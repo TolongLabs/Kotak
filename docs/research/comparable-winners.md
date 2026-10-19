@@ -1,0 +1,228 @@
+# Comparable hackathon winners
+
+Research behind [CONTEXT.md](/docs/CONTEXT.md) for SDC Hackathon 2026, Domain 1. The list covers comparable competitions and includes finalists and other placings, not only winners. All sources were accessed on 20 October 2026.
+
+Contents:
+
+1.  [Winners and finalists](#winners-and-finalists)
+    1.  [CareerSphere](#careersphere)
+    1.  [PivotPath](#pivotpath)
+    1.  [Hunar](#hunar)
+    1.  [Jobiri](#jobiri)
+    1.  [GetWage](#getwage)
+    1.  [XPRIZE Rapid Reskilling finalists](#xprize-rapid-reskilling-finalists)
+    1.  [Prospera](#prospera)
+    1.  [Vite Vere](#vite-vere)
+    1.  [Argus](#argus)
+    1.  [CopyFlag](#copyflag)
+    1.  [Wonder Reader](#wonder-reader)
+    1.  [ATTI, Spoon Share and Alpha-Eye](#atti-spoon-share-and-alpha-eye)
+    1.  [MamaMate](#mamamate)
+1.  [Solution Challenge 2024 rubric](#solution-challenge-2024-rubric)
+1.  [Patterns](#patterns)
+1.  [Anti-patterns](#anti-patterns)
+1.  [Closest overlaps with Domain 1](#closest-overlaps-with-domain-1)
+1.  [Open questions](#open-questions)
+1.  [Search tooling](#search-tooling)
+1.  [See also](#see-also)
+
+## Winners and finalists
+
+### CareerSphere
+
+- **Competition and year:** PyCon Singapore 2026 Hackathon, 19–21 June 2026, sponsored by OpenAI, AI Singapore and Apify. Job & Skills track.
+- **Placing:** #1 in the organiser's single ranking across both tracks ([results][pycon-sg-results]).
+- **What it did:** You paste a CV. It maps your skills onto the official SkillsFuture framework (2,030 roles) and scores your fit for each role. It ranks your gaps, links the live SkillsFuture courses that close them, and ranks about 88k live MyCareersFuture postings against your skills.
+- **Why it won, per its source:** The team says judging was half product and half process. Their rule was "the data decides and the AI interprets". The organisers listed "Data Integrity, User Focus, Execution" as criteria and said good products "explain why recommendations are shown using dataset logic" ([PyCon SG hackathon page][pycon-sg-hackathon]).
+- **Sources:** [write-up][careersphere-write-up], [repo][careersphere-repo], [organiser page][pycon-sg-hackathon], [results][pycon-sg-results].
+
+[pycon-sg-results]: https://pycon.sg/hackathon_entries/results.html
+[careersphere-write-up]: https://www.rohanjk.xyz/projects/careersphere
+[careersphere-repo]: https://github.com/rohanz/careersphere
+
+### PivotPath
+
+- **Competition and year:** Claude Hackathon x UVicHacks, 2026.
+- **Placing:** First Place (Devpost badge).
+- **What it did:** Free career-transition tool with two tracks: displaced workers and students. It gives five paths ranked by match score, O\*NET automation risk, salary, time to job-readiness and demand trend. Each path has a month-by-month plan with free courses. The write-up has Claude "return exactly five paths" from O\*NET inputs, so the model generates the paths from grounded data.
+- **Why it won, per its source:** No judge comment. The team stresses that its O\*NET data is "grounded rather than hallucinated" and that it shows automation risk "honestly".
+- **Sources:** [Devpost][pivotpath-devpost].
+
+[pivotpath-devpost]: https://devpost.com/software/pivot-path
+
+### Hunar
+
+- **Competition and year:** Smart India Hackathon 2024 (Govt of India), Software Edition.
+- **Placing:** Team Access Denied was a "Joint Winner" of problem statement SIH1628, Smart Competency Diagnostics and Candidate Profile Score Calculator, at the LPU nodal centre, sharing it with LPU's team Stellar Six ([SIH results][sih-2024-results]; [LPU news][lpu-sih-2024]). Neither source mentions a grand prize, which only the team's post claims, and the link between the project name Hunar and team Access Denied rests on that post.
+- **What it did:** Job and training recommendations, skill-gap analysis, a dashboard of trending skills and job forecasts, a voice-first multilingual interface (English, Hindi, Punjabi), and micro-internships.
+- **Why it won, per its source:** None given. The team highlights inclusion and breaking language barriers.
+- **Sources:** [team LinkedIn post][hunar-linkedin], [SIH results][sih-2024-results], [LPU news][lpu-sih-2024].
+
+[sih-2024-results]: https://www.sih.gov.in/sih2024/sih2024-grand-finale-result
+[lpu-sih-2024]: https://happenings.lpu.in/lpu-team-won-the-7th-edition-of-smart-india-hackathon-grand-finale-concluded-at-lpu/
+[hunar-linkedin]: https://www.linkedin.com/posts/shrynsjn_smartindiahackathon2024-hackathonwinners-activity-7274090331585859585-z-e7
+
+### Jobiri
+
+- **Competition and year:** EUvsVirus Hackathon (European Commission), 2020.
+- **Placing:** Challenge Winner (Devpost badge).
+- **What it did:** AI digital career advisor for job seekers that also helps public employment services and universities go digital.
+- **Why it won, per its source:** The team pitched on scale: deployed in Italy and Portugal, and serving both job seekers and institutions.
+- **Sources:** [Devpost][jobiri-devpost].
+
+[jobiri-devpost]: https://devpost.com/software/jobiri-the-first-ai-based-digital-career-advisor
+
+### GetWage
+
+- **Competition and year:** Google Solution Challenge, 2022.
+- **Placing:** Top 10 finalist. It was not a winner and not in the Top 3.
+- **What it did:** Helps workers hit by unemployment find and post local daily-wage work. Listed SDGs 1, 4 and 8.
+- **Why it placed, per its source:** Not stated.
+- **Sources:** [Google Developers Blog][getwage-blog].
+
+[getwage-blog]: https://developers.googleblog.com/2022/07/top-10-winners-demo-Day-2022.html
+
+### XPRIZE Rapid Reskilling finalists
+
+- **Competition and year:** XPRIZE Rapid Reskilling (US$5M), 2020–23.
+- **Placing:** Finalists were Dignified Work, VITAL, SHIFA360 and Team Isotonik. The grand prize went unclaimed.
+- **What they did:** Programmes of 3 to 18 weeks that train under-resourced workers and place them in jobs.
+- **Why they placed, per the sources:** Finalists were chosen on "reduced training time and improved job placement and retention". No team trained and placed 5,000 workers in 10 months, so nobody won the grand prize.
+- **Sources:** [XPRIZE 2023][xprize-2023], [XPRIZE via CAEL 2022][xprize-cael-2022].
+
+[xprize-2023]: https://www.xprize.org/news/xprize-announces-conclusion-of-rapid-reskilling-competition
+[xprize-cael-2022]: https://www.cael.org/resouces/pathways-blog/xprize-announces-the-five-finalists-shaping-the-future-of-work
+
+### Prospera
+
+- **Competition and year:** Gemini API Developer Competition, 2024.
+- **Placing:** Most Useful App, Best Flutter App.
+- **What it did:** Real-time AI sales coach that gives feedback during sales conversations.
+- **Why it won, per its source:** Judges: "empowers sales representatives to enhance their skills… fostering professional growth".
+- **Sources:** [Google Developers Blog][gemini-winners-blog].
+
+### Vite Vere
+
+- **Competition and year:** Gemini API Developer Competition, 2024.
+- **Placing:** Most Impactful App, People's Choice.
+- **What it did:** Step-by-step visual guidance with everyday tasks for people with cognitive disabilities.
+- **Why it won, per its source:** Judges: uses "visual understanding and clever prompting… promoting self-reliance and skill development".
+- **Sources:** [Google Developers Blog][gemini-winners-blog], the same post as for [Prospera](#prospera).
+
+### Argus
+
+- **Competition and year:** Microsoft Imagine Cup, 2025.
+- **Placing:** World Champion. The runners-up were HairMatch and Signvrse.
+- **What it did:** Wearable for people with low vision: object and face recognition, navigation.
+- **Why it won, per its source:** Judged on "innovative use of AI, inclusive design principles, and overall viability". The founders' story: grandparents with low vision. HairMatch reported "over 5,000 users in 45 countries". Signvrse was co-developed with Deaf linguists.
+- **Sources:** [Microsoft Tech Community][argus-techcommunity].
+
+[argus-techcommunity]: https://techcommunity.microsoft.com/blog/studentdeveloperblog/announcing-the-2025-imagine-cup-world-champion/4414342
+
+### CopyFlag
+
+- **Competition and year:** Microsoft Imagine Cup, 2026.
+- **Placing:** World Champion (US$150k).
+- **What it did:** Finds copies of designs online and starts corrective action to protect creators.
+- **Why it won, per its source:** Not stated.
+- **Sources:** [Microsoft Signal][copyflag-signal].
+
+[copyflag-signal]: https://news.microsoft.com/signal/articles/imagine-cup-2026-student-ai-competition/
+
+### Wonder Reader
+
+- **Competition and year:** Google Solution Challenge, 2023.
+- **Placing:** Global Top 3.
+- **What it did:** 3D-printed braille device for blind and low-vision students. Teachers send questions over Bluetooth.
+- **Why it won, per its source:** No judge comment. Built on Google Cloud, Firebase, Flutter and Text-to-Speech.
+- **Sources:** [Google blog][wonder-reader-google-blog], [archived winners page][wonder-reader-archived-winners].
+
+[wonder-reader-google-blog]: https://blog.google/innovation-and-ai/technology/developers-tools/google-student-developer-clubs-solution-challenge-2023/
+[wonder-reader-archived-winners]: http://web.archive.org/web/20240909092052/https://developers.google.com/community/gdsc-solution-challenge/winners
+
+### ATTI, Spoon Share and Alpha-Eye
+
+- **Competition and year:** Google Solution Challenge, 2024.
+- **Placing:** Global Top 3.
+- **What they did:** ATTI gives memory support for dementia, Spoon Share handles food redistribution, and Alpha-Eye screens for eye disease in Sub-Saharan Africa.
+- **Why they won, per the source:** No judge comment. Judged against the official [Solution Challenge 2024 rubric](#solution-challenge-2024-rubric).
+- **Sources:** [Google blog][solution-challenge-2024-blog].
+
+[solution-challenge-2024-blog]: https://blog.google/technology/developers/meet-the-students-that-are-changing-the-world-through-technology/
+
+### MamaMate
+
+- **Competition and year:** ITU AI for Good Innovation Factory, 2025 (team Ele-vate AI Africa).
+- **Placing:** Winner (US$20k).
+- **What it did:** Offline AI gadget for new mothers in rural communities.
+- **Why it won, per its source:** ITU's write-up calls it a "bold yet deeply grounded approach to maternal health equity". That wording is the article's narrative, not a quoted jury statement.
+- **Sources:** [AI for Good][mamamate-itu].
+
+[mamamate-itu]: https://aiforgood.itu.int/mamamate-wins-again-this-time-at-the-ai-for-good-innovation-factory-grand-finale-2025/
+
+## Solution Challenge 2024 rubric
+
+The official Google Solution Challenge 2024 rubric is worth 50 points ([archived timeline][solution-challenge-2024-timeline]). It has two halves:
+
+- **Impact, 25 points.** Clear problem statement; which SDG goals and targets the team chose and why; three feedback points from real users and how the team iterated on them; success shown with metrics, goals and outcomes; a plan to reach more people.
+- **Technology, 25 points.** Architecture and why each technology was chosen; all technical components needed; one hard coding challenge and how it was solved; a demo of "an actual working application (not a mockup)"; ability to scale.
+
+The official winners page now redirects to `/community`, so the archived copies are cited.
+
+[solution-challenge-2024-timeline]: http://web.archive.org/web/20240926112720/https://developers.google.com/community/gdsc-solution-challenge/timeline
+
+## Patterns
+
+1. **A narrow user with a vivid moment of need, often the founder's own story.** Examples: [Argus](#argus) (the founders' grandparents), Signvrse (a Deaf team lead), [GetWage](#getwage) (daily-wage workers whose working days fell from about 21 to 9 a month after lockdown), and [PivotPath](#pivotpath) (retail clerks and truck drivers for whom "a $3,000 bootcamp is… a wall").
+1. **Real, official data under the model.** [CareerSphere](#careersphere) used the SkillsFuture framework, live MyCareersFuture postings and the SkillsFuture Courses API, with deterministic scoring. Its team's rule was "the data decides and the AI interprets". [PivotPath](#pivotpath) grounds its model in O\*NET data: Claude generates the five paths from O\*NET inputs. PyCon SG scored "Data Integrity" directly ([PyCon SG hackathon page][pycon-sg-hackathon]).
+1. **Explanations you can audit.** CareerSphere showed matched and missing skills and a "why?" for each result. The PyCon SG organisers said good products "explain why recommendations are shown using dataset logic" ([PyCon SG hackathon page][pycon-sg-hackathon]). This lines up with SDC's "explainable score".
+1. **Every gap leads to an action.** Winners attach courses, jobs and a plan to each recommendation: live courses and postings (CareerSphere), month-by-month free-course plans (PivotPath), micro-internships ([Hunar](#hunar)).
+1. **A working demo deployed live.** The Google rubric gives 5 points to a working app "not a mockup". CareerSphere had a public Cloud Run URL, and PyCon SG judged "Execution" ([PyCon SG hackathon page][pycon-sg-hackathon]).
+1. **Outcomes measured, not promised.** XPRIZE judged on training time, placement and retention. Google asks for metrics plus three pieces of real-user feedback. HairMatch cited 5,000 users.
+1. **Inclusion is part of the design.** Imagine Cup scored "inclusive design". Hunar is voice-first and multilingual, and [MamaMate](#mamamate) works offline. Several "Most Impactful" winners serve disabled or underserved users.
+1. **The build process is shown.** CareerSphere kept a `DECISIONS.md`, data and algorithm cards, failure cases and an AI collaboration log, because process was half the score. Google's rubric scores code testing and iteration.
+
+## Anti-patterns
+
+- **The thin chatbot wrapper.** The CareerSphere team found that "features where the LLM decides felt like thin chatbot wrappers". SDC's judges warn against exactly this ("upload a CV and ask a chatbot").
+- **A wall of skills with no priority.** The PyCon SG organisers asked for "actionable pathways instead of overwhelming skill sets" ([PyCon SG hackathon page][pycon-sg-hackathon]). CareerSphere's write-up names "a wall of 500 skills" as the failure mode.
+- **Mockups and slideware.** Google's rubric explicitly rejects a mockup demo.
+- **Scale claims without evidence.** In XPRIZE Rapid Reskilling, no team hit the 5,000-placement target, so the grand prize was not awarded.
+- **A me-too concept.** This is our own observation, not a judge's comment. One Devpost search turned up many near-identical "CV in, gap and roadmap out" entries, such as [CareerShield AI](https://devpost.com/software/careershield-ai) and [BridgeWork](https://devpost.com/software/bridegwork), and no winner badge was found on either page. The career projects that did win added official data, a specific audience, or inclusion features.
+
+## Closest overlaps with Domain 1
+
+- **PivotPath** is the closest. It already has a match score, O\*NET automation risk, a growing/stable/declining demand trend, time to readiness, free-course plans, and separate student and worker tracks.
+- **CareerSphere** already has an explainable fit score against an official framework, a daily job-postings feed, and courses linked to gaps.
+- **Hunar** already has trending skills, job forecasts and skill-gap-driven recommendations.
+- **Where we can differ.** None of these show more than one future scenario, map each role or skill to SDG targets, or build a trend layer that continuously tracks AI advancement. PivotPath's trend comes from static O\*NET outlooks, and CareerSphere's "future-facing" is only a weight in gap ranking. Malaysian context is also unclaimed. Our natural edge is a live AI-trend signal feeding scenarios, scored deterministically, plus per-role SDG mapping.
+
+## Open questions
+
+The CareerSphere and Hunar placings were checked at their organisers' results pages in [issue 20](https://github.com/TolongLabs/sdc-hack/issues/20); see their entries above.
+
+- The detailed PyCon SG weights, which are only in the submission forms.
+- Google Solution Challenge 2025 and 2026 global winners. The format appears to have moved to regional finals (for example APAC at ADB Manila), and no official list was found.
+- XPRIZE amounts and team locations. The 2023 release says US$1.2M was awarded in total. A search summary of XPRIZE's "30 Years, 30 Prizes" retrospective says four teams shared a US$1.5M finalist award, but I did not fetch that page. Team Isotonik is listed in Bengaluru (2022) and in Washington, D.C. (2023).
+- Imagine Cup 2026 runners-up and the reason CopyFlag won.
+- ADEM/ESCO Open Data x Skills Hackathon 2024 (Luxembourg). The [organisers][adem-esco-organisers] describe the projects but name no winners.
+- No verified winners were found for SkillsFuture or GovTech, JobTech Sweden, US DOL or O\*NET, UNDP or UNICEF, MIT Solve workforce challenges, or the 2020 Devpost Future of Work Hackathon (its gallery returned 403).
+- Jobiri dates from 2020, just outside the 2021–2026 window.
+
+[adem-esco-organisers]: https://data.public.lu/en/posts/talent-to-highlight-your-skills/
+
+## Search tooling
+
+WebSearch and WebFetch; Jina Reader ([reader docs](https://jina.ai/reader)); Exa search ([search API docs](https://docs.exa.ai/reference/search)); Wayback availability API.
+
+## See also
+
+- [SDC Hackathon 2026 context](/docs/CONTEXT.md), which these notes support
+- [SDC Hackathon 2026 brief](/docs/BRIEF.md)
+- [Best practices that win marks under the SDC 2026 rubric](/docs/research/best-practices.md)
+- [Lineage, people and Malaysian precedent](/docs/research/lineage-and-local.md)
+- [Prior art, SDG mapping and course catalogues](/docs/research/prior-art-sdg-courses.md)
+- [Trend and skills data](/docs/research/trend-data.md)
+
+[pycon-sg-hackathon]: https://pycon.sg/hackathon.html
+[gemini-winners-blog]: https://developers.googleblog.com/en/announcing-the-winners-of-the-gemini-api-developer-competition/

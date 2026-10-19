@@ -25,9 +25,9 @@ Recommendations, not decisions: the team decides. After the brief's eligibility 
 3.  **Let the data decide and the model explain.** Score matches deterministically over O\*NET skills and show the breakdown. The model only explains, quotes its sources through the API's citations, and can say "I don't know"; code drops any job or course that isn't in our data. That is the rule CareerSphere's team built around, and it answers the judges' warning against "upload a CV and ask a chatbot for jobs". _Innovation, Problem-Solution Fit_ ([winners](#comparable-winners); [marks](#what-wins-marks)).
 4.  **Build scenarios from data, not adjectives.** For Malaysia, the index splits AI use into automation and augmentation across 20 occupation groups, which gives an automation-led and an augmentation-led scenario, each labelled an estimate. Neither of the two closest winners shows more than one scenario. _Innovation_ ([data](#trend-and-skills-data); [winners](#comparable-winners)).
 5.  **Tie every SDG tag to a target with Malaysian data.** The domain's targets are 4.3, 4.4, 8.2 and 8.5, and the UN SDG API returns their official text and Malaysia's figures for indicator 4.4.1, on ICT skills. We found no official skill-to-SDG crosswalk, so we publish our own with a cited basis per row; that is what makes the link "meaningful rather than decorative". _Problem-Solution Fit, Innovation_ ([SDG mapping](#sdg-mapping)).
-6.  **Cite each Malaysian figure with its source, date and scope**, because they aren't one series: about 600,000 workers needing reskilling (October 2024, and the domain file's figure), about 697,000 jobs at risk without upskilling (June 2026), and TalentCorp's 620,000 workers projected to be significantly affected. Anchor the role list in MyMahir, TalentCorp's Impact Study and MyCOL. _Clarity, Problem-Solution Fit_ ([people](#the-event-and-its-people)).
+6.  **Cite each Malaysian figure with its source, date and scope**, because they aren't one series: about 600,000 workers needing reskilling (October 2024, and the domain file's figure), about 697,000 jobs at risk without upskilling (the HR Minister, June 2026, as reported by Bernama), and TalentCorp's 620,000 workers projected to be significantly affected. Anchor the role list in MyMahir, TalentCorp's Impact Study and MyCOL. _Clarity, Problem-Solution Fit_ ([people](#the-event-and-its-people)).
 7.  **Take pathway steps from live catalogues, and never call a course "HRD Corp-claimable".** We found no working public list of claimable programmes, so state the scheme's rules instead. Microsoft Learn's catalogue gives real durations for the time estimates. _Problem-Solution Fit_ ([learning resources](#learning-resources)).
-8.  **Make the live link survive judging.** Deploy on a Replit plan that doesn't sleep, put seeded sample profiles behind one click, commit the dated snapshots with a refresh script, and serve cached, labelled answers if the model API is overloaded. Name the data risk and this fallback in the PRD. _Feasibility_ ([marks](#what-wins-marks); [data](#trend-and-skills-data)).
+8.  **Make the live link survive judging.** Deploy on a Replit Reserved VM, about US$7 for two weeks from one member's Core credits, because an idle Autoscale app's first request "can take a few seconds". Put seeded sample profiles behind one click, commit the dated snapshots with a refresh script, and serve cached, labelled answers if the model API is overloaded. Name the data risk and this fallback in the PRD. _Feasibility_ ([marks](#what-wins-marks); [data](#trend-and-skills-data)).
 9.  **Script a video of about six minutes that is mostly demo**, in our own voices, with captions checked by hand. The organisers asked for a balance of slides and demo but to prioritise the demo, and discouraged AI-generated voices ([transcript], 01:13:08 and 01:14:47). _Clarity_ ([marks](#what-wins-marks)).
 10. **Use the mentor slot on the business case.** The windows run 21 to 23 October, and two of the six mentors come from KrackedDevs, a Malaysian builder community ([people](#the-event-and-its-people)).
 
@@ -36,37 +36,41 @@ Recommendations, not decisions: the team decides. After the brief's eligibility 
 ## The event and its people
 
 - **No track record to copy.** SDC 2026 is the first dedicated hackathon circuit at XMUM ([overview]), and searches found no earlier SDC, XMUM AI Club or XMUM-hosted hackathon. No judges are named; they "may comprise representatives from academia, industry, sponsors, or other professionals" ([Terms and Conditions 7.1.2][tc71]). Asked what separates a winning submission, the organisers said to target "what our domain sponsors have expected from you" ([transcript], 01:11:02).
-- **Aiversecity says it builds human-centred AI for people and businesses.** Its one-page site states its mission "to help people, businesses, and societies design AI that serves humanity — not replaces it" ([Aiversecity][aiv]). It is the title sponsor and runs the ORION AI Youth Leaders network, which may offer members "career and internship matching with companies in Aiversecity's business network" ([participant handbook 13][ph13]). Its representative closed her remarks with "put people first" ([transcript], 00:18:01).
+- **Aiversecity says it builds human-centred AI for people and businesses.** Its one-page site states its mission "to help people, businesses, and societies design AI that serves humanity — not replaces it" ([Aiversecity][aiv]). It is the title sponsor and runs the ORION AI Youth Leaders network, which may offer members "career and internship matching with companies in Aiversecity's business network" ([participant handbook 13][ph13]). Its CEO's LinkedIn profile lists Gordan Vong as founder and CEO since January 2026 ([profile][gordan-vong]); no Aiversecity page names a legal entity, products or customers, and its terms and privacy pages are marked as drafts ([terms][aiv-terms]). Its representative closed her remarks with "put people first" ([transcript], 00:18:01).
 - **The mentors lean to business and building.** Two of the six are from KrackedDevs; the others come from Binance, Western Digital, Saichuang Weilai, in venture capital, and Intrinsic SEA ([team portal][tp-mentors]).
-- **The Malaysian figures have moved.** The reskilling figure began as about 600,000 workers within three to five years, from a study by the HR Ministry and TalentCorp ([Bernama, October 2024][bernama-600k]); in June 2026 the HR Minister put it at about 697,000 jobs at risk if workers don't upskill ([Bernama, June 2026][bernama-697k]). TalentCorp's Impact Study says about 620,000 workers, 18% of the workforce in the sectors it analysed, are "projected to be significantly affected". It names around 60 emerging roles, and career pathways and 864 skills for 84 highly impacted roles; phase 2 is in progress ([TalentCorp][tc-impact]).
+- **The Malaysian figures differ in scope.** In October 2024 the HR Minister said about 600,000 workers in 10 sectors needed reskilling within three to five years ([Bernama, October 2024][bernama-600k]). In June 2026 his successor cited a TalentCorp study finding about 697,000 jobs "at risk of being affected by technological advancements and the green economy" if workers don't upskill ([Bernama, June 2026][bernama-697k]), and about 120 roles "identified as increasingly important" ([Malay Mail][mm-697k]). Neither the 697,000 nor the 120 appears in the Hansard record of his oral answer or in any TalentCorp release; TalentCorp's January 2026 figure was about 685,000 ([TalentCorp release][tc-685k]). TalentCorp's Impact Study says about 620,000 workers, 18% of the workforce in the sectors it analysed, are "projected to be significantly affected". It names around 60 emerging roles, and career pathways and 864 skills for 84 highly impacted roles; phase 2 is in progress ([TalentCorp][tc-impact]).
 - **Judges may know the government platforms.** MyMahir lists TalentCorp's in-demand and emerging roles with their skills ([MyMahir][mymahir]). MyCOL 2024/2025, the critical occupations list, is published only as PDFs ([MyCOL][mycol]). HRD Corp lets employers claim up to 100% of approved training and runs e-LATiH, a learning portal with free courses ([HRD Corp][hrdcorp]). PERKESO's MYFutureJobs matches jobseekers with employers ([MYFutureJobs][mfj]).
 - **The nearest Malaysian precedent set a production bar.** Talentbank's Tech Hackathon, "Build Asia's Career OS with AI", crowned its first cohort's winners on 22 August 2026, and its page sets a "Production-ready only" standard, with an adoption pool "Awarded only for exceptional work". It names the winners but not what they built ([Talentbank][talentbank]). Our sponsor judges may ask the same question: could they adopt what we build?
 
 [overview]: /docs/sources/sdchack.my/overview.md#what-is-sdc
 [tc71]: /docs/sources/sdchack.my/terms-and-conditions.md#71-general-principles
 [aiv]: https://aiversecity.com/
+[gordan-vong]: https://www.linkedin.com/in/gordanvong
+[aiv-terms]: https://aiversecity.com/terms
 [ph13]: /docs/sources/drive.google.com/participant-handbook.md#13-aiversecity-orion-ai-youth-leaders-sponsor-community
 [tp-mentors]: /docs/sources/sdchack.my/team-portal.md#mentors
 [bernama-600k]: https://www.bernama.com/en/news.php?id=2350085
 [bernama-697k]: https://bernama.com/en/general/news.php?id=2572379
+[mm-697k]: https://www.malaymail.com/news/malaysia/2026/06/24/malaysia-records-42807-job-losses-as-697000-roles-at-risk-from-ai-without-urgent-upskilling-says-hr-minister/224963
+[tc-685k]: https://www.talentcorp.com.my/resources/press-releases/talentcorp-drives-national-ai-readiness-as-rm110-million-jelajah-ai-mymahir-expands-nationwide/
 [tc-impact]: https://www.talentcorp.com.my/impact-study/
 [hrdcorp]: https://hrdcorp.gov.my/
 [talentbank]: https://www.techhackathon.com/
 
 ## Comparable winners
 
-SDC has no past winners, so these come from comparable competitions. Each placing is confirmed by the organiser or a Devpost winner badge unless marked team-claimed. Eight entries judged on other rubrics are a small sample that only shows the survivors, so read the patterns as hints, not laws.
+SDC has no past winners, so these come from comparable competitions. Each placing is confirmed by the organiser or a Devpost winner badge. Eight entries judged on other rubrics are a small sample that only shows the survivors, so read the patterns as hints, not laws.
 
-| Project                           | Event and placing                                              | Why it matters to us                                                                                                              |
-| --------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [PivotPath]                       | Claude Hackathon x UVicHacks 2026, first place                 | Closest overlap: five paths ranked by match, O\*NET automation risk and demand trend, each with a free-course plan                |
-| [CareerSphere]                    | PyCon Singapore 2026, Job & Skills track, first (team-claimed) | Fit scored against Singapore's official skills framework and about 88,000 live postings; "the data decides and the AI interprets" |
-| [Hunar]                           | Smart India Hackathon 2024, nodal-centre winner (team-claimed) | Trending skills, job forecasts and skill gaps, voice-first in three languages                                                     |
-| [Jobiri]                          | EUvsVirus 2020, challenge winner                               | AI career advisor for job seekers and for public employment services                                                              |
-| [GetWage]                         | Google Solution Challenge 2022, Top 10                         | Daily-wage work for people hit by unemployment, tagged SDGs 1, 4 and 8                                                            |
-| [XPRIZE Rapid Reskilling][xprize] | XPRIZE 2020–23, grand prize unclaimed                          | Judged on training time, placement and retention; no team placed 5,000 workers                                                    |
-| [Argus]                           | Imagine Cup 2025, world champion                               | Born of the founders' grandparents' low vision; judged on AI use, inclusive design and viability                                  |
-| [MamaMate]                        | ITU AI for Good Innovation Factory 2025                        | Offline for rural mothers; ITU praised its "bold yet deeply grounded approach"                                                    |
+| Project                           | Event and placing                                                                                                   | Why it matters to us                                                                                                              |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [PivotPath]                       | Claude Hackathon x UVicHacks 2026, first place                                                                      | Closest overlap: five paths ranked by match, O\*NET automation risk and demand trend, each with a free-course plan                |
+| [CareerSphere]                    | PyCon Singapore 2026, first overall ([results][pycon-results])                                                      | Fit scored against Singapore's official skills framework and about 88,000 live postings; "the data decides and the AI interprets" |
+| [Hunar]                           | Smart India Hackathon 2024, a nodal-centre joint winner ([results][sih-results]); the team's post names the project | Trending skills, job forecasts and skill gaps, voice-first in three languages                                                     |
+| [Jobiri]                          | EUvsVirus 2020, challenge winner                                                                                    | AI career advisor for job seekers and for public employment services                                                              |
+| [GetWage]                         | Google Solution Challenge 2022, Top 10                                                                              | Daily-wage work for people hit by unemployment, tagged SDGs 1, 4 and 8                                                            |
+| [XPRIZE Rapid Reskilling][xprize] | XPRIZE 2020–23, grand prize unclaimed                                                                               | Judged on training time, placement and retention; no team placed 5,000 workers                                                    |
+| [Argus]                           | Imagine Cup 2025, world champion                                                                                    | Born of the founders' grandparents' low vision; judged on AI use, inclusive design and viability                                  |
+| [MamaMate]                        | ITU AI for Good Innovation Factory 2025                                                                             | Offline for rural mothers; ITU praised its "bold yet deeply grounded approach"                                                    |
 
 The closest published SDG rubric is the Google Solution Challenge 2024's: 25 points for impact, covering the chosen SDG targets, three pieces of real-user feedback and metrics, and 25 for technology, including "an actual working application (not a mockup)" ([archived timeline][gsc-2024]).
 
@@ -90,6 +94,8 @@ PivotPath and CareerSphere already have explainable scores, gaps and course plan
 [MamaMate]: https://aiforgood.itu.int/mamamate-wins-again-this-time-at-the-ai-for-good-innovation-factory-grand-finale-2025/
 [gsc-2024]: http://web.archive.org/web/20240926112720/https://developers.google.com/community/gdsc-solution-challenge/timeline
 [pycon]: https://pycon.sg/hackathon.html
+[pycon-results]: https://pycon.sg/hackathon_entries/results.html
+[sih-results]: https://www.sih.gov.in/sih2024/sih2024-grand-finale-result
 
 ## What wins marks
 
@@ -101,7 +107,7 @@ Practices from judging guides, accelerators and model providers, beyond the brie
 - **Script the video and deck.** Say what the app does in the first few seconds ([Devpost video][dp-video]); budget each segment and never speed up the audio ([Devpost tips][dp-tips]); put one idea on each slide, and prefer a list of steps to a screenshot ([Y Combinator deck][yc-deck]); fix YouTube's automatic captions, which can misrepresent speech ([YouTube][yt-captions]); and rehearse in front of honest critics ([Y Combinator Demo Day][yc-dd]).
 - **Write the README for a stranger**: what it does, why it's useful, how to start and where to get help ([GitHub][gh-readme]). "Ambiguity is a red flag, and also projects that lack detail and code" ([Devpost judges][dp-judges]), so link the matcher and the citation check from the README.
 - **Ground the model.** Anthropic's citations "are guaranteed to contain valid pointers to the provided documents" ([citations][a-cite]). Let the model say "I don't know", restrict it to the documents given, and have it retract any claim it can't quote ([hallucinations][a-halluc]). Test on cases that mirror real use ([evals][a-evals]), for example 20 sample profiles with zero uncited recommendations as the bar.
-- **Keep the demo up.** Replit's Autoscale drops to "as low as zero" servers when idle, while a Reserved VM "never sleeps" ([Replit][replit]). The Claude API returns `529 overloaded_error` when it is "temporarily overloaded" ([errors][a-errors]).
+- **Keep the demo up.** Replit's Autoscale drops to "as low as zero" servers when idle, and then "the first request after scaling to zero can take a few seconds"; a Reserved VM "never sleeps" ([Replit][replit]; [FAQ][replit-faq]). The cheapest current Reserved VM costs $0.0208 an hour ([pricing][replit-pricing]), and a production database still suspends after 5 idle minutes ([billing][replit-billing]). The Claude API returns `529 overloaded_error` when it is "temporarily overloaded" ([errors][a-errors]).
 - **Quote impact exactly.** Use the official target and indicator text, and a baseline from the official series ([UN SDG API][sdg-api]).
 - **Drill the questions.** "What inspired your project?", "What tools did you use, and why?" and "What challenges did you solve, and how?" ([ETHGlobal][eth]). Answer each in one sentence first.
 
@@ -121,6 +127,9 @@ Practices from judging guides, accelerators and model providers, beyond the brie
 [a-halluc]: https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
 [a-evals]: https://platform.claude.com/docs/en/test-and-evaluate/develop-tests
 [replit]: https://docs.replit.com/cloud-services/deployments/autoscale-deployments
+[replit-faq]: https://docs.replit.com/help/deployment-and-publishing
+[replit-pricing]: https://docs.replit.com/billing/aug-cloud-billing-updates
+[replit-billing]: https://docs.replit.com/billing/about-usage-based-billing
 [a-errors]: https://platform.claude.com/docs/en/api/errors
 [eth]: https://ethglobal.com/events/ethonline2026/info/details
 
@@ -131,7 +140,7 @@ What already exists, what data we can legally use, and where the gaps are.
 ### Prior art and white space
 
 - **MyMahir** (TalentCorp): a role and skill explorer with In-Demand and Emerging tags that matches a user's top skills to roles and suggests upskilling and training, plus an AI Readiness Index for organisations. It shows no numeric score, time estimates, scenarios or SDG tags ([MyMahir][mymahir]; [user guide][mymahir-guide]).
-- **MYFutureJobs** (PERKESO): "AI-driven skill-based job matching", with no explanation of how it works, plus counselling and transition programmes ([MYFutureJobs][mfj]).
+- **MYFutureJobs** (PERKESO): "AI-driven skill-based job matching", with no explanation of how it works, plus counselling ([MYFutureJobs][mfj]).
 - **HRD Corp e-LATiH and e-TRiS**: rails for courses and grants, with no matching ([e-LATiH][elatih]).
 - **Singapore's Jobs-Skills Portal**: the strongest regional benchmark. Its 369 role profiles flag "high-growth" skills from job postings, but it covers only Singapore, with no personal score, scenarios or SDGs ([Job-Skills Profile][swda]).
 - **LinkedIn Career Explorer**: a 0–100 skills-similarity score for each career move, with "Skills You'll Need". It is the best precedent for an explainable score, but has no trends, courses, scenarios or SDGs ([Career Explorer][li-ce]).
@@ -158,9 +167,9 @@ The trend layer must be updatable and dated, so feeds and versioned datasets com
 | [OpenDOSM][dosm]                | Monthly labour force; annual wages by occupation group                                                                         | CSV, or an API at 4 requests a minute      | CC BY 4.0                                         | August 2026                             |
 | [ESCO v1.2.1][esco]             | Occupations and skills mapped to ISCO-08, in many languages                                                                    | API, no key                                | Free reuse with acknowledgement ([FAQ][esco-faq]) | December 2025                           |
 
-- **Citable but not feeds**, as they are PDFs or figures only: the ILO's generative AI exposure index ([2025 update][ilo-exposure]), the World Bank and ISIS Malaysia study, which scores 484 Malaysian occupations and finds 28% of the workforce "highly exposed" ([September 2025][wb-isis]), the WEF Future of Jobs Report 2025, under CC BY-NC-ND 4.0 unless marked otherwise ([WEF][wef]; [licence][wef-licence]), [MyCOL][mycol], and MASCO 2020, Malaysia's occupation classification ([MASCO][masco]).
-- **Avoid**: Lightcast's free tier is only for nonprofits and public-good projects, subject to approval, and allows 50 skill-extraction calls a month ([Lightcast access][lightcast-api]). JobStreet's and LinkedIn's terms forbid scraping ([JobStreet terms][jobstreet]; [LinkedIn agreement][linkedin-ua]).
-- **A minimal stack**: O\*NET as the skills backbone, two Economic Index snapshots as the main trend signal, and arXiv as the live feed. The usage data joins on O\*NET codes. For Malaysian labels, BLS publishes a crosswalk from ISCO-08, which MASCO and ESCO build on, to the 2010 US codes ([BLS][bls-isco]); O\*NET uses the 2018 codes, so the chain loses detail and unmatched roles should be flagged.
+- **Citable but not feeds**, as they are PDFs or figures only: the ILO's generative AI exposure index ([2025 update][ilo-exposure]), the World Bank and ISIS Malaysia study, which scores 484 Malaysian occupations and finds 28% of the workforce "highly exposed" ([September 2025][wb-isis]), the WEF Future of Jobs Report 2025, under CC BY-NC-ND 4.0 unless marked otherwise ([WEF][wef]; [licence][wef-licence]), [MyCOL][mycol], and MASCO 2020, Malaysia's occupation classification, which is a PDF under the HR Ministry's copyright, so ask before publishing a parsed copy ([MASCO][masco]).
+- **Avoid**: Lightcast's free tier is only for nonprofits and public-good projects, subject to approval, and allows 50 skill-extraction calls a month ([Lightcast access][lightcast-api]). Adzuna's API doesn't cover Malaysia ([Adzuna spec][adzuna-spec]). Singapore's Skills Framework data may be downloaded for analysis ([SWDA FAQ][swda-faq]) but not republished without SWDA's written permission ([SWDA terms][swda-terms]). JobStreet's and LinkedIn's terms forbid scraping ([JobStreet terms][jobstreet]; [LinkedIn agreement][linkedin-ua]).
+- **A minimal stack**: O\*NET as the skills backbone, two Economic Index snapshots as the main trend signal, and arXiv as the live feed. The usage data joins on O\*NET codes. For Malaysian labels, O\*NET's and BLS's crosswalks reach ISCO-08 ([O\*NET crosswalks][onet-xwalk]; [BLS][bls-isco]), but no published table links ISCO-08 to MASCO 2020. Only about 300 of MASCO's 490 unit groups match ISCO-08 by code and title, so that step must be checked by hand and unmatched roles flagged ([trend data notes][notes-trend]).
 - **Risks and fallbacks**: the index has no announced release schedule, is too big to load live, and measures Claude usage rather than jobs, so label it an "AI usage signal". Commit filtered, dated snapshots with their source URL, add a `bun` script that checks for new releases, and cache each arXiv pull with its timestamp.
 
 [aei]: https://huggingface.co/datasets/Anthropic/EconomicIndex
@@ -178,6 +187,11 @@ The trend layer must be updatable and dated, so feeds and versioned datasets com
 [jobstreet]: https://www.jobstreet.com.my/terms
 [linkedin-ua]: https://www.linkedin.com/legal/user-agreement
 [bls-isco]: https://www.bls.gov/soc/soccrosswalks.htm
+[onet-xwalk]: https://www.onetcenter.org/crosswalks.html
+[notes-trend]: /docs/research/trend-data.md#occupation-and-skills-taxonomies
+[adzuna-spec]: https://developer.adzuna.com/swagger/spec/test2.json
+[swda-terms]: https://jobsandskills.swda.gov.sg/terms-of-use
+[swda-faq]: https://jobsandskills.swda.gov.sg/engage-us/faqs
 
 ### SDG mapping
 
@@ -208,14 +222,11 @@ The trend layer must be updatable and dated, so feeds and versioned datasets com
 
 ## Unverified claims
 
-The research couldn't confirm these at a primary source, so don't cite them until someone does; checking them is tracked in [issue #20](https://github.com/TolongLabs/sdc-hack/issues/20):
+[Issue #20](https://github.com/TolongLabs/sdc-hack/issues/20) checked every open claim against primary sources, and the findings above reflect it; the [research notes](/docs/research/) hold the evidence. These still have no primary source, so cite them only as described, or not at all:
 
-- CareerSphere's and Hunar's wins, backed only by the teams' own posts.
-- The "120 new roles" in press coverage of June 2026.
-- Whether a Replit deployment delays the first request after it idles.
-- Singapore's Skills Framework data terms, and Adzuna's country coverage, whose pages blocked access.
-- A machine-readable MASCO file, or a direct crosswalk from O\*NET to MASCO.
-- Aiversecity's founders, products and customers. The CEO's name comes only from the transcript, marked "as heard".
+- The 697,000 jobs and about 120 emerging roles of June 2026: press-reported only. If used, attribute them to the minister as reported by Bernama or Malay Mail, never to TalentCorp data.
+- Aiversecity's legal entity, products and customers: no Aiversecity page or profile names them, and SSM's paid registry wasn't searched.
+- That Hunar is the project of team Access Denied, the SIH 2024 joint winner: only the team's own post links the two.
 
 ## See also
 
@@ -223,6 +234,7 @@ The research couldn't confirm these at a primary source, so don't cite them unti
 - [Domain 1 problem statement and rubric](/docs/sources/drive.google.com/domain-1-aiversecity.md)
 - [Opening briefing transcript][transcript], with the organisers' answers on judging
 - [Team portal](/docs/sources/sdchack.my/team-portal.md), with the mentors and the submission page
+- [Research notes](/docs/research/), with the cited findings behind this file: [lineage and local context](/docs/research/lineage-and-local.md), [comparable winners](/docs/research/comparable-winners.md), [best practices](/docs/research/best-practices.md), [trend data](/docs/research/trend-data.md), and [prior art, SDG mapping and courses](/docs/research/prior-art-sdg-courses.md)
 
 [brief]: /docs/BRIEF.md
 [transcript]: /docs/sources/opening-briefing/transcript.md
