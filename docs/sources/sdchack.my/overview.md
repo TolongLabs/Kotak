@@ -1,0 +1,103 @@
+# SDC Hackathon 2026 overview
+
+SDC (Sustainably Developing Code) is a 2-week hybrid AI hackathon built around the UN Sustainable Development Goals. RM 16,000 in prizes. Open to foundation, diploma, and undergraduate students at a Malaysian university.
+
+Contents:
+
+1.  [Event summary](#event-summary)
+1.  [What is SDC?](#what-is-sdc)
+1.  [Why join](#why-join)
+1.  [AI for sustainable development](#ai-for-sustainable-development)
+    1.  [Competition timeline](#competition-timeline)
+1.  [Prizes](#prizes)
+1.  [Sponsors](#sponsors)
+1.  [Registration and contact](#registration-and-contact)
+1.  [See also](#see-also)
+
+## Event summary
+
+Build AI that matters. XMUM AI Club and XMUM Rotaract Club, 19 Oct – 1 Nov 2026. Online preliminaries + physical finals at Xiamen University Malaysia.
+
+- **RM 16,000**: total prize pool.
+- **17 SDGs · 2 domains**: every goal is in play. All 17 goals are in scope.
+- **1–5 per team**: beginners welcome.
+- **Hybrid format**: online preliminary 19–25 Oct, physical grand final 31 Oct – 1 Nov.
+
+The two challenge domains are assigned at random on Orientation Day.
+
+Figures are launch targets and will be finalised as sponsorship confirms.
+
+## What is SDC?
+
+SDC (Sustainably Developing Code) is a 2-week hybrid AI hackathon from the XMUM AI Club and Rotaract Club. It's the first dedicated hackathon circuit at Xiamen University Malaysia, challenging student builders to ship AI solutions aligned with the UN Sustainable Development Goals.
+
+- **Organised by**: XMUM AI Club, XMUM Rotaract Club.
+- **Supported by**: Rotary Club of Kuala Lumpur Dynamics, Rotary Club of Tun Razak Exchange.
+
+## Why join
+
+More than a certificate.
+
+1.  **Build**: Turn an SDG-aligned idea into a working AI prototype. Leave with a real project, not just a certificate.
+2.  **Collaborate**: Team up with builders from XMUM and universities across Malaysia. Teams of 1–5.
+3.  **Level up**: 7 days of workshops and bookable mentor sessions before the final even starts.
+4.  **Compete**: Pitch live to industry judges for a share of the RM 16,000 prize pool.
+
+## AI for sustainable development
+
+Two domains. One problem statement each. Real SDG problems from real companies.
+
+- **2**: domains, randomly assigned.
+- **1–5**: members per team.
+- **RM75**: RM50 registration + RM25 refundable deposit.
+- **All**: foundation, diploma & undergraduate.
+
+### Competition timeline
+
+The online stages let you compete from anywhere: workshops, mentors and submission are all remote. In the physical stage, top teams per domain hack for 24 hours and pitch live at XMUM.
+
+| Stage         | Format   | Dates          |
+| ------------- | -------- | -------------- |
+| Register      | Online   | By 18 Oct      |
+| Preliminary   | Online   | 19–25 Oct      |
+| Judging       | Online   | 25–28 Oct      |
+| Upgrade round | Online   | 28–30 Oct      |
+| Grand final   | Physical | 31 Oct – 1 Nov |
+
+## Prizes
+
+RM 16,000 across 2 domains, RM 8,000 each:
+
+| Place           | Prize       |
+| --------------- | ----------- |
+| Champion        | RM 3,000    |
+| 1st runner-up   | RM 1,500    |
+| 2nd runner-up   | RM 1,000    |
+| 3rd runner-up   | RM 750      |
+| 4th runner-up   | RM 250      |
+| Finalists (×10) | RM 150 each |
+
+Every finalist is paid. Nobody leaves empty-handed.
+
+## Sponsors
+
+- **Powered by**: AIversecity.
+- **Supported by**: Alpha Red Solutions, Replit, Runpod, KD, Rotary Club of Sri Petaling, Nilai Bekal Hardware Sdn Bhd, Intrinsic SEA, ChangeMaker, JomHack, Favoriot, ASEAN CXO Association Ltd, STEPAN-UNESCO, AI Business Chamber, ATOX, TIDE.
+
+## Registration and contact
+
+Registration closes 18 October 2026. [Register your team](https://sdchack.my/register).
+
+Before you register, read the [official handbook](handbook.md) and the [terms and conditions](terms-and-conditions.md). Questions first? [Ask us on Discord](https://discord.gg/p72amSbw7X).
+
+Contact a committee member on WhatsApp:
+
+- [Casey](https://wa.me/60167150868): +60 16-715 0868
+- [Kah Jun (Carson)](https://wa.me/60122799710): +60 12-279 9710
+- [Oscar](https://wa.me/60126436664): +60 12-643 6664
+- [Shu Wen](https://wa.me/60127033128): +60 12-703 3128
+
+## See also
+
+- [SDC Hackathon 2026 website](https://sdchack.my/), the source of this page
+- [FAQ](faq.md)
