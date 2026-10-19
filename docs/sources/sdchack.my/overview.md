@@ -6,12 +6,13 @@ Contents:
 
 1.  [Event summary](#event-summary)
 1.  [What is SDC?](#what-is-sdc)
+    1.  [Mascot](#mascot)
 1.  [Why join](#why-join)
 1.  [AI for sustainable development](#ai-for-sustainable-development)
     1.  [Competition timeline](#competition-timeline)
 1.  [Prizes](#prizes)
 1.  [Sponsors](#sponsors)
-1.  [Registration and contact](#registration-and-contact)
+1.  [Registration, submission and contact](#registration-submission-and-contact)
 1.  [See also](#see-also)
 
 ## Event summary
@@ -31,8 +32,12 @@ Figures are launch targets and will be finalised as sponsorship confirms.
 
 SDC (Sustainably Developing Code) is a 2-week hybrid AI hackathon from the XMUM AI Club and Rotaract Club. It's the first dedicated hackathon circuit at Xiamen University Malaysia, challenging student builders to ship AI solutions aligned with the UN Sustainable Development Goals.
 
-- **Organised by**: XMUM AI Club, XMUM Rotaract Club.
-- **Supported by**: Rotary Club of Kuala Lumpur Dynamics, Rotary Club of Tun Razak Exchange.
+- **Organised by**: XMUM AI Club ([@xmum_ai_club](https://instagram.com/xmum_ai_club)), XMUM Rotaract Club ([@rotaract.xmum](https://instagram.com/rotaract.xmum)).
+- **Supported by**: Rotary Club of Kuala Lumpur Dynamics.
+
+### Mascot
+
+Our XMUM SDC Hackathon's RUBI is a playful curious red panda that keeps us inspired. His motto is **code, create and coffee**. He is a form of welcome and encouragement from SDC ourselves to join and grow together with us.
 
 ## Why join
 
@@ -58,7 +63,7 @@ The online stages let you compete from anywhere: workshops, mentors and submissi
 
 | Stage         | Format   | Dates          |
 | ------------- | -------- | -------------- |
-| Register      | Online   | By 18 Oct      |
+| Register      | Online   | By 19 Oct      |
 | Preliminary   | Online   | 19–25 Oct      |
 | Judging       | Online   | 25–28 Oct      |
 | Upgrade round | Online   | 28–30 Oct      |
@@ -82,13 +87,13 @@ Every finalist is paid. Nobody leaves empty-handed.
 ## Sponsors
 
 - **Powered by**: AIversecity.
-- **Supported by**: Alpha Red Solutions, Replit, Runpod, KD, Rotary Club of Sri Petaling, Nilai Bekal Hardware Sdn Bhd, Intrinsic SEA, ChangeMaker, JomHack, Favoriot, ASEAN CXO Association Ltd, STEPAN-UNESCO, AI Business Chamber, ATOX, TIDE.
+- **Supported by**: Alpha Red Solutions, Replit, Runpod, KD, Rotary Club of Sri Petaling, Nilai Bekal Hardware Sdn Bhd, Intrinsic SEA, ChangeMaker, JomHack, Favoriot, ASEAN CXO Association Ltd, STEPAN-UNESCO, AI Business Chamber, ATOX, TIDE, Futurum Academy, Sime Darby Property, Ascenthea Sdn Bhd, Lineark, Orion AI Youth Community.
 
-## Registration and contact
+## Registration, submission and contact
 
-Registration closes 18 October 2026. [Register your team](https://sdchack.my/register).
+Team registration closed on 19 October 2026, 12:00 PM (MYT), and no new teams are accepted. The preliminary round is on. Submissions close 25 October 2026, 11:59 PM (MYT). Registered teams sign in to the [team portal](team-portal.md).
 
-Before you register, read the [official handbook](handbook.md) and the [terms and conditions](terms-and-conditions.md). Questions first? [Ask us on Discord](https://discord.gg/p72amSbw7X).
+Read the [official handbook](handbook.md) and the [terms and conditions](terms-and-conditions.md). Questions first? [Ask us on Discord](https://discord.gg/p72amSbw7X).
 
 Contact a committee member on WhatsApp:
 
@@ -101,3 +106,4 @@ Contact a committee member on WhatsApp:
 
 - [SDC Hackathon 2026 website](https://sdchack.my/), the source of this page
 - [FAQ](faq.md)
+- [Team portal](team-portal.md)
