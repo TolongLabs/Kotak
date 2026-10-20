@@ -1,6 +1,6 @@
 # Participant Drive sources
 
-The organisers' [SDC Hackathon 2026 - Participant Resources](https://drive.google.com/drive/folders/1xw7c2aN8N-at8hPEULzkcU76e_FFb0Ef) Google Drive folder, cleaned into Markdown. It went live at 10 PM on 19 October 2026 with the problem statements, handbooks, submission templates and tutorials, and was captured that night. A recheck just after midnight on 20 October found no file added or changed since.
+The organisers' [SDC Hackathon 2026 - Participant Resources](https://drive.google.com/drive/folders/1xw7c2aN8N-at8hPEULzkcU76e_FFb0Ef) Google Drive folder, cleaned into Markdown. It went live at 10 PM on 19 October 2026 with the problem statements, handbooks, submission templates and tutorials, and was captured that night. A recheck just after midnight on 20 October found no file added or changed since. By about 9 PM on 20 October, the orientation slides and recording had moved into a new folder 5, and the first workshop's files were in folder 6.
 
 Contents:
 
@@ -22,9 +22,10 @@ The Drive folder's layout, with where each item lives in this repo:
     - **1. Github Sample Folder**: [GitHub submission template](github-submission-template.md), the sample repository.
     - **2. Template for docs inside GitHub Rep**: the [submission template](submission-template.md) and the [Technical Tools Declaration template](technical-tools-declaration-template.md).
   - **2. Video Tutorials Needed**: [video tutorials](video-tutorials.md) on submission, the Apache 2.0 licence, mentor booking and the website.
-- **5. Workshop Recordings**: still empty on 20 October.
+- **5. Online Orientation Briefing**: the organisers' slides and recording of the [opening briefing](/docs/sources/opening-briefing/transcript.md). The recording was at the top of the folder on 19 October.
+- **6. Workshop Recordings**:
+  - **Workshop 1: AlphaRed (Agentic Development)**: the recording, the Orbyte introduction deck and a group photo, written up in [Workshop 1: Alpha Red](/docs/sources/workshop-1-alphared/transcript.md).
 - **Must Watch: Drive Guide**: also in the [video tutorials](video-tutorials.md).
-- **SDC Hackathon Online Orientation Recording.mp4**: the organisers' recording of the [opening briefing](/docs/sources/opening-briefing/transcript.md).
 
 ## Conflicts between sources
 
