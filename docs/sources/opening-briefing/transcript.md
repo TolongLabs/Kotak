@@ -16,7 +16,7 @@ The two emcees shared one Zoom account, so their lines are labelled "Emcee" unle
 - **Emcee**: Justin and Nanda, the MCs, who introduce the speakers, run the domain allocation and close the session.
 - **Alex** (Yap Zheng Hui): Organising Chairperson of SDC Hackathon 2026. Welcome speech, 00:14:09 to 00:15:48.
 - **Christine Cheng**: representative of AIverseCity, the diamond sponsor and Domain 1 partner. 00:16:58 to 00:18:45.
-- **KC** (Mr Cheh Kwan Chong; spelling unconfirmed): founder of Alphared Solutions, the platinum sponsor and Domain 2 partner. 00:19:28 to 00:21:57.
+- **KC** (KC Cheah, Mr Cheah Kwan Cheong): Founder and CEO of Alpha Red, the platinum sponsor and Domain 2 partner; the spelling is from his Orbyte deck and the organisers' Discord announcements. 00:19:28 to 00:21:57.
 - **Jessica Garson**: leads Developer Relations at RunPod. 00:22:50 to 00:26:12.
 - **Frederick Alexander**: community lead at Replit, in a pre-recorded video. 00:27:07 to 00:28:33.
 - **Wincy**: Programme and Protocol. Event timeline, 00:29:54 to 00:31:43.
@@ -82,7 +82,7 @@ _From 00:03:20 to 00:10:54 the waiting screen showed with no speech, apart from 
 
 **[00:21:31] KC:** The Sustainable Development Goals are big challenges, but every big challenge starts with a small team that decides to build and decides to try. And some of the best startups began as hackathon projects _(as heard: "process")_. So, whatever you build in these two days, don't let it end on 1st November. Whatever you build, build something that matters. I hope to see you guys in person on 31st October in Xiamen University. Thanks, everyone. Enjoy the hackathon.
 
-**[00:22:05] Emcee:** Thank you very much, Mr Cheh _(as heard: "Mr Chair")_, for your words, and for Alphared Solutions' support of SDC Hackathon 2026. Next, we would like to acknowledge another one of our tech premium sponsors, RunPod. RunPod is the AI developer cloud trusted by over 1 million developers to build and deploy AI workloads, from the first experiment to full production, with no lock-in and no ops overhead. RunPod is giving every team $25 in RunPod credits, and finalist teams will receive an additional $25 in credit. To represent RunPod, we would like to invite Ms Jessica Garson to share a few words with us.
+**[00:22:05] Emcee:** Thank you very much, Mr Cheah _(as heard: "Mr Chair")_, for your words, and for Alphared Solutions' support of SDC Hackathon 2026. Next, we would like to acknowledge another one of our tech premium sponsors, RunPod. RunPod is the AI developer cloud trusted by over 1 million developers to build and deploy AI workloads, from the first experiment to full production, with no lock-in and no ops overhead. RunPod is giving every team $25 in RunPod credits, and finalist teams will receive an additional $25 in credit. To represent RunPod, we would like to invite Ms Jessica Garson to share a few words with us.
 
 **[00:22:50] Jessica Garson:** Hi, how's it going? It's such an honour to be here today. My name is Jessica, and I lead the Developer Relations team at RunPod, and we are so proud to be part of this hackathon. At RunPod, we provide the infrastructure that AI developers need across the full life cycle: to experiment, train, fine-tune, deploy and scale. Over 1 million developers are building on RunPod specifically for AI workloads, and RunPod is the fastest path from AI experiment to production.
 

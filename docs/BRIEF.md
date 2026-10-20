@@ -179,7 +179,7 @@ Penalties run from a warning through deductions, cancelled finalist status and d
 - **Mentors**: one 15-minute Zoom session per team, booked on the [team portal][tp-mentors], first come, first served. The six mentors and their windows are listed there ([mentors][tp-mentor-list]). Mentors give feedback only, and outside mentors are off limits ([transcript], 01:17:22).
 - **Discord** is the official channel and every member must join ([participant handbook 15.2][ph152]). Use `#ask-the-organizers` for general questions, `#ask-tech` for platform problems and `#open-ticket` for a private channel ([slide 56]; [slide 57]; [slide 58]).
 - **Formal questions**: the official Discord or [sdc.xmumhack@gmail.com](mailto:sdc.xmumhack@gmail.com) ([slide 51]).
-- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]).
+- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]). The portal also shows the Replit Core code; redeem it with the organisers' guide, which turns off auto-reload to avoid charges ([team portal][tp-replit]; [guide][replit-guide]).
 
 [tp-mentor-list]: /docs/sources/sdchack.my/team-portal.md#mentors
 [ph152]: /docs/sources/drive.google.com/participant-handbook.md#152-is-joining-the-discord-server-compulsory
@@ -187,6 +187,8 @@ Penalties run from a warning through deductions, cancelled finalist status and d
 [slide 57]: /docs/sources/opening-briefing/slides.md#slide-57-discord-tour-ask-tech
 [slide 58]: /docs/sources/opening-briefing/slides.md#slide-58-discord-tour-open-a-ticket
 [tp-runpod]: /docs/sources/sdchack.my/team-portal.md#runpod-vouchers
+[tp-replit]: /docs/sources/sdchack.my/team-portal.md#replit-core
+[replit-guide]: /docs/sources/docs.google.com/replit-core-subscription-guide.md
 
 ## Open questions
 
@@ -198,10 +200,12 @@ The sources leave these open, so each comes with the safe reading. Asking the or
 - **Where proof of use goes**: inside the Tools Declaration ([participant handbook 10][ph10]) or as separate PDFs in `submission/` ([transcript], 00:47:18). Safe reading: both.
 - **Which file names**: the templates want `SDC2026_TeamName_Preliminary.pdf` and `SDC2026_TeamName_TechDeclaration.pdf`, while the sample repository uses `Submission Template SDC Hackathon.pdf` ([sample file tree][gh-tree]). Safe reading: the template names.
 - **Which committee accounts to add**: the handbook says to add them ([participant handbook 6.3.5][ph63]), but no source names them, and an organiser answered "if required not compulsory" ([chat]). Safe reading: ask for the account names.
-- **When the "mandatory" workshops run**: the template's checklist confirms all members finished "the mandatory GenAI, Database, and Cloud Deployment upskilling workshops" ([template section 5][st5]), but no source dates them, and the Drive's workshop recordings folder was still empty on 20 October ([folder map][drive-map]).
+- **When the "mandatory" workshops run**: the template's checklist confirms all members finished "the mandatory GenAI, Database, and Cloud Deployment upskilling workshops" ([template section 5][st5]), but no source dates them. By the evening of 20 October, the organisers had announced three workshops, none labelled mandatory: Alpha Red's on agentic development with Cloudflare that morning, then Replit's and Runpod's on 21 October ([announcements][disc-ws]). The first one's recording is in the Drive ([folder map][drive-map]) and written up in the [Workshop 1 transcript][w1].
 
 [chat]: /docs/sources/opening-briefing/chat.md
 [st5]: /docs/sources/drive.google.com/submission-template.md#5-eligibility--readiness-checklist
+[disc-ws]: /docs/sources/discord.com/announcements.md#workshops-on-21-october
+[w1]: /docs/sources/workshop-1-alphared/transcript.md
 [drive-map]: /docs/sources/drive.google.com/README.md#folder-map
 
 ## See also
