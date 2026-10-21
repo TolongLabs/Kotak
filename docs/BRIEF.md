@@ -12,7 +12,6 @@ Contents:
 1.  [Judging](#judging)
 1.  [Rules that can cost us](#rules-that-can-cost-us)
 1.  [Support and contacts](#support-and-contacts)
-1.  [Open questions](#open-questions)
 1.  [See also](#see-also)
 
 [tc]: /docs/sources/sdchack.my/terms-and-conditions.md
@@ -101,7 +100,7 @@ A valid submission is complete: "Every file there, every link opens, every decla
 - **`submission/` folder**: the Submission Template PDF and the Replit and RunPod proof of use, also as PDFs ([transcript], 00:47:18; [sample file tree][gh-tree]).
 - **Commit history**: genuine and continuous. A near-complete codebase landing in one big commit gets reviewed and may be disqualified as pre-built ([slide 46]; [participant handbook 6.3.5][ph63]).
 - **Secrets**: no API keys or passwords in the repository ([slide 46]).
-- **Collaborators**: add the committee's GitHub accounts ([slide 46]), which no source names yet; see [open questions](#open-questions).
+- **Collaborators**: add the committee's GitHub accounts ([slide 46]), which no source names yet ([issue #18](https://github.com/TolongLabs/sdc-hack/issues/18)).
 - **Freeze**: no commits of any kind after the deadline ([Terms and Conditions 6.6][tc66]). The briefing called a commit after 8 AM on 25 October "immediate disqualification" ([transcript], 00:53:54).
 
 [tc55]: /docs/sources/sdchack.my/terms-and-conditions.md#55-github-repository-requirements
@@ -176,11 +175,12 @@ Penalties run from a warning through deductions, cancelled finalist status and d
 
 ## Support and contacts
 
-- **Mentors**: one 15-minute Zoom session per team, booked on the [team portal][tp-mentors], first come, first served. The six mentors and their windows are listed there ([mentors][tp-mentor-list]). Mentors give feedback only, and outside mentors are off limits ([transcript], 01:17:22).
+- **Mentors**: one 15-minute Zoom session per team, booked on the [team portal][tp-mentors] at least 24 hours ahead, first come, first served ([booking rules][disc-mentor]). The six mentors and their windows, which end on Friday 23 October, are listed there ([mentors][tp-mentor-list]). Mentors give feedback only, and outside mentors are off limits ([transcript], 01:17:22). Our booking is [issue #96](https://github.com/TolongLabs/sdc-hack/issues/96).
 - **Discord** is the official channel and every member must join ([participant handbook 15.2][ph152]). Use `#ask-the-organizers` for general questions, `#ask-tech` for platform problems and `#open-ticket` for a private channel ([slide 56]; [slide 57]; [slide 58]).
 - **Formal questions**: the official Discord or [sdc.xmumhack@gmail.com](mailto:sdc.xmumhack@gmail.com) ([slide 51]).
-- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]). The portal also shows the Replit Core code; redeem it with the organisers' guide, which turns off auto-reload to avoid charges ([team portal][tp-replit]; [guide][replit-guide]).
+- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]). The portal also shows the Replit Core code; redeem it with the organisers' guide, which turns off auto-reload to avoid charges ([team portal][tp-replit]; [guide][replit-guide]). On 22 October the code had expired and a refresh was pending with Replit; [issue #99](https://github.com/TolongLabs/sdc-hack/issues/99) tracks it, with the free Starter app as the fallback.
 
+[disc-mentor]: /docs/sources/discord.com/announcements.md#mentorship-booking-rules
 [tp-mentor-list]: /docs/sources/sdchack.my/team-portal.md#mentors
 [ph152]: /docs/sources/drive.google.com/participant-handbook.md#152-is-joining-the-discord-server-compulsory
 [slide 56]: /docs/sources/opening-briefing/slides.md#slide-56-discord-tour-announcements
@@ -189,24 +189,6 @@ Penalties run from a warning through deductions, cancelled finalist status and d
 [tp-runpod]: /docs/sources/sdchack.my/team-portal.md#runpod-vouchers
 [tp-replit]: /docs/sources/sdchack.my/team-portal.md#replit-core
 [replit-guide]: /docs/sources/docs.google.com/replit-core-subscription-guide.md
-
-## Open questions
-
-The sources leave these open, so each comes with the safe reading. Asking the organisers is tracked in [issue #18](https://github.com/TolongLabs/sdc-hack/issues/18). Conflicts already logged, such as the deadline time, are in the [Drive sources README][conflicts].
-
-- **Which sponsor the checkbox means**: ticking it is mandatory and leaving it disqualifies, but no source names the "API Premium sponsor" ([team portal][tp-submit]). The briefing called RunPod, Replit and Kracked Devs tech premium sponsors ([transcript], 00:22:05, 00:26:13 and 00:28:34). Safe reading: integrate Replit for real, and RunPod for any GPU step.
-- **Where the other five items go**: six items are required, but the form takes only the GitHub link ([slide 45]; [team portal][tp-submit]). Safe reading: PDFs in `submission/`, and the deck, live prototype and video linked from the README.
-- **Whether RunPod proof is needed without GPU work**: the briefing said that without GPU work "RunPod usage would not be required" ([transcript], 01:11:57), but the sample README marks "How We Use RunPod" as required ([sample README][gh]) and missing RunPod proof is penalised ([slide 50]). Safe reading: run one real GPU step on RunPod and keep its proof.
-- **Where proof of use goes**: inside the Tools Declaration ([participant handbook 10][ph10]) or as separate PDFs in `submission/` ([transcript], 00:47:18). Safe reading: both.
-- **Which file names**: the templates want `SDC2026_TeamName_Preliminary.pdf` and `SDC2026_TeamName_TechDeclaration.pdf`, while the sample repository uses `Submission Template SDC Hackathon.pdf` ([sample file tree][gh-tree]). Safe reading: the template names.
-- **Which committee accounts to add**: the handbook says to add them ([participant handbook 6.3.5][ph63]), but no source names them, and an organiser answered "if required not compulsory" ([chat]). Safe reading: ask for the account names.
-- **When the "mandatory" workshops run**: the template's checklist confirms all members finished "the mandatory GenAI, Database, and Cloud Deployment upskilling workshops" ([template section 5][st5]), but no source dates them. By the evening of 20 October, the organisers had announced three workshops, none labelled mandatory: Alpha Red's on agentic development with Cloudflare that morning, then Replit's and Runpod's on 21 October ([announcements][disc-ws]). The first one's recording is in the Drive ([folder map][drive-map]) and written up in the [Workshop 1 transcript][w1].
-
-[chat]: /docs/sources/opening-briefing/chat.md
-[st5]: /docs/sources/drive.google.com/submission-template.md#5-eligibility--readiness-checklist
-[disc-ws]: /docs/sources/discord.com/announcements.md#workshops-on-21-october
-[w1]: /docs/sources/workshop-1-alphared/transcript.md
-[drive-map]: /docs/sources/drive.google.com/README.md#folder-map
 
 ## See also
 

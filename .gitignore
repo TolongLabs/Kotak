@@ -94,3 +94,13 @@ graphify-out/*
 .agents/skills/impeccable/scripts/bin/
 .claude/skills/impeccable/scripts/bin/
 docs/meetings/
+
+# Secrets and local env files (never commit)
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Local design tooling
+.superpowers/
