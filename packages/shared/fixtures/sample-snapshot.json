@@ -1,0 +1,120 @@
+{
+  "snapshot_id": "2026-04",
+  "is_sample": true,
+  "occupation": {
+    "onet_code": "15-1254.00",
+    "title": "Front-End Developer"
+  },
+  "corners": [
+    {
+      "corner_id": "problem-solving",
+      "name": "Problem Solving",
+      "levels": { "self_reported": 0, "slow_target": 1, "fast_target": 1 },
+      "signals": [
+        {
+          "metric": "ai_usage",
+          "value": null,
+          "source_name": "Anthropic Economic Index (sample data)",
+          "source_url": "https://www.anthropic.com/economic-index",
+          "vintage_date": "2026-04-01",
+          "geo_or_layer": "sample"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "corner_id": "communication",
+      "name": "Communication",
+      "levels": { "self_reported": 0, "slow_target": 1, "fast_target": 1 },
+      "signals": [
+        {
+          "metric": "occupation_tasks",
+          "value": null,
+          "source_name": "O*NET 30.1 (sample data)",
+          "source_url": "https://www.onetcenter.org/db_releases.html",
+          "vintage_date": "2026-04-01",
+          "geo_or_layer": "sample"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "corner_id": "technical-work",
+      "name": "Technical Work",
+      "levels": { "self_reported": 0, "slow_target": 1, "fast_target": 1 },
+      "signals": [
+        {
+          "metric": "ai_usage",
+          "value": null,
+          "source_name": "Anthropic Economic Index (sample data)",
+          "source_url": "https://www.anthropic.com/economic-index",
+          "vintage_date": "2026-04-01",
+          "geo_or_layer": "sample"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "corner_id": "digital-tools",
+      "name": "Digital Tools",
+      "levels": { "self_reported": 0, "slow_target": 1, "fast_target": 1 },
+      "signals": [
+        {
+          "metric": "occupation_tasks",
+          "value": null,
+          "source_name": "O*NET 30.1 (sample data)",
+          "source_url": "https://www.onetcenter.org/db_releases.html",
+          "vintage_date": "2026-04-01",
+          "geo_or_layer": "sample"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "corner_id": "adaptability",
+      "name": "Adaptability",
+      "levels": { "self_reported": 0, "slow_target": 1, "fast_target": 1 },
+      "signals": [
+        {
+          "metric": "ai_usage",
+          "value": null,
+          "source_name": "Anthropic Economic Index (sample data)",
+          "source_url": "https://www.anthropic.com/economic-index",
+          "vintage_date": "2026-04-01",
+          "geo_or_layer": "sample"
+        }
+      ],
+      "verdict": "Unknown"
+    },
+    {
+      "corner_id": "learning",
+      "name": "Continuous Learning",
+      "levels": { "self_reported": 0, "slow_target": 1, "fast_target": 1 },
+      "signals": [
+        {
+          "metric": "occupation_tasks",
+          "value": null,
+          "source_name": "O*NET 30.1 (sample data)",
+          "source_url": "https://www.onetcenter.org/db_releases.html",
+          "vintage_date": "2026-04-01",
+          "geo_or_layer": "sample"
+        }
+      ],
+      "verdict": "Unknown"
+    }
+  ],
+  "sources": [
+    {
+      "source_name": "Anthropic Economic Index (sample data)",
+      "source_url": "https://www.anthropic.com/economic-index",
+      "vintage_date": "2026-04-01",
+      "geo_or_layer": "sample"
+    },
+    {
+      "source_name": "O*NET 30.1 (sample data)",
+      "source_url": "https://www.onetcenter.org/db_releases.html",
+      "vintage_date": "2026-04-01",
+      "geo_or_layer": "sample"
+    }
+  ]
+}

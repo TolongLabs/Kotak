@@ -1,5 +1,16 @@
 {
+  "name": "kotak",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
+    "dev": "bun run --parallel --filter './apps/*' dev",
+    "build": "bun run --filter @kotak/web build",
+    "typecheck": "bun run --parallel --filter '*' typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "graph": "graphify update .",
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
@@ -13,6 +24,8 @@
     "@commitlint/config-conventional": "^21.2.3",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
-    "prettier": "^3.9.9"
+    "prettier": "^3.9.9",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.151.3"
   }
 }

@@ -1,0 +1,16 @@
+{
+  "name": "@kotak/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/bun.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kotak/shared": "workspace:*",
+    "hono": "^4.13.13"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3"
+  }
+}

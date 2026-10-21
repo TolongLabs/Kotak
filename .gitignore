@@ -104,3 +104,7 @@ docs/meetings/
 
 # Local design tooling
 .superpowers/
+
+# Build outputs
+dist/
+.wrangler/
