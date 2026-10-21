@@ -93,3 +93,4 @@ graphify-out/*
 # impeccable engine binaries; the launcher downloads a pinned, verified copy
 .agents/skills/impeccable/scripts/bin/
 .claude/skills/impeccable/scripts/bin/
+docs/meetings/
