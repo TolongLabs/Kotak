@@ -2,7 +2,6 @@ import { DEFAULT_SCENARIO, followUpStatement, type BundleRole } from '@kotak/sha
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
-import { CatDialogue } from '../components/kotak/CatDialogue'
 import { PageTransition } from '../components/kotak/PageTransition'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
@@ -10,6 +9,7 @@ import { Stepper } from '../components/ui/Stepper'
 import { useRoleBundle } from '../engine/bundle'
 import { useCheckup } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
+import { KopiAside, KopiStage } from './checkup/KopiDialogue'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 
@@ -43,7 +43,7 @@ export function QuestionsView() {
   if (!session.role_code) {
     return (
       <QuestionsFrame>
-        <CatDialogue pose="worried" speech="Tell me your job first, then I can ask about it." />
+        <KopiAside pose="worried" speech="Tell me your job first, then I can ask about it." />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
           Choose Your Job
         </Button>
@@ -57,7 +57,7 @@ export function QuestionsView() {
         {loaded.status === 'error' || bundle.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         ) : (
-          <CatDialogue pose="thinking" speech="Opening the box on your job…" />
+          <KopiAside pose="thinking" speech="Opening the box on your job…" />
         )}
       </QuestionsFrame>
     )
@@ -129,14 +129,6 @@ export function QuestionsView() {
 
   return (
     <QuestionsFrame>
-      {role.quality === 'auto-generated' && (
-        <Banner
-          type="info"
-          title="AI-Drafted Questions"
-          body="Kopi drafted these from the job’s O*NET tasks. The team has not checked them by hand yet."
-        />
-      )}
-
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" aria-live="polite">
         <span className="font-mono text-mono-s text-text-muted">
           Question {questionIndex + 1} of {totalQuestions}
@@ -144,12 +136,8 @@ export function QuestionsView() {
         <span className="font-mono text-mono-s text-text-primary">{corner.name}</span>
       </div>
 
-      <section className="space-y-4" aria-label="Question Card" onKeyDown={handleQuestionKeyDown}>
-        <CatDialogue
-          pose={thinking ? 'thinking' : 'asking'}
-          speech={`Is this true for you? “${statement}”`}
-          size="lg"
-        />
+      <section className="space-y-4 pb-2 pt-2 lg:pt-6" aria-label="Question Card" onKeyDown={handleQuestionKeyDown}>
+        <KopiStage pose={thinking ? 'thinking' : 'asking'} speech={statement} />
 
         <p className="text-center text-body-s text-text-muted">
           Answer for real work, not tutorials. Not sure? Choose Not Yet.
@@ -166,14 +154,14 @@ export function QuestionsView() {
       </section>
 
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-        <Button
-          variant="ghost"
-          size="lg"
+        <button
+          type="button"
           disabled={asked.length === 0 || thinking}
           onClick={() => setAsked((current) => current.slice(0, -1))}
+          className="inline-flex h-12 items-center justify-center rounded-sm px-2 text-label-l font-semibold text-text-primary underline underline-offset-4 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:text-text-muted disabled:no-underline"
         >
           Previous Question
-        </Button>
+        </button>
         <span className="hidden font-mono text-mono-s text-text-muted lg:block">Press Y or N</span>
       </div>
     </QuestionsFrame>
@@ -182,7 +170,7 @@ export function QuestionsView() {
 
 function QuestionsFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto w-full max-w-[45rem] space-y-6">
+    <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
       <h1 className="sr-only">Check-Up Questions</h1>
       <Stepper step={2} labels={stepLabels} />
       {children}
