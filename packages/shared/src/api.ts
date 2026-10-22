@@ -56,7 +56,9 @@ export const ExplanationRequestSchema = z
           })
           .strict()
       )
-      .length(6)
+      // One per role corner: most roles have 6, and #74 lets a role have fewer.
+      .min(1)
+      .max(6)
   })
   .strict()
 
@@ -82,7 +84,8 @@ export const ExplanationResponseSchema = z
           })
           .strict()
       )
-      .length(6),
+      .min(1)
+      .max(6),
     what_changed_summary: z.string().min(1),
     what_changed_source: AiTextSourceSchema.optional(),
     cached: z.boolean().optional(),
@@ -118,7 +121,7 @@ export const TtsResponseSchema = z
 export const NationalCheckupRequestSchema = z
   .object({
     onet_role_code: OnetRoleCodeSchema,
-    corner_levels: z.array(UserLevelSchema).length(6)
+    corner_levels: z.array(UserLevelSchema).min(1).max(6)
   })
   .strict()
 
@@ -138,7 +141,7 @@ export const NationalViewGroupSchema = z
     onet_role_code: OnetRoleCodeSchema,
     occupation_group: OccupationGroupCodeSchema,
     occupation_group_title: z.string().min(1),
-    average_corner_levels: z.array(z.number().min(0).max(3)).length(6),
+    average_corner_levels: z.array(z.number().min(0).max(3)).min(1).max(6),
     // Rows behind the averages. Real groups give a bucket floor, a multiple of 10 (show 20 as "20+"), never the
     // exact count. Sample groups give the number of sample rows.
     checkup_count: z.number().int().min(1),

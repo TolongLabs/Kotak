@@ -8,6 +8,12 @@ import { SnapshotIdSchema, SourceSchema, type Signal, type Source } from '../eng
 
 export const AeiGeoSchema = z.enum(['MYS', 'SGP', 'GLOBAL'])
 
+// Every Economic Index source name starts with this, whichever release it comes from. Its AI-use trend sets a
+// corner's verdict, so an explanation must cite it, not demand alone (#151).
+export const ECONOMIC_INDEX_SOURCE_PREFIX = 'Anthropic Economic Index'
+export const isEconomicIndexSource = (source: { source_name: string }) =>
+  source.source_name.startsWith(ECONOMIC_INDEX_SOURCE_PREFIX)
+
 // Levels of the AI-use fallback chain, finest first. Each level is one `category_name` and
 // `hierarchy_level` pair in the release, and its row keys join to O*NET 30.1 as noted.
 export const AeiLevelSchema = z.enum([

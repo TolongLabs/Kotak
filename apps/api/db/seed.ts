@@ -2,7 +2,7 @@
 // labelled sample rows. Real check-ups are never touched.
 // Run with DATABASE_URL set to Neon's pooled connection URL: bun run db:seed
 import { neon } from '@neondatabase/serverless'
-import { DEMO_ROLE_CODES, sampleCheckups } from './sample-checkups'
+import { SAMPLE_ROLES, sampleCheckups } from './sample-checkups'
 
 const databaseUrl = Bun.env.DATABASE_URL?.trim()
 if (!databaseUrl) {
@@ -32,4 +32,4 @@ await sql.transaction([
 ])
 
 console.info(`Applied ${migrationFiles.length} migration file(s); seeded ${rows.length} sample rows for:`)
-console.info(DEMO_ROLE_CODES.join(', '))
+console.info(SAMPLE_ROLES.map((role) => role.onet_role_code).join(', '))

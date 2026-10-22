@@ -175,7 +175,7 @@ export function buildExplanationRequest(
   snapshotId: SnapshotId,
   scenario: Scenario
 ): ExplanationRequest | null {
-  if (!checkupRole || checkupRole.onet_code !== bundleRole.onet_code || bundleRole.corners.length !== 6) return null
+  if (!checkupRole || checkupRole.onet_code !== bundleRole.onet_code) return null
 
   const verdicts = new Map(
     roleVerdicts(bundleRole.signals[snapshotId]).corners.map((verdict) => [verdict.corner_id, verdict])
