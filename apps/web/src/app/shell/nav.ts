@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, ClipboardCheck, House, Radar, Route, type LucideIcon } from 'lucide-react'
+import { BriefcaseBusiness, ClipboardCheck, House, Radar, Route, Settings, type LucideIcon } from 'lucide-react'
 import { routes } from '../routes'
 
 export interface NavItem {
@@ -14,5 +14,6 @@ export const navItems: readonly NavItem[] = [
   { label: 'Check-Up', to: routes.checkUp, icon: ClipboardCheck, match: [routes.checkUp, routes.questions] },
   { label: 'Radar', to: routes.radar, icon: Radar, match: [routes.radar] },
   { label: 'Roles', to: routes.roles, icon: BriefcaseBusiness, match: [routes.roles] },
-  { label: 'Roadmap', to: routes.roadmap, icon: Route, match: [routes.roadmap] }
+  { label: 'Roadmap', to: routes.roadmap, icon: Route, match: [routes.roadmap] },
+  { label: 'Settings', to: routes.settings, icon: Settings, match: [routes.settings] }
 ]

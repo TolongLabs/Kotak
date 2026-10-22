@@ -12,10 +12,10 @@ import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
 import { useCheckup } from '../engine/checkup'
-import { sourceRefs, toRoles } from '../engine/viewModel'
+import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { MathsModal } from './roles/MathsModal'
-import { deriveRoleReasoning, deriveSources, kopiRoleSpeech } from './roles/derived'
+import { deriveRoleEvidence, kopiRoleSpeech } from './roles/derived'
 import { formatFitPercent } from './roles/fit'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
@@ -78,10 +78,12 @@ export function RolesView() {
   const detailBundleRole = bundleRoles.find((candidate) => candidate.onet_code === selected?.id)
   const stay = session.goal === 'stay'
 
-  const speech = kopiRoleSpeech(currentJob, ranked)
-  const { sources } = sourceRefs(checkup)
-  const displaySources = selected ? deriveSources(sources, role, selected) : []
-  const reasoningText = selected ? deriveRoleReasoning(selected, detailCheckupRole, detailBundleRole) : ''
+  const speech = kopiRoleSpeech(ranked)
+  const roleEvidence = selected
+    ? deriveRoleEvidence(detailCheckupRole, detailBundleRole, role, checkup.snapshotId)
+    : null
+  const displaySources = roleEvidence?.sources ?? []
+  const reasoningText = roleEvidence?.reasoning ?? ''
 
   const fitNumerator = detailCheckupRole?.fit.numerator ?? 0
   const fitDenominator = detailCheckupRole?.fit.denominator ?? 0

@@ -1,9 +1,11 @@
-import { Lock, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { LogOut, PanelLeftClose, PanelLeftOpen, UserRound } from 'lucide-react'
 import { useId } from 'react'
 import { Logo } from '../../components/brand/Logo'
+import { Button } from '../../components/ui/Button'
 import { Tooltip } from '../../components/ui/Tooltip'
 import { cn } from '../../components/ui/cn'
-import { Link } from '../router'
+import { resetGuestSession } from '../../session/store'
+import { Link, navigate } from '../router'
 import { routes } from '../routes'
 import { navItems } from './nav'
 
@@ -94,29 +96,60 @@ export function NavList({ path, collapsed = false, onNavigate }: NavListProps) {
   )
 }
 
-const GUEST_NOTE = 'Your check-up stays on this device. Accounts open after the pilot.'
+const GUEST_NOTE = 'Your check-up stays on this device.'
+
+function signOut() {
+  resetGuestSession()
+  navigate(routes.landing)
+}
 
 export function GuestCard({ collapsed = false }: { collapsed?: boolean }) {
   const titleId = useId()
 
   if (collapsed) {
     return (
-      <Tooltip content={`Guest Mode: ${GUEST_NOTE}`}>
-        <span tabIndex={0} className="surface-card inline-flex h-11 w-11 items-center justify-center">
-          <Lock className="h-5 w-5 stroke-current" aria-hidden="true" />
-          <span className="sr-only">Guest Mode</span>
-        </span>
-      </Tooltip>
+      <div className="flex flex-col items-center gap-2">
+        <Tooltip content={`Guest: ${GUEST_NOTE}`}>
+          <span tabIndex={0} className="surface-card inline-flex h-11 w-11 items-center justify-center">
+            <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
+            <span className="sr-only">Guest</span>
+          </span>
+        </Tooltip>
+        <Tooltip content="Sign Out">
+          <button
+            type="button"
+            aria-label="Sign Out"
+            onClick={signOut}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-text-primary transition-colors hover:bg-bg-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+          >
+            <LogOut className="h-5 w-5 stroke-current" aria-hidden="true" />
+          </button>
+        </Tooltip>
+      </div>
     )
   }
 
   return (
     <section aria-labelledby={titleId} className="surface-card space-y-2 p-4">
-      <h2 id={titleId} className="flex items-center gap-2 text-label-l text-text-primary">
-        <Lock className="h-4 w-4 stroke-current" aria-hidden="true" />
-        Guest Mode
-      </h2>
-      <p className="text-body-s text-text-muted">{GUEST_NOTE}</p>
+      <div className="flex items-start gap-3">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
+          <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
+        </span>
+        <div className="min-w-0 space-y-1">
+          <h2 id={titleId} className="text-label-l text-text-primary">
+            Guest
+          </h2>
+          <p className="text-body-s text-text-muted">{GUEST_NOTE}</p>
+        </div>
+      </div>
+      <Button
+        variant="secondary"
+        fullWidth
+        iconStart={<LogOut className="h-5 w-5 stroke-current" aria-hidden="true" />}
+        onClick={signOut}
+      >
+        Sign Out
+      </Button>
     </section>
   )
 }

@@ -99,10 +99,7 @@ export function SignInView() {
 
           <p className="flex items-start gap-2 text-body-s text-text-muted">
             <Lock className="mt-0.5 h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
-            <span>
-              Your check-up stays on this device. The national view gets an anonymous job code, six levels and the date
-              only if you tick the box before the questions.
-            </span>
+            <span>Your check-up stays on this device.</span>
           </p>
         </div>
       </main>

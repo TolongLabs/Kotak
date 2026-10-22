@@ -63,8 +63,8 @@ export function WhatChangedRadar({
   beforeCorners,
   afterCorners,
   scenario,
-  neededNowLabel = 'Needed Now (Q3)',
-  beforeLabel = 'Before (Q2)',
+  neededNowLabel = 'Needed Now (May)',
+  beforeLabel = 'Before (April)',
   className
 }: WhatChangedRadarProps) {
   const beforeMap = new Map(beforeCorners.map((corner) => [corner.id, corner]))
