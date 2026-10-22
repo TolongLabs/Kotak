@@ -174,6 +174,7 @@ Every component lives on the Components page. Build each one as a custom compone
 - Page transition: the box opens in three beats, Kopi reads the line out loud, then the page fades in. With reduced motion, use a 200 ms fade instead.
 - Kopi's entrance: once per page visit, Kopi assembles from ASCII glyphs sampled from the pose art. Rows rise from the bottom over about 0.6 s, each glyph scrambling in the text colour before it settles in the art's colour. Live2D's files download during the rise and it mounts once the glyphs settle; the settled glyphs hold until it is ready, then fade away over the live cat, fitted to the art's frame. The still art shows only with reduced motion (at once, no entrance) or when Live2D can't load.
 - The live demo moment: when the newer data loads, verdict chips change, the dashed radar line moves, SWOT items change quadrant and the roadmap reorders. Animate each change so a judge can follow it.
+- Theme switch: a dithered wave of ASCII glyphs spreads from the toggle and fills the screen in the new background, the theme swaps underneath, then the glyphs fade back down the ramp. With reduced motion, the theme swaps at once.
 - Keep all other motion to hover and focus states.
 
 ## Accessibility
