@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "kotak": { "type": "http", "url": "https://kotak-alaskxntxna.replit.app/api/mcp" }
+  }
+}

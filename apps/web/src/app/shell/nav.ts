@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, ClipboardCheck, House, Radar, Route, Settings, type LucideIcon } from 'lucide-react'
+import { BriefcaseBusiness, ClipboardCheck, House, Plug, Radar, Route, Settings, type LucideIcon } from 'lucide-react'
 import { routes } from '../routes'
 
 export interface NavItem {
@@ -15,5 +15,6 @@ export const navItems: readonly NavItem[] = [
   { label: 'Radar', to: routes.radar, icon: Radar, match: [routes.radar] },
   { label: 'Roles', to: routes.roles, icon: BriefcaseBusiness, match: [routes.roles] },
   { label: 'Roadmap', to: routes.roadmap, icon: Route, match: [routes.roadmap] },
+  { label: 'Connect Your AI', to: routes.connect, icon: Plug, match: [routes.connect] },
   { label: 'Settings', to: routes.settings, icon: Settings, match: [routes.settings] }
 ]

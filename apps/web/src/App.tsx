@@ -6,6 +6,7 @@ import { AppShell } from './app/shell/AppShell'
 import { Gallery } from './dev/Gallery'
 import { useActiveSnapshot } from './session/snapshot'
 import { CheckUpView } from './views/CheckUpView'
+import { ConnectView } from './views/ConnectView'
 import { DashboardView } from './views/DashboardView'
 import { LandingView } from './views/LandingView'
 import { NotFoundView } from './views/NotFoundView'
@@ -29,6 +30,7 @@ const appViews: Record<string, ComponentType> = {
   [routes.roles]: RolesView,
   [routes.roadmap]: RoadmapView,
   [routes.changes]: WhatChangedView,
+  [routes.connect]: ConnectView,
   [routes.settings]: SettingsView
 }
 

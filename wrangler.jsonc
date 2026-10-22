@@ -10,7 +10,7 @@
     "directory": "./apps/web/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/.well-known/*"]
   },
   // The persistent Claude response cache. Wrangler creates the namespace on the first deploy (no id needed).
   "kv_namespaces": [{ "binding": "AI_CACHE" }],

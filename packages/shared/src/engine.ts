@@ -4,6 +4,11 @@ export const VerdictSchema = z.enum(['Rising', 'Steady', 'Declining', 'Split', '
 
 export const SnapshotIdSchema = z.enum(['2026-04', '2026-05'])
 
+/** The latest data, which the app opens on: the default snapshot of every check-up and tool. */
+export const DEFAULT_SNAPSHOT: SnapshotId = '2026-05'
+/** The snapshot before DEFAULT_SNAPSHOT, which What Changed compares it with by default. */
+export const PREVIOUS_SNAPSHOT: SnapshotId = '2026-04'
+
 export const SourceSchema = z
   .object({
     source_name: z.string().min(1),

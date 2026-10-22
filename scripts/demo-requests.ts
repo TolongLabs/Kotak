@@ -6,8 +6,8 @@
 //   then Yes, for each corner), which give the role's sample level on every corner.
 // Run with `bun scripts/demo-requests.ts` after `bun run build:data`, then `bun run prewarm:ai scripts/demo-requests.json`.
 import { join } from 'node:path'
+import { computeCheckup } from '../packages/sdk/src/index'
 import { BundleRoleSchema, DEFAULT_SCENARIO, DemoRolesFileSchema } from '../packages/shared/src/index'
-import { computeCheckup } from '../apps/web/src/engine/checkup'
 import { buildExplanationRequest } from '../apps/web/src/views/roles/derived'
 
 const ROOT = join(import.meta.dir, '..')

@@ -1,4 +1,5 @@
-import { addDays, fitScore, uniqueSources, type BundleRole, type Source } from '@kotak/shared'
+import { roadmapSchedule } from '@kotak/sdk'
+import { fitScore, uniqueSources, type BundleRole, type Source } from '@kotak/shared'
 import type { RoadmapStep, SourceRef } from '../demo/types'
 import type { Checkup } from './checkup'
 
@@ -26,55 +27,51 @@ function formatDateRange(start: string, end: string) {
 export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: string[]): RoadmapStep[] {
   const corners = new Map(role.corners.map((corner) => [corner.corner_id, corner]))
   const tickedIds = new Set(ticked)
-  const items = [...checkup.roadmap.items].sort((left, right) => left.rank - right.rank)
   const weeklyHours = checkup.roadmap.weekly_hours
-  let cumulativeHours = 0
   let nextAssigned = false
 
-  return items.map((item): RoadmapStep => {
-    const previousHours = cumulativeHours
-    cumulativeHours += item.hours
-    const startWeek = Math.floor(previousHours / weeklyHours) + 1
-    const endWeek = Math.max(startWeek, Math.ceil(cumulativeHours / weeklyHours))
-    const corner = corners.get(item.corner_id)
-    const id = `${item.corner_id}:${item.statement}`
-    const state = tickedIds.has(id) ? 'done' : nextAssigned ? 'todo' : 'next'
-    if (state === 'next') nextAssigned = true
+  // The weeks and their dates come from @kotak/sdk, as the SDK's roadmap report's do.
+  return roadmapSchedule(checkup.roadmap).map(
+    ({ item, weeks, start_date: startDate, end_date: endDate }): RoadmapStep => {
+      const [startWeek, endWeek] = weeks
+      const corner = corners.get(item.corner_id)
+      const id = `${item.corner_id}:${item.statement}`
+      const state = tickedIds.has(id) ? 'done' : nextAssigned ? 'todo' : 'next'
+      if (state === 'next') nextAssigned = true
 
-    const startDate = addDays(checkup.roadmap.start_date, (startWeek - 1) * 7)
-    const endDate = addDays(checkup.roadmap.start_date, endWeek * 7 - 1)
-    const conditional = item.status === 'Split' ? 'Split' : undefined
-    const resource = corner?.resources[0]
+      const conditional = item.status === 'Split' ? 'Split' : undefined
+      const resource = corner?.resources[0]
 
-    return {
-      id,
-      state,
-      weeks: [startWeek, endWeek],
-      when: `Estimated · Weeks ${startWeek}–${endWeek} · ${formatDateRange(startDate, endDate)}${conditional ? ` · ${conditional}` : ''}`,
-      skill: corner?.name ?? item.corner_id,
-      title: corner?.statements?.[item.statement] ?? '',
-      description: resource ? 'Use the linked resource to practise this skill.' : '',
-      gain: `About Level ${item.to_level} · ${corner?.name ?? item.corner_id}`,
-      hoursPerWeek: weeklyHours,
-      resource: resource
-        ? {
-            label:
-              resource.kind === 'search' && !resource.title.startsWith('Search:')
-                ? `Search: ${resource.title}`
-                : resource.title,
-            href: resource.url
-          }
-        : { label: '', href: '' },
-      sdgs: [
-        ...new Set(
-          (corner?.sdg_targets ?? [])
-            .map((target) => Number(target.split('.')[0]))
-            .filter((goal) => Number.isFinite(goal))
-        )
-      ],
-      ...(conditional ? { conditional } : {})
+      return {
+        id,
+        state,
+        weeks,
+        when: `Estimated · Weeks ${startWeek}–${endWeek} · ${formatDateRange(startDate, endDate)}${conditional ? ` · ${conditional}` : ''}`,
+        skill: corner?.name ?? item.corner_id,
+        title: corner?.statements?.[item.statement] ?? '',
+        description: resource ? 'Use the linked resource to practise this skill.' : '',
+        gain: `About Level ${item.to_level} · ${corner?.name ?? item.corner_id}`,
+        hoursPerWeek: weeklyHours,
+        resource: resource
+          ? {
+              label:
+                resource.kind === 'search' && !resource.title.startsWith('Search:')
+                  ? `Search: ${resource.title}`
+                  : resource.title,
+              href: resource.url
+            }
+          : { label: '', href: '' },
+        sdgs: [
+          ...new Set(
+            (corner?.sdg_targets ?? [])
+              .map((target) => Number(target.split('.')[0]))
+              .filter((goal) => Number.isFinite(goal))
+          )
+        ],
+        ...(conditional ? { conditional } : {})
+      }
     }
-  })
+  )
 }
 
 export function toReadinessPoints(checkup: Checkup, role: BundleRole): PlanReadinessPoint[]

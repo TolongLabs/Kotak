@@ -1,0 +1,19 @@
+{
+  "name": "@kotak/sdk",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kotak/shared": "workspace:*",
+    "zod": "^4.6.7"
+  }
+}

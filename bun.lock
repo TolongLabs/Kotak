@@ -20,8 +20,11 @@
       "name": "@kotak/api",
       "dependencies": {
         "@anthropic-ai/sdk": "^1.1.0",
+        "@kotak/agent": "workspace:*",
         "@kotak/browser": "workspace:*",
+        "@kotak/sdk": "workspace:*",
         "@kotak/shared": "workspace:*",
+        "@modelcontextprotocol/server": "^2.3.1",
         "@neondatabase/serverless": "^1.2.0",
         "hono": "^4.13.13",
         "zod": "^4.6.7",
@@ -33,6 +36,8 @@
     "apps/web": {
       "name": "@kotak/web",
       "dependencies": {
+        "@kotak/agent": "workspace:*",
+        "@kotak/sdk": "workspace:*",
         "@kotak/shared": "workspace:*",
         "lucide-react": "^1.61.0",
         "pixi-live2d-display": "^0.4.0",
@@ -50,6 +55,16 @@
         "vite": "^8.3.5",
       },
     },
+    "packages/agent": {
+      "name": "@kotak/agent",
+      "dependencies": {
+        "@anthropic-ai/sdk": "^1.1.0",
+        "@kotak/sdk": "workspace:*",
+        "@kotak/shared": "workspace:*",
+        "@modelcontextprotocol/server": "^2.3.1",
+        "zod": "^4.6.7",
+      },
+    },
     "packages/browser": {
       "name": "@kotak/browser",
       "dependencies": {
@@ -58,6 +73,13 @@
       },
       "devDependencies": {
         "@types/bun": "^1.4.3",
+      },
+    },
+    "packages/sdk": {
+      "name": "@kotak/sdk",
+      "dependencies": {
+        "@kotak/shared": "workspace:*",
+        "zod": "^4.6.7",
       },
     },
     "packages/shared": {
@@ -254,13 +276,21 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.9", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.0.3", "@jridgewell/sourcemap-codec": "^1.4.10" } }, "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ=="],
 
+    "@kotak/agent": ["@kotak/agent@workspace:packages/agent"],
+
     "@kotak/api": ["@kotak/api@workspace:apps/api"],
 
     "@kotak/browser": ["@kotak/browser@workspace:packages/browser"],
 
+    "@kotak/sdk": ["@kotak/sdk@workspace:packages/sdk"],
+
     "@kotak/shared": ["@kotak/shared@workspace:packages/shared"],
 
     "@kotak/web": ["@kotak/web@workspace:apps/web"],
+
+    "@modelcontextprotocol/core": ["@modelcontextprotocol/core@2.3.1", "", { "dependencies": { "zod": "^4.2.0" } }, "sha512-laVmIhPGpWi7rG9q+0UigblRN0Hws/Yjlb6qLFtVqryXVLkc4h+yN8z731POD2LnAGQlFe7/tXhUm7Bi0YB91g=="],
+
+    "@modelcontextprotocol/server": ["@modelcontextprotocol/server@2.3.1", "", { "dependencies": { "@modelcontextprotocol/core": "2.3.1", "zod": "^4.2.0" } }, "sha512-e59MfWuSssj6DoQ96JCTqdW1AXT5/XtnTl0WWd6MU1Ka434fFUGGosCLJbGNySDhHGvxQWoRWK137FXYFkYNWw=="],
 
     "@neondatabase/serverless": ["@neondatabase/serverless@1.2.0", "", {}, "sha512-tnaqgixUengZQNd9ZrS3ytQfamJzLKY8QxgqWQTNHHtB+KrFQWk77JTbbpg4RD+J3qE4eO2lVytvGDX5Kj6FdQ=="],
 

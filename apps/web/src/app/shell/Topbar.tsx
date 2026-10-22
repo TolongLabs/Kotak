@@ -8,6 +8,7 @@ import { assessedRoleCode, planRoleCodeOf } from '../../engine/checkup'
 import { useGuestSession } from '../../session/store'
 import { navigate } from '../router'
 import { routes } from '../routes'
+import { AskKopiButton } from './AskKopi'
 import { Brand } from './Sidebar'
 
 const listFormat = new Intl.ListFormat('en', { type: 'conjunction' })
@@ -149,7 +150,15 @@ function isTyping(target: EventTarget | null) {
   )
 }
 
-export function Topbar({ dataLabel, className }: { dataLabel: string; className?: string }) {
+export function Topbar({
+  dataLabel,
+  onAskKopi,
+  className
+}: {
+  dataLabel: string
+  onAskKopi: () => void
+  className?: string
+}) {
   const searchRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -177,6 +186,7 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
         <SearchField ref={searchRef} name="job" label="Search Jobs" hideLabel placeholder="Search 900 Jobs" />
       </form>
       <div className="ml-auto flex items-center gap-3">
+        <AskKopiButton onClick={onAskKopi} />
         <DataChip snapshot={dataLabel} />
         <div className="inline-flex shrink-0 items-center gap-2 text-label-m text-text-primary">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
@@ -193,11 +203,12 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
 interface PhoneTopBarProps {
   dataLabel: string
   onOpenMenu: () => void
+  onAskKopi: () => void
   menuButtonRef: RefObject<HTMLButtonElement | null>
   className?: string
 }
 
-export function PhoneTopBar({ dataLabel, onOpenMenu, menuButtonRef, className }: PhoneTopBarProps) {
+export function PhoneTopBar({ dataLabel, onOpenMenu, onAskKopi, menuButtonRef, className }: PhoneTopBarProps) {
   return (
     <header className={cn('surface-glass h-14 items-center gap-2 rounded-full pl-1 pr-2', className)}>
       <button
@@ -211,6 +222,7 @@ export function PhoneTopBar({ dataLabel, onOpenMenu, menuButtonRef, className }:
       </button>
       <Brand />
       <DataChip snapshot={dataLabel} compact className="ml-auto" />
+      <AskKopiButton onClick={onAskKopi} compact />
     </header>
   )
 }

@@ -1,20 +1,20 @@
+import { biggestGaps, cornerReasoning, isEstimatedLevel, roleOutlook } from '@kotak/sdk'
 import {
   addMonths,
   HORIZON_MONTHS,
-  roleVerdicts,
   uniqueSources,
   type BundleRole,
   type CornerVerdict,
-  type Scenario,
-  type SnapshotId,
-  type Source,
-  type TransferredLevel
+  type Source
 } from '@kotak/shared'
 import type { Corner, Level, Role, SourceRef, VerdictId } from '../demo/types'
 import type { Checkup } from './checkup'
 
 // Turns the engine's check-up into the shapes the screens' components already take (demo/types.ts), so the approved
-// components stay as they are. Every value here comes from the role's bundle file; nothing is typed in by hand.
+// components stay as they are. Every value here comes from the role's bundle file; nothing is typed in by hand. The
+// words and gaps come from @kotak/sdk, which the SDK's report reads too, so the app and the agents agree.
+
+export { cornerReasoning, isEstimatedLevel, roleOutlook } from '@kotak/sdk'
 
 export const verdictId = (status: CornerVerdict['status']) => status.toLowerCase() as VerdictId
 
@@ -53,34 +53,6 @@ export function sourceRefs(checkup: Checkup) {
   return { sources, numbers }
 }
 
-const aiTrendText = { rising: 'is rising', not_rising: 'is not rising', unknown: 'has no trend yet' }
-const modeText = { augmentation: 'mostly helps people do it', automation: 'mostly does it alone', unknown: '' }
-const demandText = { up: 'rising', flat: 'flat', down: 'falling', unknown: 'not measured yet' }
-
-/** Why the verdict is what it is, in plain words, from the same inputs the rule table read. */
-export function cornerReasoning(verdict: CornerVerdict, scenario: Scenario): string {
-  switch (verdict.reason) {
-    case 'scenarios_disagree':
-    case 'sources_disagree': {
-      const [slow, fast] = ['slow', 'fast'].map((s) => verdict.futures.find((f) => f.scenario === s)?.status)
-      const cause =
-        verdict.reason === 'scenarios_disagree' ? 'The two AI futures disagree' : 'The job-ad sources disagree'
-      return `${cause}: ${slow ?? 'Unknown'} at Malaysia’s pace, ${fast ?? 'Unknown'} if AI uptake speeds up.`
-    }
-    case 'too_few_points':
-      return 'There are too few dated data points to call a trend yet.'
-    case 'no_collaboration_split':
-      return 'There is no data yet on whether AI helps with this work or does it alone.'
-    case 'no_demand':
-      return 'There is no job-ad demand data for this skill yet.'
-    case 'table': {
-      const outcome = verdict.scenarios[scenario]
-      const mode = modeText[outcome.collaboration_mode]
-      return `AI use for this work ${aiTrendText[outcome.ai_trend]}${mode ? ` and AI ${mode}` : ''}. Job-ad demand is ${demandText[outcome.demand]}.`
-    }
-  }
-}
-
 export function toCorners(checkup: Checkup, numbers: Map<string, number[]>): Corner[] {
   return checkup.corners.map((corner) => ({
     id: corner.corner_id,
@@ -94,33 +66,13 @@ export function toCorners(checkup: Checkup, numbers: Map<string, number[]>): Cor
   }))
 }
 
-/** A role's outlook from its own corners; Unknown wins when it covers at least half of them. */
-export function roleOutlook(role: BundleRole, snapshotId: SnapshotId): VerdictId {
-  const statuses = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => corner.status)
-  const unknown = statuses.filter((status) => status === 'Unknown').length
-  if (unknown >= statuses.length / 2) return 'unknown'
-
-  const rising = statuses.filter((status) => status === 'Rising').length
-  const declining = statuses.filter((status) => status === 'Declining').length
-  return rising > declining ? 'rising' : declining > rising ? 'declining' : 'steady'
-}
-
-/** A level carried over from the user's answers rather than answered directly; "not asked yet" is 0, not an estimate. */
-export function isEstimatedLevel(level: TransferredLevel) {
-  return level.label === 'estimated from your answers' || level.label === 'rough estimate'
-}
-
 /** The ranked roles, with the two biggest gaps named from each role's own corners. */
 export function toRoles(checkup: Checkup, bundleRoles: BundleRole[], currentCode: string | null): Role[] {
   const byCode = new Map(bundleRoles.map((role) => [role.onet_code, role]))
   return checkup.roles.map((role) => {
     const bundleRole = byCode.get(role.onet_code)
     const names = new Map(bundleRole?.corners.map((corner) => [corner.corner_id, corner.name]))
-    const gaps = role.fit.terms
-      .filter((term) => term.user_level < term.target_level)
-      .sort((a, b) => b.target_level - b.user_level - (a.target_level - a.user_level))
-      .slice(0, 2)
-      .map((term) => names.get(term.corner_id) ?? term.corner_id)
+    const gaps = biggestGaps(role.fit).map((term) => names.get(term.corner_id) ?? term.corner_id)
     return {
       id: role.onet_code,
       title: role.title,

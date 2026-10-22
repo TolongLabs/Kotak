@@ -8,6 +8,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@kotak/agent": "workspace:*",
+    "@kotak/sdk": "workspace:*",
     "@kotak/shared": "workspace:*",
     "lucide-react": "^1.61.0",
     "pixi-live2d-display": "^0.4.0",

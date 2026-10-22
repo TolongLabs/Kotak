@@ -42,7 +42,13 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
 
   return (
     <div ref={ref} className={cn('flex flex-col', className)} {...props}>
-      <div role="tablist" onKeyDown={handleKeyDown} className="flex w-full items-end border-b border-border-subtle">
+      {/* Scrolls sideways when the tabs outgrow a phone. The baseline is an inset shadow, not a border, so the
+          selected tab’s underline still covers it inside the scroll box, and the focus ring sits inside each tab. */}
+      <div
+        role="tablist"
+        onKeyDown={handleKeyDown}
+        className="flex w-full items-end overflow-x-auto shadow-[inset_0_-1px_0_var(--color-border-subtle)]"
+      >
         {tabs.map((tab, index) => {
           const selected = tab.id === value
           return (
@@ -59,7 +65,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
               tabIndex={selected ? 0 : -1}
               onClick={() => onChange(tab.id)}
               className={cn(
-                '-mb-px inline-flex h-11 items-center whitespace-nowrap border-b-2 px-4 text-label-l transition-colors duration-150 ease-out',
+                'inline-flex h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-4 text-label-l transition-colors duration-150 ease-out focus-visible:-outline-offset-2',
                 selected
                   ? 'border-text-primary font-bold text-text-primary'
                   : 'border-transparent text-text-muted hover:border-border-control hover:text-text-primary'
