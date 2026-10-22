@@ -31,7 +31,7 @@ From the repository root:
 bun install
 bun run scrape:jobstreet --max-jobs 5
 bun run scrape:jobstreet --url https://my.jobstreet.com/data-analyst-jobs --max-pages 2 --max-jobs 40 --sort company
-bun run scrape:jobstreet --mode breadth --max-pages 50 --max-jobs 1000 --delay-ms 10000 --delay-jitter-ms 2000
+bun run scrape:jobstreet --mode breadth --max-pages 50 --max-jobs 1000 --delay-ms 30000 --delay-jitter-ms 30000
 bun run scrape:jobstreet --help
 ```
 
@@ -41,7 +41,9 @@ Verified with Kameleo Engine 5.3.1, SDK 5.2.0 and Playwright Core 1.64.1. Each r
 
 Breadth is the default mode, with one page and 20 unique jobs. Opt in to larger runs with `--max-pages` (up to 50) and `--max-jobs` (up to 1,000). A run stops at either limit or the end of pagination. These bounds limit collection; they do not guarantee that many matching jobs exist.
 
-Both modes default to a **10-second base delay plus 0–2 seconds of random variation** between pages/jobs. Configure the base with `--delay-ms` (minimum 2000) and the extra variation with `--delay-jitter-ms` (0–60000). Set variation to zero for a fixed delay. The scraper logs each chosen pause and records `delay_ms`, `delay_jitter_ms` and `browser_mode` in `run.json`. Slower pacing does not guarantee that verification will be avoided. Navigation currently follows validated URLs with Playwright's `page.goto()`; no pointer or checkbox automation is used.
+Both modes default to a **30-second base delay plus 0–30 seconds of random variation** between pages/jobs. Configure the base with `--delay-ms` (minimum 2000) and the extra variation with `--delay-jitter-ms` (0–60000). Set variation to zero for a fixed delay. The scraper logs each chosen pause and records `delay_ms`, `delay_jitter_ms` and `browser_mode` in `run.json`. These are configurable test settings; slower pacing does not guarantee that verification will be avoided.
+
+Breadth opens the first search URL, then scrolls toward and clicks the actual validated Next link. `hand.ts` is a self-contained TypeScript adaptation of the wheel notches, curved pointer reach, off-centre aiming and press dwell in TolongLarp's `browser/human.py`; no sibling checkout is required. Scrolling adds time beyond the base pause and is bounded to two minutes. The selected Next control must be visible, preserve the current search path/filters and advance exactly one page; covered or changed links are refused. Both full-page and client-side pagination are supported; each page still needs a valid URL and a new set of listing IDs. First-page navigation, depth URLs and transient retries use `page.goto()`. Verification checkboxes remain manual.
 
 ## Depth and description reuse
 
@@ -146,6 +148,8 @@ The default breadth destination is `data/jobstreet/<timestamp>-<suffix>/`; depth
 
 Breadth and prepare reports carry `schema_version: 2`; depth reports start at version 1 with `mode: depth`, selected/requested/reused counts, input/cache paths and refresh settings. Legacy breadth captures remain readable. Merging preserves observation history but does not provide automatic synchronization between machines.
 
+Navigation entries record `navigation_kind` (`goto`, `click` or `retry`). Clicked pagination includes `interaction` counts for wheel notches, pointer moves and press duration. Client-side pagination may have `http_status: null` because it produces no new top-level document response; a matching URL and changed listing IDs are required instead of inventing an HTTP 200.
+
 ## Waiting for verification
 
 Both modes recognize Cloudflare's `cf-mitigated: challenge` header and known verification-page markers. The scraper keeps the same Kameleo browser open and waits up to **120 seconds** for verification to clear. If a checkbox appears, complete it in that Kameleo browser window; the scraper activates the tab and prints the target URL, with the run's profile ID in `run.json`. Checkbox completion is a manual step. Collection resumes automatically after a new top-level page response replaces the challenge.
@@ -160,7 +164,7 @@ Each affected navigation entry in `run.json` includes `verification`: its `waiti
 
 ## Reliability and failure handling
 
-Runs are bounded to 50 search pages and 1,000 unique jobs, with at least two seconds between pages or detail requests. The default pause is 10–12 seconds. Small defaults remain one page/20 jobs for breadth and 100 jobs for depth. `--retries` permits zero to three additional navigation attempts, default two. Only navigation timeouts, selected connection failures and HTTP 500/502/503/504 responses are retried, with exponential waits starting at `--delay-ms`. Profile creation and other SDK mutations are not automatically retried.
+Runs are bounded to 50 search pages and 1,000 unique jobs, with at least two seconds between pages or detail requests. The default pause is 30–60 seconds, plus scrolling time for pagination. Small defaults remain one page/20 jobs for breadth and 100 jobs for depth. `--retries` permits zero to three additional navigation attempts, default two. Only navigation timeouts, selected connection failures and HTTP 500/502/503/504 responses are retried, with exponential waits starting at `--delay-ms`. Profile creation and other SDK mutations are not automatically retried.
 
 HTTP 401 and ordinary HTTP 403/429 responses stop the run; recognized verification pages get the bounded wait described above. Missing card selectors, an entirely invalid page, repeated pagination URLs, repeated sets of page IDs and off-domain pagination also fail. Challenge pages are never counted as successful scrapes. Search URLs drop fragments, `tracking`, `utm_*` and temporary `__cf_chl_*` parameters and sort the remaining parameters; search filters are preserved.
 
@@ -194,6 +198,7 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 - `pipeline.ts`: bounded navigation, retries, card validation, pagination checks and persisted artifacts.
 - `depth.ts`: description extraction, cache reuse, dated detail attempts and the unified enriched view.
 - `browser.ts`: shared navigation retries, bounded verification waiting and browser evidence.
+- `hand.ts`: bounded native scrolling and pointer input for validated pagination links.
 - `inputs.ts`: shared validated breadth-file reading.
 - `records.ts`: record validation, URL normalization, recency estimates, duplicate winner selection and sorting.
 - `prepare.ts`, `prepare-cli.ts`: offline contributor-file merge, retained observation history and date summaries.
