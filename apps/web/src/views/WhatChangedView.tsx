@@ -60,7 +60,7 @@ export function WhatChangedView() {
 
   if (!session.role_code) {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
         <CatDialogue pose="worried" speech="Tell me your job first, then I can compare its snapshots." />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
@@ -72,7 +72,7 @@ export function WhatChangedView() {
 
   if (bundle.status !== 'ready') {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
         {bundle.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
