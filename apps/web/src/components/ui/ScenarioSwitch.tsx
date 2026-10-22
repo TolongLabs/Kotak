@@ -33,7 +33,7 @@ export const ScenarioSwitch = forwardRef<HTMLDivElement, ScenarioSwitchProps>(fu
             className={cn(
               'has-[:focus-visible]:outline-focus-ring flex min-h-[44px] cursor-pointer items-center whitespace-nowrap rounded-full border-[1.5px] px-5 transition-colors duration-150 ease-out has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
               selected
-                ? 'border-text-primary bg-accent-box text-text-primary'
+                ? 'on-accent border-text-primary bg-accent-box text-text-primary'
                 : 'border-transparent text-text-muted hover:text-text-primary'
             )}
           >

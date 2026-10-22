@@ -21,7 +21,7 @@ export const ChoiceCard = forwardRef<HTMLLabelElement, ChoiceCardProps>(function
       className={cn(
         'has-[:focus-visible]:outline-focus-ring flex cursor-pointer items-start gap-3 rounded-md p-4 text-text-primary transition-colors duration-150 ease-out has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
         selected
-          ? 'border-[1.5px] border-text-primary bg-accent-box'
+          ? 'on-accent border-[1.5px] border-text-primary bg-accent-box'
           : 'border border-border-subtle bg-bg-default hover:border-border-control',
         className
       )}

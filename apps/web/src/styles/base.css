@@ -49,6 +49,12 @@
     border: 1px solid var(--color-border-subtle);
   }
 
+  /* Text on yellow keeps light-mode ink in both themes (5:1 or better on accent-box). */
+  .on-accent {
+    --color-text-primary: var(--k-color-accent-on-box);
+    --color-text-muted: var(--k-color-accent-on-box-muted);
+  }
+
   .surface-card {
     background-color: var(--color-bg-default);
     border: 1px solid var(--color-border-subtle);

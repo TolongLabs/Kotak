@@ -100,7 +100,7 @@ function TimelineBar({ step, totalWeeks }: { step: RoadmapStep; totalWeeks: numb
         step.conditional
           ? 'border-dashed border-border-control bg-bg-panel'
           : step.state === 'next'
-            ? 'border-text-primary bg-accent-box'
+            ? 'on-accent border-text-primary bg-accent-box'
             : 'border-text-primary bg-radar-you-fill'
       }`}
       style={{ left: `${start}%`, width: `${width}%` }}
