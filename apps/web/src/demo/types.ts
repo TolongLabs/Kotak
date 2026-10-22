@@ -2,6 +2,8 @@ export type VerdictId = 'rising' | 'steady' | 'declining' | 'split' | 'unknown'
 
 export type Level = 0 | 1 | 2 | 3
 
+export type Scenario = 'slow' | 'fast'
+
 export type SourceRef = {
   n: number
   name: string
@@ -135,6 +137,8 @@ export type Readiness = {
   threshold: string
   yLabels: string[]
   xLabels: string[]
+  // Fit % by plan week: plan is your plan, fast is the fast-uptake scenario.
+  points: { week: number; plan: number; fast: number }[]
 }
 
 export type NationalView = {
