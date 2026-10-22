@@ -12,7 +12,7 @@ import { SourceList } from '../components/kotak/SourceList'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { SdgChip } from '../components/ui/SdgChip'
-import { Stepper } from '../components/ui/Stepper'
+import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
 import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
@@ -24,8 +24,6 @@ import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
 import type { ExplanationResponse } from '@kotak/shared'
 import { buildExplanationRequest } from './roles/derived'
-
-const stepLabels: [string, string, string, string, string] = ['Home', 'Check-Up', 'Radar', 'Roles', 'Roadmap']
 
 function sdgGoals(targets: string[] | undefined, limit: number) {
   const goals = (targets ?? []).flatMap((target) => {
@@ -53,14 +51,6 @@ function latestSourceVintageDate(checkup: Checkup): string | null {
     .filter(Boolean)
   if (dates.length === 0) return null
   return [...dates].sort().reverse()[0]
-}
-
-function RadarCatDialogue({ pose, speech }: { pose: 'explaining' | 'worried'; speech: string }) {
-  return (
-    <div className="[&>div]:flex-row [&>div]:items-end [&>div]:gap-3 [&>div>div:first-child]:h-28 [&>div>div:first-child]:self-end">
-      <CatDialogue pose={pose} speech={speech} size="md" />
-    </div>
-  )
 }
 
 export function RadarView() {
@@ -127,7 +117,7 @@ export function RadarView() {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <h1 className="sr-only">Future Skills Radar</h1>
-        <Stepper step={3} labels={stepLabels} />
+        <Stepper step={3} labels={checkUpSteps} />
         <CatDialogue pose="worried" speech="Tell me your job first, then I can map its skills." />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
           Choose Your Job
@@ -140,7 +130,7 @@ export function RadarView() {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <h1 className="sr-only">Future Skills Radar</h1>
-        <Stepper step={3} labels={stepLabels} />
+        <Stepper step={3} labels={checkUpSteps} />
         {bundle.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         ) : (
@@ -241,7 +231,7 @@ export function RadarView() {
             body="Kopi drafted these skills from the job’s O*NET tasks. The team has not checked them by hand yet."
           />
         )}
-        <RadarCatDialogue
+        <CatDialogue
           pose="worried"
           speech="The AI is resting. Your verdicts still stand. I’ll explain them when it’s back."
         />
@@ -265,7 +255,10 @@ export function RadarView() {
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      <Stepper step={3} labels={stepLabels} />
+      <Stepper step={3} labels={checkUpSteps} />
+
+      <CatDialogue pose="explaining" speech={speech} />
+
       {role.quality === 'auto-generated' && (
         <Banner
           type="info"
@@ -274,14 +267,14 @@ export function RadarView() {
         />
       )}
 
-      <RadarCatDialogue pose="explaining" speech={speech} />
-
       <header className="space-y-1.5">
-        <h1 className="text-title-m text-text-primary lg:text-title-l">
-          {role.title}, {neededLabel}
+        <div className="flex items-start gap-1">
+          <h1 className="text-title-m text-text-primary lg:text-title-l">
+            {role.title}, {neededLabel}
+          </h1>
           <Tooltip
             content="The needed level is an estimate from AI-use and job-ad trends 12 months ahead."
-            className="[&_[role=tooltip]]:left-auto [&_[role=tooltip]]:right-0 [&_[role=tooltip]]:translate-x-0 [&_[role=tooltip]]:max-w-[calc(100vw-3rem)] [&_[role=tooltip]]:whitespace-normal [&_[role=tooltip]]:text-left"
+            className="mt-0.5 lg:mt-1 [&_[role=tooltip]]:left-auto [&_[role=tooltip]]:right-0 [&_[role=tooltip]]:translate-x-0 [&_[role=tooltip]]:max-w-[calc(100vw-3rem)] [&_[role=tooltip]]:whitespace-normal [&_[role=tooltip]]:text-left"
           >
             <button
               type="button"
@@ -291,7 +284,7 @@ export function RadarView() {
               <Info className="h-4 w-4 stroke-current" aria-hidden="true" />
             </button>
           </Tooltip>
-        </h1>
+        </div>
         {workSdgs && workSdgs.goals.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-label-s text-text-muted">This Work Supports</span>
@@ -306,7 +299,7 @@ export function RadarView() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-8">
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-6">
         <section className="space-y-4 lg:sticky lg:top-24 lg:self-start" aria-label="Future Skills Radar">
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
           <Banner

@@ -19,12 +19,20 @@ const MAX_ZOOM = 8
 const MIN_TICK_PX = 48
 const DRAG_PX = 5
 const PAN_PX = 96
-const MOBILE_LABEL_W = 104
 const DESKTOP_LABEL_W = 236
 const TOOLTIP_W = 264
+// Mono/S and Label/S glyphs are about 7 px wide; used to keep axis and bar labels whole instead of truncating them.
+const MONO_CHAR_PX = 7.3
+const LABEL_CHAR_PX = 6.8
+const LABEL_GAP_PX = 12
+// Months are labelled no closer than the widest label ("Sep 2027", 8 characters) plus a gap.
+const MONTH_LABEL_PX = 9 * MONO_CHAR_PX
+// Week gridlines only once a week is wide enough to read; below that, months carry the grid.
+const WEEK_GRID_PX = 24
+const MONTH_STRIDES = [1, 2, 3, 6, 12]
 
-function formatMonth(date: Date) {
-  return new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric' }).format(date)
+function weekRange([first, last]: [number, number]) {
+  return first === last ? `W${first}` : `W${first}–${last}`
 }
 
 interface HoverState {
@@ -94,7 +102,9 @@ export function RoadmapTimeline({
   }, [])
 
   const totalWeeks = Math.max(1, ...steps.map((step) => step.weeks[1]))
-  const labelW = viewport < 640 ? MOBILE_LABEL_W : DESKTOP_LABEL_W
+  // On phones each row's name sits on its own line above the bar, so the side label column goes.
+  const phone = viewport < 640
+  const labelW = phone ? 0 : DESKTOP_LABEL_W
   const trackFit = Math.max(120, viewport - labelW)
   const trackW = trackFit * zoom
   const pxWeek = trackW / totalWeeks
@@ -103,26 +113,59 @@ export function RoadmapTimeline({
   const tickInterval = 4 * Math.max(1, Math.ceil(MIN_TICK_PX / Math.max(pxWeek, 0.001) / 4))
   const tickWeeks = useMemo(() => {
     const weeks: number[] = []
-    for (let week = 1; week <= totalWeeks; week += tickInterval) weeks.push(week)
+    for (let week = 1; week <= totalWeeks; week += tickInterval) {
+      if ((week - 1) * pxWeek + `W${week}`.length * MONO_CHAR_PX + 6 <= trackW) weeks.push(week)
+    }
     return weeks
-  }, [totalWeeks, tickInterval])
+  }, [totalWeeks, tickInterval, pxWeek, trackW])
   const monthBuckets = useMemo(() => {
-    let last: string | null = null
-    const buckets: { week: number; label: string }[] = []
+    let last: number | null = null
+    const buckets: { week: number; date: Date }[] = []
     for (let week = 1; week <= totalWeeks; week++) {
       const date = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + (week - 1) * 7)
-      const label = formatMonth(date)
-      if (label !== last) {
-        buckets.push({ week, label })
-        last = label
+      const key = date.getFullYear() * 12 + date.getMonth()
+      if (key !== last) {
+        buckets.push({ week, date })
+        last = key
       }
     }
     return buckets
   }, [startDate, totalWeeks])
-  const monthWeeks = useMemo(
-    () => monthBuckets.filter((bucket) => bucket.week > 1).map((bucket) => bucket.week),
-    [monthBuckets]
-  )
+  // Long plans label every 2nd, 3rd, 6th or 12th month so each label stays whole and the gridlines stay evenly
+  // spaced; a label shows its year when the year changes. The plan's first, partial month gives way to the next
+  // labelled month when the two would collide.
+  const monthLabels = useMemo(() => {
+    const monthPx = (pxWeek * 52) / 12
+    const stride = MONTH_STRIDES.find((each) => each * monthPx >= MONTH_LABEL_PX) ?? 12
+    const labels: { week: number; x: number; text: string }[] = []
+    let freeFrom = 0
+    let lastYear: number | null = null
+    for (const bucket of monthBuckets) {
+      if (bucket.date.getMonth() % stride !== 0 && bucket.week > 1) continue
+      const x = (bucket.week - 1) * pxWeek
+      if (x < freeFrom && labels.length === 1 && labels[0].week === 1) {
+        labels.pop()
+        freeFrom = 0
+        lastYear = null
+      }
+      const year = bucket.date.getFullYear()
+      const text = new Intl.DateTimeFormat(
+        'en-GB',
+        year !== lastYear ? { month: 'short', year: 'numeric' } : { month: 'short' }
+      )
+        .format(bucket.date)
+        // en-GB writes September as "Sept"; three letters keep every month label the same width.
+        .replace('Sept', 'Sep')
+      const width = text.length * MONO_CHAR_PX + 6
+      if (x < freeFrom || x + width > trackW) continue
+      labels.push({ week: bucket.week, x, text })
+      lastYear = year
+      freeFrom = x + width + LABEL_GAP_PX
+    }
+    return labels
+  }, [monthBuckets, pxWeek, trackW])
+  // Gridlines follow the labelled months, so long plans keep a calm grid.
+  const monthWeeks = monthLabels.filter((label) => label.week > 1).map((label) => label.week)
 
   // Keeps the content point under the pointer in place while zooming.
   useLayoutEffect(() => {
@@ -253,7 +296,7 @@ export function RoadmapTimeline({
   }
 
   const hoveredStep = hovered ? (steps.find((step) => step.id === hovered.stepId) ?? null) : null
-  const showWeekGrid = pxWeek >= 7
+  const showWeekGrid = pxWeek >= WEEK_GRID_PX
 
   return (
     <section
@@ -326,19 +369,15 @@ export function RoadmapTimeline({
                 <div aria-hidden="true" className="sticky left-0 z-20 bg-bg-default" />
                 <div className="relative pb-3">
                   <div className="relative h-6" aria-hidden="true">
-                    {monthBuckets.map((bucket, i) => {
-                      const x = (bucket.week - 1) * pxWeek
-                      const end = i + 1 < monthBuckets.length ? (monthBuckets[i + 1].week - 1) * pxWeek : trackW
-                      return (
-                        <span
-                          key={bucket.week}
-                          className="absolute top-0 h-6 truncate font-mono text-mono-s text-text-muted"
-                          style={{ left: x, width: Math.max(end - x, 1) }}
-                        >
-                          {bucket.label}
-                        </span>
-                      )
-                    })}
+                    {monthLabels.map((label) => (
+                      <span
+                        key={label.week}
+                        className="absolute top-0 h-6 whitespace-nowrap border-l border-border-control pl-1.5 font-mono text-mono-s text-text-primary"
+                        style={{ left: label.x }}
+                      >
+                        {label.text}
+                      </span>
+                    ))}
                   </div>
                   <div className="relative h-6" aria-hidden="true">
                     {tickWeeks.map((week) => (
@@ -365,12 +404,13 @@ export function RoadmapTimeline({
                 const impact = impactArea !== null && step.sdgs.includes(impactArea)
                 const left = (step.weeks[0] - 1) * pxWeek
                 const width = Math.max((step.weeks[1] - step.weeks[0] + 1) * pxWeek, 8)
-                const innerLabel =
-                  width >= 150
-                    ? `${fmt(step.hoursPerWeek)} h/wk · ${rowLabels[index]}`
-                    : width >= 92
-                      ? rowLabels[index]
-                      : ''
+                // The row already names the step, so the bar carries when and how much. It sits inside the bar when it
+                // fits, otherwise just outside it: to the right, or to the left at the end of the plan.
+                const fullLabel = `${weekRange(step.weeks)} · ${fmt(step.hoursPerWeek)} h/wk`
+                const labelWidth = (text: string) => text.length * LABEL_CHAR_PX + 16
+                const barLabel = labelWidth(fullLabel) <= width ? fullLabel : null
+                const outsideLabel = barLabel ? null : fullLabel
+                const outsideRight = left + width + 4 + labelWidth(fullLabel) <= trackW
                 const barColor = step.conditional
                   ? 'border-dashed border-border-control bg-bg-panel'
                   : step.state === 'next'
@@ -380,76 +420,109 @@ export function RoadmapTimeline({
                       : 'border-text-primary bg-radar-you-fill'
 
                 return (
-                  <div key={step.id} className="grid" style={{ gridTemplateColumns: `${labelW}px ${trackW}px` }}>
-                    <div className="sticky left-0 z-20 min-h-10 min-w-0 bg-bg-default pt-1.5 lg:min-h-14">
-                      <p className="truncate pr-2 text-label-s text-text-primary lg:text-label-m">{rowLabels[index]}</p>
-                      <div className="hidden flex-wrap gap-1 pt-1 lg:flex">
-                        {step.sdgs.map((goal) => (
-                          <SdgChip key={goal} goal={goal} compact />
+                  <div key={step.id}>
+                    {phone && (
+                      <p
+                        className="sticky left-0 truncate pt-2 text-label-m text-text-primary"
+                        style={{ width: viewport }}
+                      >
+                        {rowLabels[index]}
+                      </p>
+                    )}
+                    <div className="grid" style={{ gridTemplateColumns: `${labelW}px ${trackW}px` }}>
+                      <div className="sticky left-0 z-20 min-w-0 bg-bg-default pt-1.5 lg:min-h-14">
+                        {!phone && (
+                          <>
+                            <p className="truncate pr-2 text-label-m text-text-primary">{rowLabels[index]}</p>
+                            <div className="hidden flex-wrap gap-1 pt-1 lg:flex">
+                              {step.sdgs.map((goal) => (
+                                <SdgChip key={goal} goal={goal} compact />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div className="relative h-10 lg:h-14">
+                        {showWeekGrid && (
+                          <span
+                            aria-hidden="true"
+                            className="absolute bottom-0 left-0 right-0 top-0"
+                            style={{
+                              backgroundImage: `repeating-linear-gradient(to right, var(--color-border-subtle) 0 1px, transparent 1px ${pxWeek}px)`
+                            }}
+                          />
+                        )}
+                        {monthWeeks.map((week) => (
+                          <span
+                            key={week}
+                            aria-hidden="true"
+                            className="absolute bottom-0 top-0 border-l border-border-control"
+                            style={{ left: (week - 1) * pxWeek }}
+                          />
                         ))}
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute bottom-0 top-0 border-l border-border-subtle"
+                          style={{ left: todayX }}
+                        />
+                        <button
+                          type="button"
+                          aria-pressed={selected}
+                          aria-label={`${step.skill}, weeks ${step.weeks[0]} to ${step.weeks[1]}, ${fmt(step.hoursPerWeek)} h a week, about ${fmt(step.totalHours)} h total`}
+                          onClick={() => {
+                            if (!dragRef.current.moved) onSelectStep(step.id)
+                          }}
+                          onMouseEnter={(event) => showTip(step, event.currentTarget)}
+                          onMouseLeave={clearTip}
+                          onFocus={(event) => showTip(step, event.currentTarget)}
+                          onBlur={clearTip}
+                          className={`absolute top-[6px] flex h-7 min-w-[8px] items-center overflow-hidden rounded-md border-[1.5px] px-2 text-left font-sans text-label-s cursor-pointer lg:h-11 lg:top-[6px] focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ${barColor} ${
+                            impact ? 'ring-2 ring-offset-1 ring-offset-bg-default ring-text-primary' : ''
+                          } ${selected ? 'z-30 outline outline-2 outline-offset-1 outline-text-primary' : 'z-10'}`}
+                          style={{
+                            left: `${left}px`,
+                            width: `${width}px`,
+                            pointerEvents: dragging ? 'none' : undefined
+                          }}
+                        >
+                          {barLabel && <span className="truncate">{barLabel}</span>}
+                        </button>
+                        {outsideLabel && (
+                          <span
+                            aria-hidden="true"
+                            className={`pointer-events-none absolute top-[6px] z-10 flex h-7 items-center whitespace-nowrap rounded-sm bg-bg-default px-1 text-label-s text-text-primary lg:h-11 ${
+                              outsideRight ? '' : '-translate-x-full'
+                            }`}
+                            style={{ left: outsideRight ? left + width + 4 : left - 4 }}
+                          >
+                            {outsideLabel}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="relative h-10 lg:h-14">
-                      {showWeekGrid && (
-                        <span
-                          aria-hidden="true"
-                          className="absolute bottom-0 left-0 right-0 top-0"
-                          style={{
-                            backgroundImage: `repeating-linear-gradient(to right, var(--color-border-subtle) 0 1px, transparent 1px ${pxWeek}px)`
-                          }}
-                        />
-                      )}
-                      {monthWeeks.map((week) => (
-                        <span
-                          key={week}
-                          aria-hidden="true"
-                          className="absolute bottom-0 top-0 border-l border-border-control"
-                          style={{ left: (week - 1) * pxWeek }}
-                        />
-                      ))}
-                      <span
+                    {last && (
+                      <div
+                        className="grid"
+                        style={{ gridTemplateColumns: `${labelW}px ${trackW}px` }}
                         aria-hidden="true"
-                        className="pointer-events-none absolute bottom-0 top-0 border-l border-border-subtle"
-                        style={{ left: todayX }}
-                      />
-                      {last && (
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none absolute bottom-0 z-20 rounded-full bg-text-primary px-2 py-0.5 text-label-s text-bg-default ${
-                            todayX <= 32
-                              ? 'translate-x-0'
-                              : todayX >= trackW - 32
-                                ? '-translate-x-full'
-                                : '-translate-x-1/2'
-                          }`}
-                          style={{ left: todayX }}
-                        >
-                          Today
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        aria-pressed={selected}
-                        aria-label={`${step.skill}, weeks ${step.weeks[0]} to ${step.weeks[1]}, ${fmt(step.hoursPerWeek)} h a week, about ${fmt(step.totalHours)} h total`}
-                        onClick={() => {
-                          if (!dragRef.current.moved) onSelectStep(step.id)
-                        }}
-                        onMouseEnter={(event) => showTip(step, event.currentTarget)}
-                        onMouseLeave={clearTip}
-                        onFocus={(event) => showTip(step, event.currentTarget)}
-                        onBlur={clearTip}
-                        className={`absolute top-[6px] flex h-7 min-w-[8px] items-center overflow-hidden rounded-md border-[1.5px] px-2 text-left font-sans text-label-s cursor-pointer lg:h-11 lg:top-[6px] focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ${barColor} ${
-                          impact ? 'ring-2 ring-offset-1 ring-offset-bg-default ring-text-primary' : ''
-                        } ${selected ? 'z-30 outline outline-2 outline-offset-1 outline-text-primary' : 'z-10'}`}
-                        style={{
-                          left: `${left}px`,
-                          width: `${width}px`,
-                          pointerEvents: dragging ? 'none' : undefined
-                        }}
                       >
-                        <span className="truncate">{innerLabel}</span>
-                      </button>
-                    </div>
+                        <div className="sticky left-0 z-20 bg-bg-default" />
+                        <div className="relative h-7">
+                          <span
+                            className={`absolute top-1.5 whitespace-nowrap rounded-full bg-text-primary px-2 py-0.5 text-label-s text-bg-default ${
+                              todayX <= 32
+                                ? 'translate-x-0'
+                                : todayX >= trackW - 32
+                                  ? '-translate-x-full'
+                                  : '-translate-x-1/2'
+                            }`}
+                            style={{ left: todayX }}
+                          >
+                            Today
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               })}

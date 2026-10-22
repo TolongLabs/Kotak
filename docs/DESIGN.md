@@ -127,7 +127,8 @@ The smallest text is 12 px.
 - The desktop app shell has a 256 px sidebar (72 px collapsed) and a main column with 48 px padding, so content is 1088 px wide.
 - The top bar is a glass island that stays at the top of the main column. It has no sound button; the mute button lives in Kopi's speech box.
 - Columns are symmetrical. Two columns are 532 + 24 + 532 px, three are equal thirds and the four stat cards are equal quarters. Cards in one row share one height.
-- Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar page and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
+- Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the AI-Drafted Skills banner, the page header, then the content. The Dashboard opens with its greeting and the banner, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
+- Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar and What Changed pages and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
 - Single-column pages centre the column: Check-Up Start, Questions, No Job Match and AI Unavailable.
 
 ## Components

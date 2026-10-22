@@ -5,7 +5,6 @@ import { SourceList } from '../components/kotak/SourceList'
 import { WhatChangedCard } from '../components/kotak/WhatChangedCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { Toast } from '../components/ui/Toast'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
@@ -131,7 +130,13 @@ export function WhatChangedView() {
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
+      <CatDialogue
+        pose={isMay ? 'explaining' : 'idle'}
+        speech={
+          isMay ? speech : 'You are viewing April data. Select After (May) to apply the newer snapshot across Kotak.'
+        }
+        size="md"
+      />
 
       {role.quality === 'auto-generated' && (
         <Banner
@@ -141,13 +146,17 @@ export function WhatChangedView() {
         />
       )}
 
+      <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
+
       <div className="flex min-w-0 flex-col gap-3 rounded-md border border-border-subtle bg-bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <RefreshCw className="h-5 w-5 shrink-0 stroke-current text-text-primary" aria-hidden="true" />
           <div className="min-w-0">
             <p className="text-label-m text-text-primary">Live Demo</p>
-            <p className="text-body-s text-text-muted">
-              {isMay ? 'May 2026 data is active across Kotak.' : 'April 2026 data is active across Kotak.'}
+            <p className="text-body-s text-text-muted" aria-live="polite">
+              {isMay
+                ? `New data landed: ${afterLabel} is active across Kotak.`
+                : 'April 2026 data is active across Kotak.'}
             </p>
           </div>
         </div>
@@ -183,33 +192,7 @@ export function WhatChangedView() {
         </div>
       </div>
 
-      {/* Toast */}
-      {isMay && (
-        <Toast
-          type="info"
-          title={`New Data Landed: ${afterLabel}`}
-          action={
-            <a
-              href="#what-changed-changes"
-              className="text-label-m font-semibold text-text-primary underline decoration-current underline-offset-2 transition-colors hover:text-text-muted"
-            >
-              See What Changed
-            </a>
-          }
-          className="w-full sm:max-w-[360px]"
-        />
-      )}
-
-      {/* Cat Dialogue */}
-      <CatDialogue
-        pose={isMay ? 'explaining' : 'idle'}
-        speech={
-          isMay ? speech : 'You are viewing April data. Select After (May) to apply the newer snapshot across Kotak.'
-        }
-        size="md"
-      />
-
-      <div id="what-changed-changes" className="flex flex-col gap-8 lg:flex-row lg:gap-8">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <section className="flex min-w-0 flex-1 flex-col gap-4" aria-labelledby="changes-title">
           <h2 id="changes-title" className="text-title-s text-text-primary">
             April to May Changes
@@ -225,7 +208,10 @@ export function WhatChangedView() {
           </div>
         </section>
 
-        <section className="flex min-w-0 flex-1 flex-col gap-4" aria-labelledby="radar-title">
+        <section
+          className="flex min-w-0 flex-1 flex-col gap-4 lg:sticky lg:top-24 lg:self-start"
+          aria-labelledby="radar-title"
+        >
           <h2 id="radar-title" className="text-title-s text-text-primary">
             The Dashed Line Moved
           </h2>

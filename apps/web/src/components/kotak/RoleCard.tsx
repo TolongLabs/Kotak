@@ -1,4 +1,5 @@
 import { CircleCheck } from 'lucide-react'
+import type { ReactNode } from 'react'
 import type { Role } from '../../demo/types'
 import { VerdictChip } from '../ui/VerdictChip'
 import { cn } from '../ui/cn'
@@ -9,27 +10,29 @@ export interface RoleCardProps {
   onSelect: () => void
   // The radio group name shared by every card in the list.
   name: string
+  // Pinned to the card's bottom edge, so cards in one row line up.
+  footer?: ReactNode
 }
 
-export function RoleCard({ role, selected, onSelect, name }: RoleCardProps) {
+export function RoleCard({ role, selected, onSelect, name, footer }: RoleCardProps) {
   return (
     <label
       className={cn(
-        'relative flex min-w-0 cursor-pointer flex-col gap-3 rounded-md border-[1.5px] p-4 transition-colors duration-150 ease-out has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring',
+        'relative flex h-full min-w-0 cursor-pointer flex-col gap-3 rounded-md border-[1.5px] p-4 transition-colors duration-150 ease-out has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring',
         selected
           ? 'on-accent border-text-primary bg-accent-box text-accent-on-box'
           : 'border-border-control bg-bg-default hover:bg-bg-panel'
       )}
     >
       <input type="radio" name={name} value={role.id} checked={selected} onChange={onSelect} className="sr-only" />
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex min-h-12 items-start justify-between gap-3">
         <span className="min-w-0 text-title-s text-text-primary">
           {role.title}
           {role.isCurrentJob && ' (Your Job)'}
         </span>
         <span className="flex shrink-0 items-start gap-2">
           <span className="flex flex-col items-end">
-            <span className="text-title-l text-text-primary">{role.fit}%</span>
+            <span className="text-title-l tabular-nums text-text-primary">{role.fit}%</span>
             <span className="font-mono text-mono-s text-text-muted">fit</span>
           </span>
           {selected && <CircleCheck className="mt-1 h-5 w-5 stroke-current" aria-hidden="true" />}
@@ -45,7 +48,10 @@ export function RoleCard({ role, selected, onSelect, name }: RoleCardProps) {
       >
         <span className="block h-full rounded-full bg-text-primary" style={{ width: `${role.fit}%` }} />
       </span>
-      <span className="text-body-s text-text-primary">Missing: {role.missing}</span>
+      <span className="text-body-s text-text-primary">
+        {role.missing ? `Missing: ${role.missing}` : 'No gaps to close'}
+      </span>
+      {footer && <span className="mt-auto pt-1">{footer}</span>}
     </label>
   )
 }
