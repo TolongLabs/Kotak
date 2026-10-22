@@ -24,6 +24,24 @@ const description =
 
 async function fixture(route: Route) {
   const url = new URL(route.request().url())
+  if (scenario === 'pagination' || scenario === 'spa-pagination' || scenario === 'invalid-pagination') {
+    const nextCard =
+      '<article data-job-id="102"><a data-automation="jobTitle" href="/job/102">Second engineer</a></article>'
+    const counters =
+      '<script>for (const kind of ["mousemove", "wheel", "click"]) addEventListener(kind, e => { if(e.isTrusted) sessionStorage.setItem(kind, String(Number(sessionStorage.getItem(kind) || 0) + 1)) }); addEventListener("mousedown", e => sessionStorage.setItem("pressedAt", String(e.timeStamp)));</script>'
+    const next = `<a rel="next" href="/wrong-jobs?page=2" style="display:none">Hidden duplicate</a><a aria-label="Next" href="/wrong-jobs?page=2">Unrelated recommendation</a><div style="height:1600px"></div><nav aria-label="Pagination"><a rel="next" href="/${scenario === 'invalid-pagination' ? 'wrong' : 'fixture'}-jobs?page=2" style="display:block;width:120px;height:48px;margin:24px">Next page</a></nav>`
+    const spa =
+      scenario === 'spa-pagination'
+        ? `<script>document.querySelector('nav a[rel=next]').onclick = e => { e.preventDefault(); history.pushState({}, '', '/fixture-jobs?page=2'); setTimeout(() => { document.querySelector('#cards').innerHTML = ${JSON.stringify(nextCard)}; document.querySelector('nav').remove() }, 150) };</script>`
+        : ''
+    const guard =
+      '<script>document.querySelector("nav a[rel=next]").addEventListener("click", e => { if(!e.isTrusted || Number(sessionStorage.getItem("mousemove")) < 10 || Number(sessionStorage.getItem("wheel")) < 1 || e.timeStamp - Number(sessionStorage.getItem("pressedAt")) < 40) { e.preventDefault(); e.stopImmediatePropagation() } });</script>'
+    return route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body: `<html><body>${counters}<div id="cards">${url.searchParams.has('page') ? nextCard : card + '<article data-job-id="999">Malformed card</article>'}</div>${url.searchParams.has('page') ? '' : next + guard + spa}</body></html>`
+    })
+  }
   if (url.pathname === '/frame') {
     frameRequests++
     return route.fulfill({ status: 200, contentType: 'text/html', body: card })
@@ -35,14 +53,14 @@ async function fixture(route: Route) {
       contentType: 'text/html',
       body: '<title>Access denied</title>'
     })
-  if (url.searchParams.has('verified'))
+  if (url.searchParams.has('__cf_chl_verified'))
     return route.fulfill({
       status: 200,
       contentType: 'text/html',
       body: url.pathname.includes('/job/') ? description : card
     })
   const script = scenario.startsWith('clears')
-    ? '<script>setTimeout(() => { const url = new URL(location.href); url.searchParams.set("verified", "1"); url.searchParams.set("__cf_chl_tk", "fixture-temporary"); location.href = url.href }, 800)</script>'
+    ? '<script>setTimeout(() => { const url = new URL(location.href); url.searchParams.set("__cf_chl_verified", "1"); url.searchParams.set("__cf_chl_tk", "fixture-temporary"); location.href = url.href }, 800)</script>'
     : '<iframe src="/frame"></iframe>'
   return route.fulfill({
     status: scenario === 'clears-429' ? 429 : 403,
@@ -161,6 +179,37 @@ for (const status of [403, 429])
     },
     30_000
   )
+
+browserTest(
+  'breadth scrolls and clicks the actual Next link, including client-side navigation',
+  async () => {
+    for (const mode of ['pagination', 'spa-pagination']) {
+      scenario = mode
+      const config = { ...options(mode), maxPages: 2, maxJobs: 2 }
+      const report = await breadth(config)
+      expect([report.status, report.jobs_saved]).toEqual(['success', 2])
+      expect(report.records_rejected).toBe(1)
+      expect(report.pages[1].navigation_kind).toBe('click')
+      expect(report.pages[1].interaction!.scroll_notches).toBeGreaterThan(0)
+      expect(report.pages[1].interaction!.pointer_moves).toBeGreaterThan(10)
+      expect(report.pages[1].interaction!.press_ms).toBeGreaterThanOrEqual(55)
+      expect(report.pages[1].http_status).toBe(mode === 'pagination' ? 200 : null)
+    }
+  },
+  60_000
+)
+
+browserTest(
+  'pagination refuses a Next link that changes search scope before clicking',
+  async () => {
+    scenario = 'invalid-pagination'
+    const config = { ...options('invalid-pagination'), maxPages: 2, maxJobs: 2 }
+    await expect(breadth(config)).rejects.toThrow('change the search query')
+    const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
+    expect([report.jobs_saved, report.pages.length]).toEqual([1, 1])
+  },
+  30_000
+)
 
 browserTest(
   'verification times out without counting a successful iframe response as clearance',

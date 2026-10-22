@@ -69,6 +69,27 @@ export function jobUrl(input: string, expectedId?: string): string {
   return `https://my.jobstreet.com/job/${id}`
 }
 
+export function nextSearchUrl(current: string, href: string): string {
+  const before = new URL(searchUrl(current))
+  const after = new URL(searchUrl(new URL(href, before).href))
+  const page = (url: URL) => {
+    if (url.searchParams.getAll('page').length > 1) throw new Error('Ambiguous pagination page parameter')
+    const raw = url.searchParams.get('page') ?? '1'
+    const number = Number(raw)
+    if (!/^\d+$/.test(raw) || !Number.isSafeInteger(number) || number < 1)
+      throw new Error('Invalid pagination page number')
+    return number
+  }
+  if (page(after) !== page(before) + 1) throw new Error('Next link must advance exactly one page')
+  const target = after.href
+  for (const url of [before, after]) {
+    url.searchParams.delete('page')
+    url.pathname = url.pathname.replace(/\/+$/, '')
+  }
+  if (before.href !== after.href) throw new Error('Pagination would change the search query or filters')
+  return target
+}
+
 // These are estimates from the site's relative labels, never exact posting dates.
 function estimateListedAt(label: string | null, observedAt: string): string | null {
   const match = label?.match(/^(\d+)\s*(m|min|minute|h|hr|hour|d|day|w|week)s?\s+ago$/i)

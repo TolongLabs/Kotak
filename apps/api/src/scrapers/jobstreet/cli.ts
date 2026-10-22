@@ -17,8 +17,8 @@ try {
       output: { type: 'string' },
       'max-pages': { type: 'string' },
       'max-jobs': { type: 'string' },
-      'delay-ms': { type: 'string', default: '10000' },
-      'delay-jitter-ms': { type: 'string', default: '2000' },
+      'delay-ms': { type: 'string', default: '30000' },
+      'delay-jitter-ms': { type: 'string', default: '30000' },
       retries: { type: 'string', default: '2' },
       'verification-timeout-ms': { type: 'string', default: '120000' },
       sort: { type: 'string' },
@@ -36,8 +36,8 @@ try {
   --url URL        Breadth: Malaysian JobStreet search URL (default software-engineer-jobs)
   --max-pages N    Breadth: maximum search pages (1–50, default 1)
   --max-jobs N     Maximum unique jobs (1–1000; default 20 breadth, 100 depth)
-  --delay-ms N     Base delay between pages/jobs (minimum 2000, default 10000)
-  --delay-jitter-ms N  Extra random delay (0–60000, default 2000)
+  --delay-ms N     Base delay between pages/jobs (minimum 2000, default 30000)
+  --delay-jitter-ms N  Extra random delay (0–60000, default 30000)
   --retries N      Transient navigation retries (0–3, default 2)
   --verification-timeout-ms N  Wait for verification (0–600000, default 120000); complete any checkbox in the Kameleo window
   --sort MODE      Breadth view: newest, title, company, location, job-id, scraped-at

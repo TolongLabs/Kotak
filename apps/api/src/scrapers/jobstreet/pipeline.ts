@@ -12,7 +12,8 @@ import {
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { withKameleo } from './kameleo'
-import { parseListing, parseSort, searchUrl, sortListings } from './records'
+import { PaginationHand } from './hand'
+import { nextSearchUrl, parseListing, parseSort, searchUrl, sortListings } from './records'
 import type { JobListing, SortMode } from './records'
 
 export type { JobListing } from './records'
@@ -122,6 +123,9 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     await withKameleo(
       options.endpoint,
       async (page) => {
+        const hand = new PaginationHand(page)
+        let openNext: ((entry: NavigationState) => Promise<null>) | undefined
+        let previousRawSignature: string | null = null
         const visited = new Set<string>()
         const pageSignatures = new Set<string>()
         while (next && report.pages.length < options.maxPages && report.jobs_saved < options.maxJobs) {
@@ -143,14 +147,35 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
           try {
             const response = await navigate(page, entry, maxRetries, options.delayMs, saveReport, {
               timeoutMs: verificationTimeoutMs,
-              evidencePrefix: `${prefix}-verification`
+              evidencePrefix: `${prefix}-verification`,
+              open: openNext
             })
-            if (!response || !response.ok()) throw new Error(`JobStreet returned HTTP ${entry.http_status}`)
-            searchUrl(page.url())
+            if (response ? !response.ok() : entry.navigation_kind !== 'click')
+              throw new Error(`JobStreet returned HTTP ${entry.http_status}`)
+            if (searchUrl(page.url()) !== url) throw new Error('Navigation did not reach the expected search URL')
             await page
               .locator('article[data-job-id], article[data-testid="job-card"]')
               .first()
               .waitFor({ timeout: 30_000 })
+            if (!response && previousRawSignature) {
+              await page.waitForFunction(
+                (previous) => {
+                  const ids = [...document.querySelectorAll('article[data-job-id], article[data-testid="job-card"]')]
+                    .map(
+                      (card) =>
+                        card.getAttribute('data-job-id') ||
+                        card
+                          .querySelector<HTMLAnchorElement>('a[data-testid="job-title"], a[data-automation="jobTitle"]')
+                          ?.pathname.match(/\/job\/(\d+)/)?.[1] ||
+                        ''
+                    )
+                    .filter(Boolean)
+                  return ids.length > 0 && [...new Set(ids)].sort().join(',') !== previous
+                },
+                previousRawSignature,
+                { timeout: 30_000 }
+              )
+            }
             const candidates = await extractListings(page, report.run_id)
             entry.cards = candidates.length
             const listings: JobListing[] = []
@@ -171,6 +196,11 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             const signature = [...new Set(listings.map((job) => job.job_id))].sort().join(',')
             if (pageSignatures.has(signature)) throw new Error('Pagination repeated the same set of job IDs')
             pageSignatures.add(signature)
+            previousRawSignature = [
+              ...new Set(candidates.map((raw) => (raw as { job_id: string }).job_id).filter(Boolean))
+            ]
+              .sort()
+              .join(',')
             for (const job of listings) {
               if (jobs.has(job.job_id)) {
                 report.duplicates_skipped++
@@ -182,11 +212,47 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
               report.jobs_saved++
               entry.saved++
             }
-            const nextLink = page
-              .locator('a[rel~="next"], a[data-testid="pagination-next"], a[aria-label="Next"]')
-              .first()
-            const href = (await nextLink.count()) ? await nextLink.getAttribute('href') : null
-            next = href ? searchUrl(new URL(href, page.url()).href) : null
+            if (report.jobs_saved >= options.maxJobs || report.pages.length >= options.maxPages) {
+              report.stop_reason = report.jobs_saved >= options.maxJobs ? 'job_limit' : 'page_limit'
+              next = null
+              break
+            }
+            let nextLink: ReturnType<typeof page.locator> | null = null
+            next = null
+            const invalid: string[] = []
+            const groups = [
+              page.locator(
+                'a[rel~="next"]:visible:not([aria-disabled="true"]), a[data-testid="pagination-next"]:visible:not([aria-disabled="true"])'
+              ),
+              page.locator(
+                '[aria-label*="pagination" i] a[aria-label="Next"]:visible:not([aria-disabled="true"]), [data-testid="pagination"] a[aria-label="Next"]:visible:not([aria-disabled="true"])'
+              )
+            ]
+            for (const group of groups) {
+              for (let index = 0; index < (await group.count()); index++) {
+                const candidate = group.nth(index)
+                const href = await candidate.getAttribute('href')
+                if (!href) continue
+                try {
+                  next = nextSearchUrl(page.url(), href)
+                  nextLink = candidate
+                  break
+                } catch (error) {
+                  invalid.push(String(error))
+                }
+              }
+              if (nextLink) break
+            }
+            if (!nextLink && invalid.length) throw new Error(`No valid Next pagination link: ${invalid.join('; ')}`)
+            const expectedNext = next
+            const validatedLink = nextLink
+            openNext =
+              expectedNext && validatedLink
+                ? async (navigation) => {
+                    navigation.interaction = await hand.clickNext(validatedLink, expectedNext)
+                    return null
+                  }
+                : undefined
           } finally {
             await saveEvidence(page, prefix)
             await saveReport()
@@ -196,7 +262,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
           }
         }
         if (!report.jobs_saved) throw new Error('No job listings were extracted')
-        report.stop_reason = report.jobs_saved >= options.maxJobs ? 'job_limit' : next ? 'page_limit' : 'no_next_page'
+        report.stop_reason ??= report.jobs_saved >= options.maxJobs ? 'job_limit' : next ? 'page_limit' : 'no_next_page'
       },
       async (profileId) => {
         report.profile_id = profileId
