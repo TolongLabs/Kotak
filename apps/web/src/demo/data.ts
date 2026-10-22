@@ -5,6 +5,7 @@ import type {
   Goal,
   ImpactArea,
   JobSuggestion,
+  LandingExample,
   NationalView,
   Readiness,
   RoadmapStep,
@@ -25,6 +26,28 @@ export const user: User = {
   location: 'Kuala Lumpur',
   lastCheckUp: 'Thu 22 Oct 2026'
 }
+
+// Sample verdicts the landing page shows for three different jobs.
+export const landingExamples: LandingExample[] = [
+  {
+    job: 'Front-End Developer',
+    question: 'Will Hand-Coded Layouts Still Pay?',
+    verdict: 'declining',
+    note: 'Ads asking for them are falling, and AI now drafts most layouts.'
+  },
+  {
+    job: 'Legal Executive',
+    question: 'Is Contract Drafting Still Worth My Hours?',
+    verdict: 'split',
+    note: 'The sources disagree, so Kotak shows two plans instead of a guess.'
+  },
+  {
+    job: 'Graphic Designer',
+    question: 'Should I Learn to Direct AI Image Tools?',
+    verdict: 'rising',
+    note: 'More design work now runs through AI tools, and clients still need a human eye.'
+  }
+]
 
 export const snapshots: Snapshot[] = [
   { id: '2026-04', label: 'April 2026' },

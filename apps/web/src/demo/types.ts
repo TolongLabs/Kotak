@@ -70,6 +70,13 @@ export type Swot = {
   threats: SwotItem[]
 }
 
+export type LandingExample = {
+  job: string
+  question: string
+  verdict: VerdictId
+  note: string
+}
+
 export type Snapshot = {
   id: '2026-04' | '2026-05'
   label: string
