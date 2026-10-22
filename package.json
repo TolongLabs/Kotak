@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "bun run --parallel --filter './apps/*' dev",
     "build": "bun run --filter @kotak/web build",
+    "start": "bun apps/api/src/bun.ts",
     "typecheck": "bun run --parallel --filter '*' typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
