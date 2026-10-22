@@ -19,10 +19,10 @@ export function SettingsView() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[720px] space-y-8">
-      <header className="space-y-2">
+    <div className="space-y-5 lg:space-y-6">
+      <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">Settings</h1>
-        <p className="text-body-m text-text-muted">Manage your saved guest data and preferences on this device.</p>
+        <p className="text-body-s text-text-muted">Manage your saved guest data and preferences on this device.</p>
       </header>
 
       <section className="surface-card space-y-4 p-5 lg:p-6" aria-labelledby="reset-title">
@@ -45,7 +45,7 @@ export function SettingsView() {
             <p className="text-body-s text-text-primary">
               Reset all Kotak data on this device? This action cannot be undone.
             </p>
-            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <Button variant="secondary" fullWidth className="sm:w-auto" onClick={() => setConfirmingReset(false)}>
                 Cancel
               </Button>
