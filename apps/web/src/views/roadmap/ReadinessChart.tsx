@@ -54,16 +54,19 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
       className="space-y-3 rounded-md border border-border-subtle bg-bg-default p-5"
     >
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
-        <h2 id="readiness-title" className="text-title-s text-text-primary">
-          Readiness for {roleTitle}
-        </h2>
+        <div className="min-w-0 space-y-1">
+          <h2 id="readiness-title" className="text-title-s text-text-primary">
+            Readiness for {roleTitle}
+          </h2>
+          <p className="font-mono text-mono-m text-text-primary">{annotation}</p>
+        </div>
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label="Readiness Legend">
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
             <span aria-hidden="true" className="h-0 w-6 border-t-2 border-text-primary" />
             Your Plan
           </li>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
-            <span aria-hidden="true" className="h-0 w-6 border-t-2 border-dashed border-state-success" />
+            <span aria-hidden="true" className="h-0 w-6 border-t-2 border-dashed border-text-muted" />
             Ready = 80% Fit
           </li>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
@@ -131,30 +134,8 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
                   )
                 }}
               />
-              {showToday && (
-                <ReferenceLine
-                  x={todayWeek}
-                  stroke="var(--color-text-primary)"
-                  strokeWidth={2}
-                  label={{
-                    value: 'Today',
-                    position: 'insideTopLeft',
-                    fill: 'var(--color-text-muted)',
-                    fontSize: 12
-                  }}
-                />
-              )}
-              <ReferenceLine
-                y={80}
-                stroke="var(--color-state-success)"
-                strokeDasharray="4 4"
-                label={{
-                  value: 'Ready = 80% Fit',
-                  position: 'insideTopLeft',
-                  fill: 'var(--color-state-success)',
-                  fontSize: 12
-                }}
-              />
+              {showToday && <ReferenceLine x={todayWeek} stroke="var(--color-text-primary)" strokeWidth={2} />}
+              <ReferenceLine y={80} stroke="var(--color-text-muted)" strokeDasharray="4 4" />
               <Line
                 type="monotone"
                 dataKey="plan"
@@ -174,16 +155,10 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
                 <ReferenceDot
                   x={annotationPoint.week}
                   y={annotationPoint.plan}
-                  r={5}
+                  r={6}
                   fill="var(--color-accent-box)"
                   stroke="var(--color-text-primary)"
-                  strokeWidth={1.5}
-                  label={{
-                    value: annotation,
-                    position: annotationPoint.week === xTicks[xTicks.length - 1] ? 'left' : 'bottom',
-                    fill: 'var(--color-text-primary)',
-                    fontSize: 12
-                  }}
+                  strokeWidth={2}
                 />
               ) : null}
             </LineChart>

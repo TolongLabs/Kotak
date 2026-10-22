@@ -5,13 +5,11 @@ import { routes } from '../app/routes'
 import { PageTransition } from '../components/kotak/PageTransition'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { Stepper } from '../components/ui/Stepper'
+import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside, KopiStage } from './checkup/KopiDialogue'
-
-const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 
 // Answers arrive in asking order (rising corners first); the session stores them by the corner's place in the
 // role's batch order: [2i] is corner i's working answer, [2i + 1] its follow-up (see engine/checkup.ts).
@@ -175,7 +173,7 @@ function QuestionsFrame({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
       <h1 className="sr-only">Check-Up Questions</h1>
-      <Stepper step={2} labels={stepLabels} />
+      <Stepper step={2} labels={checkUpSteps} />
       {children}
     </div>
   )

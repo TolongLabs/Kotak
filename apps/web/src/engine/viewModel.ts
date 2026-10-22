@@ -121,7 +121,7 @@ export function toRoles(checkup: Checkup, bundleRoles: BundleRole[], currentCode
       isCurrentJob: role.onet_code === currentCode,
       fit: Math.round(role.fit.score),
       outlook: bundleRole ? roleOutlook(bundleRole, checkup.snapshotId) : 'unknown',
-      missing: gaps.length > 0 ? gaps.join(', ') : 'No gaps'
+      missing: gaps.join(', ')
     }
   })
 }

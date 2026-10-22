@@ -1,16 +1,16 @@
-import { ArrowRight, Briefcase, CircleCheck, Target, TriangleAlert } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
+import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { StatCard } from '../components/kotak/StatCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { SdgChip } from '../components/ui/SdgChip'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { deriveSwot } from '../demo/swot'
-import type { Swot, SwotItem } from '../demo/types'
 import { useRoleBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
@@ -20,94 +20,6 @@ import { useGuestSession } from '../session/store'
 
 const beforeSnapshot: SnapshotId = '2026-04'
 const afterSnapshot: SnapshotId = '2026-05'
-
-const quadrantDetails = [
-  {
-    title: 'Strengths',
-    hint: 'Lead With These',
-    key: 'strengths',
-    icon: CircleCheck,
-    surface: 'border-[1.5px] border-text-primary bg-radar-you-fill'
-  },
-  {
-    title: 'Weaknesses',
-    hint: 'Close These Next',
-    key: 'weaknesses',
-    icon: Target,
-    surface: 'border-[1.5px] border-text-primary bg-bg-default'
-  },
-  {
-    title: 'Opportunities',
-    hint: 'Roles Within Reach',
-    key: 'opportunities',
-    icon: Briefcase,
-    surface: 'border border-border-subtle bg-bg-default'
-  },
-  {
-    title: 'Threats',
-    hint: 'Let AI Draft These',
-    key: 'threats',
-    icon: TriangleAlert,
-    surface: 'border-[1.5px] border-text-primary bg-bg-panel'
-  }
-] as const
-
-function DashboardSwot({ swot, snapshotId }: { swot: Swot; snapshotId: SnapshotId }) {
-  return (
-    <section className="surface-card space-y-4 p-4 lg:p-5" aria-labelledby="dashboard-swot-title">
-      <header className="flex items-start justify-between gap-3">
-        <div className="min-w-0 space-y-1">
-          <h2 id="dashboard-swot-title" className="text-title-s text-text-primary">
-            Your Skills SWOT
-          </h2>
-          <p className="text-body-s text-text-muted">
-            Your skills, sorted by your level and where the market is heading.
-          </p>
-        </div>
-        <Link
-          to={routes.radar}
-          className="inline-flex min-h-11 shrink-0 items-center bg-bg-default px-1 text-label-m text-text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-        >
-          Open Radar
-        </Link>
-      </header>
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        {quadrantDetails.map(({ title, hint, key, icon: Icon, surface }) => {
-          const items = swot[key] as SwotItem[]
-          return (
-            <section key={key} aria-label={title} className={`min-w-0 space-y-2 rounded-md p-3 lg:p-4 ${surface}`}>
-              <div className="flex items-center gap-2">
-                <Icon className="h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
-                <h3 className="text-label-m text-text-primary">{title}</h3>
-              </div>
-              <p className="text-body-s text-text-muted">{hint}</p>
-              {items.length > 0 ? (
-                <ul className="space-y-2.5">
-                  {items.map((item, index) => (
-                    <li key={`${item.label}-${index}`} className="min-w-0 space-y-1">
-                      <p className="break-words text-label-m text-text-primary">{item.label}</p>
-                      <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                        <VerdictChip verdict={item.verdict} size="sm" />
-                        <span className="font-mono text-mono-s text-text-muted">{item.detail}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-body-s text-text-muted">
-                  Not enough data yet to place skills here for {formatSnapshotMonth(snapshotId)}.
-                </p>
-              )}
-            </section>
-          )
-        })}
-      </div>
-      <p className="font-mono text-mono-s text-text-muted">
-        Fixed rules sort the skills. Each verdict cites its sources on the Radar page.
-      </p>
-    </section>
-  )
-}
 
 function DashboardState({ children }: { children: ReactNode }) {
   return <div className="mx-auto w-full max-w-[45rem] space-y-6">{children}</div>
@@ -200,6 +112,10 @@ function ReadinessSparkline({ points }: { points: { week: number; value: number 
       )}
     </svg>
   )
+}
+
+function greeting(hour: number) {
+  return hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening'
 }
 
 function withoutEndingPunctuation(value: string) {
@@ -372,44 +288,42 @@ export function DashboardView() {
     : steps.length > 0
       ? 'All roadmap steps are ticked.'
       : 'No learning steps are available for this snapshot.'
+  // The Next Step card sits right under Kopi, so Kopi points at it instead of repeating its title.
   const kopiSpeech =
-    biggestRisingGap && risingGapStatement
-      ? `Your biggest rising gap is ${biggestRisingGap.name}. Start here: “${withoutEndingPunctuation(risingGapStatement)}.”`
-      : biggestRisingGap
-        ? `Your biggest rising gap is ${biggestRisingGap.name}. I don’t have a step for that gap yet.`
-        : nextStep
-          ? `No rising gap stands out in this snapshot. Your next step is “${withoutEndingPunctuation(nextStep.title)}.”`
-          : steps.length > 0
-            ? 'No rising gap stands out in this snapshot. You’ve ticked all your roadmap steps.'
-            : 'No rising gap or roadmap steps stand out in this snapshot.'
+    biggestRisingGap && risingGapStep && risingGapStep.id === nextStep?.id
+      ? `Your biggest rising gap is ${biggestRisingGap.name}. Start with the next step below.`
+      : biggestRisingGap && risingGapStatement
+        ? `Your biggest rising gap is ${biggestRisingGap.name}. Start here: “${withoutEndingPunctuation(risingGapStatement)}.”`
+        : biggestRisingGap
+          ? `Your biggest rising gap is ${biggestRisingGap.name}. I don’t have a step for that gap yet.`
+          : nextStep
+            ? `No rising gap stands out in this snapshot. Your next step is “${withoutEndingPunctuation(nextStep.title)}.”`
+            : steps.length > 0
+              ? 'No rising gap stands out in this snapshot. You’ve ticked all your roadmap steps.'
+              : 'No rising gap or roadmap steps stand out in this snapshot.'
 
   return (
     <div className="space-y-5 lg:space-y-6">
       <header className="space-y-1.5">
-        <h1 className="text-title-m text-text-primary lg:text-title-l">Good Morning, Guest</h1>
+        <h1 className="text-title-m text-text-primary lg:text-title-l">{greeting(new Date().getHours())}, Guest</h1>
         <p className="text-body-s text-text-muted">{role.title}</p>
         {(workGoals.length > 0 || planGoals.length > 0) && (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             {workGoals.length > 0 && (
-              <>
+              <span className="inline-flex flex-wrap items-center gap-2">
                 <span className="text-label-s text-text-muted">Your Work Supports</span>
                 {workGoals.map((goal) => (
                   <SdgChip key={goal} goal={goal} title={workSdgs?.reason} />
                 ))}
-              </>
-            )}
-            {workGoals.length > 0 && planGoals.length > 0 && (
-              <span aria-hidden="true" className="text-text-muted">
-                ·
               </span>
             )}
             {planGoals.length > 0 && (
-              <>
+              <span className="inline-flex flex-wrap items-center gap-2">
                 <span className="text-label-s text-text-muted">Your Plan Supports</span>
                 {planGoals.map((goal) => (
                   <SdgChip key={goal} goal={goal} />
                 ))}
-              </>
+              </span>
             )}
           </div>
         )}
@@ -422,6 +336,32 @@ export function DashboardView() {
           body="Kopi drafted these skills from the job’s O*NET tasks. The team has not checked them by hand yet."
         />
       )}
+
+      <CatDialogue pose="explaining" speech={kopiSpeech} />
+
+      <section
+        aria-labelledby="next-step-title"
+        className="flex flex-col gap-4 rounded-md border border-border-subtle bg-bg-panel p-5 md:flex-row md:items-center md:justify-between md:gap-6"
+      >
+        <div className="min-w-0 space-y-2">
+          <p className="text-label-m text-text-muted">Next Step</p>
+          <h2 id="next-step-title" className="break-words text-title-s text-text-primary">
+            {nextStep?.title || nextStep?.skill || (steps.length > 0 ? 'Plan Complete' : 'No Roadmap Steps')}
+          </h2>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            {nextStepGoals.map((goal) => (
+              <SdgChip key={goal} goal={goal} />
+            ))}
+            <p className="text-body-s text-text-muted">{nextStepDescription}</p>
+          </div>
+        </div>
+        <Link
+          to={routes.roadmap}
+          className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring md:w-auto"
+        >
+          {nextStep ? 'Continue My Plan' : 'Open Your Roadmap'}
+        </Link>
+      </section>
 
       <section aria-label="Your Progress" className="grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4">
         <div className="flex h-full flex-col [&>section]:flex-1">
@@ -462,15 +402,17 @@ export function DashboardView() {
         </div>
         <div className="flex h-full flex-col [&>section]:flex-1">
           <StatCard
-            label="What Changed"
-            value={snapshotDiff ? `${changedSkills} Skills Changed in May` : 'Comparison Unavailable'}
+            label="What Changed in May"
+            value={snapshotDiff ? `${changedSkills} Skill${changedSkills === 1 ? '' : 's'}` : 'Not Available'}
           >
             {exampleChange ? (
               <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
                 <span className="sr-only">{exampleChange.name}:</span>
                 <VerdictChip verdict={verdictId(exampleChange.before.status)} size="sm" />
-                <ArrowRight className="h-4 w-4 shrink-0 stroke-current text-text-primary" aria-hidden="true" />
-                <VerdictChip verdict={verdictId(exampleChange.after.status)} size="sm" />
+                <span className="inline-flex items-center gap-1.5">
+                  <ArrowRight className="h-4 w-4 shrink-0 stroke-current text-text-primary" aria-hidden="true" />
+                  <VerdictChip verdict={verdictId(exampleChange.after.status)} size="sm" />
+                </span>
               </div>
             ) : (
               <p className="text-body-s text-text-muted">
@@ -499,35 +441,7 @@ export function DashboardView() {
         </div>
       </section>
 
-      <div className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_1fr]">
-        <DashboardSwot swot={swot} snapshotId={currentCheckup.snapshotId} />
-
-        <div className="flex min-w-0 flex-col gap-4 xl:h-full">
-          <div className="min-w-0 [&>div]:!flex-row [&>div]:!items-end [&>div]:!gap-4 [&>div>div:first-child]:!h-28">
-            <CatDialogue pose="explaining" speech={kopiSpeech} />
-          </div>
-
-          <section className="flex min-h-[216px] flex-1 flex-col justify-between gap-6 rounded-md border border-border-subtle bg-bg-panel p-5">
-            <div className="space-y-2">
-              <p className="text-label-m text-text-muted">Next Step</p>
-              <h2 className="break-words text-title-s text-text-primary">
-                {nextStep?.title || nextStep?.skill || (steps.length > 0 ? 'Plan Complete' : 'No Roadmap Steps')}
-              </h2>
-              {nextStepGoals.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {nextStepGoals.map((goal) => (
-                    <SdgChip key={goal} goal={goal} />
-                  ))}
-                </div>
-              )}
-              <p className="text-body-s text-text-muted">{nextStepDescription}</p>
-            </div>
-            <Button variant="primary" size="lg" className="w-full" onClick={() => navigate(routes.roadmap)}>
-              {nextStep ? 'Continue My Plan' : 'Open Your Roadmap'}
-            </Button>
-          </section>
-        </div>
-      </div>
+      <SkillsSwot swot={swot} radarLink />
     </div>
   )
 }

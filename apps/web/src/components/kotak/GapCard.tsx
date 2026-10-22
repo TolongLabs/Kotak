@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Corner, Scenario, SourceRef } from '../../demo/types'
 import { Reasoning } from './Reasoning'
 import { SourceReference } from './SourceReference'
@@ -20,6 +21,10 @@ export function GapCard({
   neededLabel = 'Needed by 2027'
 }: GapCardProps) {
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
+  // Two sources up front, as on the landing example card; the rest open and close in place.
+  const [showAll, setShowAll] = useState(false)
+  const shownSources = showAll ? sources : sources.slice(0, 2)
+  const hiddenCount = sources.length - shownSources.length
 
   return (
     <article className="surface-card space-y-3 p-4">
@@ -32,14 +37,27 @@ export function GapCard({
 
       {corner.reasoning ? <Reasoning text={corner.reasoning} paused={paused} /> : null}
 
-      {sources.length > 0 ? (
+      {shownSources.length > 0 ? (
         <ul className="space-y-2" aria-label={`Sources for ${corner.name}`}>
-          {sources.map((source) => (
+          {shownSources.map((source) => (
             <li key={source.n}>
               <SourceReference source={source} />
             </li>
           ))}
         </ul>
+      ) : null}
+
+      {sources.length > 2 ? (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            aria-expanded={showAll}
+            onClick={() => setShowAll((value) => !value)}
+            className="inline-flex min-h-11 items-center px-2 text-label-s font-semibold text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted"
+          >
+            {showAll ? 'Show Fewer Sources' : `+${hiddenCount} More Sources`}
+          </button>
+        </div>
       ) : null}
     </article>
   )

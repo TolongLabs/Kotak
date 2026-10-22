@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button'
 import { ChoiceCard } from '../components/ui/ChoiceCard'
 import { SearchField } from '../components/ui/SearchField'
 import { TextField } from '../components/ui/TextField'
-import { Stepper } from '../components/ui/Stepper'
+import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
 import type { BundleRoleIndexEntry, Occupation } from '@kotak/shared'
 import { goals } from '../demo/data'
@@ -18,7 +18,6 @@ import { updateGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import type { RoleMatchResponse } from '@kotak/shared'
 
-const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 const goalIcons = { stay: Briefcase, target: Route, explore: PackageOpen }
 // The three roles the team hand-checks (#104) plus Software Developers lead the list before anything is typed.
 const suggestedCodes = ['15-1254.00', '15-1255.00', '43-3031.00', '15-1252.00']
@@ -235,7 +234,7 @@ export function CheckUpView() {
     return (
       <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
         <h1 className="sr-only">Find Your Job</h1>
-        <Stepper step={1} labels={stepLabels} />
+        <Stepper step={1} labels={checkUpSteps} />
         <KopiAside pose="worried" speech="Hmm, I couldn’t find that job. Try a simpler title?" />
 
         <TextFieldForNoMatch value={jobQuery} onChange={updateJobQuery} />
@@ -274,7 +273,7 @@ export function CheckUpView() {
 
   return (
     <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
-      <Stepper step={1} labels={stepLabels} />
+      <Stepper step={1} labels={checkUpSteps} />
       <KopiAside pose="idle" speech="Hi, I’m Kopi. Let’s open the box on your job." />
 
       <section className="space-y-1.5" aria-labelledby="work-heading">

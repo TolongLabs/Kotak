@@ -12,7 +12,9 @@ export function StatCard({ label, value, caption, children }: StatCardProps) {
   return (
     <section className="surface-card flex min-w-0 flex-col gap-2 p-4">
       <h3 className="text-label-m text-text-muted">{label}</h3>
-      <p className="hyphens-auto text-title-l text-text-primary [overflow-wrap:anywhere]">{value}</p>
+      <p className="hyphens-auto text-title-m tabular-nums text-text-primary [overflow-wrap:anywhere] lg:text-title-l">
+        {value}
+      </p>
       {children}
       {caption && <p className="text-body-s text-text-muted">{caption}</p>}
     </section>

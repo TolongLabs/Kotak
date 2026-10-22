@@ -18,7 +18,7 @@ import { formatLevel } from './fit'
 export function kopiRoleSpeech(ranked: Role[], focus?: Role): string {
   if (focus) {
     const nextGap = focus.missing.split(', ')[0]
-    return `${focus.title} fits you at ${focus.fit}%.${nextGap ? ` Close ${nextGap} next.` : ''}`
+    return `${focus.title} fits you at ${focus.fit}%. ${nextGap ? `Close ${nextGap} next.` : 'You already meet every needed level.'}`
   }
   const bestFit = ranked.reduce<Role | undefined>(
     (best, candidate) => (!best || candidate.fit > best.fit ? candidate : best),
