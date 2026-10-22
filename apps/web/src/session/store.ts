@@ -10,10 +10,11 @@ const cleanSession: GuestSession = {
   goal: null,
   impact_area: null,
   target_role_code: null,
+  plan_role_code: null,
   answers: Array<boolean | null>(12).fill(null),
   follow_up_answers: {},
   ticked_milestones: [],
-  custom_weekly_hours: null,
+  custom_weekly_hours: 4,
   pasted_job_ad_quotes: [],
   // Kopi starts muted, as every view did before this store (#133); one tap on the speech box unmutes.
   tts_muted: true,

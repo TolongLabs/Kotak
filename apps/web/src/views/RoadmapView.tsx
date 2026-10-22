@@ -15,7 +15,7 @@ import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
 import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
 import { useRoleBundle } from '../engine/bundle'
-import { computeCheckup } from '../engine/checkup'
+import { assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { toReadinessPoints, toRoadmapSources, toRoadmapSteps } from '../engine/roadmapModel'
 import { cornerReasoning } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
@@ -214,7 +214,7 @@ function RoadmapStepWithoutResource({
 
 export function RoadmapView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(session.role_code)
+  const bundle = useRoleBundle(assessedRoleCode(session))
   const scenario = DEFAULT_SCENARIO
   const [today] = useState(() => toIsoDate(new Date()))
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null)
@@ -228,12 +228,20 @@ export function RoadmapView() {
       role: roleBundle.role,
       related: roleBundle.related,
       answers: session.answers,
-      snapshotId: '2026-05',
+      snapshotId: session.active_snapshot_id,
       scenario: DEFAULT_SCENARIO,
       weeklyHours: session.custom_weekly_hours,
-      startDate
+      startDate,
+      planRoleCode: session.plan_role_code
     })
-  }, [roleBundle, session.answers, session.custom_weekly_hours, startDate])
+  }, [
+    roleBundle,
+    session.answers,
+    session.custom_weekly_hours,
+    session.active_snapshot_id,
+    session.plan_role_code,
+    startDate
+  ])
 
   if (!session.role_code) {
     return (
@@ -280,7 +288,9 @@ export function RoadmapView() {
     )
   }
 
-  const role = bundle.data.role
+  const role =
+    [bundle.data.role, ...bundle.data.related].find((candidate) => candidate.onet_code === checkup?.planRoleCode) ??
+    bundle.data.role
   const steps = toRoadmapSteps(checkup, role, session.ticked_milestones)
   const readinessPoints = toReadinessPoints(checkup, role)
   const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
