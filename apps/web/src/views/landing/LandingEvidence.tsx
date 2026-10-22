@@ -247,7 +247,13 @@ export function LandingFooter() {
             <div className="flex flex-col gap-2">
               <h2 className="text-label-m text-text-primary">Credits</h2>
               <ul className="space-y-1.5 text-body-s text-text-muted">
-                <li>Kopi: Live2D sample model Hijiki © Live2D Inc.</li>
+                {/* The notice Live2D designates for apps that use its Original Characters, word for word:
+                    https://www.live2d.com/en/learn/sample/model-terms/ (#142) */}
+                <li>
+                  Kopi: Live2D sample model Hijiki. This content uses sample data owned and copyrighted by Live2D Inc.
+                  The sample data are utilized in accordance with terms and conditions set by Live2D Inc. This content
+                  itself is created at the author’s sole discretion.
+                </li>
                 <li>Icons: Lucide (ISC)</li>
                 <li>Data: O*NET, OpenDOSM (CC BY 4.0)</li>
               </ul>
