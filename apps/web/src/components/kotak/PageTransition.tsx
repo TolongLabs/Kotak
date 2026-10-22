@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { ProgressBar } from '../ui/ProgressBar'
 import { cn } from '../ui/cn'
 
 export interface PageTransitionProps {
@@ -80,10 +79,31 @@ export function PageTransition({ onDone, durationMs = 2400 }: PageTransitionProp
       role="status"
       className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-accent-box p-8 text-center text-accent-on-box"
     >
-      <OpeningBox open={open} className="h-64 w-72 lg:h-88 lg:w-96" />
+      <div className="flex h-[264px] w-[288px] items-center justify-center lg:h-[352px] lg:w-[384px]">
+        <OpeningBox open={open} className="h-[114px] w-[142px] lg:h-[170px] lg:w-[204px]" />
+      </div>
       <p className="text-title-l lg:text-display-l">Opening the Box…</p>
-      <p className="max-w-xs text-body-l lg:max-w-lg">Kopi is reading four sources for you.</p>
-      <ProgressBar label="Reading Four Sources" value={progress} className="w-72 lg:w-90" />
+      <p className="max-w-[300px] text-body-l lg:max-w-[520px]">Kopi is reading four sources for you.</p>
+      <div className="w-[280px] space-y-2 lg:w-[360px]">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-label-m">Reading Four Sources</span>
+          <span className="font-mono text-mono-s">{progress}%</span>
+        </div>
+        <div
+          role="progressbar"
+          aria-label="Reading Four Sources"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuetext={`${progress}%`}
+          className="h-2 w-full overflow-hidden rounded-full bg-bg-default"
+        >
+          <div
+            className="h-full rounded-full bg-text-primary transition-[width] duration-150 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
       <p className="font-mono text-mono-s">O*NET · Economic Index · DOSM · MyCOL</p>
     </div>
   )
