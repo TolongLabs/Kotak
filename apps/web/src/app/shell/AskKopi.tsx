@@ -7,7 +7,7 @@ import {
   type GuestSession
 } from '@kotak/shared'
 import { MessageCircle, RotateCcw, SendHorizontal, Wrench, X } from 'lucide-react'
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode, type Ref, type RefObject } from 'react'
 import { KopiFigure } from '../../components/kopi/KopiFigure'
 import { useReducedMotion } from '../../components/kopi/motion'
 import type { KopiPose } from '../../components/kopi/poses'
@@ -22,8 +22,9 @@ import { useGuestSession } from '../../session/store'
 import { navigate } from '../router'
 import { routes } from '../routes'
 
-// Ask Kopi (#191): a chat panel on every /app page. Kopi answers with Kotak's tools on the guest session's check-up
-// through POST /api/agent/chat. The conversation lives in memory until the page closes.
+// Ask Kopi (#191): a chat window on every /app page, opened from a button in the bottom-right corner. Kopi answers with
+// Kotak's tools on the guest session's check-up through POST /api/agent/chat. The conversation lives in memory until
+// the page closes.
 
 interface Exchange {
   question: string
@@ -58,34 +59,47 @@ function suggestionsFor(session: GuestSession, hasCheckup: boolean) {
   ]
 }
 
+const ASK_KOPI_PANEL_ID = 'ask-kopi-panel'
+
+// Floats in the bottom-right corner of every /app page and toggles the chat window above it. The label stays "Ask Kopi";
+// aria-expanded says whether the window is open.
 export function AskKopiButton({
+  open,
   onClick,
-  compact = false,
-  className
+  ref
 }: {
+  open: boolean
   onClick: () => void
-  compact?: boolean
-  className?: string
+  ref?: Ref<HTMLButtonElement>
 }) {
+  const Icon = open ? X : MessageCircle
   return (
     <button
+      ref={ref}
       type="button"
       aria-haspopup="dialog"
-      aria-label={compact ? 'Ask Kopi' : undefined}
+      aria-expanded={open}
+      aria-controls={ASK_KOPI_PANEL_ID}
       onClick={onClick}
-      className={cn(
-        'inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-bg-default text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel',
-        compact ? 'w-11' : 'border-[1.5px] border-text-primary px-4 text-label-m',
-        className
-      )}
+      className="fixed bottom-4 right-4 z-40 inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border-[1.5px] border-text-primary bg-accent-box px-5 text-label-m text-accent-on-box shadow-[var(--shadow-popover)] transition-colors duration-150 ease-out hover:bg-accent-box-hover"
     >
-      <MessageCircle className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
-      {!compact && 'Ask Kopi'}
+      <Icon className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
+      Ask Kopi
     </button>
   )
 }
 
-export function AskKopiPanel({ open, onClose, dataLabel }: { open: boolean; onClose: () => void; dataLabel: string }) {
+export function AskKopiPanel({
+  open,
+  onClose,
+  dataLabel,
+  returnFocusRef
+}: {
+  open: boolean
+  onClose: () => void
+  dataLabel: string
+  returnFocusRef: RefObject<HTMLButtonElement | null>
+}) {
   const session = useGuestSession()
   const index = useRoleIndex()
   const { reduced } = useReducedMotion()
@@ -95,7 +109,6 @@ export function AskKopiPanel({ open, onClose, dataLabel }: { open: boolean; onCl
   const dialogRef = useRef<HTMLDialogElement>(null)
   const logRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const openerRef = useRef<HTMLElement | null>(null)
   const titleId = useId()
   const inputId = useId()
   const hintId = useId()
@@ -107,21 +120,19 @@ export function AskKopiPanel({ open, onClose, dataLabel }: { open: boolean; onCl
     index.status === 'ready' ? index.data.roles.find((role) => role.onet_code === roleCode)?.title : undefined
   const pose: KopiPose = sending ? 'thinking' : pending ? 'worried' : exchanges.length > 0 ? 'explaining' : 'idle'
 
-  // Opens as a modal dialog, so the page behind is inert; focus starts in the question box and returns to the button
-  // that opened the panel.
+  // Opens as a non-modal window above the button, so the page stays in view and usable; focus starts in the question
+  // box, Escape closes it, and focus returns to the Ask Kopi button (some browsers don't focus a clicked button).
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
     if (open && !dialog.open) {
-      openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
-      dialog.showModal()
+      dialog.show()
       inputRef.current?.focus()
-    } else if (!open) {
-      if (dialog.open) dialog.close()
-      openerRef.current?.focus()
-      openerRef.current = null
+    } else if (!open && dialog.open) {
+      dialog.close()
+      returnFocusRef.current?.focus()
     }
-  }, [open])
+  }, [open, returnFocusRef])
 
   // Each new question scrolls to the top of the log, so the question and the start of Kopi's reply show together.
   useEffect(() => {
@@ -187,13 +198,14 @@ export function AskKopiPanel({ open, onClose, dataLabel }: { open: boolean; onCl
   return (
     <dialog
       ref={dialogRef}
+      id={ASK_KOPI_PANEL_ID}
       aria-labelledby={titleId}
       onClose={onClose}
-      onClick={(event) => {
-        // A click on the dialog itself, not its content, is a click on the backdrop.
-        if (event.target === event.currentTarget) onClose()
+      onKeyDown={(event) => {
+        // A non-modal dialog doesn't close on Escape by itself.
+        if (event.key === 'Escape' && !event.nativeEvent.isComposing) onClose()
       }}
-      className="fixed inset-y-0 left-auto right-0 m-0 h-dvh max-h-dvh w-full max-w-full border-border-subtle bg-bg-default p-0 text-text-primary backdrop:bg-surface-glass backdrop:backdrop-blur-xl sm:w-[28rem] sm:border-l"
+      className="fixed inset-auto bottom-(--ask-kopi-clearance) right-4 z-40 m-0 h-[min(36rem,calc(100dvh-6.5rem))] w-[calc(100vw-2rem)] overflow-hidden rounded-md border-[1.5px] border-text-primary bg-bg-default p-0 text-text-primary shadow-[var(--shadow-popover)] sm:w-[26rem]"
     >
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-3">
@@ -328,10 +340,7 @@ export function AskKopiPanel({ open, onClose, dataLabel }: { open: boolean; onCl
           {announcement}
         </p>
 
-        <form
-          onSubmit={submit}
-          className="flex items-end gap-2 border-t border-border-subtle p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
-        >
+        <form onSubmit={submit} className="flex items-end gap-2 border-t border-border-subtle p-4">
           <label htmlFor={inputId} className="sr-only">
             Your Question
           </label>
