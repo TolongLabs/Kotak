@@ -11,7 +11,7 @@ import { Button } from '../components/ui/Button'
 import { ScenarioSwitch } from '../components/ui/ScenarioSwitch'
 import { Stepper } from '../components/ui/Stepper'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
-import { useCheckup } from '../engine/checkup'
+import { useCheckup, type Checkup } from '../engine/checkup'
 import { useRoleBundle } from '../engine/bundle'
 import { useGuestSession } from '../session/store'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
@@ -24,16 +24,19 @@ function gapFor(corner: Corner, scenario: Scenario) {
   return needed - corner.you
 }
 
-function quarterLabels(snapshotId: string) {
+function snapshotMonth(snapshotId: string) {
   const [year, month] = snapshotId.split('-').map(Number)
-  const quarter = Math.floor((month - 1) / 3) + 1
-  const nextQuarter = quarter === 4 ? 1 : quarter + 1
-  const nextYear = quarter === 4 ? year + 1 : year
+  const date = new Date(Date.UTC(year, month - 1, 1))
+  return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+}
 
-  return {
-    current: `Q${quarter} ${year}`,
-    next: `Q${nextQuarter} ${nextYear}`
-  }
+function latestSourceVintageDate(checkup: Checkup): string | null {
+  const dates = checkup.corners
+    .flatMap((corner) => corner.verdict.sources)
+    .map((source) => source.vintage_date)
+    .filter(Boolean)
+  if (dates.length === 0) return null
+  return [...dates].sort().reverse()[0]
 }
 
 function RadarCatDialogue({ pose, speech }: { pose: 'explaining' | 'worried'; speech: string }) {
@@ -95,7 +98,8 @@ export function RadarView() {
   const roles = toRoles(checkup, [role, ...related], session.role_code)
   const swot = deriveSwot(corners, roles, scenario)
   const neededLabel = neededByLabel(checkup)
-  const snapshotQuarters = quarterLabels(checkup.snapshotId)
+  const activeMonth = snapshotMonth(checkup.snapshotId)
+  const latestVintage = latestSourceVintageDate(checkup)
 
   const biggestRisingGap = corners
     .filter((corner) => corner.verdict === 'rising' && gapFor(corner, scenario) > 0)
@@ -209,8 +213,8 @@ export function RadarView() {
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
           <Banner
             type="info"
-            title={`Data as of ${snapshotQuarters.current}`}
-            body={`Next DOSM release: ${snapshotQuarters.next}. We refresh the day it lands.`}
+            title={`Data as of ${activeMonth}`}
+            body={latestVintage ? `Latest source vintage date: ${latestVintage}` : undefined}
           />
         </section>
 
