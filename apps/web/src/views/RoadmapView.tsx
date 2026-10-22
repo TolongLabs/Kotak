@@ -3,6 +3,7 @@ import { Check, Clock3 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
+import { AiDraftedBanner } from '../components/kotak/AiDraftedBanner'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoadmapStepCard } from '../components/kotak/RoadmapStepCard'
@@ -390,13 +391,7 @@ export function RoadmapView() {
           }
         />
 
-        {role.quality === 'auto-generated' && (
-          <Banner
-            type="info"
-            title="AI-Drafted Skills"
-            body="Kopi drafted these skills from the job’s O*NET tasks. The team has not checked them by hand yet."
-          />
-        )}
+        {role.quality === 'auto-generated' && <AiDraftedBanner roleCode={role.onet_code} />}
 
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1.5">

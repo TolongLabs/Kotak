@@ -1,5 +1,6 @@
 import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { RefreshCw } from 'lucide-react'
+import { AiDraftedBanner } from '../components/kotak/AiDraftedBanner'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { SourceList } from '../components/kotak/SourceList'
 import { WhatChangedCard } from '../components/kotak/WhatChangedCard'
@@ -138,13 +139,7 @@ export function WhatChangedView() {
         size="md"
       />
 
-      {role.quality === 'auto-generated' && (
-        <Banner
-          type="info"
-          title="AI-Drafted Skills"
-          body="Kopi drafted these skills from the job’s O*NET tasks. The team has not checked them by hand yet."
-        />
-      )}
+      {role.quality === 'auto-generated' && <AiDraftedBanner roleCode={role.onet_code} />}
 
       <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
 
