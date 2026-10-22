@@ -28,6 +28,18 @@ export function verificationTimeout(value = 120_000): number {
   return value
 }
 
+export function pacingJitter(value = 0): number {
+  if (!Number.isInteger(value) || value < 0 || value > 60_000)
+    throw new Error('--delay-jitter-ms must be an integer from 0 to 60000')
+  return value
+}
+
+export async function pauseBetweenRequests(delayMs: number, jitterMs: number): Promise<void> {
+  const wait = delayMs + Math.floor(Math.random() * (jitterMs + 1))
+  console.info(`Waiting ${(wait / 1000).toFixed(1)}s before the next page/job`)
+  await Bun.sleep(wait)
+}
+
 async function isVerification(page: Page, response: Response | null): Promise<boolean> {
   if ((await response?.headerValue('cf-mitigated')) === 'challenge') return true
   return page.evaluate(() => {
@@ -48,8 +60,8 @@ async function waitForVerification(
   options: { timeoutMs: number; evidencePrefix?: string }
 ) {
   const initial = latestResponse()
-  // Authentication failures and rate limits remain terminal, even if branded as verification.
-  if ([401, 429].includes(initial?.status() ?? 0) || !(await isVerification(page, initial))) return
+  // Cloudflare can serve verification with HTTP 429 too; inspect the challenge before treating it as a rate limit.
+  if (initial?.status() === 401 || !(await isVerification(page, initial))) return
   const started = Date.now()
   const deadline = started + options.timeoutMs
   const state: VerificationState = {
