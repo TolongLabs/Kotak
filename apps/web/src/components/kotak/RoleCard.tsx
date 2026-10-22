@@ -17,7 +17,7 @@ export function RoleCard({ role, selected, onSelect, name }: RoleCardProps) {
       className={cn(
         'relative flex min-w-0 cursor-pointer flex-col gap-3 rounded-md border-[1.5px] p-4 transition-colors duration-150 ease-out has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring',
         selected
-          ? 'border-text-primary bg-accent-box text-accent-on-box'
+          ? 'on-accent border-text-primary bg-accent-box text-accent-on-box'
           : 'border-border-control bg-bg-default hover:bg-bg-panel'
       )}
     >

@@ -328,7 +328,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                       className={cn(
                         'flex h-11 w-full items-center justify-center rounded-sm border text-body-m text-text-primary focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 focus-visible:outline-bg-default disabled:cursor-not-allowed disabled:text-text-muted',
                         selected
-                          ? 'border-[1.5px] border-text-primary bg-accent-box'
+                          ? 'on-accent border-[1.5px] border-text-primary bg-accent-box'
                           : isToday
                             ? 'border border-text-primary bg-bg-default'
                             : 'border border-transparent bg-bg-default',
