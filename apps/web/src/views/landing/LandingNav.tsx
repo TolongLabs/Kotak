@@ -4,7 +4,6 @@ import { Link } from '../../app/router'
 import { routes } from '../../app/routes'
 import { Logo } from '../../components/brand/Logo'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
-import { LandingActionLink } from './LandingActionLink'
 
 const anchorClass =
   'inline-flex min-h-11 items-center justify-center rounded-sm px-3 text-label-m text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-default'
@@ -40,14 +39,6 @@ export function LandingNav() {
           <Link to={routes.signIn} className={anchorClass}>
             Sign In
           </Link>
-          <LandingActionLink
-            to={routes.checkUp}
-            variant="primary"
-            showArrow={false}
-            className="min-h-11 px-4 text-label-m"
-          >
-            Start
-          </LandingActionLink>
         </div>
 
         <div className="flex items-center gap-1">
@@ -79,9 +70,6 @@ export function LandingNav() {
           <Link to={routes.signIn} className={anchorClass} onClick={closeMenu}>
             Sign In
           </Link>
-          <LandingActionLink to={routes.checkUp} variant="primary" className="w-full" onClick={closeMenu}>
-            Start
-          </LandingActionLink>
         </div>
       ) : null}
     </header>
