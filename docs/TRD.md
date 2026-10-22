@@ -863,7 +863,7 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 - **Live link**: the link must load without cold-start failures and stay up through judging ([#33]). The post-deploy smoke check confirms it after each deploy ([#62]). A remote smoke test from another network and device runs the judge path before submission ([#94]).
 - **No live dependency for the demo**: scores, verdicts and the snapshot switch run in the browser from static JSON. Demo explanations and fixed voice lines are pre-warmed.
 - **Worker limits**: the free plan allows 100,000 requests a day and 10 ms of CPU per request, not counting network waits ([deploy notes][deploy]). Heavy work stays in the browser and the build. The Worker bundle is about 6.9 MiB, or 1.1 MiB gzipped; Cloudflare counts only the uncompressed size, against a 64 MiB limit ([Workers limits][cf-limits]).
-- **MCP CPU budget**: a check-up reads 21 role files, which is the heaviest work the Worker does. The MCP server parses each file once per isolate and skips its Zod parse, skips the MCP SDK's output check, and warms its code at isolate startup rather than in a request. Measured locally after the warm-up, a cold `run_checkup` costs about 16 ms of CPU in V8 and 8 ms in Bun, down from about 25 ms, and a warm one about 2 ms. The real figure is the `cpuTime` in Workers Logs after a deploy. If cold calls exceed the limit, the Bun server on Replit is the fallback MCP URL ([#186]).
+- **MCP CPU budget**: a check-up reads 21 role files, which is the heaviest work the Worker does. The MCP server parses each file once per isolate and skips its Zod parse, skips the MCP SDK's output check, and warms its code at isolate startup rather than in a request. Measured locally after the warm-up, a cold `run_checkup` costs about 16 ms of CPU in V8 and 8 ms in Bun, down from about 25 ms, and a warm one about 2 ms. On the live Worker on 23 October, the **Worker CPU** workflow (`.github/workflows/worker-cpu.yml`) measured 15 to 54 ms of CPU per `run_checkup` call. Every call still returned `ok`, and over 24 hours there were no `exceededResources` invocations (P99 33 ms). Whether the plan enforces the 10 ms limit is still open in [#202]. If MCP calls start failing, the Bun server on Replit is the fallback MCP URL ([#186]).
 
 [cf-limits]: https://developers.cloudflare.com/workers/platform/limits/
 
@@ -1040,6 +1040,7 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 [#184]: https://github.com/TolongLabs/sdc-hack/issues/184
 [#185]: https://github.com/TolongLabs/sdc-hack/issues/185
 [#186]: https://github.com/TolongLabs/sdc-hack/issues/186
+[#202]: https://github.com/TolongLabs/sdc-hack/issues/202
 [#187]: https://github.com/TolongLabs/sdc-hack/issues/187
 [#188]: https://github.com/TolongLabs/sdc-hack/issues/188
 [#189]: https://github.com/TolongLabs/sdc-hack/issues/189
