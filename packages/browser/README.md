@@ -1,6 +1,6 @@
 # Browser profiles
 
-`@kotak/browser` gives the scraper saved browser profiles, without Kameleo. Each profile keeps one device identity. It drives the open build of [Clearcote](https://github.com/clearcotelabs/clearcote-browser), a de-Googled Chromium with fingerprint controls compiled into the engine. Everything runs on this machine: no account, quota, telemetry or local server.
+`@kotak/browser` gives the scraper saved browser profiles. Each profile keeps one device identity. It drives the open build of [Clearcote](https://github.com/clearcotelabs/clearcote-browser), a de-Googled Chromium with fingerprint controls compiled into the engine. Everything runs on this machine: no account, quota, telemetry or local server.
 
 Contents:
 
@@ -32,7 +32,7 @@ The first launch downloads the Clearcote build pinned by the `clearcote` SDK (ab
 
 ### Library
 
-`withProfile()` has the same shape as the scraper's former `withKameleo()`. Without `profileId`, it creates a profile for the run and deletes it afterwards. With one, it reuses that saved identity and its cookies.
+`withProfile()` runs a scraper operation with a browser profile. Without `profileId`, it creates a profile for the run and deletes it afterwards. With one, it reuses that saved identity and its cookies.
 
 ```ts
 import { withProfile } from '@kotak/browser'
@@ -47,17 +47,7 @@ const title = await withProfile({ profileId: '…' }, async (page) => {
 
 ## Design
 
-The structure follows what [REA](https://github.com/morluto/rea) showed about Kameleo 5.3.1, keeping the local parts and dropping the vendor services.
-
-| Kameleo                                                        | Here                                                                       |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Engine: ASP.NET API on `127.0.0.1:5050`, `/playwright/{id}` WS | In-process library; no open port                                           |
-| Kernel: Chroma, a patched Chromium                             | Clearcote open build, a patched ungoogled-chromium                         |
-| Fingerprint search against Kameleo's servers                   | A random seed per profile; the engine derives one coherent machine from it |
-| Start info sent to the kernel at each launch                   | The seed and this machine's values, passed as launch options               |
-| Start info: `LocationInfo` resolved from the exit IP           | Opt-in `--geoip`; otherwise a fixed timezone and languages                 |
-| Workspace folder per profile                                   | `.local/browser-profiles/<id>/` with `profile.json` and `data/`            |
-| Profile Hub, Sentry, OpenTelemetry, quotas, device ID, updates | None                                                                       |
+Each profile uses the local Clearcote Chromium build and stores its identity under `.local/browser-profiles/<id>/` in `profile.json` and `data/`. A per-profile seed and machine values are passed as launch options. GeoIP matching is opt-in; otherwise profiles use the configured default timezone and languages. No remote profile service is required.
 
 A profile presents Chrome on Windows, `en-MY` and `Asia/Kuala_Lumpur` by default. The engine derives the GPU, canvas and WebGL noise and the rest of the machine from the seed; the user agent, client hints, TLS handshake and HTTP/2 settings come from the same Chromium, so they agree. Values are kept close to the machine that created the profile:
 

@@ -32,6 +32,11 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Apply database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: bun run db:migrate
+
       - name: Deploy Worker
         id: deploy
         uses: cloudflare/wrangler-action@v4
@@ -43,10 +48,12 @@ jobs:
             ANTHROPIC_API_KEY
             ELEVENLABS_API_KEY
             DATABASE_URL
+            SCRAPER_ADMIN_TOKEN
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SCRAPER_ADMIN_TOKEN: ${{ secrets.SCRAPER_ADMIN_TOKEN }}
 
       - name: Check deployed health endpoint
         env:

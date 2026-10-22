@@ -1,10 +1,11 @@
 # JobStreet research scraper
 
-Implemented on 22 October 2026. The local Bun pipeline uses Clearcote and Playwright in two modes: **breadth** reads Malaysian JobStreet search cards; **depth** enriches saved listings with full descriptions. Depth writes one unified view and reuses saved descriptions by default. An offline command merges dated breadth observations from multiple runs or contributors. Database storage remains deferred.
+Implemented on 22 October 2026. The Bun pipeline uses Clearcote and Playwright in two modes: **breadth** reads Malaysian JobStreet search cards; **depth** enriches saved listings with full descriptions. Local runs write auditable files. Production uses Neon Postgres for run state, current listings, dated observations and depth attempts, with a separate Bun runner for browser work.
 
 Contents:
 
 1.  [Run](#run)
+1.  [Production setup](#production-setup)
 1.  [Depth and description reuse](#depth-and-description-reuse)
 1.  [Merge contributor captures](#merge-contributor-captures)
 1.  [Deduplication rules](#deduplication-rules)
@@ -37,9 +38,9 @@ bun run scrape:jobstreet --mode breadth --max-pages 120 --max-jobs 5000
 bun run scrape:jobstreet --help
 ```
 
-The scraper opens a visible browser window. Set `BROWSER_PROFILE_ID` to reuse a saved profile and its cookies; otherwise, it creates a temporary local profile for the run and removes it afterward. No separate local browser service is needed.
+The scraper opens a visible browser window by default. Set `BROWSER_PROFILE_ID` to reuse a saved profile and its cookies; otherwise, it creates a temporary local profile for the run and removes it afterward. No separate local browser service is needed.
 
-The active scraper uses the repository's `@kotak/browser` package (`clearcote` SDK 0.60, Chromium 150 open build, Playwright Core 1.64). The browser is launched headed by default. The previous Kameleo implementation is recoverable from the pre-migration Git revision; Kameleo is no longer an API dependency or active scraper backend.
+The active scraper uses the repository's `@kotak/browser` package (`clearcote` SDK 0.60, Chromium 150 open build, Playwright Core 1.64). Browser setup and profile management are documented in [the browser package guide](/packages/browser/README.md).
 
 Breadth is the default mode, with one page and 20 unique jobs. Opt in to larger runs with `--max-pages` (up to 200) and `--max-jobs` (up to 5,000). When JobStreet exposes a result count in its page description, the scraper records that count on each page and uses the first observed total as an additional unique-job target. The effective target is the smaller of that total and `--max-jobs`; duplicate cards do not advance it. Reports include `target_jobs`, the first and latest reported totals, the source used to read the count, and a `reported_total` stop reason when that target ends the run. If no count is exposed, the explicit job/page limits and pagination end remain the stopping signals. The site count is a changing estimate and can differ between page metadata and the underlying search results, so it is useful for sizing and stopping but should not be treated as an exact census. It represents the current JobStreet query in its location/filter scope, not a standardized count for an entire career field. For example, a Software Engineer result count near 2,373 can guide a run configured with a larger `--max-jobs`; use enough pages to cover it (at roughly 30 results per page, about 80 pages). The default remains deliberately bounded.
 
@@ -48,6 +49,33 @@ Both modes default to a **30-second base delay plus 0–30 seconds of random var
 Breadth opens the first search URL, then scrolls toward and clicks the actual validated Next link. Clearcote's `humanize` option provides the trusted curved pointer and click input; `hand.ts` adds whole 100-pixel wheel notches in short flicks, variable pauses, and an occasional one-notch overshoot with correction, adapted from TolongLarp's `browser/human.py`. Only the validated pagination link is clicked. Disabled and `aria-hidden` Next placeholders are ignored, so the scraper stops at the final page instead of scrolling toward a non-interactive link. Scrolling adds time beyond the base pause and is bounded to two minutes. The selected Next control must be visible, preserve the current search path/filters and advance exactly one page; changed links are refused. Both full-page and client-side pagination are supported; each page still needs a valid URL and a new set of listing IDs. First-page navigation, depth URLs and transient retries use `page.goto()`. Verification must be completed manually.
 
 JobStreet's current [robots.txt](https://my.jobstreet.com/robots.txt) contains directives for job-detail paths and query-string URLs. The scraper does not enforce those directives; the run remains subject to JobStreet's HTTP responses and the configured pacing and verification limits.
+
+## Production setup
+
+The production API and web app run on Cloudflare Workers. A Worker cannot launch this repository's Clearcote desktop process, so it authenticates admin requests, stores run state in Neon, and queues work. A separate Windows Bun process runs the same Clearcote/Playwright breadth and depth functions, then writes the local run artifacts and persists them to Neon. Keep that runner online for manual runs and the daily queue. It claims one queued run at a time.
+
+### Neon and deployment
+
+1. Create or select the Neon project used by the production app. Create a database and copy its pooled Postgres connection string from the Neon connection details.
+2. Add `DATABASE_URL` as a GitHub Actions repository secret. The deploy workflow applies the idempotent SQL migrations before deploying and passes this secret to the Worker.
+3. Generate a long random `SCRAPER_ADMIN_TOKEN`. Add it as a GitHub Actions secret and as a Cloudflare Worker secret. The token protects the admin API; enter it on the admin page when connecting.
+4. For a local database migration or data import, set `DATABASE_URL` in the shell without committing it. Preview local captures first with `bun run jobs:import --dry-run`, then run `bun run jobs:import` to import every completed capture under `data/jobstreet/`.
+
+The import is repeatable and commits each run in one transaction. Job listings are keyed by JobStreet job ID and search career. Each distinct run observation remains in `jobstreet_observations` with its original `scraped_at` and run ID; legacy captures without an ID receive a stable content-derived ID. Detail attempts come from the raw `details.jsonl` ledger, while cached descriptions in an enriched view do not become fresh attempts. Depth captures without an enriched file can recover listing snapshots from their raw details. The latest successful detail is also attached to the listing, and older imports cannot replace a newer description. Re-running an import does not duplicate an identical observation. Failed runs with valid partial captures are imported with their failed status so their data remains traceable.
+
+### Browser runner
+
+On a Windows host with Clearcote available, install the repository dependencies and set `DATABASE_URL`. Start `bun run scraper:worker` as a long-running process. The worker polls Neon for queued breadth or depth runs and uses the same pipeline, profile lifecycle, scrolling, pagination, delays and verification timeout as local commands. `BROWSER_PROFILE_ID` is optional. `JOBSTREET_DELAY_MS` and `JOBSTREET_DELAY_JITTER_MS` default to 30,000 ms each.
+
+The scraper remains headed by default to match local operation. Set `BROWSER_HEADLESS=true` only when the production host cannot keep a desktop session open. Headless mode is configurable, but a verification page still requires completion in a visible browser; the unattended runner waits for the configured timeout and records a failed run rather than trying to bypass it.
+
+### Admin panel and schedule
+
+Open `/admin/scraping`, enter the admin token, choose one of the seeded career queries and select breadth or depth. The page shows listing and description counts plus the latest 50 run records. The seeded searches are Software Engineer, Front-End Developer, Design Systems Developer and Accessibility Engineer. These JobStreet search titles are separate from the public check-up's O*NET suggestions.
+
+Cloudflare queues one breadth refresh for each career daily at **12:00 a.m. Asia/Singapore** (`16:00 UTC`). Keep in mind that result totals are estimates for broad JobStreet queries, not exact counts of jobs whose title matches the career. Breadth stores each repeated sighting with its date while updating the latest listing view. Depth is manual and selects listings without a saved description; it does not refresh existing descriptions by default.
+
+The queue is consumed only while the Bun runner is online. If no runner is connected, runs stay queued and the admin page shows that status. The Cloudflare Worker handles scheduling and queueing; it does not run a browser. A run left in `running` for more than 12 hours is marked failed on the next runner poll so it cannot block later work for that career. The timeout is intentionally much longer than ordinary runs at the configured pace.
 
 ## Depth and description reuse
 
@@ -208,7 +236,7 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 - `prepare.ts`, `prepare-cli.ts`: offline contributor-file merge, retained observation history and date summaries.
 - `files.ts`: exclusive output directories and report/view replacement.
 
-No public API route launches browsers. Scraper database ingestion and integration with the app's scoring engine remain outside this pipeline.
+The admin API only queues work; the standalone Bun runner owns browser launch and database ingestion. Scraped listings are not currently fed into the role-scoring engine.
 
 ## References
 
