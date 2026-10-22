@@ -1,19 +1,20 @@
-import { VoiceToggle } from '../ui/VoiceToggle'
+import { KopiFigure } from '../kopi/KopiFigure'
+import { KopiSpeechBox } from '../kopi/KopiSpeechBox'
+import type { KopiPose } from '../kopi/poses'
 import { cn } from '../ui/cn'
 
-export type KopiPose = 'idle' | 'asking' | 'thinking' | 'happy' | 'worried' | 'explaining'
+export type { KopiPose }
 
 export interface CatDialogueProps {
   pose: KopiPose
+  // Kopi's line; [n] markers become citations. The speech box owns the mute button and voice.
   speech: string
-  muted: boolean
-  onToggleVoice: () => void
   size?: 'md' | 'lg'
   // Stack the cat above the speech box, for narrow columns on wide screens.
   stacked?: boolean
 }
 
-export function CatDialogue({ pose, speech, muted, onToggleVoice, size = 'md', stacked = false }: CatDialogueProps) {
+export function CatDialogue({ pose, speech, size = 'md', stacked = false }: CatDialogueProps) {
   return (
     <div
       className={cn(
@@ -26,24 +27,15 @@ export function CatDialogue({ pose, speech, muted, onToggleVoice, size = 'md', s
             )
       )}
     >
-      <img
-        src={`/kopi/${pose}.png`}
-        alt=""
+      <KopiFigure
+        pose={pose}
         className={cn(
-          'w-auto max-w-full shrink-0 object-contain max-[479px]:self-center',
+          'max-w-full max-[479px]:self-center',
           stacked && 'self-center',
           size === 'lg' ? 'h-60 max-[479px]:h-48' : 'h-28 max-[479px]:h-16'
         )}
       />
-      <div className="min-w-0 flex-1 space-y-2 rounded-md border-2 border-text-primary bg-bg-default p-4">
-        <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-mono-s text-text-muted">Kopi</span>
-          <VoiceToggle muted={muted} onToggle={onToggleVoice} />
-        </div>
-        <p aria-live="polite" aria-atomic="true" className="font-speech text-body-l text-text-primary">
-          {speech}
-        </p>
-      </div>
+      <KopiSpeechBox speech={speech} />
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { ArrowRight, BookOpen, Clock3, Sparkles } from 'lucide-react'
 import { corners, changes, landingExamples, roadmap, roles } from '../../demo/data'
 import { questions } from '../../demo/questions'
@@ -66,17 +65,7 @@ function BoxSection() {
 }
 
 function StepOneDialogue() {
-  const [muted, setMuted] = useState(true)
-
-  return (
-    <CatDialogue
-      pose="asking"
-      speech={reviewQuestion?.text ?? ''}
-      muted={muted}
-      onToggleVoice={() => setMuted((value) => !value)}
-      size="md"
-    />
-  )
+  return <CatDialogue pose="asking" speech={reviewQuestion?.text ?? ''} size="md" />
 }
 
 function MiniRoadmap({ step }: { step: RoadmapStep }) {

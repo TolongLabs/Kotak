@@ -15,7 +15,6 @@ const totalQuestions = corners.length * 2
 
 export function QuestionsView() {
   const [answers, setAnswers] = useState<boolean[]>([])
-  const [muted, setMuted] = useState(true)
   const [thinking, setThinking] = useState(false)
   const thinkingTimer = useRef<number | null>(null)
 
@@ -84,13 +83,7 @@ export function QuestionsView() {
       </div>
 
       <section className="space-y-4" aria-label="Question Card" onKeyDown={handleQuestionKeyDown}>
-        <CatDialogue
-          pose={thinking ? 'thinking' : 'asking'}
-          speech={question.text}
-          muted={muted}
-          onToggleVoice={() => setMuted((value) => !value)}
-          size="lg"
-        />
+        <CatDialogue pose={thinking ? 'thinking' : 'asking'} speech={question.text} size="lg" />
 
         <p className="text-center text-body-s text-text-muted">
           Answer for real work, not tutorials. Not sure? Choose Not Yet.

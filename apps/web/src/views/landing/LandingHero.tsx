@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { Corner, SourceRef } from '../../demo/types'
 import { corners, sources } from '../../demo/data'
 import { Banner } from '../../components/ui/Banner'
@@ -65,18 +64,7 @@ function GapPreview({ corner, citedSources }: { corner: Corner; citedSources: So
 }
 
 function HeroKopi({ speech }: { speech: string }) {
-  const [muted, setMuted] = useState(true)
-
-  return (
-    <CatDialogue
-      pose="explaining"
-      speech={speech}
-      muted={muted}
-      onToggleVoice={() => setMuted((value) => !value)}
-      size="lg"
-      stacked
-    />
-  )
+  return <CatDialogue pose="explaining" speech={speech} size="lg" stacked />
 }
 
 export function LandingHero() {

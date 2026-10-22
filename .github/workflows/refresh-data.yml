@@ -1,0 +1,170 @@
+name: Refresh data
+
+# Checks the upstream feeds every week, rebuilds and validates the snapshots, and proposes any change in a pull
+# request (#90, "Data refresh" in docs/TRD.md). It never pushes to main.
+#
+# REPOSITORY FREEZE (#89): any commit after 7:59:59 AM MYT on 25 October 2026 disqualifies the team, and the
+# data-refresh branch this workflow pushes is a commit in this repository. Disable this workflow before then:
+# Actions > Refresh data > "..." > Disable workflow, or `gh workflow disable refresh-data.yml`. As a backstop, the
+# Collect changes step stops publishing from FREEZE_AT, 07:00 MYT on 25 October, the submission time in #89, and the
+# pull-request job checks again before it pushes, since a refresh can take 45 minutes.
+#
+# Opening the pull request needs "Allow GitHub Actions to create and approve pull requests" under
+# Settings > Actions > General. A pull request opened with GITHUB_TOKEN starts other workflows, such as CI, only
+# after someone with write access selects "Approve workflows to run", and its pushes start none.
+
+on:
+  schedule:
+    # Saturdays at 09:17 in Malaysia, off the top of the hour, when GitHub delays scheduled runs most.
+    - cron: '17 9 * * 6'
+      timezone: Asia/Kuala_Lumpur
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Check, build and validate only, without pushing or opening a pull request
+        type: boolean
+        default: false
+  # workflow_dispatch works only once this file is on the default branch, so pull requests that change the
+  # refresh run it as a dry run.
+  pull_request:
+    paths:
+      - .github/workflows/refresh-data.yml
+      - scripts/refresh/**
+
+permissions:
+  contents: read
+
+env:
+  FREEZE_AT: 2026-10-24T23:00:00Z
+
+concurrency:
+  group: refresh-data-${{ github.event_name == 'pull_request' && github.ref || 'upstream' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  refresh:
+    name: Check, build and validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      open-pr: ${{ steps.changes.outputs.open-pr }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # The Snapshot Diff summary compares this build of the checked-out data with the one after the ingest scripts.
+      - name: Build static data before the ingest scripts
+        run: |
+          bun run build:data
+          mkdir -p .cache/refresh
+          cp apps/web/public/data/manifest.json .cache/refresh/manifest-before.json
+
+      - name: Check upstream feeds
+        run: bun run refresh:check
+
+      - name: Build static data
+        run: bun run build:data
+
+      - name: Validate snapshots
+        run: bun run refresh:validate
+
+      - name: Summarize the Snapshot Diff for the demo roles
+        run: bun scripts/refresh/snapshot-diff.ts
+
+      - name: Collect changes
+        id: changes
+        env:
+          # Only scheduled runs, and manual runs on main that are not dry runs, push and open a pull request.
+          PUBLISH: ${{ github.event_name != 'pull_request' && !inputs.dry_run && github.ref == 'refs/heads/main' }}
+        run: |
+          if [ "$(date -u +%s)" -ge "$(date -u -d "$FREEZE_AT" +%s)" ]; then
+            echo "Repository freeze (#89): this run does not push or open a pull request"
+            PUBLISH=false
+          fi
+          git add --all
+          if git diff --cached --quiet; then
+            echo "No tracked files changed, so there is nothing to propose"
+          else
+            git diff --cached --binary > .cache/refresh/changes.patch
+            {
+              echo
+              echo '### Files in this pull request'
+              echo
+              echo '```text'
+              git diff --cached --stat
+              echo '```'
+            } >> .cache/refresh/summary.md
+            if [ "$PUBLISH" = true ]; then
+              echo "open-pr=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Tracked files changed, but this run does not push or open a pull request; see the summary and artifact"
+            fi
+          fi
+          cat .cache/refresh/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload refresh result
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: refresh-data
+          path: .cache/refresh/
+          include-hidden-files: true
+          if-no-files-found: ignore
+
+  pull-request:
+    name: Open or update the refresh pull request
+    needs: refresh
+    if: needs.refresh.outputs.open-pr == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Download refresh result
+        uses: actions/download-artifact@v8
+        with:
+          name: refresh-data
+          path: ${{ runner.temp }}/refresh
+
+      - name: Push the branch and open or update its pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: data-refresh
+          RESULT: ${{ runner.temp }}/refresh
+          TITLE: 'chore: refresh upstream data snapshots'
+        run: |
+          if [ "$(date -u +%s)" -ge "$(date -u -d "$FREEZE_AT" +%s)" ]; then
+            echo "Repository freeze (#89): the freeze began during this run, so it does not push or open a pull request"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch --create "$BRANCH"
+          git apply --index "$RESULT/changes.patch"
+          git commit --message "$TITLE"
+          # Every run rebuilds the branch from main and replaces it. Nothing here pushes to main.
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          {
+            cat "$RESULT/summary.md"
+            echo
+            echo "Opened by [this Refresh data run]($run_url). Each run that finds changes force-pushes \`$BRANCH\`, so don't push to it by hand. CI starts once someone with write access selects **Approve workflows to run**."
+          } > "$RUNNER_TEMP/body.md"
+          number=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh pr edit "$number" --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --head "$BRANCH" --base main --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"
+          fi
