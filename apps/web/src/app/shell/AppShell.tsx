@@ -11,9 +11,32 @@ export interface AppShellProps {
   children: ReactNode
 }
 
+const SIDEBAR_STORAGE_KEY = 'kotak:sidebar'
+
+function readSidebarPreference(): boolean | null {
+  try {
+    const stored = localStorage.getItem(SIDEBAR_STORAGE_KEY)
+    return stored === 'true' ? true : stored === 'false' ? false : null
+  } catch {
+    return null
+  }
+}
+
 export function AppShell({ path, dataLabel, collapsed = false, children }: AppShellProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const sidebarCollapsed = sidebarPreference ?? collapsed
+
+  function toggleSidebar() {
+    const next = !sidebarCollapsed
+    setSidebarPreference(next)
+    try {
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next))
+    } catch {
+      // The preference lasts until the page closes when storage is blocked.
+    }
+  }
 
   return (
     <div className="min-h-dvh bg-bg-default lg:flex">
@@ -23,7 +46,7 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
       >
         Skip to Content
       </a>
-      <Sidebar path={path} collapsed={collapsed} className="hidden lg:flex" />
+      <Sidebar path={path} collapsed={sidebarCollapsed} onToggleCollapsed={toggleSidebar} className="hidden lg:flex" />
       <div className="min-w-0 flex-1">
         <div className="sticky top-0 z-20 px-3 pt-3 lg:px-12 lg:pt-4">
           <Topbar dataLabel={dataLabel} className="hidden lg:flex" />
