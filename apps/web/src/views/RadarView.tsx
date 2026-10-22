@@ -1,11 +1,12 @@
 import { DEFAULT_SCENARIO } from '@kotak/shared'
 import { Info } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
+import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
 import { SourceReference } from '../components/kotak/SourceReference'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { Banner } from '../components/ui/Banner'
@@ -15,9 +16,12 @@ import { Tooltip } from '../components/ui/Tooltip'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
 import { computeCheckup, type Checkup } from '../engine/checkup'
 import { useRoleBundle } from '../engine/bundle'
+import { fetchExplanations } from '../engine/api'
 import { useGuestSession } from '../session/store'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
+import type { ExplanationResponse } from '@kotak/shared'
+import { buildExplanationRequest } from './roles/derived'
 
 const stepLabels: [string, string, string, string, string] = ['Home', 'Check-Up', 'Radar', 'Roles', 'Roadmap']
 
@@ -74,6 +78,33 @@ export function RadarView() {
   const [explanationsPaused, setExplanationsPaused] = useState(
     () => new URLSearchParams(window.location.search).get('ai') === 'off'
   )
+  const [explanationState, setExplanationState] = useState<{
+    roleCode: string
+    snapshotId: string
+    explanations: ExplanationResponse['explanations']
+  } | null>(null)
+  const activeRoleCheckup = checkup?.roles.find((candidate) => candidate.onet_code === roleData?.role.onet_code)
+
+  useEffect(() => {
+    if (explanationsPaused || !roleData || !checkup || !activeRoleCheckup) return
+    const request = buildExplanationRequest(roleData.role, activeRoleCheckup, checkup.snapshotId, scenario)
+    if (!request) return
+
+    let current = true
+    void fetchExplanations(roleData.role.onet_code, request).then((result) => {
+      if (current && result.status === 'available') {
+        setExplanationState({
+          roleCode: roleData.role.onet_code,
+          snapshotId: checkup.snapshotId,
+          explanations: result.data.explanations
+        })
+      }
+    })
+
+    return () => {
+      current = false
+    }
+  }, [activeRoleCheckup, checkup, explanationsPaused, roleData, scenario])
 
   const retryExplanations = () => {
     const url = new URL(window.location.href)
@@ -111,7 +142,15 @@ export function RadarView() {
 
   const { role, related } = bundle.data
   const { sources, numbers } = sourceRefs(checkup)
-  const corners = toCorners(checkup, numbers)
+  const explanationByCorner = new Map(
+    explanationState?.roleCode === role.onet_code && explanationState.snapshotId === checkup.snapshotId
+      ? explanationState.explanations.map((explanation) => [explanation.corner_id, explanation] as const)
+      : []
+  )
+  const corners = toCorners(checkup, numbers).map((corner) => {
+    const explanation = explanationByCorner.get(corner.id)
+    return explanation ? { ...corner, reasoning: explanation.sentences.join(' ') } : corner
+  })
   const roles = toRoles(checkup, [role, ...related], session.role_code)
   const swot = deriveSwot(corners, roles, scenario)
   const neededLabel = neededByLabel(checkup)
@@ -149,16 +188,18 @@ export function RadarView() {
       const source = sourceByNumber.get(number)
       return source ? [source] : []
     })
+    const explanationSource = explanationByCorner.get(corner.id)?.source ?? 'template'
 
     return (
-      <GapCard
-        key={corner.id}
-        corner={corner}
-        sources={cornerSources}
-        scenario={scenario}
-        neededLabel={neededLabel}
-        paused={explanationsPaused}
-      />
+      <ExplanationSourceProvider key={corner.id} source={explanationSource}>
+        <GapCard
+          corner={corner}
+          sources={cornerSources}
+          scenario={scenario}
+          neededLabel={neededLabel}
+          paused={explanationsPaused}
+        />
+      </ExplanationSourceProvider>
     )
   }
 
