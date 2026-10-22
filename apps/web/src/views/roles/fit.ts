@@ -1,4 +1,5 @@
 import type { CheckupRole } from '../../engine/checkup'
+import { isEstimatedLevel } from '../../engine/viewModel'
 
 /** Percentages are whole numbers; levels show at most 1 decimal and never an unrounded float. */
 export const formatFitPercent = (score: number) => `${Math.round(score)}%`
@@ -9,12 +10,8 @@ export function formatLevel(value: number): string {
   return Number.isInteger(rounded) ? `${rounded}` : rounded.toFixed(1)
 }
 
-/** Corner ids whose levels were carried over from the user's own job; they carry the "Estimated" tag. */
-export function carriedOverCorners(checkupRole: CheckupRole, jobCode: string | null, isJob: boolean): Set<string> {
-  if (isJob || !jobCode) return new Set()
-  return new Set(
-    checkupRole.levels
-      .filter((level) => level.basis.from.some((answer) => answer.onet_code === jobCode))
-      .map((level) => level.corner_id)
-  )
+/** Corner ids whose levels are estimated from the user's answers rather than answered directly; they carry the
+ * "Estimated" tag. */
+export function estimatedCorners(checkupRole: CheckupRole): Set<string> {
+  return new Set(checkupRole.levels.filter(isEstimatedLevel).map((level) => level.corner_id))
 }

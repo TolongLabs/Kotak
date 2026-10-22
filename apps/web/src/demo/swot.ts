@@ -28,7 +28,11 @@ export function deriveSwot(corners: Corner[], roles: Role[], scenario: 'slow' | 
 
   for (const role of roles) {
     if (!role.isCurrentJob && role.outlook === 'rising' && role.fit >= 60) {
-      opportunities.push({ label: role.title, verdict: role.outlook, detail: `${role.fit}% Fit` })
+      opportunities.push({
+        label: role.title,
+        verdict: role.outlook,
+        detail: `${role.fit}% ${role.fitEstimated ? 'Estimated Fit' : 'Fit'}`
+      })
     }
   }
 

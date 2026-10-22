@@ -27,6 +27,8 @@ export type Role = {
   title: string
   isCurrentJob: boolean
   fit: number
+  // Some of the levels behind the fit are estimated from answers about another role or corner.
+  fitEstimated?: boolean
   outlook: VerdictId
   missing: string
   reasoning?: string
