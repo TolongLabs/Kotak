@@ -4,11 +4,7 @@ import { isEstimatedLevel } from '../../engine/viewModel'
 /** Percentages are whole numbers; levels show at most 1 decimal and never an unrounded float. */
 export const formatFitPercent = (score: number) => `${Math.round(score)}%`
 
-/** Whole levels stay "2"; estimates get one decimal ("2.3"), with a value near a whole level shown as that level. */
-export function formatLevel(value: number): string {
-  const rounded = Math.round(value * 10) / 10
-  return Number.isInteger(rounded) ? `${rounded}` : rounded.toFixed(1)
-}
+export { formatLevel } from '@kotak/sdk'
 
 /** Corner ids whose levels are estimated from the user's answers rather than answered directly; they carry the
  * "Estimated" tag. */

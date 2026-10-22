@@ -55,6 +55,12 @@ export function roleOutlook(role: BundleRole, snapshotId: SnapshotId): Outlook {
 }
 
 /** A level carried over from the user's answers rather than answered directly; "not asked yet" is 0, not an estimate. */
+/** Whole levels stay "2"; estimates get one decimal ("2.3"), with a value near a whole level shown as that level. */
+export function formatLevel(value: number): string {
+  const rounded = Math.round(value * 10) / 10
+  return Number.isInteger(rounded) ? `${rounded}` : rounded.toFixed(1)
+}
+
 export function isEstimatedLevel(level: TransferredLevel): boolean {
   return level.label === 'estimated from your answers' || level.label === 'rough estimate'
 }
