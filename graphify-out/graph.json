@@ -36,7 +36,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "jobdetailobservation",
       "source_file": "apps/api/src/scrapers/jobstreet/depth.ts",
@@ -49,7 +49,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "inputrow",
       "source_file": "apps/api/src/scrapers/jobstreet/inputs.ts",
@@ -62,7 +62,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "joblisting",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -678,19 +678,6 @@
       "norm_label": "occupationcorners",
       "source_file": "packages/shared/src/data/role-corners.ts",
       "source_location": "L105"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_browser_profile_browserprofileoptions",
-      "label": "BrowserProfileOptions",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "profiles.ts",
-      "file_type": "code",
-      "norm_label": "browserprofileoptions",
-      "source_file": "apps/api/src/scrapers/jobstreet/browser-profile.ts",
-      "source_location": "L4"
     },
     {
       "id": "packages_browser_src_machine_machine",
@@ -1367,6 +1354,19 @@
       "norm_label": "occupation",
       "source_file": "packages/shared/src/engine.ts",
       "source_location": "L69"
+    },
+    {
+      "id": "apps_api_db_sample_checkups_samplecheckup",
+      "label": "SampleCheckup",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "samplecheckup",
+      "source_file": "apps/api/db/sample-checkups.ts",
+      "source_location": "L12"
     },
     {
       "id": "apps_web_src_components_kopi_kopispeechbox_kopispeechboxprops",
@@ -2474,17 +2474,30 @@
       "source_location": "L38"
     },
     {
-      "id": "apps_api_src_cache_bytes",
-      "label": "Bytes",
+      "id": "apps_web_src_components_kopi_voice_playback",
+      "label": "Playback",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 153,
-      "community_name": "ai/cache.ts",
+      "community_name": "voice.ts",
       "file_type": "code",
-      "norm_label": "bytes",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L12"
+      "norm_label": "playback",
+      "source_file": "apps/web/src/components/kopi/voice.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "packages_shared_src_api_ttsrequest",
+      "label": "TtsRequest",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 153,
+      "community_name": "voice.ts",
+      "file_type": "code",
+      "norm_label": "ttsrequest",
+      "source_file": "packages/shared/src/api.ts",
+      "source_location": "L170"
     },
     {
       "id": "apps_web_src_components_kotak_futureskillsradar_futureskillsradarprops",
@@ -2591,6 +2604,19 @@
       "source_location": "L10"
     },
     {
+      "id": "apps_api_src_cache_bytes",
+      "label": "Bytes",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "bytes",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L12"
+    },
+    {
       "id": "apps_api_src_routes_tts_assetsbinding",
       "label": "AssetsBinding",
       "_callable": true,
@@ -2604,30 +2630,17 @@
       "source_location": "L16"
     },
     {
-      "id": "apps_web_src_components_kopi_voice_playback",
-      "label": "Playback",
+      "id": "apps_api_src_ai_cache_keyvaluestore",
+      "label": "KeyValueStore",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 155,
-      "community_name": "tts.ts",
+      "community": 157,
+      "community_name": "deps.ts",
       "file_type": "code",
-      "norm_label": "playback",
-      "source_file": "apps/web/src/components/kopi/voice.ts",
+      "norm_label": "keyvaluestore",
+      "source_file": "apps/api/src/ai/cache.ts",
       "source_location": "L4"
-    },
-    {
-      "id": "packages_shared_src_api_ttsrequest",
-      "label": "TtsRequest",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 155,
-      "community_name": "tts.ts",
-      "file_type": "code",
-      "norm_label": "ttsrequest",
-      "source_file": "packages/shared/src/api.ts",
-      "source_location": "L170"
     },
     {
       "id": "apps_api_src_ai_cache_responsecache",
@@ -2680,6 +2693,19 @@
       "norm_label": "aideps",
       "source_file": "apps/api/src/ai/deps.ts",
       "source_location": "L14"
+    },
+    {
+      "id": "apps_api_src_ai_env_aibindings",
+      "label": "AiBindings",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 157,
+      "community_name": "deps.ts",
+      "file_type": "code",
+      "norm_label": "aibindings",
+      "source_file": "apps/api/src/ai/env.ts",
+      "source_location": "L6"
     },
     {
       "id": "apps_api_src_ai_env_aicontext",
@@ -2838,6 +2864,19 @@
       "source_location": "L13"
     },
     {
+      "id": "packages_shared_src_api_apierror",
+      "label": "ApiError",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "apierror",
+      "source_file": "packages/shared/src/api.ts",
+      "source_location": "L161"
+    },
+    {
       "id": "packages_shared_src_api_explanationresponse",
       "label": "ExplanationResponse",
       "_callable": true,
@@ -2849,6 +2888,19 @@
       "norm_label": "explanationresponse",
       "source_file": "packages/shared/src/api.ts",
       "source_location": "L167"
+    },
+    {
+      "id": "packages_shared_src_api_rolematchresponse",
+      "label": "RoleMatchResponse",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "rolematchresponse",
+      "source_file": "packages/shared/src/api.ts",
+      "source_location": "L165"
     },
     {
       "id": "apps_web_src_views_roadmap_plansupport_timelinestep",
@@ -3124,58 +3176,6 @@
       "source_location": "L8"
     },
     {
-      "id": "apps_api_src_ai_cache_keyvaluestore",
-      "label": "KeyValueStore",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "keyvaluestore",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "apps_api_src_ai_env_aibindings",
-      "label": "AiBindings",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "aibindings",
-      "source_file": "apps/api/src/ai/env.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "packages_shared_src_api_apierror",
-      "label": "ApiError",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "apierror",
-      "source_file": "packages/shared/src/api.ts",
-      "source_location": "L161"
-    },
-    {
-      "id": "packages_shared_src_api_rolematchresponse",
-      "label": "RoleMatchResponse",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "rolematchresponse",
-      "source_file": "packages/shared/src/api.ts",
-      "source_location": "L165"
-    },
-    {
       "id": "apps_web_src_components_kopi_live2d_modelsettings",
       "label": "ModelSettings",
       "_callable": true,
@@ -3213,19 +3213,6 @@
       "norm_label": "question",
       "source_file": "apps/web/src/demo/types.ts",
       "source_location": "L87"
-    },
-    {
-      "id": "apps_api_db_sample_checkups_samplecheckup",
-      "label": "SampleCheckup",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "samplecheckup",
-      "source_file": "apps/api/db/sample-checkups.ts",
-      "source_location": "L12"
     },
     {
       "id": "scripts_refresh_check_economicindex",
@@ -4174,7 +4161,7 @@
       "file_type": "code",
       "norm_label": "runrecord",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L11"
+      "source_location": "L12"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_sql",
@@ -4187,7 +4174,7 @@
       "file_type": "code",
       "norm_label": "sql",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L9"
+      "source_location": "L10"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_statement",
@@ -4200,7 +4187,7 @@
       "file_type": "code",
       "norm_label": "statement",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L10"
+      "source_location": "L11"
     },
     {
       "id": "apps_api_src_worker_scheduledcontroller",
@@ -4305,6 +4292,19 @@
       "norm_label": "pageresult",
       "source_file": "apps/api/src/scrapers/jobstreet/pipeline.ts",
       "source_location": "L36"
+    },
+    {
+      "id": "apps_api_src_scrapers_jobstreet_browser_profile_browserprofileoptions",
+      "label": "BrowserProfileOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 97,
+      "community_name": "depth.integration.test.ts",
+      "file_type": "code",
+      "norm_label": "browserprofileoptions",
+      "source_file": "apps/api/src/scrapers/jobstreet/browser-profile.ts",
+      "source_location": "L4"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_depth_depthoptions",
@@ -4657,7 +4657,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "cachedobservation()",
       "source_file": "apps/api/src/scrapers/jobstreet/depth.ts",
@@ -4669,7 +4669,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "createoutputdirectory()",
       "source_file": "apps/api/src/scrapers/jobstreet/files.ts",
@@ -4681,7 +4681,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "writejson()",
       "source_file": "apps/api/src/scrapers/jobstreet/files.ts",
@@ -4693,7 +4693,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "writelistings()",
       "source_file": "apps/api/src/scrapers/jobstreet/files.ts",
@@ -4705,7 +4705,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "readlistingrows()",
       "source_file": "apps/api/src/scrapers/jobstreet/inputs.ts",
@@ -4717,7 +4717,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "resolveinputs()",
       "source_file": "apps/api/src/scrapers/jobstreet/inputs.ts",
@@ -4729,7 +4729,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "preparejobs()",
       "source_file": "apps/api/src/scrapers/jobstreet/prepare.ts",
@@ -4741,7 +4741,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "compare()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4753,7 +4753,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "compareid()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4765,7 +4765,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "estimatelistedat()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4777,7 +4777,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "joburl()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4789,7 +4789,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "parselisting()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4801,7 +4801,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "parsesort()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4813,7 +4813,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "preferobservation()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4825,7 +4825,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "sortlistings()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -4837,7 +4837,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "utctimestamp()",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -6416,6 +6416,30 @@
       "source_location": "L126"
     },
     {
+      "id": "apps_api_db_sample_checkups_samplecheckups",
+      "label": "sampleCheckups()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "samplecheckups()",
+      "source_file": "apps/api/db/sample-checkups.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "apps_api_src_routes_national_view_sampleaggregates",
+      "label": "sampleAggregates()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "sampleaggregates()",
+      "source_file": "apps/api/src/routes/national-view.ts",
+      "source_location": "L93"
+    },
+    {
       "id": "apps_web_src_components_kotak_pagetransition_openingbox",
       "label": "OpeningBox()",
       "_callable": true,
@@ -7412,18 +7436,6 @@
       "source_location": "L172"
     },
     {
-      "id": "apps_api_src_routes_explanations_promptinput",
-      "label": "promptInput()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 147,
-      "community_name": "verifier.ts",
-      "file_type": "code",
-      "norm_label": "promptinput()",
-      "source_file": "apps/api/src/routes/explanations.ts",
-      "source_location": "L24"
-    },
-    {
       "id": "packages_shared_src_data_dosm_jmi_checkfigure",
       "label": "checkFigure()",
       "_callable": true,
@@ -8168,112 +8180,16 @@
       "source_location": "L34"
     },
     {
-      "id": "apps_api_src_ai_cache_canonicaljson",
-      "label": "canonicalJson()",
+      "id": "apps_web_src_components_kopi_voice_canautoplay",
+      "label": "canAutoplay()",
       "_callable": true,
       "_origin": "ast",
       "community": 153,
-      "community_name": "ai/cache.ts",
+      "community_name": "voice.ts",
       "file_type": "code",
-      "norm_label": "canonicaljson()",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L51"
-    },
-    {
-      "id": "apps_api_src_ai_cache_claudecachekey",
-      "label": "claudeCacheKey()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "claudecachekey()",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L62"
-    },
-    {
-      "id": "apps_api_src_ai_cache_createresponsecache",
-      "label": "createResponseCache()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "createresponsecache()",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L21"
-    },
-    {
-      "id": "apps_api_src_cache_cacheget",
-      "label": "cacheGet()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "cacheget()",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L43"
-    },
-    {
-      "id": "apps_api_src_cache_cacheput",
-      "label": "cachePut()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "cacheput()",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L58"
-    },
-    {
-      "id": "apps_api_src_cache_forget",
-      "label": "forget()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "forget()",
-      "source_file": "apps/api/src/cache.ts",
+      "norm_label": "canautoplay()",
+      "source_file": "apps/web/src/components/kopi/voice.ts",
       "source_location": "L20"
-    },
-    {
-      "id": "apps_api_src_cache_remember",
-      "label": "remember()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "remember()",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L27"
-    },
-    {
-      "id": "apps_api_src_cache_sha256hex",
-      "label": "sha256Hex()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "sha256hex()",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L38"
-    },
-    {
-      "id": "apps_api_src_cache_workerscache",
-      "label": "workersCache()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "workerscache()",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L18"
     },
     {
       "id": "apps_web_src_components_kotak_futureskillsradar_renderangletick",
@@ -8324,6 +8240,114 @@
       "source_location": "L22"
     },
     {
+      "id": "apps_api_src_ai_cache_canonicaljson",
+      "label": "canonicalJson()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "canonicaljson()",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L51"
+    },
+    {
+      "id": "apps_api_src_ai_cache_claudecachekey",
+      "label": "claudeCacheKey()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "claudecachekey()",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L62"
+    },
+    {
+      "id": "apps_api_src_ai_cache_createresponsecache",
+      "label": "createResponseCache()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "createresponsecache()",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "apps_api_src_cache_cacheget",
+      "label": "cacheGet()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "cacheget()",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "apps_api_src_cache_cacheput",
+      "label": "cachePut()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "cacheput()",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L58"
+    },
+    {
+      "id": "apps_api_src_cache_forget",
+      "label": "forget()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "forget()",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "apps_api_src_cache_remember",
+      "label": "remember()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "remember()",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "apps_api_src_cache_sha256hex",
+      "label": "sha256Hex()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "sha256hex()",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "apps_api_src_cache_workerscache",
+      "label": "workersCache()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "workerscache()",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L18"
+    },
+    {
       "id": "apps_api_src_routes_tts_pregeneratedaudio",
       "label": "pregeneratedAudio()",
       "_callable": true,
@@ -8372,16 +8396,28 @@
       "source_location": "L18"
     },
     {
-      "id": "apps_web_src_components_kopi_voice_canautoplay",
-      "label": "canAutoplay()",
+      "id": "apps_api_src_ai_cache_keyvaluestore_get",
+      "label": ".get()",
       "_callable": true,
       "_origin": "ast",
-      "community": 155,
-      "community_name": "tts.ts",
+      "community": 157,
+      "community_name": "deps.ts",
       "file_type": "code",
-      "norm_label": "canautoplay()",
-      "source_file": "apps/web/src/components/kopi/voice.ts",
-      "source_location": "L20"
+      "norm_label": ".get()",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "apps_api_src_ai_cache_keyvaluestore_put",
+      "label": ".put()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 157,
+      "community_name": "deps.ts",
+      "file_type": "code",
+      "norm_label": ".put()",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L6"
     },
     {
       "id": "apps_api_src_ai_cache_responsecache_get",
@@ -8490,6 +8526,18 @@
       "norm_label": "generatecached()",
       "source_file": "apps/api/src/ai/deps.ts",
       "source_location": "L30"
+    },
+    {
+      "id": "apps_api_src_ai_env_readcachestore",
+      "label": "readCacheStore()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 157,
+      "community_name": "deps.ts",
+      "file_type": "code",
+      "norm_label": "readcachestore()",
+      "source_file": "apps/api/src/ai/env.ts",
+      "source_location": "L12"
     },
     {
       "id": "packages_shared_src_rules_resolve_test_full",
@@ -8718,6 +8766,114 @@
       "norm_label": "titlekey()",
       "source_file": "scripts/ingest/dosm-jmi.ts",
       "source_location": "L123"
+    },
+    {
+      "id": "apps_api_src_ai_errors_fail",
+      "label": "fail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "fail()",
+      "source_file": "apps/api/src/ai/errors.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "apps_api_src_ai_errors_invalidrequest",
+      "label": "invalidRequest()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "invalidrequest()",
+      "source_file": "apps/api/src/ai/errors.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "apps_api_src_ai_errors_toolarge",
+      "label": "tooLarge()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "toolarge()",
+      "source_file": "apps/api/src/ai/errors.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "apps_api_src_routes_explanations_createexplanationsroute",
+      "label": "createExplanationsRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "createexplanationsroute()",
+      "source_file": "apps/api/src/routes/explanations.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "apps_api_src_routes_explanations_promptinput",
+      "label": "promptInput()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "promptinput()",
+      "source_file": "apps/api/src/routes/explanations.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "apps_api_src_routes_roles_createrolesroute",
+      "label": "createRolesRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "createrolesroute()",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "apps_api_src_routes_roles_matchsystemprompt",
+      "label": "matchSystemPrompt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "matchsystemprompt()",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "apps_api_src_routes_roles_prompttitle",
+      "label": "promptTitle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "prompttitle()",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L31"
+    },
+    {
+      "id": "apps_api_src_routes_roles_respond",
+      "label": "respond()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "respond()",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L35"
     },
     {
       "id": "apps_web_src_engine_api_cornerexplanationkey",
@@ -9018,18 +9174,6 @@
       "norm_label": "round1()",
       "source_file": "scripts/ingest/dosm-jmi.ts",
       "source_location": "L373"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_browser_pacingjitter",
-      "label": "pacingJitter()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 176,
-      "community_name": "pipeline.ts",
-      "file_type": "code",
-      "norm_label": "pacingjitter()",
-      "source_file": "apps/api/src/scrapers/jobstreet/browser.ts",
-      "source_location": "L32"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_hand_between",
@@ -9680,148 +9824,52 @@
       "source_location": "L11"
     },
     {
-      "id": "apps_api_src_ai_cache_keyvaluestore_get",
-      "label": ".get()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": ".get()",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "apps_api_src_ai_cache_keyvaluestore_put",
-      "label": ".put()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": ".put()",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L6"
-    },
-    {
       "id": "apps_api_src_ai_disk_store_creatediskstore",
       "label": "createDiskStore()",
       "_callable": true,
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
       "norm_label": "creatediskstore()",
       "source_file": "apps/api/src/ai/disk-store.ts",
       "source_location": "L6"
     },
     {
-      "id": "apps_api_src_ai_env_readcachestore",
-      "label": "readCacheStore()",
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_command",
+      "label": "command()",
       "_callable": true,
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
-      "norm_label": "readcachestore()",
-      "source_file": "apps/api/src/ai/env.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "apps_api_src_ai_errors_fail",
-      "label": "fail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "fail()",
-      "source_file": "apps/api/src/ai/errors.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "apps_api_src_ai_errors_invalidrequest",
-      "label": "invalidRequest()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "invalidrequest()",
-      "source_file": "apps/api/src/ai/errors.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "apps_api_src_ai_errors_toolarge",
-      "label": "tooLarge()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "toolarge()",
-      "source_file": "apps/api/src/ai/errors.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "apps_api_src_routes_explanations_createexplanationsroute",
-      "label": "createExplanationsRoute()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "createexplanationsroute()",
-      "source_file": "apps/api/src/routes/explanations.ts",
-      "source_location": "L43"
-    },
-    {
-      "id": "apps_api_src_routes_roles_createrolesroute",
-      "label": "createRolesRoute()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "createrolesroute()",
-      "source_file": "apps/api/src/routes/roles.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "apps_api_src_routes_roles_matchsystemprompt",
-      "label": "matchSystemPrompt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "matchsystemprompt()",
-      "source_file": "apps/api/src/routes/roles.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "apps_api_src_routes_roles_prompttitle",
-      "label": "promptTitle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "prompttitle()",
-      "source_file": "apps/api/src/routes/roles.ts",
+      "norm_label": "command()",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
       "source_location": "L31"
     },
     {
-      "id": "apps_api_src_routes_roles_respond",
-      "label": "respond()",
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_lines",
+      "label": "lines()",
       "_callable": true,
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
-      "norm_label": "respond()",
-      "source_file": "apps/api/src/routes/roles.ts",
-      "source_location": "L35"
+      "norm_label": "lines()",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_row",
+      "label": "row()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 193,
+      "community_name": "ref_node_path",
+      "file_type": "code",
+      "norm_label": "row()",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
+      "source_location": "L14"
     },
     {
       "id": "apps_web_src_components_kopi_live2d_drawkopi",
@@ -10014,30 +10062,6 @@
       "norm_label": "summarize()",
       "source_file": "scripts/refresh/check.ts",
       "source_location": "L153"
-    },
-    {
-      "id": "apps_api_db_sample_checkups_samplecheckups",
-      "label": "sampleCheckups()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "samplecheckups()",
-      "source_file": "apps/api/db/sample-checkups.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "apps_api_src_routes_national_view_sampleaggregates",
-      "label": "sampleAggregates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "sampleaggregates()",
-      "source_file": "apps/api/src/routes/national-view.ts",
-      "source_location": "L93"
     },
     {
       "id": "scripts_refresh_check_changeddatafiles",
@@ -10733,7 +10757,7 @@
       "file_type": "code",
       "norm_label": "breadthstatements()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L44"
+      "source_location": "L45"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_currentlistingstatements",
@@ -10745,7 +10769,7 @@
       "file_type": "code",
       "norm_label": "currentlistingstatements()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L78"
+      "source_location": "L79"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_depthstatements",
@@ -10757,7 +10781,7 @@
       "file_type": "code",
       "norm_label": "depthstatements()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L111"
+      "source_location": "L112"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_detailvalues",
@@ -10769,7 +10793,7 @@
       "file_type": "code",
       "norm_label": "detailvalues()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L102"
+      "source_location": "L103"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_persistrunoutput",
@@ -10781,7 +10805,7 @@
       "file_type": "code",
       "norm_label": "persistrunoutput()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L215"
+      "source_location": "L216"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_readjsonlines",
@@ -10793,7 +10817,7 @@
       "file_type": "code",
       "norm_label": "readjsonlines()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L173"
+      "source_location": "L174"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_readrunoutput",
@@ -10805,7 +10829,7 @@
       "file_type": "code",
       "norm_label": "readrunoutput()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L190"
+      "source_location": "L191"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_store_runstatement",
@@ -10817,7 +10841,7 @@
       "file_type": "code",
       "norm_label": "runstatement()",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "apps_api_src_worker_scheduled",
@@ -11240,6 +11264,18 @@
       "source_location": "L127"
     },
     {
+      "id": "apps_api_src_scrapers_jobstreet_browser_pacingjitter",
+      "label": "pacingJitter()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 96,
+      "community_name": "depth.ts",
+      "file_type": "code",
+      "norm_label": "pacingjitter()",
+      "source_file": "apps/api/src/scrapers/jobstreet/browser.ts",
+      "source_location": "L32"
+    },
+    {
       "id": "apps_api_src_scrapers_jobstreet_browser_pausebetweenrequests",
       "label": "pauseBetweenRequests()",
       "_callable": true,
@@ -11250,18 +11286,6 @@
       "norm_label": "pausebetweenrequests()",
       "source_file": "apps/api/src/scrapers/jobstreet/browser.ts",
       "source_location": "L38"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_browser_profile_withbrowserprofile",
-      "label": "withBrowserProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 96,
-      "community_name": "depth.ts",
-      "file_type": "code",
-      "norm_label": "withbrowserprofile()",
-      "source_file": "apps/api/src/scrapers/jobstreet/browser-profile.ts",
-      "source_location": "L9"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_browser_saveevidence",
@@ -11384,6 +11408,18 @@
       "source_location": "L159"
     },
     {
+      "id": "apps_api_src_scrapers_jobstreet_browser_profile_withbrowserprofile",
+      "label": "withBrowserProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 97,
+      "community_name": "depth.integration.test.ts",
+      "file_type": "code",
+      "norm_label": "withbrowserprofile()",
+      "source_file": "apps/api/src/scrapers/jobstreet/browser-profile.ts",
+      "source_location": "L9"
+    },
+    {
       "id": "apps_api_src_scrapers_jobstreet_depth_integration_test_fixture",
       "label": "fixture()",
       "_callable": true,
@@ -11442,42 +11478,6 @@
       "norm_label": "options()",
       "source_file": "apps/api/src/scrapers/jobstreet/depth.integration.test.ts",
       "source_location": "L135"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_command",
-      "label": "command()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "command()",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L31"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_lines",
-      "label": "lines()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "lines()",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L43"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_row",
-      "label": "row()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "row()",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L14"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_verification_integration_test_fixture",
@@ -13069,22 +13069,11 @@
       "source_location": "L18"
     },
     {
-      "id": "apps_api_src_scrapers_jobstreet_cli",
-      "label": "jobstreet/cli.ts",
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "ref_node_path",
-      "file_type": "code",
-      "norm_label": "jobstreet/cli.ts",
-      "source_file": "apps/api/src/scrapers/jobstreet/cli.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "apps_api_src_scrapers_jobstreet_files",
       "label": "files.ts",
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "files.ts",
       "source_file": "apps/api/src/scrapers/jobstreet/files.ts",
@@ -13095,7 +13084,7 @@
       "label": "inputs.ts",
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "inputs.ts",
       "source_file": "apps/api/src/scrapers/jobstreet/inputs.ts",
@@ -13106,7 +13095,7 @@
       "label": "prepare.ts",
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "prepare.ts",
       "source_file": "apps/api/src/scrapers/jobstreet/prepare.ts",
@@ -13117,7 +13106,7 @@
       "label": "prepare-cli.ts",
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "prepare-cli.ts",
       "source_file": "apps/api/src/scrapers/jobstreet/prepare-cli.ts",
@@ -13128,7 +13117,7 @@
       "label": "records.ts",
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "records.ts",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -13139,7 +13128,7 @@
       "label": "sortModes",
       "_origin": "ast",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "file_type": "code",
       "norm_label": "sortmodes",
       "source_file": "apps/api/src/scrapers/jobstreet/records.ts",
@@ -13906,6 +13895,30 @@
       "source_location": "L178"
     },
     {
+      "id": "docs_design_colour",
+      "label": "Colour",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "Kotak design system",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "colour",
+      "source_file": "docs/DESIGN.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "docs_design_colour_rules",
+      "label": "Colour rules",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "Kotak design system",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "colour rules",
+      "source_file": "docs/DESIGN.md",
+      "source_location": "L81"
+    },
+    {
       "id": "docs_design_components",
       "label": "Components",
       "_origin": "ast",
@@ -14002,6 +14015,18 @@
       "source_location": "L186"
     },
     {
+      "id": "docs_design_sdg_colours",
+      "label": "SDG colours",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "Kotak design system",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "sdg colours",
+      "source_file": "docs/DESIGN.md",
+      "source_location": "L57"
+    },
+    {
       "id": "docs_design_see_also",
       "label": "See also",
       "_origin": "ast",
@@ -14012,6 +14037,18 @@
       "norm_label": "see also",
       "source_file": "docs/DESIGN.md",
       "source_location": "L204"
+    },
+    {
+      "id": "docs_design_semantic_colour_tokens",
+      "label": "Semantic colour tokens",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "Kotak design system",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "semantic colour tokens",
+      "source_file": "docs/DESIGN.md",
+      "source_location": "L34"
     },
     {
       "id": "docs_design_source_of_truth",
@@ -14338,28 +14375,112 @@
       "source_location": "L447"
     },
     {
-      "id": "docs_trd_core_rule_data_decides_ai_explains",
-      "label": "Core rule: data decides, AI explains",
+      "id": "docs_trd_architecture_diagram",
+      "label": "Architecture diagram",
       "_origin": "ast",
       "community": 109,
       "community_name": "Technical requirements",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "core rule: data decides, ai explains",
+      "norm_label": "architecture diagram",
       "source_file": "docs/TRD.md",
-      "source_location": "L77"
+      "source_location": "L160"
     },
     {
-      "id": "docs_trd_declaration_crosswalk",
-      "label": "Declaration crosswalk",
+      "id": "docs_trd_architecture_summary",
+      "label": "Architecture summary",
       "_origin": "ast",
       "community": 109,
       "community_name": "Technical requirements",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "declaration crosswalk",
+      "norm_label": "architecture summary",
       "source_file": "docs/TRD.md",
-      "source_location": "L108"
+      "source_location": "L127"
+    },
+    {
+      "id": "docs_trd_client_runtime",
+      "label": "Client runtime",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "client runtime",
+      "source_file": "docs/TRD.md",
+      "source_location": "L206"
+    },
+    {
+      "id": "docs_trd_components",
+      "label": "Components",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "components",
+      "source_file": "docs/TRD.md",
+      "source_location": "L133"
+    },
+    {
+      "id": "docs_trd_data_flow",
+      "label": "Data flow",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "data flow",
+      "source_file": "docs/TRD.md",
+      "source_location": "L149"
+    },
+    {
+      "id": "docs_trd_data_sources",
+      "label": "Data sources",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "data sources",
+      "source_file": "docs/TRD.md",
+      "source_location": "L258"
+    },
+    {
+      "id": "docs_trd_datasets",
+      "label": "Datasets",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "datasets",
+      "source_file": "docs/TRD.md",
+      "source_location": "L260"
+    },
+    {
+      "id": "docs_trd_external_apis_and_cloud_services",
+      "label": "External APIs and cloud services",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "external apis and cloud services",
+      "source_file": "docs/TRD.md",
+      "source_location": "L240"
+    },
+    {
+      "id": "docs_trd_four_layer_hierarchy_and_fallbacks",
+      "label": "Four-layer hierarchy and fallbacks",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "four-layer hierarchy and fallbacks",
+      "source_file": "docs/TRD.md",
+      "source_location": "L303"
     },
     {
       "id": "docs_trd_known_limitations_and_risks",
@@ -14374,6 +14495,30 @@
       "source_location": "L729"
     },
     {
+      "id": "docs_trd_languages_frameworks_and_libraries",
+      "label": "Languages, frameworks and libraries",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "languages, frameworks and libraries",
+      "source_file": "docs/TRD.md",
+      "source_location": "L215"
+    },
+    {
+      "id": "docs_trd_licences_and_attribution",
+      "label": "Licences and attribution",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "licences and attribution",
+      "source_file": "docs/TRD.md",
+      "source_location": "L281"
+    },
+    {
       "id": "docs_trd_limitations_summary",
       "label": "Limitations summary",
       "_origin": "ast",
@@ -14384,18 +14529,6 @@
       "norm_label": "limitations summary",
       "source_file": "docs/TRD.md",
       "source_location": "L753"
-    },
-    {
-      "id": "docs_trd_overview",
-      "label": "Overview",
-      "_origin": "ast",
-      "community": 109,
-      "community_name": "Technical requirements",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "overview",
-      "source_file": "docs/TRD.md",
-      "source_location": "L70"
     },
     {
       "id": "docs_trd_risk_register",
@@ -14422,6 +14555,30 @@
       "source_location": "L775"
     },
     {
+      "id": "docs_trd_stack",
+      "label": "Stack",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "stack",
+      "source_file": "docs/TRD.md",
+      "source_location": "L213"
+    },
+    {
+      "id": "docs_trd_system_architecture",
+      "label": "System architecture",
+      "_origin": "ast",
+      "community": 109,
+      "community_name": "Technical requirements",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "system architecture",
+      "source_file": "docs/TRD.md",
+      "source_location": "L125"
+    },
+    {
       "id": "docs_trd_technical_requirements",
       "label": "Technical requirements",
       "_origin": "ast",
@@ -14444,18 +14601,6 @@
       "norm_label": "traceability",
       "source_file": "docs/TRD.md",
       "source_location": "L759"
-    },
-    {
-      "id": "docs_trd_what_ai_may_and_may_not_do",
-      "label": "What AI may and may not do",
-      "_origin": "ast",
-      "community": 109,
-      "community_name": "Technical requirements",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "what ai may and may not do",
-      "source_file": "docs/TRD.md",
-      "source_location": "L85"
     },
     {
       "id": "docs_sources_drive_google_com_participant_handbook_10_submission_guideline",
@@ -15288,7 +15433,7 @@
       "node_kind": "heading",
       "norm_label": "admin panel and schedule",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L72"
+      "source_location": "L74"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_browser_runner",
@@ -15300,7 +15445,7 @@
       "node_kind": "heading",
       "norm_label": "browser runner",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L66"
+      "source_location": "L68"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_deduplication_rules",
@@ -15312,7 +15457,7 @@
       "node_kind": "heading",
       "norm_label": "deduplication rules",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L121"
+      "source_location": "L123"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_depth_and_description_reuse",
@@ -15324,7 +15469,7 @@
       "node_kind": "heading",
       "norm_label": "depth and description reuse",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L80"
+      "source_location": "L82"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_implementation",
@@ -15336,7 +15481,7 @@
       "node_kind": "heading",
       "norm_label": "implementation",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L226"
+      "source_location": "L228"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_jobstreet_research_scraper",
@@ -15360,7 +15505,7 @@
       "node_kind": "heading",
       "norm_label": "merge contributor captures",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L107"
+      "source_location": "L109"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_neon_and_deployment",
@@ -15384,7 +15529,7 @@
       "node_kind": "heading",
       "norm_label": "observation dates and trend tracking",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L131"
+      "source_location": "L133"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_output",
@@ -15396,7 +15541,7 @@
       "node_kind": "heading",
       "norm_label": "output",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L164"
+      "source_location": "L166"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_production_setup",
@@ -15420,7 +15565,7 @@
       "node_kind": "heading",
       "norm_label": "references",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L241"
+      "source_location": "L243"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_reliability_and_failure_handling",
@@ -15432,7 +15577,7 @@
       "node_kind": "heading",
       "norm_label": "reliability and failure handling",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L197"
+      "source_location": "L199"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_run",
@@ -15456,7 +15601,7 @@
       "node_kind": "heading",
       "norm_label": "sorting rules",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L145"
+      "source_location": "L147"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_verification",
@@ -15468,7 +15613,7 @@
       "node_kind": "heading",
       "norm_label": "verification",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L207"
+      "source_location": "L209"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_readme_waiting_for_verification",
@@ -15480,18 +15625,150 @@
       "node_kind": "heading",
       "norm_label": "waiting for verification",
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L185"
+      "source_location": "L187"
     },
     {
-      "id": "apps_api_src_scrapers_jobstreet_browser_profile",
-      "label": "browser-profile.ts",
+      "id": "packages_browser_package",
+      "label": "browser/package.json",
       "_origin": "ast",
       "community": 117,
       "community_name": "profiles.ts",
       "file_type": "code",
-      "norm_label": "browser-profile.ts",
-      "source_file": "apps/api/src/scrapers/jobstreet/browser-profile.ts",
+      "norm_label": "browser/package.json",
+      "source_file": "packages/browser/package.json",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_browser_package_dependencies",
+      "label": "dependencies",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "dependencies",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "packages_browser_package_dependencies_clearcote",
+      "label": "clearcote",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "clearcote",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_browser_package_dependencies_playwright_core",
+      "label": "playwright-core",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "playwright-core",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "packages_browser_package_devdependencies",
+      "label": "devDependencies",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "devdependencies",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_browser_package_devdependencies_types_bun",
+      "label": "@types/bun",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "@types/bun",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "packages_browser_package_exports",
+      "label": "exports",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "exports",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "packages_browser_package_name",
+      "label": "name",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "name",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "packages_browser_package_private",
+      "label": "private",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "private",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "packages_browser_package_scripts",
+      "label": "scripts",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "scripts",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "packages_browser_package_scripts_profile",
+      "label": "profile",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "profile",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_browser_package_scripts_typecheck",
+      "label": "typecheck",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "typecheck",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "packages_browser_package_type",
+      "label": "type",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "code",
+      "norm_label": "type",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L4"
     },
     {
       "id": "packages_browser_src_cli",
@@ -15571,6 +15848,28 @@
       "source_location": "L1"
     },
     {
+      "id": "packages_browser_package_json_ref_types_bun",
+      "label": "@types/bun",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "concept",
+      "norm_label": "@types/bun",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "ref_clearcote",
+      "label": "clearcote",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "concept",
+      "norm_label": "clearcote",
+      "source_file": "packages/browser/package.json",
+      "source_location": "L17"
+    },
+    {
       "id": "ref_playwright_core",
       "label": "playwright-core",
       "_origin": "ast",
@@ -15580,6 +15879,66 @@
       "norm_label": "playwright-core",
       "source_file": "packages/browser/package.json",
       "source_location": "L18"
+    },
+    {
+      "id": "packages_browser_readme",
+      "label": "browser/README.md",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "browser/readme.md",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_browser_readme_browser_profiles",
+      "label": "Browser profiles",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "browser profiles",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_browser_readme_command_line",
+      "label": "Command line",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "command line",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_browser_readme_design",
+      "label": "Design",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "design",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "packages_browser_readme_files_and_removal",
+      "label": "Files and removal",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "files and removal",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L73"
     },
     {
       "id": "packages_browser_readme_library",
@@ -15592,6 +15951,66 @@
       "norm_label": "library",
       "source_file": "packages/browser/README.md",
       "source_location": "L33"
+    },
+    {
+      "id": "packages_browser_readme_limitations",
+      "label": "Limitations",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "limitations",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L82"
+    },
+    {
+      "id": "packages_browser_readme_network_behaviour",
+      "label": "Network behaviour",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "network behaviour",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "packages_browser_readme_see_also",
+      "label": "See also",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "see also",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "packages_browser_readme_usage",
+      "label": "Usage",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "usage",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_browser_readme_why_chromium",
+      "label": "Why Chromium",
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "profiles.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "why chromium",
+      "source_file": "packages/browser/README.md",
+      "source_location": "L60"
     },
     {
       "id": "apps_web_tsconfig",
@@ -15845,11 +16264,59 @@
       "source_location": "L2"
     },
     {
+      "id": "docs_brief",
+      "label": "BRIEF.md",
+      "_origin": "ast",
+      "community": 121,
+      "community_name": "IDEA.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "brief.md",
+      "source_file": "docs/BRIEF.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_context",
+      "label": "CONTEXT.md",
+      "_origin": "ast",
+      "community": 121,
+      "community_name": "IDEA.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "context.md",
+      "source_file": "docs/CONTEXT.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_design",
+      "label": "DESIGN.md",
+      "_origin": "ast",
+      "community": 121,
+      "community_name": "IDEA.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "design.md",
+      "source_file": "docs/DESIGN.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_idea",
+      "label": "IDEA.md",
+      "_origin": "ast",
+      "community": 121,
+      "community_name": "IDEA.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "idea.md",
+      "source_file": "docs/IDEA.md",
+      "source_location": "L1"
+    },
+    {
       "id": "docs_idea_how_the_idea_was_built",
       "label": "How the idea was built",
       "_origin": "ast",
       "community": 121,
-      "community_name": "Idea",
+      "community_name": "IDEA.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "how the idea was built",
@@ -15861,7 +16328,7 @@
       "label": "Idea",
       "_origin": "ast",
       "community": 121,
-      "community_name": "Idea",
+      "community_name": "IDEA.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "idea",
@@ -15873,7 +16340,7 @@
       "label": "Ideas we compared",
       "_origin": "ast",
       "community": 121,
-      "community_name": "Idea",
+      "community_name": "IDEA.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "ideas we compared",
@@ -15885,7 +16352,7 @@
       "label": "See also",
       "_origin": "ast",
       "community": 121,
-      "community_name": "Idea",
+      "community_name": "IDEA.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "see also",
@@ -15897,7 +16364,7 @@
       "label": "The idea in brief",
       "_origin": "ast",
       "community": 121,
-      "community_name": "Idea",
+      "community_name": "IDEA.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "the idea in brief",
@@ -15909,12 +16376,36 @@
       "label": "Where the detail lives",
       "_origin": "ast",
       "community": 121,
-      "community_name": "Idea",
+      "community_name": "IDEA.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "where the detail lives",
       "source_file": "docs/IDEA.md",
       "source_location": "L42"
+    },
+    {
+      "id": "docs_product",
+      "label": "PRODUCT.md",
+      "_origin": "ast",
+      "community": 121,
+      "community_name": "IDEA.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "product.md",
+      "source_file": "docs/PRODUCT.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_trd",
+      "label": "TRD.md",
+      "_origin": "ast",
+      "community": 121,
+      "community_name": "IDEA.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "trd.md",
+      "source_file": "docs/TRD.md",
+      "source_location": "L1"
     },
     {
       "id": "docs_sources_sdchack_my_handbook_8_1_use_of_external_tools_apis_and_cloud_services",
@@ -18130,6 +18621,105 @@
       "source_location": "L8"
     },
     {
+      "id": "apps_api_db_sample_checkups",
+      "label": "sample-checkups.ts",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "sample-checkups.ts",
+      "source_file": "apps/api/db/sample-checkups.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_db_sample_checkups_demo_role_codes",
+      "label": "DEMO_ROLE_CODES",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "demo_role_codes",
+      "source_file": "apps/api/db/sample-checkups.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "apps_api_db_sample_checkups_sample_rows_per_role",
+      "label": "SAMPLE_ROWS_PER_ROLE",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "sample_rows_per_role",
+      "source_file": "apps/api/db/sample-checkups.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "apps_api_db_seed",
+      "label": "seed.ts",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "seed.ts",
+      "source_file": "apps/api/db/seed.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_db_seed_databaseurl",
+      "label": "databaseUrl",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "databaseurl",
+      "source_file": "apps/api/db/seed.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "apps_api_db_seed_migrationfiles",
+      "label": "migrationFiles",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "migrationfiles",
+      "source_file": "apps/api/db/seed.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "apps_api_db_seed_rows",
+      "label": "rows",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "rows",
+      "source_file": "apps/api/db/seed.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "apps_api_db_seed_sql",
+      "label": "sql",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "sql",
+      "source_file": "apps/api/db/seed.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "apps_api_db_seed_statements",
+      "label": "statements",
+      "_origin": "ast",
+      "community": 141,
+      "community_name": "seed.ts",
+      "file_type": "code",
+      "norm_label": "statements",
+      "source_file": "apps/api/db/seed.ts",
+      "source_location": "L15"
+    },
+    {
       "id": "apps_web_src_components_kopi_kopispeechbox",
       "label": "KopiSpeechBox.tsx",
       "_origin": "ast",
@@ -19908,59 +20498,26 @@
       "source_location": "L32"
     },
     {
-      "id": "apps_api_src_ai_cache",
-      "label": "ai/cache.ts",
+      "id": "apps_web_src_components_kopi_voice",
+      "label": "voice.ts",
       "_origin": "ast",
       "community": 153,
-      "community_name": "ai/cache.ts",
+      "community_name": "voice.ts",
       "file_type": "code",
-      "norm_label": "ai/cache.ts",
-      "source_file": "apps/api/src/ai/cache.ts",
+      "norm_label": "voice.ts",
+      "source_file": "apps/web/src/components/kopi/voice.ts",
       "source_location": "L1"
     },
     {
-      "id": "apps_api_src_ai_cache_decoder",
-      "label": "decoder",
+      "id": "packages_shared_src_api_ttsresponseschema",
+      "label": "TtsResponseSchema",
       "_origin": "ast",
       "community": 153,
-      "community_name": "ai/cache.ts",
+      "community_name": "voice.ts",
       "file_type": "code",
-      "norm_label": "decoder",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "apps_api_src_ai_cache_encoder",
-      "label": "encoder",
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "encoder",
-      "source_file": "apps/api/src/ai/cache.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "apps_api_src_cache",
-      "label": "src/cache.ts",
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "src/cache.ts",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_cache_memory",
-      "label": "memory",
-      "_origin": "ast",
-      "community": 153,
-      "community_name": "ai/cache.ts",
-      "file_type": "code",
-      "norm_label": "memory",
-      "source_file": "apps/api/src/cache.ts",
-      "source_location": "L15"
+      "norm_label": "ttsresponseschema",
+      "source_file": "packages/shared/src/api.ts",
+      "source_location": "L111"
     },
     {
       "id": "apps_web_src_components_kotak_futureskillsradar",
@@ -20018,6 +20575,61 @@
       "source_location": "L17"
     },
     {
+      "id": "apps_api_src_ai_cache",
+      "label": "ai/cache.ts",
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "ai/cache.ts",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_ai_cache_decoder",
+      "label": "decoder",
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "decoder",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "apps_api_src_ai_cache_encoder",
+      "label": "encoder",
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "encoder",
+      "source_file": "apps/api/src/ai/cache.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "apps_api_src_cache",
+      "label": "src/cache.ts",
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "src/cache.ts",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_cache_memory",
+      "label": "memory",
+      "_origin": "ast",
+      "community": 155,
+      "community_name": "tts.ts",
+      "file_type": "code",
+      "norm_label": "memory",
+      "source_file": "apps/api/src/cache.ts",
+      "source_location": "L15"
+    },
+    {
       "id": "apps_api_src_routes_tts",
       "label": "tts.ts",
       "_origin": "ast",
@@ -20062,17 +20674,6 @@
       "source_location": "L12"
     },
     {
-      "id": "apps_web_src_components_kopi_voice",
-      "label": "voice.ts",
-      "_origin": "ast",
-      "community": 155,
-      "community_name": "tts.ts",
-      "file_type": "code",
-      "norm_label": "voice.ts",
-      "source_file": "apps/web/src/components/kopi/voice.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_shared_src_api_ttsrequestschema",
       "label": "TtsRequestSchema",
       "_origin": "ast",
@@ -20082,17 +20683,6 @@
       "norm_label": "ttsrequestschema",
       "source_file": "packages/shared/src/api.ts",
       "source_location": "L109"
-    },
-    {
-      "id": "packages_shared_src_api_ttsresponseschema",
-      "label": "TtsResponseSchema",
-      "_origin": "ast",
-      "community": 155,
-      "community_name": "tts.ts",
-      "file_type": "code",
-      "norm_label": "ttsresponseschema",
-      "source_file": "packages/shared/src/api.ts",
-      "source_location": "L111"
     },
     {
       "id": "scripts_kopi_lines",
@@ -20312,6 +20902,17 @@
       "file_type": "code",
       "norm_label": "deps.ts",
       "source_file": "apps/api/src/ai/deps.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_ai_env",
+      "label": "env.ts",
+      "_origin": "ast",
+      "community": 157,
+      "community_name": "deps.ts",
+      "file_type": "code",
+      "norm_label": "env.ts",
+      "source_file": "apps/api/src/ai/env.ts",
       "source_location": "L1"
     },
     {
@@ -20890,6 +21491,17 @@
       "source_location": "L417"
     },
     {
+      "id": "apps_api_src_ai_errors",
+      "label": "errors.ts",
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "errors.ts",
+      "source_file": "apps/api/src/ai/errors.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "apps_api_src_ai_verifier_explanationdraftschema",
       "label": "ExplanationDraftSchema",
       "_origin": "ast",
@@ -20910,6 +21522,39 @@
       "norm_label": "explanations.ts",
       "source_file": "apps/api/src/routes/explanations.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_routes_roles",
+      "label": "roles.ts",
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "roles.ts",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_routes_roles_matchdraftschema",
+      "label": "MatchDraftSchema",
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "matchdraftschema",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "apps_api_src_routes_roles_systemprompts",
+      "label": "systemPrompts",
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "systemprompts",
+      "source_file": "apps/api/src/routes/roles.ts",
+      "source_location": "L18"
     },
     {
       "id": "apps_web_src_engine_api",
@@ -21009,6 +21654,17 @@
       "norm_label": "rolematchrequestschema",
       "source_file": "packages/shared/src/api.ts",
       "source_location": "L29"
+    },
+    {
+      "id": "packages_shared_src_api_rolematchresponseschema",
+      "label": "RoleMatchResponseSchema",
+      "_origin": "ast",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "file_type": "code",
+      "norm_label": "rolematchresponseschema",
+      "source_file": "packages/shared/src/api.ts",
+      "source_location": "L31"
     },
     {
       "id": "scripts_prewarm_ai_cache",
@@ -21418,76 +22074,52 @@
       "source_location": "L1"
     },
     {
-      "id": "docs_trd_architecture_diagram",
-      "label": "Architecture diagram",
+      "id": "docs_trd_core_rule_data_decides_ai_explains",
+      "label": "Core rule: data decides, AI explains",
       "_origin": "ast",
       "community": 173,
-      "community_name": "System architecture",
+      "community_name": "Overview",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "architecture diagram",
+      "norm_label": "core rule: data decides, ai explains",
       "source_file": "docs/TRD.md",
-      "source_location": "L160"
+      "source_location": "L77"
     },
     {
-      "id": "docs_trd_architecture_summary",
-      "label": "Architecture summary",
+      "id": "docs_trd_declaration_crosswalk",
+      "label": "Declaration crosswalk",
       "_origin": "ast",
       "community": 173,
-      "community_name": "System architecture",
+      "community_name": "Overview",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "architecture summary",
+      "norm_label": "declaration crosswalk",
       "source_file": "docs/TRD.md",
-      "source_location": "L127"
+      "source_location": "L108"
     },
     {
-      "id": "docs_trd_client_runtime",
-      "label": "Client runtime",
+      "id": "docs_trd_overview",
+      "label": "Overview",
       "_origin": "ast",
       "community": 173,
-      "community_name": "System architecture",
+      "community_name": "Overview",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "client runtime",
+      "norm_label": "overview",
       "source_file": "docs/TRD.md",
-      "source_location": "L206"
+      "source_location": "L70"
     },
     {
-      "id": "docs_trd_components",
-      "label": "Components",
+      "id": "docs_trd_what_ai_may_and_may_not_do",
+      "label": "What AI may and may not do",
       "_origin": "ast",
       "community": 173,
-      "community_name": "System architecture",
+      "community_name": "Overview",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "components",
+      "norm_label": "what ai may and may not do",
       "source_file": "docs/TRD.md",
-      "source_location": "L133"
-    },
-    {
-      "id": "docs_trd_data_flow",
-      "label": "Data flow",
-      "_origin": "ast",
-      "community": 173,
-      "community_name": "System architecture",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "data flow",
-      "source_file": "docs/TRD.md",
-      "source_location": "L149"
-    },
-    {
-      "id": "docs_trd_system_architecture",
-      "label": "System architecture",
-      "_origin": "ast",
-      "community": 173,
-      "community_name": "System architecture",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "system architecture",
-      "source_file": "docs/TRD.md",
-      "source_location": "L125"
+      "source_location": "L85"
     },
     {
       "id": "apps_web_src_main",
@@ -21521,54 +22153,6 @@
       "norm_label": "react-dom",
       "source_file": "apps/web/package.json",
       "source_location": "L16"
-    },
-    {
-      "id": "docs_design",
-      "label": "DESIGN.md",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "IDEA.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "design.md",
-      "source_file": "docs/DESIGN.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_idea",
-      "label": "IDEA.md",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "IDEA.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "idea.md",
-      "source_file": "docs/IDEA.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_product",
-      "label": "PRODUCT.md",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "IDEA.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "product.md",
-      "source_file": "docs/PRODUCT.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_trd",
-      "label": "TRD.md",
-      "_origin": "ast",
-      "community": 175,
-      "community_name": "IDEA.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "trd.md",
-      "source_file": "docs/TRD.md",
-      "source_location": "L1"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_hand",
@@ -21638,54 +22222,6 @@
       "source_location": "L1"
     },
     {
-      "id": "docs_design_colour",
-      "label": "Colour",
-      "_origin": "ast",
-      "community": 179,
-      "community_name": "Colour",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "colour",
-      "source_file": "docs/DESIGN.md",
-      "source_location": "L32"
-    },
-    {
-      "id": "docs_design_colour_rules",
-      "label": "Colour rules",
-      "_origin": "ast",
-      "community": 179,
-      "community_name": "Colour",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "colour rules",
-      "source_file": "docs/DESIGN.md",
-      "source_location": "L81"
-    },
-    {
-      "id": "docs_design_sdg_colours",
-      "label": "SDG colours",
-      "_origin": "ast",
-      "community": 179,
-      "community_name": "Colour",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "sdg colours",
-      "source_file": "docs/DESIGN.md",
-      "source_location": "L57"
-    },
-    {
-      "id": "docs_design_semantic_colour_tokens",
-      "label": "Semantic colour tokens",
-      "_origin": "ast",
-      "community": 179,
-      "community_name": "Colour",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "semantic colour tokens",
-      "source_file": "docs/DESIGN.md",
-      "source_location": "L34"
-    },
-    {
       "id": "gemini",
       "label": "GEMINI.md",
       "_origin": "ast",
@@ -21696,54 +22232,6 @@
       "norm_label": "gemini.md",
       "source_file": "GEMINI.md",
       "source_location": "L1"
-    },
-    {
-      "id": "docs_trd_data_sources",
-      "label": "Data sources",
-      "_origin": "ast",
-      "community": 180,
-      "community_name": "Data sources",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "data sources",
-      "source_file": "docs/TRD.md",
-      "source_location": "L258"
-    },
-    {
-      "id": "docs_trd_datasets",
-      "label": "Datasets",
-      "_origin": "ast",
-      "community": 180,
-      "community_name": "Data sources",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "datasets",
-      "source_file": "docs/TRD.md",
-      "source_location": "L260"
-    },
-    {
-      "id": "docs_trd_four_layer_hierarchy_and_fallbacks",
-      "label": "Four-layer hierarchy and fallbacks",
-      "_origin": "ast",
-      "community": 180,
-      "community_name": "Data sources",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "four-layer hierarchy and fallbacks",
-      "source_file": "docs/TRD.md",
-      "source_location": "L303"
-    },
-    {
-      "id": "docs_trd_licences_and_attribution",
-      "label": "Licences and attribution",
-      "_origin": "ast",
-      "community": 180,
-      "community_name": "Data sources",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "licences and attribution",
-      "source_file": "docs/TRD.md",
-      "source_location": "L281"
     },
     {
       "id": "apps_web_src_components_kopi_kopifigure",
@@ -21788,42 +22276,6 @@
       "norm_label": "kopidialogue.tsx",
       "source_file": "apps/web/src/views/checkup/KopiDialogue.tsx",
       "source_location": "L1"
-    },
-    {
-      "id": "docs_trd_external_apis_and_cloud_services",
-      "label": "External APIs and cloud services",
-      "_origin": "ast",
-      "community": 182,
-      "community_name": "Stack",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "external apis and cloud services",
-      "source_file": "docs/TRD.md",
-      "source_location": "L240"
-    },
-    {
-      "id": "docs_trd_languages_frameworks_and_libraries",
-      "label": "Languages, frameworks and libraries",
-      "_origin": "ast",
-      "community": 182,
-      "community_name": "Stack",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "languages, frameworks and libraries",
-      "source_file": "docs/TRD.md",
-      "source_location": "L215"
-    },
-    {
-      "id": "docs_trd_stack",
-      "label": "Stack",
-      "_origin": "ast",
-      "community": 182,
-      "community_name": "Stack",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "stack",
-      "source_file": "docs/TRD.md",
-      "source_location": "L213"
     },
     {
       "id": "apps_web_src_components_ui_datepicker",
@@ -22161,171 +22613,6 @@
       "source_location": "L104"
     },
     {
-      "id": "packages_browser_package",
-      "label": "browser/package.json",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "browser/package.json",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_browser_package_dependencies",
-      "label": "dependencies",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "dependencies",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L16"
-    },
-    {
-      "id": "packages_browser_package_dependencies_clearcote",
-      "label": "clearcote",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "clearcote",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L17"
-    },
-    {
-      "id": "packages_browser_package_dependencies_playwright_core",
-      "label": "playwright-core",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "playwright-core",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L18"
-    },
-    {
-      "id": "packages_browser_package_devdependencies",
-      "label": "devDependencies",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "devdependencies",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L20"
-    },
-    {
-      "id": "packages_browser_package_devdependencies_types_bun",
-      "label": "@types/bun",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "@types/bun",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L21"
-    },
-    {
-      "id": "packages_browser_package_exports",
-      "label": "exports",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "exports",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L5"
-    },
-    {
-      "id": "packages_browser_package_name",
-      "label": "name",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "name",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L2"
-    },
-    {
-      "id": "packages_browser_package_private",
-      "label": "private",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "private",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L3"
-    },
-    {
-      "id": "packages_browser_package_scripts",
-      "label": "scripts",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "scripts",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L12"
-    },
-    {
-      "id": "packages_browser_package_scripts_profile",
-      "label": "profile",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "profile",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L13"
-    },
-    {
-      "id": "packages_browser_package_scripts_typecheck",
-      "label": "typecheck",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "typecheck",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L14"
-    },
-    {
-      "id": "packages_browser_package_type",
-      "label": "type",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "code",
-      "norm_label": "type",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L4"
-    },
-    {
-      "id": "packages_browser_package_json_ref_types_bun",
-      "label": "@types/bun",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "concept",
-      "norm_label": "@types/bun",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L21"
-    },
-    {
-      "id": "ref_clearcote",
-      "label": "clearcote",
-      "_origin": "ast",
-      "community": 190,
-      "community_name": "browser/package.json",
-      "file_type": "concept",
-      "norm_label": "clearcote",
-      "source_file": "packages/browser/package.json",
-      "source_location": "L17"
-    },
-    {
       "id": "apps_api_db_migrations_0002_jobstreet",
       "label": "0002_jobstreet.sql",
       "_origin": "ast",
@@ -22469,58 +22756,14 @@
       "source_location": "L25"
     },
     {
-      "id": "apps_api_src_ai_deps_defaultaideps",
-      "label": "defaultAiDeps",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "defaultaideps",
-      "source_file": "apps/api/src/ai/deps.ts",
-      "source_location": "L21"
-    },
-    {
       "id": "apps_api_src_ai_disk_store",
       "label": "disk-store.ts",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
       "norm_label": "disk-store.ts",
       "source_file": "apps/api/src/ai/disk-store.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_ai_env",
-      "label": "env.ts",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "env.ts",
-      "source_file": "apps/api/src/ai/env.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_ai_errors",
-      "label": "errors.ts",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "errors.ts",
-      "source_file": "apps/api/src/ai/errors.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_app",
-      "label": "app.ts",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "app.ts",
-      "source_file": "apps/api/src/app.ts",
       "source_location": "L1"
     },
     {
@@ -22528,7 +22771,7 @@
       "label": "bun.ts",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
       "norm_label": "bun.ts",
       "source_file": "apps/api/src/bun.ts",
@@ -22539,7 +22782,7 @@
       "label": "bindings",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
       "norm_label": "bindings",
       "source_file": "apps/api/src/bun.ts",
@@ -22550,7 +22793,7 @@
       "label": "port",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
       "norm_label": "port",
       "source_file": "apps/api/src/bun.ts",
@@ -22561,110 +22804,55 @@
       "label": "webRoot",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
       "norm_label": "webroot",
       "source_file": "apps/api/src/bun.ts",
       "source_location": "L10"
     },
     {
-      "id": "apps_api_src_routes_national_view_nationalview",
-      "label": "nationalView",
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test",
+      "label": "prepare.integration.test.ts",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
-      "norm_label": "nationalview",
-      "source_file": "apps/api/src/routes/national-view.ts",
-      "source_location": "L129"
-    },
-    {
-      "id": "apps_api_src_routes_roles",
-      "label": "roles.ts",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "roles.ts",
-      "source_file": "apps/api/src/routes/roles.ts",
+      "norm_label": "prepare.integration.test.ts",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
       "source_location": "L1"
     },
     {
-      "id": "apps_api_src_routes_roles_matchdraftschema",
-      "label": "MatchDraftSchema",
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_cli",
+      "label": "cli",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
-      "norm_label": "matchdraftschema",
-      "source_file": "apps/api/src/routes/roles.ts",
-      "source_location": "L10"
+      "norm_label": "cli",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
+      "source_location": "L9"
     },
     {
-      "id": "apps_api_src_routes_roles_systemprompts",
-      "label": "systemPrompts",
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_root",
+      "label": "root",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
-      "norm_label": "systemprompts",
-      "source_file": "apps/api/src/routes/roles.ts",
-      "source_location": "L18"
+      "norm_label": "root",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
+      "source_location": "L7"
     },
     {
-      "id": "apps_api_src_routes_tts_tts",
-      "label": "tts",
+      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_scratch",
+      "label": "scratch",
       "_origin": "ast",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "file_type": "code",
-      "norm_label": "tts",
-      "source_file": "apps/api/src/routes/tts.ts",
-      "source_location": "L52"
-    },
-    {
-      "id": "packages_shared_src_api_healthresponseschema",
-      "label": "HealthResponseSchema",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "healthresponseschema",
-      "source_file": "packages/shared/src/api.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "packages_shared_src_api_rolematchresponseschema",
-      "label": "RoleMatchResponseSchema",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "rolematchresponseschema",
-      "source_file": "packages/shared/src/api.ts",
-      "source_location": "L31"
-    },
-    {
-      "id": "packages_shared_src_engine_enginesnapshotschema",
-      "label": "EngineSnapshotSchema",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "code",
-      "norm_label": "enginesnapshotschema",
-      "source_file": "packages/shared/src/engine.ts",
-      "source_location": "L55"
-    },
-    {
-      "id": "ref_hono",
-      "label": "hono",
-      "_origin": "ast",
-      "community": 193,
-      "community_name": "roles.ts",
-      "file_type": "concept",
-      "norm_label": "hono",
-      "source_file": "apps/api/package.json",
-      "source_location": "L14"
+      "norm_label": "scratch",
+      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
+      "source_location": "L8"
     },
     {
       "id": "cubism4",
@@ -22698,126 +22886,6 @@
       "norm_label": "live2d.ts",
       "source_file": "apps/web/src/components/kopi/live2d.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "packages_browser_readme",
-      "label": "browser/README.md",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "browser/readme.md",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_browser_readme_browser_profiles",
-      "label": "Browser profiles",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "browser profiles",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_browser_readme_command_line",
-      "label": "Command line",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "command line",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L19"
-    },
-    {
-      "id": "packages_browser_readme_design",
-      "label": "Design",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "design",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L48"
-    },
-    {
-      "id": "packages_browser_readme_files_and_removal",
-      "label": "Files and removal",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "files and removal",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L73"
-    },
-    {
-      "id": "packages_browser_readme_limitations",
-      "label": "Limitations",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "limitations",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L82"
-    },
-    {
-      "id": "packages_browser_readme_network_behaviour",
-      "label": "Network behaviour",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "network behaviour",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L64"
-    },
-    {
-      "id": "packages_browser_readme_see_also",
-      "label": "See also",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "see also",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L88"
-    },
-    {
-      "id": "packages_browser_readme_usage",
-      "label": "Usage",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "usage",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L17"
-    },
-    {
-      "id": "packages_browser_readme_why_chromium",
-      "label": "Why Chromium",
-      "_origin": "ast",
-      "community": 195,
-      "community_name": "Browser profiles",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "why chromium",
-      "source_file": "packages/browser/README.md",
-      "source_location": "L60"
     },
     {
       "id": "scripts_corners_stub_server",
@@ -26258,18 +26326,6 @@
       "source_location": "L23"
     },
     {
-      "id": "docs_context",
-      "label": "CONTEXT.md",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "SDC Hackathon 2026 context",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "context.md",
-      "source_file": "docs/CONTEXT.md",
-      "source_location": "L1"
-    },
-    {
       "id": "docs_context_comparable_winners",
       "label": "Comparable winners",
       "_origin": "ast",
@@ -27204,18 +27260,6 @@
       "norm_label": "5. project development rules",
       "source_file": "docs/sources/sdchack.my/terms-and-conditions.md",
       "source_location": "L385"
-    },
-    {
-      "id": "docs_brief",
-      "label": "BRIEF.md",
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "SDC Hackathon 2026 brief",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "brief.md",
-      "source_file": "docs/BRIEF.md",
-      "source_location": "L1"
     },
     {
       "id": "docs_brief_deadlines",
@@ -33410,160 +33454,6 @@
       "source_location": "L1"
     },
     {
-      "id": "apps_api_db_migrate",
-      "label": "migrate.ts",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "migrate.ts",
-      "source_file": "apps/api/db/migrate.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_db_migrate_databaseurl",
-      "label": "databaseUrl",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "databaseurl",
-      "source_file": "apps/api/db/migrate.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "apps_api_db_migrate_migrationfiles",
-      "label": "migrationFiles",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "migrationfiles",
-      "source_file": "apps/api/db/migrate.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "apps_api_db_migrate_sql",
-      "label": "sql",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "sql",
-      "source_file": "apps/api/db/migrate.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "apps_api_db_migrate_statements",
-      "label": "statements",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "statements",
-      "source_file": "apps/api/db/migrate.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "apps_api_db_sample_checkups",
-      "label": "sample-checkups.ts",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "sample-checkups.ts",
-      "source_file": "apps/api/db/sample-checkups.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_db_sample_checkups_demo_role_codes",
-      "label": "DEMO_ROLE_CODES",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "demo_role_codes",
-      "source_file": "apps/api/db/sample-checkups.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "apps_api_db_sample_checkups_sample_rows_per_role",
-      "label": "SAMPLE_ROWS_PER_ROLE",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "sample_rows_per_role",
-      "source_file": "apps/api/db/sample-checkups.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "apps_api_db_seed",
-      "label": "seed.ts",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "seed.ts",
-      "source_file": "apps/api/db/seed.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_db_seed_databaseurl",
-      "label": "databaseUrl",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "databaseurl",
-      "source_file": "apps/api/db/seed.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "apps_api_db_seed_migrationfiles",
-      "label": "migrationFiles",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "migrationfiles",
-      "source_file": "apps/api/db/seed.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "apps_api_db_seed_rows",
-      "label": "rows",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "rows",
-      "source_file": "apps/api/db/seed.ts",
-      "source_location": "L21"
-    },
-    {
-      "id": "apps_api_db_seed_sql",
-      "label": "sql",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "sql",
-      "source_file": "apps/api/db/seed.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "apps_api_db_seed_statements",
-      "label": "statements",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "code",
-      "norm_label": "statements",
-      "source_file": "apps/api/db/seed.ts",
-      "source_location": "L15"
-    },
-    {
       "id": "apps_api_package",
       "label": "api/package.json",
       "_origin": "ast",
@@ -33793,17 +33683,6 @@
       "norm_label": "@kotak/browser",
       "source_file": "apps/api/package.json",
       "source_location": "L11"
-    },
-    {
-      "id": "ref_neondatabase_serverless",
-      "label": "@neondatabase/serverless",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "api/package.json",
-      "file_type": "concept",
-      "norm_label": "@neondatabase/serverless",
-      "source_file": "apps/api/package.json",
-      "source_location": "L13"
     },
     {
       "id": "docs_product_accessibility_inclusion",
@@ -35262,6 +35141,28 @@
       "source_location": "L346"
     },
     {
+      "id": "apps_api_src_ai_deps_defaultaideps",
+      "label": "defaultAiDeps",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "code",
+      "norm_label": "defaultaideps",
+      "source_file": "apps/api/src/ai/deps.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "apps_api_src_app",
+      "label": "app.ts",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "code",
+      "norm_label": "app.ts",
+      "source_file": "apps/api/src/app.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "apps_api_src_config",
       "label": "config.ts",
       "_origin": "ast",
@@ -35295,6 +35196,17 @@
       "source_location": "L25"
     },
     {
+      "id": "apps_api_src_routes_national_view_nationalview",
+      "label": "nationalView",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "code",
+      "norm_label": "nationalview",
+      "source_file": "apps/api/src/routes/national-view.ts",
+      "source_location": "L129"
+    },
+    {
       "id": "apps_api_src_routes_national_view_occupation_group_titles",
       "label": "OCCUPATION_GROUP_TITLES",
       "_origin": "ast",
@@ -35304,6 +35216,17 @@
       "norm_label": "occupation_group_titles",
       "source_file": "apps/api/src/routes/national-view.ts",
       "source_location": "L28"
+    },
+    {
+      "id": "apps_api_src_routes_tts_tts",
+      "label": "tts",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "code",
+      "norm_label": "tts",
+      "source_file": "apps/api/src/routes/tts.ts",
+      "source_location": "L52"
     },
     {
       "id": "packages_shared_src_api",
@@ -35337,6 +35260,17 @@
       "norm_label": "apierrorschema",
       "source_file": "packages/shared/src/api.ts",
       "source_location": "L13"
+    },
+    {
+      "id": "packages_shared_src_api_healthresponseschema",
+      "label": "HealthResponseSchema",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "code",
+      "norm_label": "healthresponseschema",
+      "source_file": "packages/shared/src/api.ts",
+      "source_location": "L24"
     },
     {
       "id": "packages_shared_src_api_jobadextractrequestschema",
@@ -35469,6 +35403,28 @@
       "norm_label": "userlevelschema",
       "source_file": "packages/shared/src/api.ts",
       "source_location": "L4"
+    },
+    {
+      "id": "packages_shared_src_engine_enginesnapshotschema",
+      "label": "EngineSnapshotSchema",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "code",
+      "norm_label": "enginesnapshotschema",
+      "source_file": "packages/shared/src/engine.ts",
+      "source_location": "L55"
+    },
+    {
+      "id": "ref_hono",
+      "label": "hono",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "file_type": "concept",
+      "norm_label": "hono",
+      "source_file": "apps/api/package.json",
+      "source_location": "L14"
     },
     {
       "id": "apps_web_package",
@@ -36895,6 +36851,61 @@
       "source_location": "L56"
     },
     {
+      "id": "apps_api_db_migrate",
+      "label": "migrate.ts",
+      "_origin": "ast",
+      "community": 94,
+      "community_name": "jobstreet/store.ts",
+      "file_type": "code",
+      "norm_label": "migrate.ts",
+      "source_file": "apps/api/db/migrate.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_db_migrate_databaseurl",
+      "label": "databaseUrl",
+      "_origin": "ast",
+      "community": 94,
+      "community_name": "jobstreet/store.ts",
+      "file_type": "code",
+      "norm_label": "databaseurl",
+      "source_file": "apps/api/db/migrate.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "apps_api_db_migrate_migrationfiles",
+      "label": "migrationFiles",
+      "_origin": "ast",
+      "community": 94,
+      "community_name": "jobstreet/store.ts",
+      "file_type": "code",
+      "norm_label": "migrationfiles",
+      "source_file": "apps/api/db/migrate.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "apps_api_db_migrate_sql",
+      "label": "sql",
+      "_origin": "ast",
+      "community": 94,
+      "community_name": "jobstreet/store.ts",
+      "file_type": "code",
+      "norm_label": "sql",
+      "source_file": "apps/api/db/migrate.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "apps_api_db_migrate_statements",
+      "label": "statements",
+      "_origin": "ast",
+      "community": 94,
+      "community_name": "jobstreet/store.ts",
+      "file_type": "code",
+      "norm_label": "statements",
+      "source_file": "apps/api/db/migrate.ts",
+      "source_location": "L10"
+    },
+    {
       "id": "apps_api_src_app_app",
       "label": "app",
       "_origin": "ast",
@@ -37126,6 +37137,17 @@
       "source_location": "L1"
     },
     {
+      "id": "ref_neondatabase_serverless",
+      "label": "@neondatabase/serverless",
+      "_origin": "ast",
+      "community": 94,
+      "community_name": "jobstreet/store.ts",
+      "file_type": "concept",
+      "norm_label": "@neondatabase/serverless",
+      "source_file": "apps/api/package.json",
+      "source_location": "L13"
+    },
+    {
       "id": "apps_web_src_components_kotak_statcard",
       "label": "StatCard.tsx",
       "_origin": "ast",
@@ -37203,6 +37225,17 @@
       "source_location": "L1"
     },
     {
+      "id": "apps_api_src_scrapers_jobstreet_cli",
+      "label": "jobstreet/cli.ts",
+      "_origin": "ast",
+      "community": 96,
+      "community_name": "depth.ts",
+      "file_type": "code",
+      "norm_label": "jobstreet/cli.ts",
+      "source_file": "apps/api/src/scrapers/jobstreet/cli.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "apps_api_src_scrapers_jobstreet_depth",
       "label": "depth.ts",
       "_origin": "ast",
@@ -37211,6 +37244,17 @@
       "file_type": "code",
       "norm_label": "depth.ts",
       "source_file": "apps/api/src/scrapers/jobstreet/depth.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_scrapers_jobstreet_browser_profile",
+      "label": "browser-profile.ts",
+      "_origin": "ast",
+      "community": 97,
+      "community_name": "depth.integration.test.ts",
+      "file_type": "code",
+      "norm_label": "browser-profile.ts",
+      "source_file": "apps/api/src/scrapers/jobstreet/browser-profile.ts",
       "source_location": "L1"
     },
     {
@@ -37245,50 +37289,6 @@
       "norm_label": "scratch",
       "source_file": "apps/api/src/scrapers/jobstreet/depth.integration.test.ts",
       "source_location": "L10"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test",
-      "label": "prepare.integration.test.ts",
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "prepare.integration.test.ts",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_cli",
-      "label": "cli",
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "cli",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_root",
-      "label": "root",
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "root",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "apps_api_src_scrapers_jobstreet_prepare_integration_test_scratch",
-      "label": "scratch",
-      "_origin": "ast",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "file_type": "code",
-      "norm_label": "scratch",
-      "source_file": "apps/api/src/scrapers/jobstreet/prepare.integration.test.ts",
-      "source_location": "L8"
     },
     {
       "id": "apps_api_src_scrapers_jobstreet_verification_integration_test",
@@ -38183,34 +38183,10 @@
       "label": "ref_node_fs",
       "_origin": "semantic",
       "community": 101,
-      "community_name": "ref_node_path",
+      "community_name": "records.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_fs",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_node_path",
-      "label": "ref_node_path",
-      "_origin": "semantic",
-      "community": 101,
-      "community_name": "ref_node_path",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_node_path",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_node_util",
-      "label": "ref_node_util",
-      "_origin": "semantic",
-      "community": 101,
-      "community_name": "ref_node_path",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_node_util",
       "source_file": "",
       "type": "external"
     },
@@ -38499,6 +38475,18 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_shared_src_index_preparetitleindex",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "data_demo_roles",
+      "label": "data_demo_roles",
+      "_origin": "semantic",
+      "community": 141,
+      "community_name": "seed.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "data_demo_roles",
       "source_file": "",
       "type": "external"
     },
@@ -38866,11 +38854,23 @@
       "id": "packages_shared_src_index_ttsrequest",
       "label": "packages_shared_src_index_ttsrequest",
       "_origin": "semantic",
-      "community": 155,
-      "community_name": "tts.ts",
+      "community": 153,
+      "community_name": "voice.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_shared_src_index_ttsrequest",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "packages_shared_src_index_ttsresponseschema",
+      "label": "packages_shared_src_index_ttsresponseschema",
+      "_origin": "semantic",
+      "community": 153,
+      "community_name": "voice.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_src_index_ttsresponseschema",
       "source_file": "",
       "type": "external"
     },
@@ -38883,18 +38883,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_shared_src_index_ttsrequestschema",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "packages_shared_src_index_ttsresponseschema",
-      "label": "packages_shared_src_index_ttsresponseschema",
-      "_origin": "semantic",
-      "community": 155,
-      "community_name": "tts.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_shared_src_index_ttsresponseschema",
       "source_file": "",
       "type": "external"
     },
@@ -39223,6 +39211,18 @@
       "type": "external"
     },
     {
+      "id": "packages_shared_src_index_apierror",
+      "label": "packages_shared_src_index_apierror",
+      "_origin": "semantic",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_src_index_apierror",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "packages_shared_src_index_explanationrequestschema",
       "label": "packages_shared_src_index_explanationrequestschema",
       "_origin": "semantic",
@@ -39267,6 +39267,18 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_shared_src_index_rolematchrequestschema",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "packages_shared_src_index_rolematchresponse",
+      "label": "packages_shared_src_index_rolematchresponse",
+      "_origin": "semantic",
+      "community": 164,
+      "community_name": "engine/api.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_src_index_rolematchresponse",
       "source_file": "",
       "type": "external"
     },
@@ -39319,18 +39331,6 @@
       "type": "external"
     },
     {
-      "id": "packages_browser_src_index_page",
-      "label": "packages_browser_src_index_page",
-      "_origin": "semantic",
-      "community": 176,
-      "community_name": "pipeline.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_browser_src_index_page",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "packages_shared_src_index_bundleroleindexentry",
       "label": "packages_shared_src_index_bundleroleindexentry",
       "_origin": "semantic",
@@ -39367,14 +39367,38 @@
       "type": "external"
     },
     {
-      "id": "packages_shared_src_index_apierror",
-      "label": "packages_shared_src_index_apierror",
+      "id": "ref_bun_test",
+      "label": "ref_bun_test",
       "_origin": "semantic",
       "community": 193,
-      "community_name": "roles.ts",
+      "community_name": "ref_node_path",
       "external": true,
       "file_type": "concept",
-      "norm_label": "packages_shared_src_index_apierror",
+      "norm_label": "ref_bun_test",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "ref_node_path",
+      "label": "ref_node_path",
+      "_origin": "semantic",
+      "community": 193,
+      "community_name": "ref_node_path",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_node_path",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "ref_node_util",
+      "label": "ref_node_util",
+      "_origin": "semantic",
+      "community": 196,
+      "community_name": "stub-server.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_node_util",
       "source_file": "",
       "type": "external"
     },
@@ -39382,8 +39406,8 @@
       "id": "packages_shared_src_index_enginesnapshotschema",
       "label": "packages_shared_src_index_enginesnapshotschema",
       "_origin": "semantic",
-      "community": 193,
-      "community_name": "roles.ts",
+      "community": 87,
+      "community_name": "src/api.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_shared_src_index_enginesnapshotschema",
@@ -39394,47 +39418,11 @@
       "id": "packages_shared_src_index_healthresponseschema",
       "label": "packages_shared_src_index_healthresponseschema",
       "_origin": "semantic",
-      "community": 193,
-      "community_name": "roles.ts",
+      "community": 87,
+      "community_name": "src/api.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_shared_src_index_healthresponseschema",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "packages_shared_src_index_rolematchresponse",
-      "label": "packages_shared_src_index_rolematchresponse",
-      "_origin": "semantic",
-      "community": 193,
-      "community_name": "roles.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_shared_src_index_rolematchresponse",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "packages_shared_src_index_samplesnapshot",
-      "label": "packages_shared_src_index_samplesnapshot",
-      "_origin": "semantic",
-      "community": 193,
-      "community_name": "roles.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_shared_src_index_samplesnapshot",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "data_demo_roles",
-      "label": "data_demo_roles",
-      "_origin": "semantic",
-      "community": 78,
-      "community_name": "api/package.json",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "data_demo_roles",
       "source_file": "",
       "type": "external"
     },
@@ -39511,6 +39499,18 @@
       "type": "external"
     },
     {
+      "id": "packages_shared_src_index_samplesnapshot",
+      "label": "packages_shared_src_index_samplesnapshot",
+      "_origin": "semantic",
+      "community": 87,
+      "community_name": "src/api.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_src_index_samplesnapshot",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "ref_node_crypto",
       "label": "ref_node_crypto",
       "_origin": "semantic",
@@ -39583,6 +39583,30 @@
       "type": "external"
     },
     {
+      "id": "ref_node_url",
+      "label": "ref_node_url",
+      "_origin": "semantic",
+      "community": 96,
+      "community_name": "depth.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_node_url",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "packages_browser_src_index_page",
+      "label": "packages_browser_src_index_page",
+      "_origin": "semantic",
+      "community": 97,
+      "community_name": "depth.integration.test.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_browser_src_index_page",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "packages_browser_src_index_route",
       "label": "packages_browser_src_index_route",
       "_origin": "semantic",
@@ -39591,30 +39615,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "packages_browser_src_index_route",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_bun_test",
-      "label": "ref_bun_test",
-      "_origin": "semantic",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_bun_test",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_node_url",
-      "label": "ref_node_url",
-      "_origin": "semantic",
-      "community": 97,
-      "community_name": "depth.integration.test.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_node_url",
       "source_file": "",
       "type": "external"
     },
@@ -41393,7 +41393,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -41405,7 +41405,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L225",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
@@ -41417,7 +41417,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L228",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -41429,7 +41429,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L254",
+      "source_location": "L257",
       "weight": 1.0
     },
     {
@@ -41441,7 +41441,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L265",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -41453,7 +41453,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L268",
+      "source_location": "L271",
       "weight": 1.0
     },
     {
@@ -41465,7 +41465,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L278",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -41477,7 +41477,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L279",
+      "source_location": "L282",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_scrapers_jobstreet_store_persistrunoutput",
+      "target": "apps_api_src_scrapers_jobstreet_files_writejson",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -41489,7 +41501,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L204",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -54632,7 +54644,7 @@
     },
     {
       "source": "apps_api_src_scrapers_jobstreet_store",
-      "target": "apps_api_src_scrapers_jobstreet_records_parselisting",
+      "target": "apps_api_src_scrapers_jobstreet_files_writejson",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -54644,7 +54656,7 @@
     },
     {
       "source": "apps_api_src_scrapers_jobstreet_store",
-      "target": "apps_api_src_scrapers_jobstreet_records_joblisting",
+      "target": "apps_api_src_scrapers_jobstreet_records_parselisting",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -54652,6 +54664,18 @@
       "context": "import",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
       "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_scrapers_jobstreet_store",
+      "target": "apps_api_src_scrapers_jobstreet_records_joblisting",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -70977,6 +71001,18 @@
     },
     {
       "source": "apps_api_src_scrapers_jobstreet_store",
+      "target": "apps_api_src_scrapers_jobstreet_files",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_scrapers_jobstreet_store",
       "target": "apps_api_src_scrapers_jobstreet_records",
       "relation": "imports_from",
       "_origin": "ast",
@@ -70984,7 +71020,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "type_only": true,
       "weight": 1.0
     },
@@ -82051,7 +82087,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L107",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -82062,7 +82098,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L121",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -82073,7 +82109,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L131",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -82084,7 +82120,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L145",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -82095,7 +82131,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L164",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -82106,7 +82142,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L185",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -82117,7 +82153,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L197",
+      "source_location": "L199",
       "weight": 1.0
     },
     {
@@ -82128,7 +82164,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L207",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -82150,7 +82186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L226",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -82161,7 +82197,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L241",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -82183,7 +82219,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L80",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -82205,7 +82241,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L66",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -82216,7 +82252,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/README.md",
-      "source_location": "L72",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -82463,7 +82499,7 @@
     },
     {
       "source": "apps_api_src_scrapers_jobstreet_store",
-      "target": "apps_api_src_scrapers_jobstreet_store_statement",
+      "target": "apps_api_src_scrapers_jobstreet_store_sql",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -82480,12 +82516,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L102",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
       "source": "apps_api_src_scrapers_jobstreet_store",
-      "target": "apps_api_src_scrapers_jobstreet_store_runrecord",
+      "target": "apps_api_src_scrapers_jobstreet_store_statement",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -82502,7 +82538,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L111",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_scrapers_jobstreet_store",
+      "target": "apps_api_src_scrapers_jobstreet_store_runrecord",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -82513,7 +82560,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -82524,18 +82571,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L190",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_scrapers_jobstreet_store",
-      "target": "apps_api_src_scrapers_jobstreet_store_runstatement",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L21",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -82546,7 +82582,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L215",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_scrapers_jobstreet_store",
+      "target": "apps_api_src_scrapers_jobstreet_store_runstatement",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -82557,7 +82604,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -82568,18 +82615,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L78",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_scrapers_jobstreet_store",
-      "target": "apps_api_src_scrapers_jobstreet_store_sql",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/scrapers/jobstreet/store.ts",
-      "source_location": "L9",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -112468,5 +112504,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "025148ba939f971f9913137bffed660390961b58"
+  "built_at_commit": "d3f7308f1923a8be4c98e3acd2db5d934adcf5c0"
 }

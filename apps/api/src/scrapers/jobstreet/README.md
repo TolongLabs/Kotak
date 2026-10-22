@@ -63,6 +63,8 @@ The production API and web app run on Cloudflare Workers. A Worker cannot launch
 
 The import is repeatable and commits each run in one transaction. Job listings are keyed by JobStreet job ID and search career. Each distinct run observation remains in `jobstreet_observations` with its original `scraped_at` and run ID; legacy captures without an ID receive a stable content-derived ID. Detail attempts come from the raw `details.jsonl` ledger, while cached descriptions in an enriched view do not become fresh attempts. Depth captures without an enriched file can recover listing snapshots from their raw details. The latest successful detail is also attached to the listing, and older imports cannot replace a newer description. Re-running an import does not duplicate an identical observation. Failed runs with valid partial captures are imported with their failed status so their data remains traceable.
 
+Runner artifacts retain `database_run_id` alongside the browser pipeline's `run_id`. The importer reuses that database queue identity when loading those artifacts later, preserving one run and one set of observations.
+
 ### Browser runner
 
 On a Windows host with Clearcote available, install the repository dependencies and set `DATABASE_URL`. Start `bun run scraper:worker` as a long-running process. The worker polls Neon for queued breadth or depth runs and uses the same pipeline, profile lifecycle, scrolling, pagination, delays and verification timeout as local commands. `BROWSER_PROFILE_ID` is optional. `JOBSTREET_DELAY_MS` and `JOBSTREET_DELAY_JITTER_MS` default to 30,000 ms each.
