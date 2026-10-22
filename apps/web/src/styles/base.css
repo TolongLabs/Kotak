@@ -103,6 +103,20 @@
     }
   }
 
+  /* Dark landing scenes keep dark-mode colours in both themes. */
+  .tone-dark {
+    --color-bg-default: #10100b;
+    --color-bg-panel: #1b1a13;
+    --color-text-primary: #f3f2ed;
+    --color-text-muted: #acaba3;
+    --color-border-subtle: #37362f;
+    --color-border-control: #6a6961;
+    --color-accent-box: #efd127;
+    --color-accent-box-hover: #f6d732;
+    --color-focus-ring: #efd127;
+    color-scheme: dark;
+  }
+
   .surface-card {
     background-color: var(--color-bg-default);
     border: 1px solid var(--color-border-subtle);

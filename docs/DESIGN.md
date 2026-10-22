@@ -130,6 +130,9 @@ The smallest text is 12 px.
 - Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the page header, then the content. The Dashboard opens with its greeting, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
 - Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar and What Changed pages and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
 - Questions and the AI Unavailable state centre a single column. Every other app page and state uses the full content width, including Check-Up Start, No Job Match, and the empty, loading and error states.
+- Every landing section fills the viewport (at least `100svh`) and centres its content in a 1312 px column with 64 px side padding. The hero fits the nav, headline and example stage in one screen at 1440 × 790; taller content grows a section instead of clipping. Sections alternate panel, white and dark grounds, split by a 1 px `color/border/subtle` line.
+- Landing lists are ruled rows, not card grids: the three sample worries and the five data sources each set one row in Display/33, after [mkdir.directory](https://mkdir.directory/). How It Works is three ruled columns whose artifacts share a floor.
+- The landing footer is a full-viewport dark scene in three tiers: the greeting and big links on a ruled grid, the credits, then a full-width "kotak" wordmark drawn in ASCII glyphs as the floor, cut by the page's bottom edge.
 
 ## Components
 
@@ -176,6 +179,7 @@ Every component lives on the Components page. Build each one as a custom compone
 - Kopi's entrance: once per page visit, Kopi assembles from ASCII glyphs sampled from the pose art. Rows rise from the bottom over about 0.6 s, each glyph scrambling in the text colour before it settles in the art's colour. Live2D's files download during the rise and it mounts once the glyphs settle; the settled glyphs hold until it is ready, then fade away over the live cat, fitted to the art's frame. The still art shows only with reduced motion (at once, no entrance) or when Live2D can't load.
 - The live demo moment: when the newer data loads, verdict chips change, the dashed radar line moves, SWOT items change quadrant and the roadmap reorders. Animate each change so a judge can follow it.
 - Theme switch: a dithered wave of ASCII glyphs spreads from the toggle and fills the screen in the new background, the theme swaps underneath, then the glyphs fade back down the ramp. With reduced motion, the theme swaps at once.
+- Footer wordmark: it holds still in the text colour. Under a mouse, nearby glyphs scramble in the accent and settle back over 0.7 s. Touch and reduced motion get no effect.
 - Keep all other motion to hover and focus states.
 
 ## Accessibility
