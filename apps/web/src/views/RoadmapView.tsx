@@ -1,5 +1,5 @@
 import { DEFAULT_SCENARIO } from '@kotak/shared'
-import { Check, Clock3, MoreHorizontal } from 'lucide-react'
+import { Check, Clock3 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
@@ -67,41 +67,6 @@ interface LessImportantItem {
   id: string
   verdict?: VerdictType
   text: string
-}
-
-function RoadmapActionMenu({ onPrint }: { onPrint: () => void }) {
-  return (
-    <details className="relative shrink-0">
-      <summary
-        aria-label="More Roadmap Actions"
-        className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-bg-default text-text-primary transition-colors hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
-      >
-        <MoreHorizontal className="h-5 w-5 stroke-current" aria-hidden="true" />
-      </summary>
-      <div className="absolute right-0 top-full z-20 mt-2 w-48 space-y-1 rounded-md border border-border-subtle bg-bg-default p-2 shadow-popover">
-        <button
-          type="button"
-          className="w-full rounded-sm px-3 py-2 text-left text-label-m text-text-primary hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring"
-          onClick={(event) => {
-            event.currentTarget.closest('details')?.removeAttribute('open')
-            onPrint()
-          }}
-        >
-          Save My Plan
-        </button>
-        <button
-          type="button"
-          className="w-full rounded-sm px-3 py-2 text-left text-label-m text-text-primary hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring"
-          onClick={(event) => {
-            event.currentTarget.closest('details')?.removeAttribute('open')
-            onPrint()
-          }}
-        >
-          Export as PDF
-        </button>
-      </div>
-    </details>
-  )
 }
 
 function RoadmapStepToggle({
@@ -447,7 +412,6 @@ export function RoadmapView() {
             <Button variant="secondary" onClick={printPlan}>
               Export as PDF
             </Button>
-            <RoadmapActionMenu onPrint={printPlan} />
           </div>
         </header>
 
@@ -636,16 +600,10 @@ export function RoadmapView() {
           </p>
         )}
 
-        <div className="roadmap-print-actions hidden lg:block">
-          <Button variant="primary" fullWidth onClick={printPlan}>
-            Save My Plan
-          </Button>
-        </div>
-        <div className="roadmap-print-actions surface-glass sticky bottom-0 z-10 -mx-3 grid grid-cols-2 gap-3 p-3 lg:hidden">
-          <Button variant="primary" fullWidth onClick={printPlan}>
-            Save My Plan
-          </Button>
-          <Button variant="secondary" fullWidth onClick={printPlan}>
+        {/* One print action per screen: the header button on desktop, this sticky bar on phones. The plan already stays on
+            this device, so nothing here claims to save it. */}
+        <div className="roadmap-print-actions surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:hidden">
+          <Button variant="primary" size="lg" fullWidth onClick={printPlan}>
             Export as PDF
           </Button>
         </div>
