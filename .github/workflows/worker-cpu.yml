@@ -1,8 +1,8 @@
 name: Worker CPU
 
-# TRD.md: the free plan allows 10 ms of CPU per request, and a cold MCP check-up measured about 16 ms locally (#186).
-# This reads the live Worker's real CPU time, which only the account that owns it can see: the status counts and
-# CPU quantiles from the GraphQL Analytics API, then the outcome of each request in a burst of MCP calls, from a tail.
+# TRD.md: the free plan allows a Worker request 10 ms of CPU, so MCP calls and Kopi's chat run in a Durable Object (#202).
+# This reads the live CPU time, which only the account that owns the Worker can see: the status counts and CPU
+# quantiles from the GraphQL Analytics API, then the outcome and CPU of each request type in a tail.
 
 on:
   workflow_dispatch:
@@ -57,20 +57,28 @@ jobs:
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H 'Content-Type: application/json' --data @- \
           | jq '.errors // .data.viewer.accounts[0].workersInvocationsAdaptive'
 
-      # Twelve roles, so most calls load role files the isolate hasn't parsed yet.
-      - name: Tail a burst of MCP calls
+      # Bursts of 12 calls each, told apart in the tail by a probe query parameter: the health route (Hono only),
+      # tools/list (the MCP layer), run_checkup for one role (warm files), and run_checkup across 12 roles (new files).
+      - name: Tail bursts by request type
         run: |
           bunx wrangler tail kotak --format json > tail.jsonl 2> tail.log &
           tail_pid=$!
           sleep 20
-          for role in 11-1011.00 13-1161.00 13-2011.00 15-1252.00 15-1254.00 15-1255.00 25-2021.00 29-1141.00 29-2061.00 41-2031.00 43-3031.00 53-3032.00; do
-            curl --silent --show-error -o /dev/null -w "$role %{http_code}\n" -X POST "$LIVE_URL/api/mcp" \
-              -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
-              -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"run_checkup\",\"arguments\":{\"role_code\":\"$role\",\"answers\":[]}}}"
+          mcp() {
+            curl --silent --show-error -o /dev/null -w "$1 %{http_code}\n" -X POST "$LIVE_URL/api/mcp?probe=$1" \
+              -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d "$2"
+          }
+          checkup() { echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"run_checkup\",\"arguments\":{\"role_code\":\"$1\",\"answers\":[]}}}"; }
+          for _ in $(seq 12); do curl --silent -o /dev/null "$LIVE_URL/api/health?probe=health"; done
+          for _ in $(seq 12); do mcp list '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'; done
+          for _ in $(seq 12); do mcp same "$(checkup 15-1254.00)"; done
+          for role in 11-1011.00 13-1161.00 13-2011.00 15-1252.00 15-1255.00 25-2021.00 29-1141.00 29-2061.00 41-2031.00 43-3031.00 53-3032.00 27-1024.00; do
+            mcp new "$(checkup "$role")"
           done
           sleep 15
           kill "$tail_pid" || true
           cat tail.log
-          jq -s '[.[] | select(.event.request.url | test("/api/mcp"))]
-            | {requests: length, outcomes: (group_by(.outcome) | map({(.[0].outcome): length}) | add),
-               cpu_ms: [.[] | .cpuTime // empty], wall_ms: [.[] | .wallTime // empty]}' tail.jsonl
+          jq -s 'map(select(.event.request.url // "" | test("probe=")))
+            | group_by([(.event.request.url | capture("probe=(?<p>[a-z]+)").p), (.entrypoint // "Worker")])
+            | map({probe: (.[0].event.request.url | capture("probe=(?<p>[a-z]+)").p), runs_in: (.[0].entrypoint // "Worker"),
+                   outcomes: (group_by(.outcome) | map({(.[0].outcome): length}) | add), cpu_ms: [.[] | .cpuTime // empty]})' tail.jsonl

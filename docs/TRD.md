@@ -199,8 +199,8 @@ flowchart LR
   subgraph Edge["Cloudflare Worker"]
     ASSETS["Static assets<br/>React app, JSON, skill zip, llms.txt"]
     API["Hono API at /api/*"]
-    MCP["MCP server<br/>/api/mcp"]
-    CHAT["Kopi's chat<br/>/api/agent/chat"]
+    MCP["MCP server<br/>/api/mcp, in the KotakAgent Durable Object"]
+    CHAT["Kopi's chat<br/>/api/agent/chat, in the KotakAgent Durable Object"]
     TOOLS["@kotak/agent tool registry<br/>on @kotak/sdk"]
   end
   subgraph Client["Browser"]
@@ -211,7 +211,7 @@ flowchart LR
   CLAUDE["Claude API<br/>Claude Haiku 5.5"]
   EL["ElevenLabs TTS"]
   NEON["Neon Postgres 18<br/>national view"]
-  REPLIT["Replit copy<br/>proof of use, fallback MCP URL"]
+  REPLIT["Replit copy<br/>proof of use"]
   ONET & AEI & DOSM & MYCOL & ODOSM & EPOCH --> ING
   ONET --> RP
   RP -. failed or missing roles .-> CB
@@ -554,7 +554,7 @@ The text stays well under the 4,096 characters at which Claude Code cuts a serve
 
 ### MCP server and clients
 
-The Worker and the Bun server both serve the registry at `/api/mcp`; on the live link that is `https://kotak.tp073654.workers.dev/api/mcp` ([#186]). It speaks MCP's Streamable HTTP through the [MCP TypeScript SDK v2][mcp-sdk]'s stateless `createMcpHandler`, a web-standard `fetch` handler that runs on both runtimes with no sessions or Durable Objects. The [MCP route](#mcp-route) gives the details.
+The Worker and the Bun server both serve the registry at `/api/mcp`; on the live link that is `https://kotak.tp073654.workers.dev/api/mcp` ([#186]). It speaks MCP's Streamable HTTP through the [MCP TypeScript SDK v2][mcp-sdk]'s stateless `createMcpHandler`, a web-standard `fetch` handler that runs on both runtimes with no sessions. On Cloudflare the Worker hands `/api/mcp` to a Durable Object for its CPU budget ([#202]); see [Performance and availability](#performance-and-availability). The [MCP route](#mcp-route) gives the details.
 
 Clients connect with no sign-in:
 
@@ -648,7 +648,7 @@ The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels
 - **Output**: each tool result as `structuredContent` in the tool's published output schema, plus the same JSON as text for clients that ignore structured output. The server skips the MCP SDK's own check of each result against its schema, which cost about 2.5 ms of a cold Worker request's CPU; results come from the SDK's rules, and clients that validate still check them.
 - **Auth**: none. Every tool only reads public data, and the server stores nothing. The route sits under `/api/*`, so the Worker runs first and the app's CORS applies.
 - **`/.well-known/*`**: MCP clients probe it for OAuth metadata, so it answers a JSON 404 `not_found`, not the app's `index.html`. `wrangler.jsonc` sends it to the Worker first.
-- **Data**: one `Kotak` per isolate, shared with Kopi's chat, reading the bundle through `ASSETS` on the Worker and from disk on Bun, as a trusted source. A cold isolate warms the MCP and Zod code at startup with an in-memory `tools/list` and `run_checkup` that read no data.
+- **Data**: one `Kotak` per isolate, shared with Kopi's chat, reading the bundle through `ASSETS` in the `KotakAgent` Durable Object on Cloudflare and from disk on Bun, as a trusted source. A cold isolate warms the MCP and Zod code at startup with an in-memory `tools/list` and `run_checkup` that read no data.
 - **Failure**: without a data bundle the route answers 503 `mcp_unavailable`. A tool that fails, such as for an unknown role code, returns an MCP tool error whose message tells the model what to do next.
 - **CPU**: see [Performance and availability](#performance-and-availability).
 
@@ -789,7 +789,7 @@ Replit is compulsory, and proof must come from the team's own account ([brief][b
 
 - `.replit` at the repository root installs dependencies and starts the Bun server and the frontend.
 - Replit Secrets hold the runtime variables, by the names in `.env.example`.
-- The Bun server also serves `/api/mcp` and Kopi's chat, reading the data bundle from disk. Its `/api/mcp` is the fallback MCP URL if the Worker can't fit an MCP call in its CPU limit ([#186]).
+- The Bun server also serves `/api/mcp` and Kopi's chat, reading the data bundle from disk ([#186]).
 - Screenshots show the account name, the project URL, the run or version history, the Secrets names and the running app ([#68]). [#102] compiles them into `submission/REPLIT PROOF OF USE.pdf`.
 - Plan: Replit Core from the sponsor code, if [#99] gets a working code and [#100] redeems it. Otherwise the one free Starter app, which "Includes 1 free published app. The deployment expires after 30 days" ([deploy notes][deploy], [#99]).
 
@@ -863,8 +863,9 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 - **Live link**: the link must load without cold-start failures and stay up through judging ([#33]). The post-deploy smoke check confirms it after each deploy ([#62]). A remote smoke test from another network and device runs the judge path before submission ([#94]).
 - **No live dependency for the demo**: scores, verdicts and the snapshot switch run in the browser from static JSON. Demo explanations and fixed voice lines are pre-warmed.
 - **Worker limits**: the free plan allows 100,000 requests a day and 10 ms of CPU per request, not counting network waits ([deploy notes][deploy]). Heavy work stays in the browser and the build. The Worker bundle is about 6.9 MiB, or 1.1 MiB gzipped; Cloudflare counts only the uncompressed size, against a 64 MiB limit ([Workers limits][cf-limits]).
-- **MCP CPU budget**: a check-up reads 21 role files, which is the heaviest work the Worker does. The MCP server parses each file once per isolate and skips its Zod parse, skips the MCP SDK's output check, and warms its code at isolate startup rather than in a request. Measured locally after the warm-up, a cold `run_checkup` costs about 16 ms of CPU in V8 and 8 ms in Bun, down from about 25 ms, and a warm one about 2 ms. On the live Worker on 23 October, the **Worker CPU** workflow (`.github/workflows/worker-cpu.yml`) measured 15 to 54 ms of CPU per `run_checkup` call. Every call still returned `ok`, and over 24 hours there were no `exceededResources` invocations (P99 33 ms). Whether the plan enforces the 10 ms limit is still open in [#202]. If MCP calls start failing, the Bun server on Replit is the fallback MCP URL ([#186]).
+- **MCP CPU budget**: the free plan gives a Worker request 10 ms of CPU, and tolerates only infrequent overruns before it ends requests with error 1102 ([Workers limits][cf-limits]). On the live Worker on 23 October, the **Worker CPU** workflow (`.github/workflows/worker-cpu.yml`) measured the health route at about 4 ms, an MCP `tools/list` at 7 to 26 ms and a `run_checkup` at 9 to 132 ms. Requests kept landing on fresh isolates, so the cache of parsed role files rarely helped. The MCP layer alone is over budget, so no cut to the check-up could fit. The Worker therefore hands `/api/mcp` and `/api/agent/chat` to one `KotakAgent` Durable Object, which runs the same Hono app with a 30 s CPU budget per request. The object sits in Asia-Pacific, near Kotak's users, and keeps the role files it parsed until it is evicted after a minute or two without requests ([Durable Objects limits][do-limits], [#202]). The free plan allows 100,000 Durable Object requests and 13,000 GB-s of duration a day, and only the SQLite storage backend; the object stores nothing. The Bun server has no CPU limit and runs the routes directly.
 
+[do-limits]: https://developers.cloudflare.com/durable-objects/platform/limits/
 [cf-limits]: https://developers.cloudflare.com/workers/platform/limits/
 
 ### Privacy
@@ -908,7 +909,7 @@ Kotak has no accounts. Users sign in as a guest, and their check-up stays in the
 | The batch makes uneven or vague corners                                        | Weak questions for some jobs              | The task-ID validator; the "auto-generated" label; hand-checked demo and legal roles                                                                                                                                                                                      | [#74], [#104], [#91]         |
 | The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | The Claude Message Batches backup for any subset of codes                                                                                                                                                                                                                 | [#79]                        |
 | ElevenLabs fails or the credits run out                                        | No voice                                  | Pre-generated static MP3s; text-only fallback; a persistent mute                                                                                                                                                                                                          | [#46]                        |
-| The Worker hits its free-plan limits                                           | Failed API or MCP calls                   | Scoring runs in the browser; static assets are free and unlimited; the MCP server parses role files once per isolate, without Zod, and warms up at startup; the Bun server on Replit is the fallback MCP URL                                                              | [#62], [#186]                |
+| The Worker hits its free-plan limits                                           | Failed API or MCP calls                   | Scoring runs in the browser; static assets are free and unlimited; MCP calls and Kopi's chat run in a Durable Object with a 30 s CPU budget                                                                                                                               | [#62], [#186], [#202]        |
 | An open AI or TTS route is called by others                                    | Spent credits                             | Response caches; at most 30 uncached Claude calls a minute per route, per Cloudflare location and approximate ([#155]); Kopi's chat checks the limit before every Claude request and caps its requests and tokens ([#189]); a TTS-only ElevenLabs key with a credit quota | [#46], [#53], [#155], [#189] |
 | The repository that lists the plugin is private                                | No one-command plugin install             | The connector URL and the skill zip are the main install paths; the marketplace slug is one constant, moved to a public repository before submission                                                                                                                      | [#188]                       |
 | MyCOL and MASCO have no open licence; Job Market Insights has DOSM's terms     | A breach if raw tables ship or uncredited | Store only cited figures and codes; commit no restricted raw data; every Job Market Insights figure carries DOSM's attribution and the snapshot links its terms                                                                                                           | [#47], [#52], [#60]          |
