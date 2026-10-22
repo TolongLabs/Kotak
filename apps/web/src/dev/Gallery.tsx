@@ -1,5 +1,6 @@
 import { ActionsGallery } from './gallery/ActionsGallery'
 import { FormsGallery } from './gallery/FormsGallery'
+import { KotakGallery } from './gallery/KotakGallery'
 import { OverlaysGallery } from './gallery/OverlaysGallery'
 import { ShellGallery } from './gallery/ShellGallery'
 
@@ -11,6 +12,7 @@ export function Gallery() {
       <FormsGallery />
       <OverlaysGallery />
       <ShellGallery />
+      <KotakGallery />
     </main>
   )
 }
