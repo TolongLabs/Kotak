@@ -1,0 +1,101 @@
+{
+  "generated_by": "runpod",
+  "endpoint_id": "5yjk19uqmrpbp7",
+  "openai_base_url": "https://api.runpod.ai/v2/5yjk19uqmrpbp7/openai/v1",
+  "totals": {
+    "runtime_seconds": 1285,
+    "requests": 930,
+    "prompt_tokens": 1092522,
+    "completion_tokens": 1137450
+  },
+  "occupations": {
+    "catalogue": 923,
+    "in_output": 923,
+    "six_corners": 907,
+    "fewer_corners": 16
+  },
+  "task_coverage": {
+    "candidate": 14913,
+    "assigned": 14603,
+    "share": 0.9792
+  },
+  "missing_codes": [],
+  "runs": [
+    {
+      "started_at": "2026-10-22T07:36:06.560Z",
+      "finished_at": "2026-10-22T07:44:28.471Z",
+      "runtime_seconds": 502,
+      "model": "Qwen/Qwen3.8-27B-FP8",
+      "endpoint": {
+        "name": "kotak-corners-batch",
+        "gpu_type_ids": [
+          "NVIDIA H100 PCIe",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB"
+        ],
+        "gpu_count": 1,
+        "workers_max": 1,
+        "idle_timeout_s": 5,
+        "image": null,
+        "env": {}
+      },
+      "settings": {
+        "concurrency": 32,
+        "attempts": 3,
+        "temperature": 0,
+        "structured_output": "json_schema"
+      },
+      "requested": 3,
+      "kept_from_earlier_runs": 0,
+      "generated": 3,
+      "requests": {
+        "sent": 3,
+        "http_errors": 0,
+        "rejected_answers": 0,
+        "prompt_tokens": 4127,
+        "completion_tokens": 3843
+      },
+      "failed": []
+    },
+    {
+      "started_at": "2026-10-22T07:49:09.556Z",
+      "finished_at": "2026-10-22T08:02:12.907Z",
+      "runtime_seconds": 783,
+      "model": "Qwen/Qwen3.8-27B-FP8",
+      "endpoint": {
+        "name": "kotak-corners-batch",
+        "gpu_type_ids": [
+          "NVIDIA H100 PCIe",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB"
+        ],
+        "gpu_count": 1,
+        "workers_max": 1,
+        "idle_timeout_s": 5,
+        "image": null,
+        "env": {}
+      },
+      "settings": {
+        "concurrency": 32,
+        "attempts": 3,
+        "temperature": 0,
+        "structured_output": "json_schema"
+      },
+      "requested": 923,
+      "kept_from_earlier_runs": 3,
+      "generated": 920,
+      "requests": {
+        "sent": 927,
+        "http_errors": 0,
+        "rejected_answers": 7,
+        "prompt_tokens": 1088395,
+        "completion_tokens": 1133607
+      },
+      "failed": []
+    }
+  ]
+}
