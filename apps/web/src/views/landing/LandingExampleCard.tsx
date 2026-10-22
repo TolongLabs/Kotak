@@ -11,6 +11,7 @@ export interface LandingExampleCardProps {
   corner: Corner
   sources: SourceRef[]
   paused?: boolean
+  maxSources?: number
   scenario?: Scenario
   neededLabel?: string
   className?: string
@@ -20,12 +21,13 @@ export function LandingExampleCard({
   corner,
   sources,
   paused = false,
+  maxSources = 2,
   scenario = DEFAULT_SCENARIO,
   neededLabel = 'Needed by 2027',
   className
 }: LandingExampleCardProps) {
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
-  const displayedSources = sources.slice(0, 2)
+  const displayedSources = sources.slice(0, maxSources)
   const remainingCount = sources.length - displayedSources.length
 
   return (
