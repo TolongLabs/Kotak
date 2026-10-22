@@ -231,7 +231,7 @@ export function ConnectView() {
             Every tool is read-only: your assistant can look things up in Kotak, but it can’t change anything.
           </p>
         </div>
-        <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <ul className="grid auto-rows-fr grid-cols-1 gap-3 lg:grid-cols-2">
           {tools.map((tool) => (
             <li key={tool.name} className="space-y-1 rounded-md border border-border-subtle bg-bg-panel p-4">
               <h3 className="text-label-l text-text-primary">{tool.title}</h3>

@@ -74,6 +74,10 @@
   /* Elevation and blur */
   --shadow-popover: 0 8px 24px rgb(25 24 18 / 12%);
   --blur-glass: 24px;
+
+  /* Room for the floating Ask Kopi button: its 1rem inset, 3rem height and a 0.75rem gap. Phone action bars and the
+     chat window sit this far up so the button never covers them. */
+  --ask-kopi-clearance: 4.75rem;
 }
 
 :root[data-theme='dark'] {
