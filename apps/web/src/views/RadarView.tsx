@@ -7,8 +7,10 @@ import { GapCard } from '../components/kotak/GapCard'
 import { SourceReference } from '../components/kotak/SourceReference'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { Banner } from '../components/ui/Banner'
+import { Button } from '../components/ui/Button'
 import { ScenarioSwitch } from '../components/ui/ScenarioSwitch'
 import { Stepper } from '../components/ui/Stepper'
+import { cn } from '../components/ui/cn'
 import { corners, roadmap, roles, sources, user } from '../demo/data'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
@@ -27,7 +29,11 @@ function getTargetDateLabel(lastCheckUp: string) {
 
 export function RadarView() {
   const [scenario, setScenario] = useState<Scenario>('slow')
-  const [muted, setMuted] = useState(false)
+  const [muted, setMuted] = useState(true)
+  // Explanations come from the AI route (#43). Until it exists, ?ai=off shows the paused state for demos.
+  const [explanationsPaused, setExplanationsPaused] = useState(
+    () => new URLSearchParams(window.location.search).get('ai') === 'off'
+  )
   const swot = useMemo(() => deriveSwot(corners, roles, scenario), [scenario])
   const targetDate = getTargetDateLabel(user.lastCheckUp)
   const targetYear = targetDate.split(' ').slice(-1)[0] ?? ''
@@ -62,14 +68,32 @@ export function RadarView() {
     return source ? [source] : []
   })
 
+  const retryExplanations = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('ai')
+    window.history.replaceState(null, '', url)
+    setExplanationsPaused(false)
+  }
+
   return (
     <div className="space-y-5 lg:space-y-6">
       <Stepper step={3} labels={stepLabels} />
+      {explanationsPaused && (
+        <Banner
+          type="error"
+          title="Explanations Are Paused"
+          body="We couldn't reach the AI. Your verdicts, roles and plan still work."
+        />
+      )}
       <Banner type="sample" />
 
       <CatDialogue
-        pose="explaining"
-        speech={speech}
+        pose={explanationsPaused ? 'worried' : 'explaining'}
+        speech={
+          explanationsPaused
+            ? 'The AI is resting. Your verdicts still stand. I’ll explain them when it’s back.'
+            : speech
+        }
         muted={muted}
         onToggleVoice={() => setMuted((current) => !current)}
         size="lg"
@@ -118,6 +142,7 @@ export function RadarView() {
                   sources={cornerSources}
                   scenario={scenario}
                   neededLabel={neededYearLabel}
+                  paused={explanationsPaused}
                 />
               )
             })}
@@ -136,7 +161,17 @@ export function RadarView() {
             </ul>
           </section>
 
-          <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
+          <div
+            className={cn(
+              'surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none',
+              explanationsPaused && 'grid grid-cols-1 gap-3 sm:grid-cols-2'
+            )}
+          >
+            {explanationsPaused && (
+              <Button variant="secondary" fullWidth onClick={retryExplanations}>
+                Try the Explanations Again
+              </Button>
+            )}
             <Link
               to={routes.roles}
               className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
