@@ -1,6 +1,7 @@
 import { CalendarDays, Menu, UserRound } from 'lucide-react'
 import { useEffect, useRef, type RefObject } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
+import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { cn } from '../../components/ui/cn'
 import { navigate } from '../router'
 import { routes } from '../routes'
@@ -56,6 +57,7 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
       </form>
       <div className="ml-auto flex items-center gap-4">
         <DataChip label={`Data ${dataLabel}`} />
+        <ThemeToggle />
         <span className="inline-flex items-center gap-2 text-label-l text-text-primary">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
             <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
@@ -88,6 +90,7 @@ export function PhoneTopBar({ dataLabel, onOpenMenu, menuButtonRef, className }:
       </button>
       <Brand />
       <DataChip label={dataLabel} className="ml-auto" />
+      <ThemeToggle />
     </header>
   )
 }

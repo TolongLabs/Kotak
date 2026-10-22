@@ -3,6 +3,7 @@ import { Menu, X } from 'lucide-react'
 import { Link } from '../../app/router'
 import { routes } from '../../app/routes'
 import { Logo } from '../../components/brand/Logo'
+import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { LandingActionLink } from './LandingActionLink'
 
 const anchorClass =
@@ -47,16 +48,19 @@ export function LandingNav() {
           </LandingActionLink>
         </div>
 
-        <button
-          type="button"
-          aria-label={menuOpen ? 'Close Navigation' : 'Open Navigation'}
-          aria-expanded={menuOpen}
-          aria-controls={menuId}
-          onClick={() => setMenuOpen((open) => !open)}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-bg-default text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-default lg:hidden"
-        >
-          {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
-        </button>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label={menuOpen ? 'Close Navigation' : 'Open Navigation'}
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-bg-default text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-default lg:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+          </button>
+        </div>
       </nav>
 
       {menuOpen ? (
