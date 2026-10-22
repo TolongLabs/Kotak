@@ -3,6 +3,7 @@ import type { ChangeItem, SourceRef } from '../../demo/types'
 import { verdictId } from '../../engine/viewModel'
 import type { Checkup } from '../../engine/checkup'
 import { toRoadmapSteps } from '../../engine/roadmapModel'
+import { fmt } from '../roadmap/planSupport'
 
 export type MovedRow = { label: string; effect: string }
 
@@ -30,8 +31,15 @@ function formatStorySource(sources: CornerDiffItem['sources']['after']): string 
   return `May data · ${title}, ${dateText}`
 }
 
+// One decimal, or two when one would print the same number before and after ("about 2 to about 2").
+function formatTargets(before: number, after: number): [string, string] {
+  if (fmt(before) !== fmt(after)) return [fmt(before), fmt(after)]
+  const precise = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 })
+  return [precise.format(before), precise.format(after)]
+}
+
 function citationSuffix(citations: number[]) {
-  return citations.map((number) => `[${number}]`).join(' ')
+  return citations.length > 0 ? ` ${citations.map((number) => `[${number}]`).join(' ')}` : ''
 }
 
 function splitReasoning(corner: Checkup['corners'][number]) {
@@ -61,23 +69,32 @@ function storyWhyFor(
   const details: string[] = []
   const beforeRefs = citationSuffix(beforeCitations)
   const afterRefs = citationSuffix(afterCitations)
+  // The verdict and target sentences always cite; the follow-on sentences cite only when nothing above did, so the
+  // same chips do not repeat after every sentence.
+  let cited = false
 
   if (item.changes.includes('verdict')) {
     details.push(
       `April's verdict was ${item.before.label}${beforeRefs}, and May's verdict is ${item.after.label}${afterRefs}.`
     )
+    cited = true
   }
   if (item.changes.includes('target')) {
+    const [before, after] = formatTargets(item.before.target, item.after.target)
     details.push(
-      `The estimated target moved from about ${item.before.target} in April${beforeRefs} to about ${item.after.target} in May${afterRefs}.`
+      `The estimated target moved from about ${before} in April${beforeRefs} to about ${after} in May${afterRefs}.`
     )
+    cited = true
   }
   if (item.changes.includes('ai_use')) {
-    details.push(`The AI-use reading or its projection changed between April${beforeRefs} and May${afterRefs}.`)
+    details.push(
+      `The AI-use reading or its projection changed between April${cited ? '' : beforeRefs} and May${cited ? '' : afterRefs}.`
+    )
+    cited = true
   }
   if (item.changes.includes('roadmap')) {
     details.push(
-      `The roadmap position moved from ${item.before.roadmap_rank ?? 'not planned'} in April${beforeRefs} to ${item.after.roadmap_rank ?? 'not planned'} in May${afterRefs}.`
+      `The roadmap position moved from ${item.before.roadmap_rank ?? 'not planned'} in April${cited ? '' : beforeRefs} to ${item.after.roadmap_rank ?? 'not planned'} in May${cited ? '' : afterRefs}.`
     )
   }
 
@@ -89,12 +106,7 @@ function storyWhyFor(
   return details.join(' ') || 'The skill data changed between April and May.'
 }
 
-function storyEffectFor(
-  item: CornerDiffItem,
-  role: BundleRole | undefined,
-  beforeCheckup: Checkup | undefined,
-  afterCheckup: Checkup | undefined
-): string {
+function storyEffectFor(item: CornerDiffItem, role: BundleRole | undefined, afterCheckup: Checkup | undefined): string {
   if (afterCheckup && role) {
     const steps = toRoadmapSteps(afterCheckup, role, [])
     const step = steps.find((s) => s.id.startsWith(item.corner_id + ':'))
@@ -105,17 +117,10 @@ function storyEffectFor(
       }
       return `Your roadmap: “${step.title}” moved to step ${item.after.roadmap_rank}.`
     }
-
-    const topRole = afterCheckup.roles[0]
-    const prevTopRole = beforeCheckup?.roles[0]
-    if (topRole && (!prevTopRole || prevTopRole.onet_code !== topRole.onet_code || !item.changes.includes('roadmap'))) {
-      const matchPct = Math.round(topRole.fit.score * 100)
-      return `${topRole.title} is now your top match at ${matchPct}%.`
-    }
   }
 
   const effects: string[] = []
-  if (item.changes.includes('target')) effects.push(`Estimated target: about ${item.after.target}.`)
+  if (item.changes.includes('target')) effects.push(`Estimated target: about ${fmt(item.after.target)}.`)
   if (item.changes.includes('roadmap')) {
     effects.push(`Roadmap position: ${item.after.roadmap_rank ?? 'not planned'}.`)
   }
@@ -153,7 +158,7 @@ export function whatChangedItems(
       from: verdictId(item.before.status),
       to: verdictId(item.after.status),
       why: storyWhyFor(item, beforeCheckup, afterCheckup, beforeCitations, afterCitations),
-      effect: storyEffectFor(item, role, beforeCheckup, afterCheckup)
+      effect: storyEffectFor(item, role, afterCheckup)
     }
   })
 }

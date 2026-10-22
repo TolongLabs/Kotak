@@ -8,7 +8,7 @@ import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { SdgChip } from '../components/ui/SdgChip'
-import { Stepper } from '../components/ui/Stepper'
+import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
@@ -18,8 +18,6 @@ import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { deriveRoleEvidence, kopiRoleSpeech, pickDisplayRoles, sessionHeading } from './roles/derived'
 import { carriedOverCorners, formatFitPercent, formatLevel } from './roles/fit'
-
-const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 
 export function RolesView() {
   const session = useGuestSession()
@@ -33,7 +31,7 @@ export function RolesView() {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
-        <Stepper step={4} labels={stepLabels} />
+        <Stepper step={4} labels={checkUpSteps} />
         <CatDialogue pose="worried" speech="Tell me your job first, then I can find roles that fit." />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
           Choose Your Job
@@ -46,7 +44,7 @@ export function RolesView() {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
-        <Stepper step={4} labels={stepLabels} />
+        <Stepper step={4} labels={checkUpSteps} />
         {loaded.status === 'error' || bundle.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         ) : (
@@ -96,6 +94,8 @@ export function RolesView() {
         estimated: carryOver.has(term.corner_id)
       }))
     : []
+  // When every level is carried over, one caption replaces a badge on every row.
+  const allEstimated = fitRows.length > 0 && fitRows.every((fitRow) => fitRow.estimated)
   const mathsAnswer = detailCheckupRole
     ? `Fit = sum of min(your level, needed level) ÷ sum of needed levels; here ${formatLevel(
         detailCheckupRole.fit.numerator
@@ -110,7 +110,7 @@ export function RolesView() {
 
   return (
     <div className="flex flex-col gap-5 lg:gap-6">
-      <Stepper step={4} labels={stepLabels} />
+      <Stepper step={4} labels={checkUpSteps} />
 
       <CatDialogue pose="explaining" speech={speech} />
 
@@ -130,33 +130,34 @@ export function RolesView() {
         </p>
       </header>
 
-      <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 items-start gap-4 md:grid-cols-3">
+      <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {displayRoles.map((displayRole) => {
           const occupation = occupationSdgs(displayRole.id)
           const goals = occupation?.goals.slice(0, 3) ?? []
           return (
-            <div key={displayRole.id} className="flex flex-col gap-2">
-              <RoleCard
-                role={displayRole}
-                name="role"
-                selected={displayRole.id === selected?.id}
-                onSelect={() => setSelectedId(displayRole.id)}
-              />
-              {goals.length > 0 && (
-                <span className="flex flex-wrap items-center gap-1.5">
-                  <span className="font-mono text-mono-s text-text-muted">This Work Supports</span>
-                  {goals.map((goal) => (
-                    <SdgChip key={goal} goal={goal} compact title={occupation?.reason} />
-                  ))}
-                </span>
-              )}
-            </div>
+            <RoleCard
+              key={displayRole.id}
+              role={displayRole}
+              name="role"
+              selected={displayRole.id === selected?.id}
+              onSelect={() => setSelectedId(displayRole.id)}
+              footer={
+                goals.length > 0 && (
+                  <span className="flex flex-wrap items-center gap-1.5">
+                    <span className="font-mono text-mono-s text-text-muted">This Work Supports</span>
+                    {goals.map((goal) => (
+                      <SdgChip key={goal} goal={goal} compact title={occupation?.reason} />
+                    ))}
+                  </span>
+                )
+              }
+            />
           )
         })}
       </section>
 
       {selected && (
-        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* How Fit Is Worked Out */}
           <section aria-labelledby="fit-maths-title" className="surface-card flex flex-col gap-3 p-5">
             <h2 id="fit-maths-title" className="text-title-s text-text-primary">
@@ -198,12 +199,15 @@ export function RolesView() {
                           {fitRow.name}
                         </th>
                         <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
-                          {fitRow.you}
-                          {fitRow.estimated && (
-                            <span className="ml-1 rounded-full border border-border-control px-1.5 py-0.5 font-sans text-label-s text-text-muted">
-                              Estimated
-                            </span>
-                          )}
+                          {/* On phones the badge drops under the level, so all four columns fit. */}
+                          <span className="inline-flex flex-col items-end gap-1 sm:flex-row sm:items-center">
+                            {fitRow.you}
+                            {fitRow.estimated && !allEstimated && (
+                              <span className="rounded-full border border-border-control px-1.5 py-0.5 font-sans text-label-s text-text-muted">
+                                Estimated
+                              </span>
+                            )}
+                          </span>
                         </td>
                         <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
                           {fitRow.needed}
@@ -217,13 +221,19 @@ export function RolesView() {
                 </table>
               </div>
             )}
+            {allEstimated && (
+              <p className="text-body-s text-text-muted">
+                Your levels here are estimated from your {role.title} answers.
+              </p>
+            )}
             {detailCheckupRole && mathsAnswer && (
               <Accordion items={[{ id: 'fit-maths', question: 'See the Maths', answer: mathsAnswer }]} />
             )}
           </section>
 
           {/* Why This Role */}
-          <section aria-label="Why This Role" className="flex flex-col gap-3">
+          {/* Stretches with the fit card, so both boxes in the row end on one line. */}
+          <section aria-label="Why This Role" className="flex flex-col justify-between gap-3">
             <Reasoning text={reasoningText} source="template" paused={aiOff} rows={roleEvidence?.rows ?? []} />
             <SourceList sources={displaySources} />
           </section>

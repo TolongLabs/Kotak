@@ -3,6 +3,9 @@ import { cn } from './cn'
 
 export type StepperStep = 1 | 2 | 3 | 4 | 5
 
+// The Check-Up flow's five steps, shared so every page names them the same way.
+export const checkUpSteps: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
+
 export interface StepperProps extends ComponentPropsWithoutRef<'div'> {
   step: StepperStep | number
   labels: [string, string, string, string, string]
