@@ -24,7 +24,7 @@ export function RoadmapStepCard({ step, index, last }: RoadmapStepCardProps) {
         <span
           className={`relative z-10 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-[1.5px] font-mono text-mono-s ${
             step.state === 'next'
-              ? 'border-text-primary bg-accent-box text-text-primary'
+              ? 'on-accent border-text-primary bg-accent-box text-text-primary'
               : step.state === 'done'
                 ? 'border-state-success bg-state-success text-bg-default'
                 : 'border-border-control bg-bg-default text-text-primary'

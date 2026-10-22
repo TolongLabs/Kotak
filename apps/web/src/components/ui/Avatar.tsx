@@ -22,7 +22,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
     <div ref={ref} className={cn('inline-flex shrink-0 items-center gap-2.5', className)} {...props}>
       <span
         className={cn(
-          'inline-flex shrink-0 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box font-sans font-bold text-accent-on-box',
+          'inline-flex shrink-0 items-center justify-center rounded-full on-accent border-[1.5px] border-text-primary bg-accent-box font-sans font-bold text-accent-on-box',
           circleSizes[size]
         )}
         aria-hidden="true"
