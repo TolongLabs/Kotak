@@ -86,7 +86,7 @@ export function RoadmapView() {
   )
   const [startDate, setStartDate] = useState(getInitialStartDate)
   const [scenario, setScenario] = useState<ScenarioValue>('slow')
-  const [muted, setMuted] = useState(false)
+  const [muted, setMuted] = useState(true)
 
   const visibleSteps = roadmap.filter((step) => !step.conditional || scenario === 'fast')
   const reasoningCorner = corners.find((corner) => corner.name === roadmap[0]?.skill)
