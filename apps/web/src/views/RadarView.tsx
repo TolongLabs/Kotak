@@ -11,6 +11,7 @@ import { SourceReference } from '../components/kotak/SourceReference'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
+import { SdgChip } from '../components/ui/SdgChip'
 import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
@@ -24,6 +25,14 @@ import type { ExplanationResponse } from '@kotak/shared'
 import { buildExplanationRequest } from './roles/derived'
 
 const stepLabels: [string, string, string, string, string] = ['Home', 'Check-Up', 'Radar', 'Roles', 'Roadmap']
+
+function sdgGoals(targets: string[] | undefined, limit: number) {
+  const goals = (targets ?? []).flatMap((target) => {
+    const goal = Number(target.split('.')[0])
+    return Number.isInteger(goal) && goal >= 1 && goal <= 17 ? [goal] : []
+  })
+  return [...new Set(goals)].slice(0, limit)
+}
 
 function gapFor(corner: Corner, scenario: Scenario) {
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
@@ -179,6 +188,7 @@ export function RadarView() {
     .filter((corner) => weaknessNames.has(corner.name))
     .sort((left, right) => gapFor(right, scenario) - gapFor(left, scenario))
   const sourceByNumber = new Map(sources.map((source) => [source.n, source]))
+  const sdgByCorner = new Map(role.corners.map((corner) => [corner.corner_id, corner.sdg_targets]))
   const pausedGapCorners = weaknessCorners.filter(
     (corner) => corner.verdict === 'rising' && gapFor(corner, scenario) > 0
   )
@@ -189,16 +199,27 @@ export function RadarView() {
       return source ? [source] : []
     })
     const explanationSource = explanationByCorner.get(corner.id)?.source ?? 'template'
+    const goals = sdgGoals(sdgByCorner.get(corner.id), 2)
 
     return (
       <ExplanationSourceProvider key={corner.id} source={explanationSource}>
-        <GapCard
-          corner={corner}
-          sources={cornerSources}
-          scenario={scenario}
-          neededLabel={neededLabel}
-          paused={explanationsPaused}
-        />
+        <div className="surface-card space-y-3 p-4 [&>article]:rounded-none [&>article]:border-0 [&>article]:bg-transparent [&>article]:p-0">
+          <GapCard
+            corner={corner}
+            sources={cornerSources}
+            scenario={scenario}
+            neededLabel={neededLabel}
+            paused={explanationsPaused}
+          />
+          {goals.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-label-s text-text-muted">Closing This Supports</span>
+              {goals.map((goal) => (
+                <SdgChip key={goal} goal={goal} />
+              ))}
+            </div>
+          )}
+        </div>
       </ExplanationSourceProvider>
     )
   }

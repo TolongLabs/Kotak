@@ -1,79 +1,35 @@
-import { useEffect, useState } from 'react'
-import { DEFAULT_SCENARIO, type ExplanationResponse } from '@kotak/shared'
+import { useState } from 'react'
+import { DEFAULT_SCENARIO } from '@kotak/shared'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
 import { SourceReference } from '../components/kotak/SourceReference'
+import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
+import { SdgChip } from '../components/ui/SdgChip'
 import { Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
-import { useCheckup } from '../engine/checkup'
-import { fetchExplanations } from '../engine/api'
+import { assessedRoleCode, useCheckup } from '../engine/checkup'
+import { roleSdgGoals } from '../engine/sdg'
 import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
-import { MathsModal } from './roles/MathsModal'
-import { buildExplanationRequest, deriveRoleEvidence, kopiRoleSpeech } from './roles/derived'
-import { formatFitPercent } from './roles/fit'
+import { deriveRoleEvidence, kopiRoleSpeech, pickDisplayRoles, sessionHeading } from './roles/derived'
+import { carriedOverCorners, formatFitPercent, formatLevel } from './roles/fit'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 
 export function RolesView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(session.role_code)
+  const bundle = useRoleBundle(assessedRoleCode(session))
   const loaded = useCheckup({ scenario: DEFAULT_SCENARIO })
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [mathsId, setMathsId] = useState<string | null>(null)
   const [askOpen, setAskOpen] = useState(false)
-  const [explanationState, setExplanationState] = useState<{
-    roleCode: string
-    snapshotId: string
-    explanations: ExplanationResponse['explanations']
-  } | null>(null)
-  const roleData = bundle.status === 'ready' ? bundle.data : null
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
   const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
-
-  useEffect(() => {
-    if (aiOff || !roleData || !checkup) return
-
-    const ranked = toRoles(checkup, [roleData.role, ...roleData.related], session.role_code)
-    const currentJob = ranked.find((candidate) => candidate.isCurrentJob)
-    const otherRoles = ranked.filter((candidate) => !candidate.isCurrentJob)
-    const displayRoles = currentJob ? [currentJob, ...otherRoles.slice(0, 2)] : ranked.slice(0, 3)
-    const defaultSelected =
-      displayRoles.find((candidate) => !candidate.isCurrentJob && candidate.outlook === 'rising') ??
-      (displayRoles.length > 2 ? displayRoles[2] : displayRoles[0])
-    const selected = displayRoles.find((candidate) => candidate.id === selectedId) ?? defaultSelected
-    if (!selected) return
-
-    const detailCheckupRole = checkup.roles.find((candidate) => candidate.onet_code === selected.id)
-    const detailBundleRole = [roleData.role, ...roleData.related].find(
-      (candidate) => candidate.onet_code === selected.id
-    )
-    if (!detailBundleRole) return
-
-    const request = buildExplanationRequest(detailBundleRole, detailCheckupRole, checkup.snapshotId, checkup.scenario)
-    if (!request) return
-
-    let current = true
-    void fetchExplanations(detailBundleRole.onet_code, request).then((result) => {
-      if (current && result.status === 'available') {
-        setExplanationState({
-          roleCode: detailBundleRole.onet_code,
-          snapshotId: checkup.snapshotId,
-          explanations: result.data.explanations
-        })
-      }
-    })
-
-    return () => {
-      current = false
-    }
-  }, [aiOff, checkup, roleData, selectedId, session.role_code])
 
   if (!session.role_code) {
     return (
@@ -106,48 +62,53 @@ export function RolesView() {
   const bundleRoles = [role, ...related]
   const ranked = toRoles(checkup, bundleRoles, session.role_code)
 
-  const currentJob = ranked.find((candidate) => candidate.isCurrentJob)
-  const otherRoles = ranked.filter((candidate) => !candidate.isCurrentJob)
-  const displayRoles = currentJob ? [currentJob, ...otherRoles.slice(0, 2)] : ranked.slice(0, 3)
-
-  const defaultSelected =
-    displayRoles.find((candidate) => !candidate.isCurrentJob && candidate.outlook === 'rising') ??
-    (displayRoles.length > 2 ? displayRoles[2] : displayRoles[0])
-
-  const selected = displayRoles.find((candidate) => candidate.id === selectedId) ?? defaultSelected
-
-  const mathsRole = ranked.find((candidate) => candidate.id === mathsId)
-  const mathsCheckupRole = checkup.roles.find((candidate) => candidate.onet_code === mathsRole?.id)
-  const mathsBundleRole = bundleRoles.find((candidate) => candidate.onet_code === mathsRole?.id)
+  const { roles: displayRoles, defaultId } = pickDisplayRoles(session.goal, session.target_role_code, ranked)
+  const selected =
+    displayRoles.find((candidate) => candidate.id === selectedId) ??
+    displayRoles.find((candidate) => candidate.id === defaultId)
 
   const detailCheckupRole = checkup.roles.find((candidate) => candidate.onet_code === selected?.id)
   const detailBundleRole = bundleRoles.find((candidate) => candidate.onet_code === selected?.id)
-  const stay = session.goal === 'stay'
 
-  const speech = kopiRoleSpeech(ranked)
-  const roleEvidence = selected
-    ? deriveRoleEvidence(detailCheckupRole, detailBundleRole, role, checkup.snapshotId)
-    : null
-  const displaySources = roleEvidence?.sources ?? []
-  const currentExplanations =
-    selected && explanationState?.roleCode === selected.id && explanationState.snapshotId === checkup.snapshotId
-      ? explanationState.explanations
-      : null
-  const apiReasoning = currentExplanations?.map((explanation) => explanation.sentences.join(' ')).join(' ')
-  const reasoningText =
-    roleEvidence && apiReasoning ? `${roleEvidence.reasoningPrefix} ${apiReasoning}` : (roleEvidence?.reasoning ?? '')
-  const reasoningSource = currentExplanations?.every((explanation) => explanation.source === 'claude')
-    ? 'claude'
-    : 'template'
+  const speech = kopiRoleSpeech(
+    ranked,
+    session.goal === 'explore' ? undefined : displayRoles.find((candidate) => candidate.id === defaultId)
+  )
+  const heading = sessionHeading(session.goal)
 
-  const fitNumerator = detailCheckupRole?.fit.numerator ?? 0
-  const fitDenominator = detailCheckupRole?.fit.denominator ?? 0
-  const fitScore = detailCheckupRole ? formatFitPercent(detailCheckupRole.fit.score) : `${selected?.fit ?? 0}%`
+  const roleEvidence = selected ? deriveRoleEvidence(detailCheckupRole, detailBundleRole, checkup.snapshotId) : null
+  // Only the sources the visible rows cite; the first two when no row cites one.
+  const citedNumbers = new Set(roleEvidence?.rows.map((row) => row.citation).filter((n) => n !== null))
+  const allSources = roleEvidence?.sources ?? []
+  const displaySources =
+    citedNumbers.size > 0 ? allSources.filter((source) => citedNumbers.has(source.n)) : allSources.slice(0, 2)
+
+  const reasoningText = roleEvidence?.summary ?? ''
+
+  const cornerName = new Map(detailBundleRole?.corners.map((corner) => [corner.corner_id, corner.name]) ?? [])
+  const carryOver = detailCheckupRole
+    ? carriedOverCorners(detailCheckupRole, session.role_code, Boolean(selected?.isCurrentJob))
+    : new Set<string>()
+  const fitRows = detailCheckupRole
+    ? detailCheckupRole.fit.terms.map((term) => ({
+        name: cornerName.get(term.corner_id) ?? term.corner_id,
+        you: formatLevel(term.user_level),
+        needed: formatLevel(term.target_level),
+        counts: formatLevel(term.term),
+        estimated: carryOver.has(term.corner_id)
+      }))
+    : []
+  const mathsAnswer = detailCheckupRole
+    ? `Fit = sum of min(your level, needed level) ÷ sum of needed levels; here ${formatLevel(
+        detailCheckupRole.fit.numerator
+      )} / ${formatLevel(detailCheckupRole.fit.denominator)} gives ${formatFitPercent(detailCheckupRole.fit.score)}.`
+    : ''
+  const sdgByRole = new Map(bundleRoles.map((bundleRole) => [bundleRole.onet_code, roleSdgGoals(bundleRole.corners)]))
 
   function pick() {
     if (!selected) return
-    if (selected.isCurrentJob) {
-      updateGuestSession({ target_role_code: null })
+    if (selected.id === assessedRoleCode(session)) {
+      updateGuestSession({ plan_role_code: null })
       navigate(routes.roadmap)
       return
     }
@@ -155,8 +116,9 @@ export function RolesView() {
   }
 
   function continueToRoadmap() {
-    if (selected && !selected.isCurrentJob) updateGuestSession({ target_role_code: selected.id })
-    else updateGuestSession({ target_role_code: null })
+    updateGuestSession({
+      plan_role_code: selected && selected.id !== assessedRoleCode(session) ? selected.id : null
+    })
     navigate(routes.roadmap)
   }
 
@@ -175,58 +137,107 @@ export function RolesView() {
       )}
 
       <header className="flex flex-col gap-1.5">
-        <h1 className="text-title-m font-bold text-text-primary lg:text-title-l">
-          {stay ? "Your Job's Future" : 'Roles That Fit You'}
-        </h1>
+        <h1 className="text-title-m font-bold text-text-primary lg:text-title-l">{heading}</h1>
         <p className="text-body-s text-text-muted">
           Fit is the share of each role’s needed levels you already meet. Outlook comes from DOSM job ads and AI use for
           that role.
         </p>
       </header>
 
-      <section
-        role="radiogroup"
-        aria-label={stay ? "Your Job's Future" : 'Roles That Fit You'}
-        className="grid grid-cols-1 gap-4 md:grid-cols-3"
-      >
-        {displayRoles.map((displayRole) => (
-          <RoleCard
-            key={displayRole.id}
-            role={displayRole}
-            name="role"
-            selected={displayRole.id === selected?.id}
-            onSelect={() => setSelectedId(displayRole.id)}
-          />
-        ))}
+      <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 items-start gap-4 md:grid-cols-3">
+        {displayRoles.map((displayRole) => {
+          const goals = sdgByRole.get(displayRole.id) ?? []
+          return (
+            <div key={displayRole.id} className="flex flex-col gap-2">
+              <RoleCard
+                role={displayRole}
+                name="role"
+                selected={displayRole.id === selected?.id}
+                onSelect={() => setSelectedId(displayRole.id)}
+              />
+              {goals.length > 0 && (
+                <span className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-mono text-mono-s text-text-muted">Contributes To</span>
+                  {goals.map((goal) => (
+                    <SdgChip key={goal} goal={goal} compact />
+                  ))}
+                </span>
+              )}
+            </div>
+          )
+        })}
       </section>
 
       {selected && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
           {/* How Fit Is Worked Out */}
-          <section
-            aria-labelledby="fit-maths-title"
-            className="flex flex-col gap-2.5 rounded-md border border-border-subtle bg-bg-panel p-5"
-          >
+          <section aria-labelledby="fit-maths-title" className="surface-card flex flex-col gap-3 p-5">
             <h2 id="fit-maths-title" className="text-title-s text-text-primary">
               How Fit Is Worked Out
             </h2>
-            <p className="break-words font-mono text-mono-s text-text-primary">
-              Fit = sum of min(your level, needed level) ÷ sum of needed levels
+            <p className="text-body-s text-text-primary">
+              {detailCheckupRole
+                ? `You meet ${formatLevel(detailCheckupRole.fit.numerator)} of ${formatLevel(
+                    detailCheckupRole.fit.denominator
+                  )} needed levels for ${selected.title}, so fit is ${formatFitPercent(detailCheckupRole.fit.score)}.`
+                : `Fit for ${selected.title} is not ready yet.`}
             </p>
-            <p className="text-body-s text-text-muted">
-              {selected.title}: you meet {fitNumerator} of {fitDenominator} needed levels, so fit is {fitScore}. Levels
-              shared with your job carry over; the rest are marked Estimated.
-            </p>
-            <div className="mt-auto pt-2">
-              <Button variant="secondary" size="md" fullWidth onClick={() => setMathsId(selected.id)}>
-                See the Maths
-              </Button>
-            </div>
+            {fitRows.length > 0 && (
+              <div role="region" tabIndex={0} aria-label="Fit by skill" className="overflow-x-auto">
+                <table className="w-full text-body-s">
+                  <caption className="sr-only">
+                    {selected.title}: your level, needed level and counted level per skill
+                  </caption>
+                  <thead>
+                    <tr className="bg-bg-panel text-left text-label-m">
+                      <th scope="col" className="px-2 py-1.5">
+                        Skill
+                      </th>
+                      <th scope="col" className="px-2 py-1.5 text-right">
+                        You
+                      </th>
+                      <th scope="col" className="px-2 py-1.5 text-right">
+                        Needed
+                      </th>
+                      <th scope="col" className="px-2 py-1.5 text-right">
+                        Counts
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fitRows.map((fitRow) => (
+                      <tr key={fitRow.name} className="border-t border-border-subtle">
+                        <th scope="row" className="px-2 py-1.5 text-left font-normal">
+                          {fitRow.name}
+                        </th>
+                        <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
+                          {fitRow.you}
+                          {fitRow.estimated && (
+                            <span className="ml-1 rounded-full border border-border-control px-1.5 py-0.5 font-sans text-label-s text-text-muted">
+                              Estimated
+                            </span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
+                          {fitRow.needed}
+                        </td>
+                        <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
+                          {fitRow.counts}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {detailCheckupRole && mathsAnswer && (
+              <Accordion items={[{ id: 'fit-maths', question: 'See the Maths', answer: mathsAnswer }]} />
+            )}
           </section>
 
           {/* Why This Role */}
           <section aria-label="Why This Role" className="flex flex-col gap-3">
-            <Reasoning text={reasoningText} source={reasoningSource} paused={aiOff} />
+            <Reasoning text={reasoningText} source="template" paused={aiOff} rows={roleEvidence?.rows ?? []} />
             {displaySources.length > 0 && (
               <div className="divide-y divide-border-subtle rounded-md border border-border-subtle bg-bg-default [&>div]:rounded-none [&>div]:border-0">
                 {displaySources.map((source) => (
@@ -244,10 +255,6 @@ export function RolesView() {
           Build My Roadmap
         </Button>
       </div>
-
-      {mathsRole && mathsCheckupRole && mathsBundleRole && (
-        <MathsModal role={mathsCheckupRole} bundleRole={mathsBundleRole} open onClose={() => setMathsId(null)} />
-      )}
 
       <Modal
         open={askOpen}

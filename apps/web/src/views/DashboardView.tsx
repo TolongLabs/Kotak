@@ -7,11 +7,12 @@ import { CatDialogue } from '../components/kotak/CatDialogue'
 import { StatCard } from '../components/kotak/StatCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
+import { SdgChip } from '../components/ui/SdgChip'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { deriveSwot } from '../demo/swot'
 import type { Swot, SwotItem } from '../demo/types'
 import { useRoleBundle } from '../engine/bundle'
-import { answeredLevels, useCheckup, type Checkup } from '../engine/checkup'
+import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
 import { toReadinessPoints, toRoadmapSteps } from '../engine/roadmapModel'
 import { useGuestSession } from '../session/store'
@@ -206,7 +207,7 @@ function withoutEndingPunctuation(value: string) {
 
 export function DashboardView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(session.role_code)
+  const bundle = useRoleBundle(assessedRoleCode(session))
   const checkup = useCheckup({ scenario: DEFAULT_SCENARIO })
   const otherScenario = useCheckup({ scenario: DEFAULT_SCENARIO === 'slow' ? 'fast' : 'slow' })
 
@@ -276,7 +277,7 @@ export function DashboardView() {
     )
   }
 
-  const currentFit = currentCheckup.roles.find((entry) => entry.onet_code === session.role_code)
+  const currentFit = currentCheckup.roles.find((entry) => entry.onet_code === assessedRoleCode(session))
   if (!currentFit) {
     return (
       <DashboardState>
@@ -295,9 +296,20 @@ export function DashboardView() {
   const corners = toCorners(currentCheckup, sourceRefs(currentCheckup).numbers)
   const roles = toRoles(currentCheckup, [role, ...bundle.data.related], session.role_code)
   const swot = deriveSwot(corners, roles, currentCheckup.scenario)
-  const steps = toRoadmapSteps(currentCheckup, role, session.ticked_milestones)
+  const planBundleRole =
+    [role, ...bundle.data.related].find((entry) => entry.onet_code === currentCheckup.planRoleCode) ?? role
+  const steps = toRoadmapSteps(currentCheckup, planBundleRole, session.ticked_milestones)
   const nextStep = steps.find((step) => step.state === 'next')
-  const fitRoleCode = session.target_role_code ?? session.role_code
+  const nextStepGoals = (nextStep?.sdgs ?? []).slice(0, 2)
+  const sdgCounts = new Map<number, number>()
+  for (const step of steps) {
+    for (const goal of new Set(step.sdgs)) sdgCounts.set(goal, (sdgCounts.get(goal) ?? 0) + 1)
+  }
+  const topPlanGoals = [...sdgCounts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0] - right[0])
+    .slice(0, 3)
+    .map(([goal]) => goal)
+  const fitRoleCode = planRoleCodeOf(session)
   const fitRole = currentCheckup.roles.find((entry) => entry.onet_code === fitRoleCode)
   const fitBundleRole = [role, ...bundle.data.related].find((entry) => entry.onet_code === fitRoleCode) ?? role
   const readinessPoints = toReadinessPoints(slowCheckup, fastCheckup, fitBundleRole)
@@ -371,6 +383,14 @@ export function DashboardView() {
       <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">Good Morning, Guest</h1>
         <p className="text-body-s text-text-muted">{role.title}</p>
+        {topPlanGoals.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-label-s text-text-muted">Your Plan Supports</span>
+            {topPlanGoals.map((goal) => (
+              <SdgChip key={goal} goal={goal} />
+            ))}
+          </div>
+        )}
       </header>
 
       {role.quality === 'auto-generated' && (
@@ -471,6 +491,13 @@ export function DashboardView() {
               <h2 className="break-words text-title-s text-text-primary">
                 {nextStep?.title || nextStep?.skill || (steps.length > 0 ? 'Plan Complete' : 'No Roadmap Steps')}
               </h2>
+              {nextStepGoals.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {nextStepGoals.map((goal) => (
+                    <SdgChip key={goal} goal={goal} />
+                  ))}
+                </div>
+              )}
               <p className="text-body-s text-text-muted">{nextStepDescription}</p>
             </div>
             <Button variant="primary" size="lg" className="w-full" onClick={() => navigate(routes.roadmap)}>

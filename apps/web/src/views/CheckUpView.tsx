@@ -4,9 +4,7 @@ import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { Button } from '../components/ui/Button'
 import { ChoiceCard } from '../components/ui/ChoiceCard'
-import { DatePicker } from '../components/ui/DatePicker'
 import { SearchField } from '../components/ui/SearchField'
-import { Slider } from '../components/ui/Slider'
 import { TextField } from '../components/ui/TextField'
 import { Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
@@ -14,8 +12,9 @@ import type { BundleRoleIndexEntry, Occupation } from '@kotak/shared'
 import { goals } from '../demo/data'
 import type { Goal } from '../demo/types'
 import { useRoleIndex } from '../engine/bundle'
+import { assessedRoleCode } from '../engine/checkup'
 import { fetchRoleMatch, type ApiResult } from '../engine/api'
-import { updateGuestSession, useGuestSession } from '../session/store'
+import { updateGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import type { RoleMatchResponse } from '@kotak/shared'
 
@@ -76,13 +75,15 @@ function closestRoles(roles: BundleRoleIndexEntry[], query: string) {
 }
 
 export function CheckUpView() {
-  const session = useGuestSession()
   const roleIndex = useRoleIndex()
   const roles = roleIndex.status === 'ready' ? roleIndex.data.roles : []
   const searchRef = useRef<HTMLInputElement>(null)
   const [jobQuery, setJobQuery] = useState(getInitialJobQuery)
   const [acceptedJob, setAcceptedJob] = useState<Occupation | null>(null)
   const [suggestionsOpen, setSuggestionsOpen] = useState(true)
+  const [targetQuery, setTargetQuery] = useState('')
+  const [acceptedTarget, setAcceptedTarget] = useState<Occupation | null>(null)
+  const [targetSuggestionsOpen, setTargetSuggestionsOpen] = useState(false)
   const [roleMatchState, setRoleMatchState] = useState<
     | { queryKey: string; status: 'loading' }
     | { queryKey: string; status: 'settled'; result: ApiResult<RoleMatchResponse> }
@@ -91,8 +92,6 @@ export function CheckUpView() {
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null)
   const [submitVersion, setSubmitVersion] = useState(0)
   const [goalId, setGoalId] = useState<Goal['id']>('explore')
-  const [hoursPerWeek, setHoursPerWeek] = useState(session.custom_weekly_hours ?? 4)
-  const [startDate, setStartDate] = useState(() => new Date())
 
   const normalizedQuery = jobQuery.trim().toLocaleLowerCase()
   const queryKey = normalizeJobQuery(jobQuery)
@@ -131,6 +130,20 @@ export function CheckUpView() {
     (roleMatchFallback || (matchingSuggestions.length === 0 && !waitingForRoleMatch && !hasRemoteSuggestion))
   const closeMatches = noJobMatch ? closestRoles(roles, normalizedQuery) : []
   const noMatchSuggestions = closeMatches.length ? closeMatches : noJobMatch ? getSuggestedRoles(roles) : []
+  const isTargetGoal = goalId === 'target'
+  const normalizedTargetQuery = targetQuery.trim().toLocaleLowerCase()
+  const targetSuggestions = normalizedTargetQuery
+    ? roles.filter((role) => matchesQuery(role, normalizedTargetQuery)).slice(0, maxSuggestions)
+    : []
+  const targetMatchesJob =
+    acceptedJob !== null && acceptedTarget !== null && acceptedJob.onet_code === acceptedTarget.onet_code
+  const canStart = acceptedJob !== null && (!isTargetGoal || (acceptedTarget !== null && !targetMatchesJob))
+  const assessedCode = assessedRoleCode({
+    goal: goalId,
+    role_code: acceptedJob?.onet_code ?? null,
+    target_role_code: acceptedTarget?.onet_code ?? null
+  })
+  const previousAssessedCode = useRef(assessedCode)
 
   useEffect(() => {
     if (roleIndex.status !== 'ready' || !queryKey || hasExactLocalMatch || acceptedJob) return
@@ -150,6 +163,12 @@ export function CheckUpView() {
     }
   }, [acceptedJob, hasExactLocalMatch, jobQuery, queryKey, roleIndex.status, submittedQuery, submitVersion])
 
+  useEffect(() => {
+    if (previousAssessedCode.current === assessedCode) return
+    previousAssessedCode.current = assessedCode
+    updateGuestSession({ answers: Array<boolean | null>(12).fill(null), plan_role_code: null })
+  }, [assessedCode])
+
   const updateJobQuery = (value: string) => {
     setJobQuery(value)
     setAcceptedJob(null)
@@ -162,6 +181,29 @@ export function CheckUpView() {
     setSuggestionsOpen(false)
   }
 
+  const updateTargetQuery = (value: string) => {
+    setTargetQuery(value)
+    setAcceptedTarget(null)
+    setTargetSuggestionsOpen(true)
+    if (acceptedTarget) updateGuestSession({ target_role_code: null })
+  }
+
+  const acceptTarget = (role: Pick<Occupation, 'onet_code' | 'title'>) => {
+    setTargetQuery(getRoleDisplayTitle(role))
+    setAcceptedTarget(role)
+    setTargetSuggestionsOpen(false)
+    updateGuestSession({ target_role_code: role.onet_code })
+  }
+
+  const selectGoal = (next: Goal['id']) => {
+    setGoalId(next)
+    if (next === 'target') return
+    setTargetQuery('')
+    setAcceptedTarget(null)
+    setTargetSuggestionsOpen(false)
+    updateGuestSession({ target_role_code: null })
+  }
+
   const submitTitleMatch = () => {
     if (!queryKey || hasExactLocalMatch || acceptedJob) return
     setSubmittedQuery(queryKey)
@@ -170,12 +212,13 @@ export function CheckUpView() {
 
   // A new check-up starts from blank answers, so the radar never mixes two jobs' answers.
   const startQuestions = () => {
-    if (!acceptedJob) return
+    if (!acceptedJob || !canStart) return
     updateGuestSession({
       role_code: acceptedJob.onet_code,
       goal: goalId,
-      custom_weekly_hours: hoursPerWeek,
+      target_role_code: isTargetGoal && acceptedTarget ? acceptedTarget.onet_code : null,
       answers: Array<boolean | null>(12).fill(null),
+      plan_role_code: null,
       ticked_milestones: []
     })
     navigate(routes.questions)
@@ -338,28 +381,66 @@ export function CheckUpView() {
                 description={goal.description}
                 icon={Icon}
                 selected={goalId === goal.id}
-                onSelect={(value) => setGoalId(value as Goal['id'])}
+                onSelect={(value) => selectGoal(value as Goal['id'])}
               />
             )
           })}
         </div>
       </section>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Slider
-          label="Hours per Week"
-          min={1}
-          max={10}
-          step={1}
-          value={hoursPerWeek}
-          onChange={setHoursPerWeek}
-          unit="h"
-        />
-        <DatePicker label="Plan Start Date" value={startDate} onChange={setStartDate} />
-      </div>
+      {isTargetGoal && (
+        <section className="space-y-3" aria-labelledby="target-role-heading">
+          <h2 id="target-role-heading" className="text-label-l text-text-primary">
+            Which Role Do You Want?
+          </h2>
+          <div className="w-full min-w-0 space-y-2 lg:max-w-[342px]">
+            <SearchField
+              label="Target Role"
+              hideLabel
+              placeholder="Type the Role You Want"
+              shortcutHint=""
+              value={targetQuery}
+              onChange={(event) => updateTargetQuery(event.currentTarget.value)}
+              onFocus={() => setTargetSuggestionsOpen(true)}
+              aria-controls={
+                targetSuggestionsOpen && targetSuggestions.length > 0 ? 'target-role-suggestions' : undefined
+              }
+              aria-expanded={targetSuggestionsOpen && targetSuggestions.length > 0}
+            />
+            {targetSuggestionsOpen && targetSuggestions.length > 0 && (
+              <ul
+                id="target-role-suggestions"
+                aria-label="Target Role Suggestions"
+                className="w-full min-w-0 space-y-0.5 rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
+              >
+                {targetSuggestions.map((role, index) => (
+                  <li key={role.onet_code}>
+                    <button
+                      type="button"
+                      onClick={() => acceptTarget(role)}
+                      className={cn(
+                        'flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2',
+                        index === 0 && 'bg-bg-panel'
+                      )}
+                    >
+                      <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
+                      <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {targetMatchesJob && (
+              <p className="text-body-s text-state-error" role="status">
+                Pick a Role Different From Your Current Job.
+              </p>
+            )}
+          </div>
+        </section>
+      )}
 
       <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
-        <Button variant="primary" size="lg" fullWidth disabled={!acceptedJob} onClick={startQuestions}>
+        <Button variant="primary" size="lg" fullWidth disabled={!canStart} onClick={startQuestions}>
           Start the 12 Questions
         </Button>
       </div>

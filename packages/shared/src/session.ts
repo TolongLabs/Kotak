@@ -8,6 +8,8 @@ export const GuestSessionSchema = z
     goal: z.string().nullable(),
     impact_area: z.string().nullable(),
     target_role_code: z.string().nullable(),
+    // The role the roadmap plans for when the user picks one on the Roles page; null plans for the assessed role.
+    plan_role_code: z.string().nullable().default(null),
     answers: z.array(z.boolean().nullable()).length(12),
     follow_up_answers: z.record(z.string(), z.boolean().nullable()),
     ticked_milestones: z.array(z.string()),
