@@ -72,7 +72,7 @@ The six must-haves:
 Fixed rules, not AI, set every verdict, score, ranking and roadmap order. AI does three jobs:
 
 - Before the demo, a RunPod GPU batch groups each O\*NET job's own tasks into 6 skills and drafts the questions. A validator rejects any task outside that job.
-- Live, Claude Opus 5.5 explains each verdict with its dated sources, matches Malay and local job titles, and reads pasted job ads, keeping only word-for-word quotes.
+- Live, Claude Sonnet 5.5 explains each verdict with its dated sources, matches Malay and local job titles, and reads pasted job ads, keeping only word-for-word quotes.
 - ElevenLabs voices Kopi, with mute and a text fallback.
 
 A Postgres-backed anonymous national view shows TalentCorp or HRD Corp which rising skills workers lack most.
@@ -91,7 +91,7 @@ Kotak is a TypeScript monorepo run with Bun. It has three parts: `apps/web` (the
 - **Frontend**: React and Vite, Tailwind CSS, Recharts for the radar and readiness graph, Lucide icons, and pixi-live2d-display for Kopi, built on Live2D's Hijiki sample model. It has phone (390 px) and desktop (1440 px) layouts, follows WCAG 2.2 AA and has a reduced-motion mode ([design system][design]).
 - **Rule engine in the browser**: the app loads precomputed, dated JSON snapshots and computes levels, targets, verdicts, fit scores and roadmap order in the browser. Switching the snapshot from April to May 2026 recomputes them at once. A guest session in `localStorage` keeps answers and ticked milestones.
 - **API**: Hono on Cloudflare Workers. One Worker serves the React build and the API. Its routes match job titles, write cited explanations, read pasted job ads, proxy text to speech and record anonymous check-ups. Zod validates every request and response.
-- **GenAI**: the Claude API with Claude Opus 5.5 at temperature 0. The API caches each answer by a SHA-256 hash of the request and pre-warms the cache for the demo roles. A check rejects any explanation that changes a verdict or lacks a dated citation, and falls back to a fixed template. The Message Batches API backs up the RunPod batch.
+- **GenAI**: the Claude API with Claude Sonnet 5.5. The API caches each answer by a SHA-256 hash of the request and pre-warms the cache for the demo roles. A check rejects any explanation that changes a verdict or lacks a dated citation, and falls back to a fixed template. The Message Batches API backs up the RunPod batch.
 - **Voice**: ElevenLabs. Fixed lines are pre-generated with `eleven_v4`, and live lines use `eleven_v4_turbo`. The API caches audio by a hash of the text, and the key stays on the server ([TTS notes][tts]).
 - **Data pipeline**: Bun scripts ingest O\*NET 30.1 and filter the Economic Index to Malaysia, Singapore and global rows. They also extract DOSM Job Market Insights (Q3 2019 to Q2 2026), DOSM Employment Statistics, MyCOL editions, OpenDOSM series and Epoch AI context ([trend data][trend]; [demand sources][demand-pub]). Every record carries its source, date and layer. A weekly GitHub Actions workflow checks for new releases and rebuilds the snapshots.
 - **Database**: Neon Postgres 18 (region `aws-ap-southeast-1`) for the national view. One table stores only the role code, the 6 skill levels, a sample flag and the date. Totals show only for groups of 10 or more.
@@ -112,7 +112,7 @@ flowchart LR
   GPU --> SNAP
   SNAP --> WEB["React app: rule engine in the browser"]
   WEB <--> API["Hono API"]
-  API <--> CLAUDE["Claude Opus 5.5"]
+  API <--> CLAUDE["Claude Sonnet 5.5"]
   API <--> TTS["ElevenLabs TTS"]
   API <--> PG[("Neon Postgres: national view")]
   DEPLOY["GitHub Actions deploy"] --> HOST["Cloudflare Workers"]
@@ -183,7 +183,7 @@ Yes. Kotak cites restricted sources by figure and date, and does not redistribut
 | Epoch AI data                                 | dataset        | Creative Commons Attribution, version not stated [trend]                                  |
 | Live2D Hijiki sample model                    | model (2D art) | [Live2D Free Material License Agreement][l2d]                                             |
 | Lucide icons                                  | code           | ISC [i47]                                                                                 |
-| Claude Opus 5.5, through the Claude API       | model          | Proprietary API service from Anthropic                                                    |
+| Claude Sonnet 5.5, through the Claude API     | model          | Proprietary API service from Anthropic                                                    |
 | ElevenLabs text to speech                     | model          | Proprietary API; users keep the rights to the output [tts]                                |
 
 The Live2D licence says "the Customer may not Redistribute all or part of the Material to third party" (clause 4.1.1). The team keeps the model in the repository and credits Live2D, a risk it accepted on 22 October 2026 ([mascot decision][idea-mascot]).
