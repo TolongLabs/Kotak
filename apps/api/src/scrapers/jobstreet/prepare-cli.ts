@@ -18,7 +18,7 @@ try {
     console.info(`Usage: bun run jobs:prepare --input PATH [--input PATH ...] --output NEW_DIRECTORY [--sort MODE]
   Merge captures or observations.jsonl files; preserve observation history and a sorted latest-job view.
   Sort modes: newest (default), title, company, location, job-id, scraped-at
-  Does not require Kameleo. Rejected rows are recorded in rejected.jsonl.`)
+  Does not require a browser. Rejected rows are recorded in rejected.jsonl.`)
   } else {
     if (!values.output) throw new Error('--output must name a new directory')
     await prepareJobs(values.input ?? [], values.output, parseSort(values.sort))

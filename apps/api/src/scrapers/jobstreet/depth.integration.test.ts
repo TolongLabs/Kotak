@@ -2,14 +2,14 @@ import { afterAll, beforeAll, expect, mock, test } from 'bun:test'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
-import type { Page, Route } from 'playwright-core'
+import type { Page, Route } from '@kotak/browser'
 import type { DepthOptions, scrapeJobstreetDepth } from './depth'
-import { withKameleo } from './kameleo'
+import { withBrowserProfile } from './browser-profile'
 
 const root = fileURLToPath(new URL('../../../../../', import.meta.url))
 const scratch = resolve(root, '.local')
-const browserTest = Bun.env.KAMELEO_INTEGRATION === '1' ? test : test.skip
-const openProfile = withKameleo
+const browserTest = Bun.env.BROWSER_INTEGRATION === '1' ? test : test.skip
+const openProfile = withBrowserProfile
 let workspace: string
 let input: string
 let scenario = 'mixed'
@@ -102,15 +102,15 @@ beforeAll(async () => {
     ...['102', '103', '104', '105', '106'].map((id) => listing(id))
   ]
   await writeFile(input, `${rows.map((row) => JSON.stringify(row)).join('\n')}\nnot-json\n`)
-  if (Bun.env.KAMELEO_INTEGRATION === '1') {
-    mock.module(resolve(root, 'apps/api/src/scrapers/jobstreet/kameleo.ts'), () => ({
-      withKameleo: (
-        endpoint: string,
+  if (Bun.env.BROWSER_INTEGRATION === '1') {
+    mock.module(resolve(root, 'apps/api/src/scrapers/jobstreet/browser-profile.ts'), () => ({
+      withBrowserProfile: (
+        options: { profileId?: string; headless?: boolean },
         callback: (page: Page, id: string) => Promise<unknown>,
         onProfile?: (id: string) => Promise<void>
       ) =>
         openProfile(
-          endpoint,
+          options,
           async (page, id) => {
             await page.route('https://my.jobstreet.com/**', fixture)
             return callback(page, id)
@@ -134,7 +134,7 @@ afterAll(async () => {
 
 const options = (name: string): DepthOptions => ({
   inputs: [input],
-  endpoint: Bun.env.KAMELEO_ENDPOINT || 'http://localhost:5050',
+  profileId: Bun.env.BROWSER_PROFILE_ID,
   output: join(workspace, name),
   maxJobs: 100,
   delayMs: 2000,
@@ -249,7 +249,7 @@ browserTest(
         ...options(`reuse-after-${outcome}`),
         maxJobs: 1,
         previousDetails: [refreshed],
-        endpoint: 'http://127.0.0.1:1'
+        profileId: 'unopened-profile'
       })
       expect([reused.jobs_reused, reused.jobs_attempted, reused.profile_id]).toEqual([1, 0, null])
       const reusedRow = (await lines(join(workspace, `reuse-after-${outcome}/jobs.enriched.jsonl`)))[0]
@@ -271,7 +271,7 @@ browserTest(
       ...options('reused'),
       maxJobs: 1,
       previousDetails: [cache],
-      endpoint: 'http://127.0.0.1:1'
+      profileId: 'unopened-profile'
     })
     expect(reused.refresh_after_hours).toBeNull()
     expect([reused.jobs_reused, reused.jobs_attempted, reused.profile_id]).toEqual([1, 0, null])

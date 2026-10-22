@@ -1,6 +1,6 @@
 # JobStreet research scraper
 
-Implemented on 22 October 2026. The local Bun pipeline uses Kameleo and Playwright in two modes: **breadth** paginates public Malaysian JobStreet search cards; **depth** enriches saved listings with full descriptions. Depth writes one unified view and reuses saved descriptions by default. An offline command merges dated breadth observations from multiple runs or contributors. Database storage remains deferred.
+Implemented on 22 October 2026. The local Bun pipeline uses Clearcote and Playwright in two modes: **breadth** reads Malaysian JobStreet search cards; **depth** enriches saved listings with full descriptions. Depth writes one unified view and reuses saved descriptions by default. An offline command merges dated breadth observations from multiple runs or contributors. Database storage remains deferred.
 
 Contents:
 
@@ -19,10 +19,11 @@ Contents:
 
 ## Run
 
-Install Kameleo using the [official installation guide](https://developer.kameleo.io/getting-started/installation/) and start the Engine. On Windows:
+The browser comes from the `@kotak/browser` workspace package, which drives the open build of [Clearcote](https://github.com/clearcotelabs/clearcote-browser), a patched Chromium. The first launch fetches the pinned build if it is not already cached. Create or inspect a local profile from the repository root:
 
 ```powershell
-& "$env:LOCALAPPDATA\Programs\Kameleo\Kameleo.Engine.exe"
+bun run --filter @kotak/browser profile list
+bun run --filter @kotak/browser profile create --name jobstreet-research
 ```
 
 From the repository root:
@@ -32,18 +33,21 @@ bun install
 bun run scrape:jobstreet --max-jobs 5
 bun run scrape:jobstreet --url https://my.jobstreet.com/data-analyst-jobs --max-pages 2 --max-jobs 40 --sort company
 bun run scrape:jobstreet --mode breadth --max-pages 50 --max-jobs 1000 --delay-ms 30000 --delay-jitter-ms 30000
+bun run scrape:jobstreet --mode breadth --max-pages 120 --max-jobs 5000
 bun run scrape:jobstreet --help
 ```
 
-The Engine defaults to `http://localhost:5050`; set `KAMELEO_ENDPOINT` for another address. Authentication belongs to the Engine, through its desktop login or `PAT` environment variable. Accountless mode is supported by Kameleo, subject to its limits. No credentials are embedded in the scraper.
+The scraper opens a visible browser window. Set `BROWSER_PROFILE_ID` to reuse a saved profile and its cookies; otherwise, it creates a temporary local profile for the run and removes it afterward. No separate local browser service is needed.
 
-Verified with Kameleo Engine 5.3.1, SDK 5.2.0 and Playwright Core 1.64.1. Each run creates a fresh desktop Chrome profile, explicitly starts a visible Chroma browser with no `--headless` argument, connects Playwright to its default context, then stops and deletes that profile. The Engine running in the background is separate from browser headless mode. Existing profiles are untouched. Run serially to stay within Kameleo browser quotas. The SDK is pinned to the published 5.2 minor; verify compatibility when changing the Engine version.
+The active scraper uses the repository's `@kotak/browser` package (`clearcote` SDK 0.60, Chromium 150 open build, Playwright Core 1.64). The browser is launched headed by default. The previous Kameleo implementation is recoverable from the pre-migration Git revision; Kameleo is no longer an API dependency or active scraper backend.
 
-Breadth is the default mode, with one page and 20 unique jobs. Opt in to larger runs with `--max-pages` (up to 50) and `--max-jobs` (up to 1,000). A run stops at either limit or the end of pagination. These bounds limit collection; they do not guarantee that many matching jobs exist.
+Breadth is the default mode, with one page and 20 unique jobs. Opt in to larger runs with `--max-pages` (up to 200) and `--max-jobs` (up to 5,000). When JobStreet exposes a result count in its page description, the scraper records that count on each page and uses the first observed total as an additional unique-job target. The effective target is the smaller of that total and `--max-jobs`; duplicate cards do not advance it. Reports include `target_jobs`, the first and latest reported totals, the source used to read the count, and a `reported_total` stop reason when that target ends the run. If no count is exposed, the explicit job/page limits and pagination end remain the stopping signals. The site count is a changing estimate and can differ between page metadata and the underlying search results, so it is useful for sizing and stopping but should not be treated as an exact census. It represents the current JobStreet query in its location/filter scope, not a standardized count for an entire career field. For example, a Software Engineer result count near 2,373 can guide a run configured with a larger `--max-jobs`; use enough pages to cover it (at roughly 30 results per page, about 80 pages). The default remains deliberately bounded.
 
 Both modes default to a **30-second base delay plus 0–30 seconds of random variation** between pages/jobs. Configure the base with `--delay-ms` (minimum 2000) and the extra variation with `--delay-jitter-ms` (0–60000). Set variation to zero for a fixed delay. The scraper logs each chosen pause and records `delay_ms`, `delay_jitter_ms` and `browser_mode` in `run.json`. These are configurable test settings; slower pacing does not guarantee that verification will be avoided.
 
-Breadth opens the first search URL, then scrolls toward and clicks the actual validated Next link. `hand.ts` is a self-contained TypeScript adaptation of the wheel notches, curved pointer reach, off-centre aiming and press dwell in TolongLarp's `browser/human.py`; no sibling checkout is required. Scrolling adds time beyond the base pause and is bounded to two minutes. The selected Next control must be visible, preserve the current search path/filters and advance exactly one page; covered or changed links are refused. Both full-page and client-side pagination are supported; each page still needs a valid URL and a new set of listing IDs. First-page navigation, depth URLs and transient retries use `page.goto()`. Verification checkboxes remain manual.
+Breadth opens the first search URL, then scrolls toward and clicks the actual validated Next link. Clearcote's `humanize` option provides the trusted curved pointer and click input; `hand.ts` adds whole 100-pixel wheel notches in short flicks, variable pauses, and an occasional one-notch overshoot with correction, adapted from TolongLarp's `browser/human.py`. Only the validated pagination link is clicked. Disabled and `aria-hidden` Next placeholders are ignored, so the scraper stops at the final page instead of scrolling toward a non-interactive link. Scrolling adds time beyond the base pause and is bounded to two minutes. The selected Next control must be visible, preserve the current search path/filters and advance exactly one page; changed links are refused. Both full-page and client-side pagination are supported; each page still needs a valid URL and a new set of listing IDs. First-page navigation, depth URLs and transient retries use `page.goto()`. Verification must be completed manually.
+
+JobStreet's current [robots.txt](https://my.jobstreet.com/robots.txt) contains directives for job-detail paths and query-string URLs. The scraper does not enforce those directives; the run remains subject to JobStreet's HTTP responses and the configured pacing and verification limits.
 
 ## Depth and description reuse
 
@@ -74,7 +78,7 @@ The first refreshes descriptions at least a week old; zero forces a new fetch. T
 
 ## Merge contributor captures
 
-Share raw `jobs.jsonl` captures or a prepared collection's `observations.jsonl` manually for now, then run the offline merger. Git ignores `data/jobstreet/`, so pulling the repository does not transfer captured data. This command does not need Kameleo or network access:
+Share raw `jobs.jsonl` captures or a prepared collection's `observations.jsonl` manually for now, then run the offline merger. Git ignores `data/jobstreet/`, so pulling the repository does not transfer captured data. This command does not need a browser or network access:
 
 ```sh
 bun run jobs:prepare --input data/jobstreet/alice-run/jobs.jsonl --input data/jobstreet/bob-run/jobs.jsonl --output data/jobstreet/collections/research-01 --sort newest
@@ -137,7 +141,7 @@ The default breadth destination is `data/jobstreet/<timestamp>-<suffix>/`; depth
 - `jobs.sorted.jsonl`: the scraper's sorted view, also retained on handled failures.
 - `observations.jsonl`: prepared collection's full distinct observation history, ordered by scrape time ascending. Use this file for subsequent merges and trend analysis.
 - `job-history.jsonl`: prepared collection's first/last-seen dates, counts and query scopes per job, ordered by job ID.
-- `run.json`: scraper status, run ID, limits, stop reason, sort mode, HTTP responses, attempts, duplicate/rejection counts, profile ID and error.
+- `run.json`: scraper status, run ID, configured limits and effective result-count target, first/latest reported totals, stop reason, sort mode, HTTP responses, attempts, duplicate/rejection counts, profile ID and error.
 - `prepare.json`: offline merge status, input paths, sort mode, latest-job count, observations retained, repeated job observations, exact duplicates removed, rejected rows and error.
 - `rejected.jsonl`: invalid rows with raw contents, reason and file/line or page/card location; empty when none were rejected.
 - `page-N.html` and `page-N.png`: browser evidence for each visited search page.
@@ -148,11 +152,11 @@ The default breadth destination is `data/jobstreet/<timestamp>-<suffix>/`; depth
 
 Breadth and prepare reports carry `schema_version: 2`; depth reports start at version 1 with `mode: depth`, selected/requested/reused counts, input/cache paths and refresh settings. Legacy breadth captures remain readable. Merging preserves observation history but does not provide automatic synchronization between machines.
 
-Navigation entries record `navigation_kind` (`goto`, `click` or `retry`). Clicked pagination includes `interaction` counts for wheel notches, pointer moves and press duration. Client-side pagination may have `http_status: null` because it produces no new top-level document response; a matching URL and changed listing IDs are required instead of inventing an HTTP 200.
+Navigation entries record `navigation_kind` (`goto`, `click` or `retry`). Clicked pagination includes the number of wheel notches in `interaction.scroll_notches`; Clearcote handles pointer paths and click timing. Client-side pagination may have `http_status: null` because it produces no new top-level document response; a matching URL and changed listing IDs are required instead of inventing an HTTP 200.
 
 ## Waiting for verification
 
-Both modes recognize Cloudflare's `cf-mitigated: challenge` header and known verification-page markers. The scraper keeps the same Kameleo browser open and waits up to **120 seconds** for verification to clear. If a checkbox appears, complete it in that Kameleo browser window; the scraper activates the tab and prints the target URL, with the run's profile ID in `run.json`. Checkbox completion is a manual step. Collection resumes automatically after a new top-level page response replaces the challenge.
+Both modes recognize Cloudflare's `cf-mitigated: challenge` header and known verification-page markers. The scraper keeps the same browser open and waits up to **120 seconds** for verification to clear. Complete any required verification manually in that browser window; the scraper activates the tab and prints the target URL, with the run's profile ID in `run.json`. Collection resumes automatically after a new top-level page response replaces the challenge.
 
 ```sh
 bun run scrape:jobstreet --max-pages 3 --max-jobs 90 --verification-timeout-ms 300000
@@ -170,7 +174,7 @@ HTTP 401 and ordinary HTTP 403/429 responses stop the run; recognized verificati
 
 A malformed card is quarantined while valid cards continue. Success requires at least one saved job and successful profile cleanup; it can still have rejected records, so inspect report counts. An entirely invalid offline input fails with exit code 1. Reports and sorted views use temporary files followed by rename. Raw observations are appended as accepted, preserving earlier results when a later page fails.
 
-Depth continues after individual detail failures, retaining successful records and a `partial` report. Partial and failed depth runs exit with code 1. Access denials and verification timeouts stop the run. Cache-only runs need no Kameleo connection. Both modes run independently of Hono and Cloudflare Workers and do not feed the app's scoring engine.
+Depth continues after individual detail failures, retaining successful records and a `partial` report. Partial and failed depth runs exit with code 1. Access denials and verification timeouts stop the run. Cache-only runs need no browser. Both modes run independently of Hono and Cloudflare Workers and do not feed the app's scoring engine.
 
 ## Verification
 
@@ -181,10 +185,10 @@ bun test apps/api/src/scrapers/jobstreet
 bun run typecheck
 ```
 
-Browser-backed depth integration checks are opt-in and require the Engine. They use routed fixtures for deduplication, JSON-LD dates, retries, unavailable ads, isolated failures, rate limits and description reuse:
+Browser-backed integration checks are opt-in and launch the Clearcote build. They use routed fixtures for verification handling, pagination input, retries, unavailable ads, isolated failures, rate limits and description reuse:
 
 ```powershell
-$env:KAMELEO_INTEGRATION = '1'
+$env:BROWSER_INTEGRATION = '1'
 bun test apps/api/src/scrapers/jobstreet/depth.integration.test.ts
 bun test apps/api/src/scrapers/jobstreet/verification.integration.test.ts
 ```
@@ -194,7 +198,7 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 ## Implementation
 
 - `cli.ts`: command arguments and environment configuration.
-- `kameleo.ts`: SDK readiness, fingerprint selection, owned profile lifecycle and Playwright connection.
+- `browser-profile.ts`: adapter to the local `@kotak/browser` profile lifecycle.
 - `pipeline.ts`: bounded navigation, retries, card validation, pagination checks and persisted artifacts.
 - `depth.ts`: description extraction, cache reuse, dated detail attempts and the unified enriched view.
 - `browser.ts`: shared navigation retries, bounded verification waiting and browser evidence.
@@ -208,12 +212,9 @@ No public API route launches browsers. Scraper database ingestion and integratio
 
 ## References
 
-- [Kameleo quickstart](https://developer.kameleo.io/getting-started/quickstart/)
-- [Kameleo Playwright integration](https://developer.kameleo.io/integrations/playwright/)
-- [Kameleo browser headless mode](https://developer.kameleo.io/tutorials/starting-headless-browsers/)
-- [Kameleo configuration](https://developer.kameleo.io/reference/configuration-options/)
-- [Kameleo usage limits](https://developer.kameleo.io/reference/usage-limits/)
-- [Playwright CDP connection](https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp)
+- [Clearcote browser](https://github.com/clearcotelabs/clearcote-browser)
+- [Clearcote Node SDK](https://github.com/clearcotelabs/clearcote-browser/blob/main/sdk/node/README.md)
+- [Playwright persistent context API](https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context)
 - [Playwright navigation](https://playwright.dev/docs/api/class-page#page-goto)
 - [Cloudflare challenge response detection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/detect-response/)
 - [Node file operations](https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath)
