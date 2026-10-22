@@ -48,11 +48,14 @@ let fallbacks = 0
 for (const request of titles) {
   const match = RoleMatchResponseSchema.parse(await post('/api/roles/match', request))
   const found = match.occupation ? `${match.occupation.onet_code} ${match.occupation.title}` : 'no occupation'
-  if (match.match_source === 'title_search') {
-    console.info(`match "${request.job_title}": ${found} by title search, no Claude call`)
-  } else if (match.fallback_reason === 'ai_unavailable') {
+  // A fallback first: title search also answers when Claude is unavailable or the rate limit is reached.
+  if (match.fallback_reason === 'ai_unavailable') {
     fallbacks += 1
     console.warn(`match "${request.job_title}": fallback, Claude unavailable`)
+  } else if (match.fallback_reason === 'no_valid_suggestion') {
+    console.warn(`match "${request.job_title}": ${found} by title search, Claude suggested no listed occupation`)
+  } else if (match.match_source === 'title_search') {
+    console.info(`match "${request.job_title}": ${found} by title search, no Claude call`)
   } else {
     console.info(`match "${request.job_title}": ${found}, ${state(match.cached)}`)
   }
@@ -66,6 +69,12 @@ for (const [index, request] of explanations.entries()) {
     console.warn(`${label}: fixed template, Claude unavailable`)
   } else {
     const fromClaude = response.explanations.filter((explanation) => explanation.source === 'claude').length
+    // A rejected draft is cached too, so running again changes nothing; the demo shows the template for it.
+    if (response.fallback_reason === 'verifier_rejected') {
+      console.warn(
+        `${label}: the verifier rejected Claude's text for some corners or the summary; they show the template`
+      )
+    }
     console.info(
       `${label}: ${fromClaude} of ${response.explanations.length} corners from Claude, summary from ${response.what_changed_source}, ${state(response.cached)}`
     )
