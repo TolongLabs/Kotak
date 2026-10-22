@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import type { NeonQueryFunction } from '@neondatabase/serverless'
 import { careerForSearchUrl } from './careers'
+import { writeJson } from './files'
 import { parseListing } from './records'
 import type { JobListing } from './records'
 
@@ -242,12 +243,14 @@ export async function persistRunOutput(
       throw new Error('Detail ledger identity or career does not match its scrape run')
   }
   const legacyRunId = `legacy-${createHash('sha256').update(JSON.stringify({ report, rows, details })).digest('hex').slice(0, 32)}`
-  const id = runIdOverride || reportRunId || legacyRunId
+  const databaseRunId = typeof report.database_run_id === 'string' ? report.database_run_id : ''
+  const id = runIdOverride || databaseRunId || reportRunId || legacyRunId
   const finalStatus = report.status === 'partial' || report.status === 'success' ? report.status : 'failed'
   const storedReport = {
     ...report,
     finished_at: typeof report.finished_at === 'string' ? report.finished_at : new Date().toISOString(),
-    ...(runIdOverride ? { pipeline_run_id: reportRunId } : {}),
+    ...(reportRunId && id !== reportRunId ? { pipeline_run_id: reportRunId } : {}),
+    ...(runIdOverride || databaseRunId ? { database_run_id: id } : {}),
     run_id: id
   }
   const statements = [
@@ -278,6 +281,8 @@ export async function persistRunOutput(
     statements.push(...currentListingStatements(career.slug, mapped))
     statements.push(...depthStatements(career.slug, id, rows, details))
   }
+  // Preserve the queue identity if these same browser artifacts are imported offline later.
+  if (runIdOverride) await writeJson(join(outputPath, 'run.json'), { ...report, database_run_id: id })
   await sql.transaction((transaction) => statements.map(({ text, params }) => transaction.query(text, params)), {
     fetchOptions: { signal: AbortSignal.timeout(60_000) }
   })
