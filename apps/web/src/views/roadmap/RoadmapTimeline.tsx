@@ -433,7 +433,8 @@ export function RoadmapTimeline({
                 const left = (step.weeks[0] - 1) * pxWeek
                 const width = Math.max((step.weeks[1] - step.weeks[0] + 1) * pxWeek, 8)
                 // The row already names the step, so the bar carries when and how much. It sits inside the bar when it
-                // fits, otherwise just outside it: to the right, or to the left at the end of the plan.
+                // fits, otherwise just outside it: to the right, or to the left at the end of the plan. A bar without a
+                // label has no padding, so it renders at exactly this width and the label beside it never touches it.
                 const fullLabel = `${weekRange(step.weeks)} · ${fmt(step.hoursPerWeek)} h/wk`
                 const labelWidth = (text: string) => text.length * LABEL_CHAR_PX + 16
                 const barLabel = labelWidth(fullLabel) <= width ? fullLabel : null
@@ -527,9 +528,12 @@ export function RoadmapTimeline({
                             if (event.currentTarget.matches(':focus-visible')) showTip(step, event.currentTarget)
                           }}
                           onBlur={clearTip}
-                          className={`absolute top-[6px] flex h-7 min-w-[8px] touch-manipulation items-center overflow-hidden rounded-md border-[1.5px] px-2 text-left font-sans text-label-s cursor-pointer lg:h-11 lg:top-[6px] focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ${barColor} ${
+                          className={`absolute top-[6px] flex h-7 min-w-[8px] touch-manipulation items-center overflow-hidden rounded-md border-[1.5px] text-left font-sans text-label-s cursor-pointer lg:h-11 lg:top-[6px] focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ${barColor} ${
                             impact ? 'ring-2 ring-offset-1 ring-offset-bg-default ring-text-primary' : ''
-                          } ${selected ? 'z-30 outline outline-2 outline-offset-1 outline-text-primary' : 'z-10'}`}
+                          } ${barLabel ? 'px-2' : 'px-0'} ${
+                            // Bars sit above every label; a selected bar still stays under the frozen name column.
+                            selected ? 'z-15 outline outline-2 outline-offset-1 outline-text-primary' : 'z-10'
+                          }`}
                           style={{
                             left: `${left}px`,
                             width: `${width}px`,
@@ -541,7 +545,7 @@ export function RoadmapTimeline({
                         {outsideLabel && (
                           <span
                             aria-hidden="true"
-                            className={`pointer-events-none absolute top-[6px] z-10 flex h-7 items-center whitespace-nowrap rounded-sm bg-bg-default px-1 text-label-s text-text-primary lg:h-11 ${
+                            className={`pointer-events-none absolute top-[6px] z-5 flex h-7 items-center whitespace-nowrap rounded-sm bg-bg-default px-1 text-label-s text-text-primary lg:h-11 ${
                               outsideRight ? '' : '-translate-x-full'
                             }`}
                             style={{ left: outsideRight ? left + width + 4 : left - 4 }}
