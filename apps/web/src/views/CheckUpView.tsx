@@ -2,7 +2,6 @@ import { Briefcase, PackageOpen, Route } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
-import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Button } from '../components/ui/Button'
 import { Checkbox } from '../components/ui/Checkbox'
 import { ChoiceCard } from '../components/ui/ChoiceCard'
@@ -12,11 +11,13 @@ import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
 import { TextField } from '../components/ui/TextField'
 import { Stepper } from '../components/ui/Stepper'
+import { cn } from '../components/ui/cn'
 import type { BundleRoleIndexEntry } from '@kotak/shared'
-import { goals, impactAreas, nationalView } from '../demo/data'
+import { goals, impactAreas } from '../demo/data'
 import type { Goal } from '../demo/types'
 import { useRoleIndex } from '../engine/bundle'
 import { updateGuestSession, useGuestSession } from '../session/store'
+import { KopiAside } from './checkup/KopiDialogue'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 const goalIcons = { stay: Briefcase, target: Route, explore: PackageOpen }
@@ -28,10 +29,23 @@ function getInitialJobQuery() {
   return new URLSearchParams(window.location.search).get('job') ?? ''
 }
 
-// Roles whose title contains a word of the query, for "Did You Mean" when no title contains the whole query.
+// Roles whose title starts with a word of the query, best fit first, for "Did You Mean".
 function closestRoles(roles: BundleRoleIndexEntry[], query: string) {
   const words = query.split(/\s+/).filter((word) => word.length >= 3)
-  return roles.filter((role) => words.some((word) => role.title.toLocaleLowerCase().includes(word))).slice(0, 3)
+
+  return roles
+    .map((role) => {
+      const titleWords = role.title.toLocaleLowerCase().split(/[^a-z0-9]+/)
+      const score = words.reduce(
+        (total, word) => total + (titleWords.some((titleWord) => titleWord.startsWith(word)) ? 1 : 0),
+        0
+      )
+      return { role, score }
+    })
+    .filter((match) => match.score > 0)
+    .sort((left, right) => right.score - left.score || left.role.title.length - right.role.title.length)
+    .slice(0, 3)
+    .map((match) => match.role)
 }
 
 export function CheckUpView() {
@@ -43,8 +57,8 @@ export function CheckUpView() {
   const [acceptedJob, setAcceptedJob] = useState<BundleRoleIndexEntry | null>(null)
   const [suggestionsOpen, setSuggestionsOpen] = useState(true)
   const [goalId, setGoalId] = useState<Goal['id']>('explore')
-  const [selectedImpact, setSelectedImpact] = useState<number | null>(impactAreas[0]?.sdg ?? null)
-  const [hoursPerWeek, setHoursPerWeek] = useState(session.custom_weekly_hours ?? 3)
+  const [selectedImpact, setSelectedImpact] = useState<number | null>(null)
+  const [hoursPerWeek, setHoursPerWeek] = useState(session.custom_weekly_hours ?? 4)
   const [startDate, setStartDate] = useState(() => new Date())
   const [anonymousResult, setAnonymousResult] = useState(false)
 
@@ -54,7 +68,12 @@ export function CheckUpView() {
     : roles.filter((role) => suggestedCodes.includes(role.onet_code))
   const noJobMatch =
     roleIndex.status === 'ready' && normalizedQuery.length > 0 && matchingSuggestions.length === 0 && !acceptedJob
-  const noMatchSuggestions = noJobMatch ? closestRoles(roles, normalizedQuery) : []
+  const closeMatches = noJobMatch ? closestRoles(roles, normalizedQuery) : []
+  const noMatchSuggestions = closeMatches.length
+    ? closeMatches
+    : noJobMatch
+      ? roles.filter((role) => suggestedCodes.includes(role.onet_code))
+      : []
 
   const updateJobQuery = (value: string) => {
     setJobQuery(value)
@@ -91,10 +110,10 @@ export function CheckUpView() {
 
   if (noJobMatch) {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
         <h1 className="sr-only">Find Your Job</h1>
         <Stepper step={1} labels={stepLabels} />
-        <CatDialogue pose="worried" speech="Hmm, I couldn’t find that job. Try a simpler title?" />
+        <KopiAside pose="worried" speech="Hmm, I couldn’t find that job. Try a simpler title?" />
 
         <TextFieldForNoMatch value={jobQuery} onChange={updateJobQuery} />
 
@@ -104,26 +123,36 @@ export function CheckUpView() {
           </h2>
           <div className="flex flex-wrap gap-2">
             {noMatchSuggestions.map((role) => (
-              <Button key={role.onet_code} variant="secondary" onClick={() => acceptJob(role)}>
-                {role.title}
+              <Button
+                key={role.onet_code}
+                variant="secondary"
+                size="lg"
+                className="max-w-full"
+                onClick={() => acceptJob(role)}
+              >
+                <span className="truncate">{role.title}</span>
               </Button>
             ))}
           </div>
         </section>
 
         <div className="flex justify-center">
-          <Button variant="ghost" onClick={browseJobs}>
+          <button
+            type="button"
+            onClick={browseJobs}
+            className="inline-flex h-12 items-center justify-center rounded-sm px-2 text-label-l font-semibold text-text-primary underline underline-offset-4 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          >
             Browse All 900 Jobs
-          </Button>
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto w-full max-w-[45rem] space-y-6">
+    <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
       <Stepper step={1} labels={stepLabels} />
-      <CatDialogue pose="idle" speech="Hi, I’m Kopi. Let’s open the box on your job." />
+      <KopiAside pose="idle" speech="Hi, I’m Kopi. Let’s open the box on your job." />
 
       <section className="space-y-1.5" aria-labelledby="work-heading">
         <h1 id="work-heading" className="text-title-m text-text-primary">
@@ -134,7 +163,7 @@ export function CheckUpView() {
         </p>
       </section>
 
-      <div className="space-y-2">
+      <div className="w-full min-w-0 space-y-2 lg:max-w-[342px]">
         <SearchField
           ref={searchRef}
           label="Your Job Title"
@@ -151,22 +180,25 @@ export function CheckUpView() {
           <ul
             id="job-suggestions"
             aria-label="Job Suggestions"
-            className="space-y-0.5 rounded-sm border border-border-subtle bg-bg-default p-1 shadow-popover"
+            className="w-full min-w-0 space-y-0.5 rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
           >
-            {matchingSuggestions.map((role) => (
+            {matchingSuggestions.map((role, index) => (
               <li key={role.onet_code}>
                 <button
                   type="button"
                   onClick={() => acceptJob(role)}
-                  className="flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm px-3 py-2 text-left text-text-primary hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2"
+                  className={cn(
+                    'flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2',
+                    index === 0 && 'bg-bg-panel'
+                  )}
                 >
-                  <span className="text-body-m">{role.title}</span>
+                  <span className="w-full break-words text-label-l">{role.title}</span>
                   <span className="font-mono text-mono-s text-text-muted">O*NET {role.onet_code}</span>
                 </button>
               </li>
             ))}
             <li className="px-2 py-1 text-body-s text-text-muted">
-              Can’t find it? Try a shorter title, such as “designer” or “clerk”.
+              Can’t find it? Type any title and Kopi will match it.
             </li>
           </ul>
         )}
@@ -197,7 +229,7 @@ export function CheckUpView() {
       </section>
 
       <section className="space-y-3" aria-labelledby="impact-heading">
-        <div className="space-y-1">
+        <div className="space-y-3">
           <h2 id="impact-heading" className="text-label-l text-text-primary">
             Where Do You Want to Make a Difference?
           </h2>
@@ -214,10 +246,10 @@ export function CheckUpView() {
                 aria-label={`SDG ${area.sdg}: ${area.label}`}
                 aria-pressed={selected}
                 onClick={() => setSelectedImpact(area.sdg)}
-                className={
-                  'inline-flex min-h-11 items-center rounded-full bg-bg-default px-1 focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ' +
-                  (selected ? 'border-[1.5px] border-text-primary' : 'border border-transparent')
-                }
+                className={cn(
+                  'inline-flex items-center rounded-full bg-bg-default p-0.5 focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2',
+                  selected ? 'border-[1.5px] border-text-primary' : 'border border-transparent'
+                )}
               >
                 <SdgChip goal={area.sdg} />
               </button>
@@ -239,14 +271,11 @@ export function CheckUpView() {
         <DatePicker label="Plan Start Date" value={startDate} onChange={setStartDate} />
       </div>
 
-      <div className="space-y-1">
-        <Checkbox
-          label="Add my anonymous result to the national view"
-          checked={anonymousResult}
-          onChange={setAnonymousResult}
-        />
-        <p className="pl-8 text-body-s text-text-muted">{nationalView.howCounted.privacy}</p>
-      </div>
+      <Checkbox
+        label="Add my anonymous result to the national view"
+        checked={anonymousResult}
+        onChange={setAnonymousResult}
+      />
 
       <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
         <Button variant="primary" size="lg" fullWidth disabled={!acceptedJob} onClick={startQuestions}>
