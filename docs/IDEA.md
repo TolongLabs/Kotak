@@ -51,7 +51,7 @@ Contents:
 | [PRD](PRD.md)         | Product requirements, in the organisers' preliminary proposal template    |
 | [TRD](TRD.md)         | Technical requirements: architecture, data, engine rules, APIs and deploy |
 
-The local [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) is implemented with breadth collection and depth description enrichment. Its contributor guide covers Kameleo setup, deduplication, sorting, contributor-file merging and dated observations for trend analysis. Depth produces a unified enriched view and reuses descriptions by default; refresh is opt-in. Database storage remains deferred.
+The [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) supports local breadth collection and depth description enrichment, plus production persistence through Neon Postgres. The production admin panel queues runs for four seeded search titles; a separate Bun runner launches the browser, and a Cloudflare cron queues daily breadth refreshes. Initial Neon credentials and local-capture import still need to be configured by an operator.
 
 ## Ideas we compared
 
