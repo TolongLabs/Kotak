@@ -43,8 +43,13 @@ export function LandingNav() {
           <Link to={routes.signIn} className={anchorClass}>
             Sign In
           </Link>
-          <LandingActionLink to={routes.checkUp} variant="primary" className="min-h-11 px-4 text-label-m">
-            Start Your Free Check-Up
+          <LandingActionLink
+            to={routes.checkUp}
+            variant="primary"
+            showArrow={false}
+            className="min-h-11 px-4 text-label-m"
+          >
+            Start Your Check-Up
           </LandingActionLink>
         </div>
 
@@ -81,7 +86,7 @@ export function LandingNav() {
             Sign In
           </Link>
           <LandingActionLink to={routes.checkUp} variant="primary" className="w-full" onClick={closeMenu}>
-            Start Your Free Check-Up
+            Start Your Check-Up
           </LandingActionLink>
         </div>
       ) : null}

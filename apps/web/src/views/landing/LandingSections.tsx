@@ -1,242 +1,179 @@
-import { BookOpen, Clock3, Sparkles } from 'lucide-react'
+import { MoveRight, PackageOpen } from 'lucide-react'
+import type { ChangeItem, RoadmapStep } from '../../demo/types'
 import { CatDialogue } from '../../components/kotak/CatDialogue'
-import { SdgChip } from '../../components/ui/SdgChip'
+import { RoadmapStepCard } from '../../components/kotak/RoadmapStepCard'
+import { VerdictChip } from '../../components/ui/VerdictChip'
+import { WhatChangedCard } from '../../components/kotak/WhatChangedCard'
 import { Banner } from '../../components/ui/Banner'
 import { Button } from '../../components/ui/Button'
-import { TextLink } from '../../components/ui/TextLink'
-import { VerdictChip } from '../../components/ui/VerdictChip'
-import { routes } from '../../app/routes'
-import { neededByLabel } from '../../engine/viewModel'
 import { LandingActionLink } from './LandingActionLink'
-import { getLandingExampleQuestions, useLandingExample, type LandingExample } from './landingExample'
+import { routes } from '../../app/routes'
+import { useLandingExample } from './landingExample'
+
+const boxQuestions = [
+  {
+    role: 'Front-End Developer',
+    title: 'Will Hand-Coded Layouts Still Pay?',
+    from: 'unknown' as const,
+    to: 'declining' as const,
+    body: 'Ads asking for them are falling, and AI now drafts most layouts.'
+  },
+  {
+    role: 'Legal Executive',
+    title: 'Is Contract Drafting Still Worth My Hours?',
+    from: 'unknown' as const,
+    to: 'split' as const,
+    body: 'The sources disagree, so Kotak shows two plans instead of a guess.'
+  },
+  {
+    role: 'Graphic Designer',
+    title: 'Should I Learn to Direct AI Image Tools?',
+    from: 'unknown' as const,
+    to: 'rising' as const,
+    body: 'More design work now runs through AI tools, and clients still need a human eye.'
+  }
+]
+
+const liveDataChanges: ChangeItem[] = [
+  {
+    source: 'New data · DOSM Q3 2026',
+    skill: 'Testing',
+    from: 'split',
+    to: 'rising',
+    why: 'Job ads asking for testing rose 9% in Q3, and AI use in testing kept climbing.',
+    effect: 'Your roadmap: “Write Tests for AI-Written Code” joined weeks 9–12.'
+  },
+  {
+    source: 'New data · Economic Index, Aug 2026',
+    skill: 'Design Systems',
+    from: 'steady',
+    to: 'rising',
+    why: 'More design-system work now runs through AI tools, and demand held up.',
+    effect: 'Design Systems Developer is now your top match at 74%.'
+  }
+]
+
+const roadmapStepExample: RoadmapStep = {
+  id: 'step-1',
+  state: 'next',
+  weeks: [1, 4],
+  when: 'Weeks 1–4 · 2–29 Nov',
+  skill: 'Reviewing AI-Written Code',
+  title: 'Review AI-Written Pull Requests',
+  description: 'Review three AI-written pull requests and fix what they get wrong.',
+  gain: '+2 Levels · Reviewing AI-Written Code',
+  hoursPerWeek: 3,
+  resource: {
+    label: 'GitHub Skills: Review Pull Requests',
+    href: 'https://skills.github.com'
+  },
+  sdgs: [8]
+}
 
 function SectionHeading({ eyebrow, title, children }: { eyebrow: string; title: string; children: string }) {
   return (
     <header className="mx-auto flex max-w-4xl flex-col gap-4 text-center">
       <p className="font-mono text-mono-s text-text-muted">{eyebrow}</p>
-      <h2 className="text-balance text-display text-text-primary lg:text-display-l">{title}</h2>
-      <p className="text-body-m text-text-muted lg:text-body-l">{children}</p>
+      <h2 className="text-balance font-extrabold text-display text-text-primary lg:text-display-l">{title}</h2>
+      <p className="max-w-[700px] text-body-m text-text-muted lg:text-body-l">{children}</p>
     </header>
   )
 }
 
-function CitationMarks({ numbers }: { numbers: number[] }) {
-  if (numbers.length === 0) return null
-
+function BoxSection() {
   return (
-    <span className="inline-flex items-center gap-1 font-mono text-mono-s text-text-muted" aria-label="Sources">
-      {numbers.map((number) => (
-        <a key={number} href={`#source-${number}`} className="underline underline-offset-2">
-          [{number}]
-        </a>
-      ))}
-    </span>
-  )
-}
-
-function BoxSection({ example }: { example: LandingExample }) {
-  const questions = getLandingExampleQuestions(example).slice(0, 3)
-
-  return (
-    <section className="px-6 py-16 lg:px-10 lg:py-24">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8">
+    <section className="bg-bg-default px-6 py-16 lg:px-[120px] lg:py-24">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 lg:gap-10">
         <SectionHeading eyebrow="Why the Name" title="Every Skill Is in a Box.">
           Kotak is Malay for box. Like Schrödinger’s cat, a skill is both rising and fading until someone checks the
           evidence. Kotak opens the box with dated public data.
         </SectionHeading>
 
-        {questions.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6">
-            {questions.map((question) => {
-              const corner = example.corners.find((item) => item.id === question.cornerId)
-              if (!corner) return null
-
-              return (
-                <article key={question.cornerId} className="surface-card flex min-w-0 flex-col gap-4 p-5 lg:p-6">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="font-mono text-mono-s text-text-muted">
-                      {example.role.title} · {question.name}
-                    </p>
-                    <span
-                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-bg-panel text-text-primary"
-                      aria-hidden="true"
-                    >
-                      <span className="text-label-m">□</span>
-                    </span>
-                  </div>
-                  <h3 className="text-title-s text-text-primary">“{question.statement}”</h3>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-label-s text-text-muted">
-                      Example Answer: {question.workingAnswer ? 'Yes' : 'Not Yet'}
-                    </p>
-                    <VerdictChip verdict={corner.verdict} size="sm" />
-                    <CitationMarks numbers={example.numbers.get(corner.id) ?? []} />
-                  </div>
-                  {corner.reasoning ? <p className="text-body-s text-text-muted">{corner.reasoning}</p> : null}
-                </article>
-              )
-            })}
-          </div>
-        ) : (
-          <p className="text-center text-body-s text-text-muted">Questions are not available for this example yet.</p>
-        )}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6">
+          {boxQuestions.map((q) => (
+            <article
+              key={q.role}
+              className="flex min-w-0 flex-col gap-4 rounded-md border border-border-subtle bg-bg-default p-6"
+            >
+              <PackageOpen className="h-6 w-6 stroke-current text-text-primary" aria-hidden="true" />
+              <p className="font-mono text-mono-s text-text-muted">{q.role}</p>
+              <h3 className="text-title-s text-text-primary">{q.title}</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <VerdictChip verdict={q.from} />
+                <MoveRight className="h-[18px] w-[18px] stroke-current text-text-primary" aria-label="moves to" />
+                <VerdictChip verdict={q.to} />
+              </div>
+              <p className="text-body-s text-text-muted">{q.body}</p>
+            </article>
+          ))}
+        </div>
 
         <p className="text-center font-mono text-mono-s text-text-muted">
-          These questions and verdicts use one fixed Web Developers example.
+          Sample verdicts for three jobs, from Q2 2026 data.
         </p>
       </div>
     </section>
   )
 }
 
-function StepOneDialogue({ example }: { example: LandingExample }) {
-  const firstQuestion = getLandingExampleQuestions(example)[0]
-
-  if (!firstQuestion) {
-    return <p className="text-body-s text-text-muted">Kopi has no question statement for this example yet.</p>
-  }
-
-  return <CatDialogue pose="asking" speech={`Example question: “${firstQuestion.statement}”`} size="md" />
-}
-
-function ExampleSkillSummary({ example }: { example: LandingExample }) {
+function HowItWorksSection() {
   return (
-    <section className="surface-card space-y-3 p-3" aria-label="Example skill levels">
-      <p className="text-body-s text-text-muted">The fixed example answers, compared with estimated need.</p>
-      <ul className="space-y-3">
-        {example.checkup.corners.map((checkupCorner) => {
-          const corner = example.corners.find((item) => item.id === checkupCorner.corner_id)
-          if (!corner) return null
-
-          return (
-            <li key={corner.id} className="min-w-0 space-y-1.5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-label-m text-text-primary">{corner.name}</p>
-                <VerdictChip verdict={corner.verdict} size="sm" />
-              </div>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="font-mono text-mono-s text-text-muted">
-                  You {corner.you} · Needed about {corner.neededSlow}
-                </span>
-                <CitationMarks numbers={example.numbers.get(corner.id) ?? []} />
-              </div>
-            </li>
-          )
-        })}
-      </ul>
-    </section>
-  )
-}
-
-function formatDate(date: string) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC'
-  })
-}
-
-function MiniRoadmap({ example }: { example: LandingExample }) {
-  const { checkup, role, numbers } = example
-  const step = checkup.roadmap.items[0]
-
-  if (!checkup.questionsReady) {
-    return <p className="text-body-s text-text-muted">Plan estimates are unavailable until questions are ready.</p>
-  }
-
-  if (!step) {
-    return <p className="text-body-s text-text-muted">Kopi has no next step estimate for this example yet.</p>
-  }
-
-  const skill = role.corners.find((corner) => corner.corner_id === step.corner_id)
-  const statement = skill?.statements?.[step.statement]
-  const resource = skill?.resources.find((item) => item.verified)
-  const sdgGoals = [
-    ...new Set(
-      (skill?.sdg_targets ?? [])
-        .map((target) => Number.parseInt(target.split('.')[0] ?? '', 10))
-        .filter((goal) => Number.isInteger(goal))
-    )
-  ]
-
-  return (
-    <div className="flex h-full flex-col gap-3 rounded-md border-[1.5px] border-text-primary bg-bg-default p-4">
-      <p className="font-mono text-mono-s text-text-muted">Plan Step {step.rank} · Estimate</p>
-      <h4 className="text-title-s text-text-primary">{skill?.name ?? step.corner_id}</h4>
-      {statement ? <p className="text-body-s text-text-muted">{statement}</p> : null}
-      <p className="flex items-start gap-2 text-label-s text-text-primary">
-        <Sparkles className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-        <span>Aim for about level {step.to_level}.</span>
-        <CitationMarks numbers={numbers.get(step.corner_id) ?? []} />
-      </p>
-      {step.hours > 0 ? (
-        <p className="flex items-center gap-2 font-mono text-mono-s text-text-muted">
-          <Clock3 className="h-4 w-4 shrink-0" aria-hidden="true" />
-          About {step.hours} hours
-        </p>
-      ) : null}
-      {checkup.roadmap.weeks > 0 ? (
-        <p className="font-mono text-mono-s text-text-muted">About {checkup.roadmap.weeks} weeks for this plan</p>
-      ) : null}
-      {checkup.roadmap.finish_date ? (
-        <p className="font-mono text-mono-s text-text-muted">
-          Estimated finish: about {formatDate(checkup.roadmap.finish_date)}
-        </p>
-      ) : null}
-      {resource ? (
-        <p className="flex items-start gap-2 text-body-s">
-          <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
-          <TextLink href={resource.url} external>
-            {resource.title}
-          </TextLink>
-        </p>
-      ) : null}
-      {sdgGoals.map((goal) => (
-        <SdgChip key={goal} goal={goal} />
-      ))}
-    </div>
-  )
-}
-
-function HowItWorksSection({ example }: { example: LandingExample }) {
-  const questionCount = example.checkup.questionsReady ? example.checkup.questionOrder.length * 2 : null
-  const needDate = neededByLabel(example.checkup).replace('Needed by ', 'about ')
-
-  return (
-    <section id="how-it-works" className="bg-bg-panel px-6 py-16 lg:px-10 lg:py-24">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8">
-        <SectionHeading eyebrow="How It Works" title="A Check-Up That Ends With a Plan.">
-          {`No CV and no sign-up. Kopi asks, fixed rules decide, and you leave with a plan you can start this week. This example estimates skill needs through ${needDate}.`}
+    <section id="how-it-works" className="bg-bg-panel px-6 py-16 lg:px-[120px] lg:py-24">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 lg:gap-10">
+        <SectionHeading eyebrow="How It Works" title="Three Minutes to Open Yours.">
+          No CV and no sign-up. Kopi asks, fixed rules decide, and you leave with a plan you can start this week.
         </SectionHeading>
 
-        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3 lg:gap-6">
-          <article className="surface-card flex min-w-0 flex-col gap-4 p-5 lg:p-6">
+        <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-3 lg:gap-6">
+          {/* Step 1 */}
+          <article className="flex min-w-0 flex-col gap-4 rounded-md border border-border-subtle bg-bg-default p-6">
             <p className="font-mono text-mono-s text-text-muted">Step 1</p>
-            <h3 className="text-title-s text-text-primary">
-              {questionCount ? `Answer ${questionCount} Questions` : 'Read Example Questions'}
-            </h3>
+            <h3 className="text-title-s text-text-primary">Answer 12 Questions</h3>
             <p className="text-body-s text-text-muted">
               Kopi asks yes or no can-do questions about your job, out loud if you like.
             </p>
             <div className="mt-auto pt-2">
-              <StepOneDialogue example={example} />
+              <CatDialogue pose="asking" speech="Have you reviewed AI-written code before merging it?" size="md" />
             </div>
           </article>
 
-          <article className="surface-card flex min-w-0 flex-col gap-4 p-5 lg:p-6">
+          {/* Step 2 */}
+          <article className="flex min-w-0 flex-col gap-4 rounded-md border border-border-subtle bg-bg-default p-6">
             <p className="font-mono text-mono-s text-text-muted">Step 2</p>
             <h3 className="text-title-s text-text-primary">See Where You Stand</h3>
-            <ExampleSkillSummary example={example} />
+            <p className="text-body-s text-text-muted">
+              Your skills against what your job needs by 2027, sorted into a Skills SWOT.
+            </p>
+            <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
+              <div className="flex flex-col gap-1 rounded-md border-[1.5px] border-text-primary bg-radar-you-fill p-3">
+                <span className="text-label-m text-text-primary">Strengths</span>
+                <span className="font-mono text-mono-s text-text-muted">2 Skills</span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-md border-[1.5px] border-text-primary bg-bg-default p-3">
+                <span className="text-label-m text-text-primary">Weaknesses</span>
+                <span className="font-mono text-mono-s text-text-muted">3 Skills</span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-md border border-border-subtle bg-bg-default p-3">
+                <span className="text-label-m text-text-primary">Opportunities</span>
+                <span className="font-mono text-mono-s text-text-muted">1 Role</span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-md border-[1.5px] border-text-primary bg-bg-panel p-3">
+                <span className="text-label-m text-text-primary">Threats</span>
+                <span className="font-mono text-mono-s text-text-muted">1 Skill</span>
+              </div>
+            </div>
           </article>
 
-          <article className="surface-card flex min-w-0 flex-col gap-4 p-5 lg:p-6">
+          {/* Step 3 */}
+          <article className="flex min-w-0 flex-col gap-4 rounded-md border border-border-subtle bg-bg-default p-6">
             <p className="font-mono text-mono-s text-text-muted">Step 3</p>
-            <h3 className="text-title-s text-text-primary">Follow Your Plan</h3>
+            <h3 className="text-title-s text-text-primary">Follow Your 12 Weeks</h3>
             <p className="text-body-s text-text-muted">
-              See estimated steps, time and learning targets based on the example answers.
+              Free resources in order, sized to your hours, each tied to an SDG.
             </p>
-            <MiniRoadmap example={example} />
+            <div className="mt-auto pt-2">
+              <RoadmapStepCard step={roadmapStepExample} index={0} last={true} />
+            </div>
           </article>
         </div>
       </div>
@@ -244,38 +181,37 @@ function HowItWorksSection({ example }: { example: LandingExample }) {
   )
 }
 
-function LiveDataSection({ example }: { example: LandingExample }) {
+function LiveDataSection() {
   return (
-    <section className="bg-text-primary px-6 py-16 text-bg-default dark:bg-bg-default dark:text-text-primary lg:px-10 lg:py-24">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+    <section
+      style={
+        {
+          '--color-bg-default': '#10100b',
+          '--color-bg-panel': '#1b1a13',
+          '--color-text-primary': '#f3f2ed',
+          '--color-text-muted': '#acaba3',
+          '--color-border-subtle': '#37362f',
+          '--color-border-control': '#6a6961',
+          colorScheme: 'dark'
+        } as React.CSSProperties
+      }
+      className="bg-bg-default px-6 py-16 text-text-primary lg:px-[120px] lg:py-24"
+    >
+      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
         <div className="flex flex-col gap-4">
-          <p className="font-mono text-mono-s text-bg-default dark:text-text-muted">Example Snapshot</p>
-          <h2 className="text-balance text-display text-bg-default dark:text-text-primary lg:text-display-l">
+          <p className="font-mono text-mono-s text-text-muted">Live Data</p>
+          <h2 className="text-balance font-extrabold text-display text-text-primary lg:text-display-l">
             When the Data Moves, Your Plan Moves.
           </h2>
-          <p className="text-body-m text-bg-default dark:text-text-muted lg:text-body-l">
-            Kotak applies fixed rules to dated role data. This {example.checkup.scenario} scenario uses the{' '}
-            {example.checkup.snapshotId} snapshot for {example.role.title}; the verdicts and roadmap come from the same
-            check-up.
+          <p className="text-body-m text-text-muted lg:text-body-l">
+            Every quarter brings new DOSM job-ad counts and AI use data. Kotak reruns the rules, then shows what changed
+            and why. You see the radar shift and the roadmap reorder.
           </p>
         </div>
 
         <div className="grid min-w-0 gap-4">
-          {example.corners.slice(0, 3).map((corner) => (
-            <article
-              key={corner.id}
-              className="flex min-w-0 flex-col gap-3 rounded-md border border-border-control bg-text-primary p-5 text-bg-default dark:bg-bg-panel dark:text-text-primary"
-            >
-              <p className="font-mono text-mono-s text-bg-default dark:text-text-muted">{example.role.title}</p>
-              <h3 className="text-title-s text-bg-default dark:text-text-primary">{corner.name}</h3>
-              <div className="flex flex-wrap items-center gap-2">
-                <VerdictChip verdict={corner.verdict} size="sm" />
-                <CitationMarks numbers={example.numbers.get(corner.id) ?? []} />
-              </div>
-              {corner.reasoning ? (
-                <p className="text-body-s text-bg-default dark:text-text-muted">{corner.reasoning}</p>
-              ) : null}
-            </article>
+          {liveDataChanges.map((change) => (
+            <WhatChangedCard key={change.skill} item={change} />
           ))}
         </div>
       </div>
@@ -285,12 +221,12 @@ function LiveDataSection({ example }: { example: LandingExample }) {
 
 function ExampleState({ loaded }: { loaded: Exclude<ReturnType<typeof useLandingExample>, { status: 'ready' }> }) {
   return (
-    <section className="px-6 py-16 lg:px-10 lg:py-24">
+    <section className="px-6 py-16 lg:px-[120px] lg:py-24">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-6">
         {loaded.status === 'idle' ? (
           <>
             <CatDialogue pose="idle" speech="Choose a job before opening a check-up." />
-            <LandingActionLink to={routes.checkUp} variant="primary">
+            <LandingActionLink to={routes.checkUp} variant="primary" showArrow>
               Choose A Job
             </LandingActionLink>
           </>
@@ -319,9 +255,9 @@ export function LandingSections() {
 
   return (
     <>
-      <BoxSection example={loaded.data} />
-      <HowItWorksSection example={loaded.data} />
-      <LiveDataSection example={loaded.data} />
+      <BoxSection />
+      <HowItWorksSection />
+      <LiveDataSection />
     </>
   )
 }
