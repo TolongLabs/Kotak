@@ -34,6 +34,7 @@ export const SdgChip = forwardRef<HTMLSpanElement, SdgChipProps>(function SdgChi
 ) {
   const name = SDG_NAMES[goal] ?? `Goal ${goal}`
   const fullLabel = `SDG ${goal}: ${name}`
+  const known = Number.isInteger(goal) && goal >= 1 && goal <= 17
 
   return (
     <span
@@ -42,13 +43,14 @@ export const SdgChip = forwardRef<HTMLSpanElement, SdgChipProps>(function SdgChi
       aria-label={compact ? fullLabel : undefined}
       className={cn(
         'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 font-sans text-label-s transition-opacity',
+        !known && 'border border-border-control bg-bg-panel text-text-primary',
         className
       )}
-      style={{
-        backgroundColor: `var(--color-sdg-${goal})`,
-        color: `var(--color-sdg-${goal}-text)`,
-        ...style
-      }}
+      style={
+        known
+          ? { backgroundColor: `var(--color-sdg-${goal})`, color: `var(--color-sdg-${goal}-text)`, ...style }
+          : style
+      }
       {...props}
     >
       <strong className="font-bold">SDG {goal}</strong>
