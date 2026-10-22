@@ -213,14 +213,14 @@ browserTest(
 )
 
 browserTest(
-  'depth stops on a verification page before validating its changed URL',
+  'depth bounds verification waiting before validating its changed URL',
   async () => {
     scenario = 'challenge'
     blockedAttempts = 0
     const config = options('challenge')
-    await expect(run(config)).rejects.toThrow('verification')
+    await expect(run({ ...config, verificationTimeoutMs: 0 })).rejects.toThrow('Verification did not clear')
     const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
-    expect([report.stop_reason, report.jobs_attempted, blockedAttempts]).toEqual(['blocked', 1, 1])
+    expect([report.stop_reason, report.jobs_attempted, blockedAttempts]).toEqual(['verification_timeout', 1, 1])
     const detail = (await lines(join(config.output, 'details.jsonl')))[0]
     expect(detail.final_url).toBe('https://my.jobstreet.com/captcha')
     expect(detail.unavailable_reason).toBeNull()

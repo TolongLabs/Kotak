@@ -47,7 +47,7 @@ export function searchUrl(input: string): string {
   }
   url.hash = ''
   for (const key of [...url.searchParams.keys()]) {
-    if (key === 'tracking' || key.startsWith('utm_')) url.searchParams.delete(key)
+    if (key === 'tracking' || key.startsWith('utm_') || key.startsWith('__cf_chl_')) url.searchParams.delete(key)
   }
   url.searchParams.sort()
   return url.href
