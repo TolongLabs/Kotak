@@ -1,6 +1,5 @@
 import { writeFile } from 'node:fs/promises'
-import { errors } from 'playwright-core'
-import type { Page, Response } from 'playwright-core'
+import { errors, type Page, type Response } from '@kotak/browser'
 
 interface VerificationState {
   status: 'waiting' | 'cleared' | 'denied' | 'timed_out' | 'interrupted'
@@ -19,7 +18,7 @@ export interface NavigationState {
   retry_errors: string[]
   verification?: VerificationState
   navigation_kind?: 'goto' | 'click' | 'retry'
-  interaction?: { scroll_notches: number; pointer_moves: number; press_ms: number }
+  interaction?: { scroll_notches: number }
 }
 
 export class VerificationTimeoutError extends Error {}
@@ -79,13 +78,13 @@ async function waitForVerification(
   try {
     await save()
     console.warn(
-      `Verification required at ${entry.url}. Waiting up to ${options.timeoutMs / 1000}s. If a checkbox appears, complete it in this run's Kameleo browser window; profile ID is in run.json.`
+      `Verification required at ${entry.url}. Waiting up to ${options.timeoutMs / 1000}s. Complete any required verification manually in the browser window; profile ID is in run.json.`
     )
     await page.bringToFront().catch(() => {})
     if (options.evidencePrefix) await saveEvidence(page, options.evidencePrefix)
     let nextNotice = started + 15_000
     while (Date.now() < deadline) {
-      if (page.isClosed()) throw new Error('Kameleo page closed while waiting for verification')
+      if (page.isClosed()) throw new Error('Browser page closed while waiting for verification')
       const response = latestResponse()
       // Clearance must lead to a new top-level document response. Removing a banner alone is insufficient.
       if (response && response !== initial) {
@@ -103,7 +102,7 @@ async function waitForVerification(
         }
       }
       if (Date.now() >= nextNotice) {
-        console.info(`Still waiting for verification at ${entry.url}; complete any checkbox in the Kameleo window.`)
+        console.info(`Still waiting for verification at ${entry.url}; complete any verification in the browser window.`)
         nextNotice = Date.now() + 15_000
       }
       await Bun.sleep(Math.min(250, Math.max(0, deadline - Date.now())))

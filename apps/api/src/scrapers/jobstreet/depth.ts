@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { appendFile, readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { Page } from 'playwright-core'
+import type { Page } from '@kotak/browser'
 import {
   navigate,
   saveEvidence,
@@ -14,13 +14,13 @@ import {
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { readListingRows, resolveInputs } from './inputs'
-import { withKameleo } from './kameleo'
+import { withBrowserProfile } from './browser-profile'
 import { jobUrl, parseListing, preferObservation, utcTimestamp } from './records'
 import type { JobListing } from './records'
 
 export interface DepthOptions {
   inputs: string[]
-  endpoint: string
+  profileId?: string
   output: string
   maxJobs: number
   delayMs: number
@@ -361,8 +361,8 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     })
     await save()
     if (pending.length)
-      await withKameleo(
-        options.endpoint,
+      await withBrowserProfile(
+        { profileId: options.profileId, headless: false },
         async (page) => {
           for (const [index, breadth] of pending.entries()) {
             const entry: DetailAttempt = {

@@ -1,6 +1,6 @@
 import { appendFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import type { Page } from 'playwright-core'
+import type { Page } from '@kotak/browser'
 import {
   navigate,
   saveEvidence,
@@ -11,7 +11,7 @@ import {
 } from './browser'
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
-import { withKameleo } from './kameleo'
+import { withBrowserProfile } from './browser-profile'
 import { PaginationHand } from './hand'
 import { nextSearchUrl, parseListing, parseSort, searchUrl, sortListings } from './records'
 import type { JobListing, SortMode } from './records'
@@ -21,7 +21,7 @@ export { searchUrl } from './records'
 
 export interface ScrapeOptions {
   url: string
-  endpoint: string
+  profileId?: string
   output: string
   maxPages: number
   maxJobs: number
@@ -36,6 +36,45 @@ interface PageResult extends NavigationState {
   cards: number
   saved: number
   rejected: number
+  reported_total_jobs: number | null
+}
+
+const MAX_BREADTH_JOBS = 5_000
+const MAX_BREADTH_PAGES = 200
+
+export function parseReportedTotal(candidates: { value: string; source: string }[]) {
+  for (const { value, source } of candidates) {
+    const match = value.match(/(?:\bwith\s+|\bthere\s+are\s+)?([\d,]+)\s+.{1,100}?\bjobs?\s+found\b/i)
+    if (!match) continue
+    const total = Number(match[1].replaceAll(',', ''))
+    if (Number.isSafeInteger(total) && total >= 0) return { total, source }
+  }
+  return null
+}
+
+export function resolveBreadthTarget(configuredMax: number, reportedTotal: number | null) {
+  return reportedTotal !== null && reportedTotal > 0 ? Math.min(configuredMax, reportedTotal) : configuredMax
+}
+
+export function isNoResultsPage(text: string) {
+  return /\bno matching search results\b/i.test(text)
+}
+
+export function isEnabledNextLink(attributes: { ariaDisabled: string | null; ariaHidden: string | null }) {
+  return attributes.ariaDisabled?.toLowerCase() !== 'true' && attributes.ariaHidden?.toLowerCase() !== 'true'
+}
+
+async function extractReportedTotal(page: Page): Promise<{ total: number; source: string } | null> {
+  const descriptions = await page
+    .locator('meta[name="description"], meta[property="og:description"]')
+    .evaluateAll((elements) => elements.map((element) => element.getAttribute('content') ?? ''))
+  const candidates = descriptions.map((value) => ({ value, source: 'meta_description' }))
+  const body = await page
+    .locator('body')
+    .innerText()
+    .catch(() => '')
+  if (body) candidates.push({ value: body, source: 'page_text' })
+  return parseReportedTotal(candidates)
 }
 
 async function extractListings(page: Page, runId: string): Promise<unknown[]> {
@@ -76,11 +115,11 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
   const verificationTimeoutMs = verificationTimeout(options.verificationTimeoutMs)
   const delayJitterMs = pacingJitter(options.delayJitterMs)
   const sort = parseSort(options.sort ?? 'newest')
-  if (!Number.isInteger(options.maxPages) || options.maxPages < 1 || options.maxPages > 50) {
-    throw new Error('--max-pages must be an integer from 1 to 50')
+  if (!Number.isInteger(options.maxPages) || options.maxPages < 1 || options.maxPages > MAX_BREADTH_PAGES) {
+    throw new Error(`--max-pages must be an integer from 1 to ${MAX_BREADTH_PAGES}`)
   }
-  if (!Number.isInteger(options.maxJobs) || options.maxJobs < 1 || options.maxJobs > 1000) {
-    throw new Error('--max-jobs must be an integer from 1 to 1000')
+  if (!Number.isInteger(options.maxJobs) || options.maxJobs < 1 || options.maxJobs > MAX_BREADTH_JOBS) {
+    throw new Error(`--max-jobs must be an integer from 1 to ${MAX_BREADTH_JOBS}`)
   }
   if (!Number.isInteger(options.delayMs) || options.delayMs < 2000) {
     throw new Error('--delay-ms must be an integer of at least 2000')
@@ -103,6 +142,10 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     search_url: next,
     max_pages: options.maxPages,
     max_jobs: options.maxJobs,
+    target_jobs: options.maxJobs,
+    reported_total_jobs_first: null as number | null,
+    reported_total_jobs_latest: null as number | null,
+    reported_total_source: null as string | null,
     sort_by: sort,
     max_retries: maxRetries,
     verification_timeout_ms: verificationTimeoutMs,
@@ -114,21 +157,23 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     jobs_saved: 0,
     duplicates_skipped: 0,
     records_rejected: 0,
-    stop_reason: null as 'job_limit' | 'page_limit' | 'no_next_page' | 'verification_timeout' | 'error' | null,
+    stop_reason: null as
+      'reported_total' | 'job_limit' | 'page_limit' | 'no_next_page' | 'verification_timeout' | 'error' | null,
     error: null as string | null
   }
   const saveReport = () => writeJson(resolve(output, 'run.json'), report)
   await saveReport()
   try {
-    await withKameleo(
-      options.endpoint,
+    await withBrowserProfile(
+      { profileId: options.profileId, headless: false },
       async (page) => {
         const hand = new PaginationHand(page)
+        let targetJobs = options.maxJobs
         let openNext: ((entry: NavigationState) => Promise<null>) | undefined
         let previousRawSignature: string | null = null
         const visited = new Set<string>()
         const pageSignatures = new Set<string>()
-        while (next && report.pages.length < options.maxPages && report.jobs_saved < options.maxJobs) {
+        while (next && report.pages.length < options.maxPages && report.jobs_saved < targetJobs) {
           const url: string = searchUrl(next)
           if (visited.has(url)) throw new Error('Pagination returned a previously visited search URL')
           visited.add(url)
@@ -140,7 +185,8 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             retry_errors: [],
             cards: 0,
             saved: 0,
-            rejected: 0
+            rejected: 0,
+            reported_total_jobs: null
           }
           report.pages.push(entry)
           const prefix = resolve(output, `page-${report.pages.length}`)
@@ -153,13 +199,10 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             if (response ? !response.ok() : entry.navigation_kind !== 'click')
               throw new Error(`JobStreet returned HTTP ${entry.http_status}`)
             if (searchUrl(page.url()) !== url) throw new Error('Navigation did not reach the expected search URL')
-            await page
-              .locator('article[data-job-id], article[data-testid="job-card"]')
-              .first()
-              .waitFor({ timeout: 30_000 })
             if (!response && previousRawSignature) {
               await page.waitForFunction(
                 (previous) => {
+                  if (/\bno matching search results\b/i.test(document.body.innerText)) return true
                   const ids = [...document.querySelectorAll('article[data-job-id], article[data-testid="job-card"]')]
                     .map(
                       (card) =>
@@ -175,6 +218,32 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
                 previousRawSignature,
                 { timeout: 30_000 }
               )
+            }
+            await page.waitForFunction(
+              () =>
+                Boolean(document.querySelector('article[data-job-id], article[data-testid="job-card"]')) ||
+                /\bno matching search results\b/i.test(document.body.innerText),
+              undefined,
+              { timeout: 30_000 }
+            )
+            const pageText = await page.locator('body').innerText()
+            const noResults = isNoResultsPage(pageText)
+            const total = await extractReportedTotal(page)
+            if (total) {
+              entry.reported_total_jobs = total.total
+              report.reported_total_jobs_first ??= total.total
+              report.reported_total_jobs_latest = total.total
+              report.reported_total_source ??= total.source
+              if (report.pages.length === 1 && total.total > 0) {
+                targetJobs = resolveBreadthTarget(options.maxJobs, total.total)
+                report.target_jobs = targetJobs
+              }
+            }
+            if (noResults) {
+              if (!report.jobs_saved) throw new Error('No job listings were extracted')
+              report.stop_reason = 'no_next_page'
+              next = null
+              break
             }
             const candidates = await extractListings(page, report.run_id)
             entry.cards = candidates.length
@@ -206,14 +275,19 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
                 report.duplicates_skipped++
                 continue
               }
-              if (report.jobs_saved >= options.maxJobs) break
+              if (report.jobs_saved >= targetJobs) break
               await appendFile(resolve(output, 'jobs.jsonl'), `${JSON.stringify(job)}\n`)
               jobs.set(job.job_id, job)
               report.jobs_saved++
               entry.saved++
             }
-            if (report.jobs_saved >= options.maxJobs || report.pages.length >= options.maxPages) {
-              report.stop_reason = report.jobs_saved >= options.maxJobs ? 'job_limit' : 'page_limit'
+            if (report.jobs_saved >= targetJobs || report.pages.length >= options.maxPages) {
+              report.stop_reason =
+                report.jobs_saved >= targetJobs
+                  ? report.reported_total_jobs_first !== null && report.reported_total_jobs_first <= options.maxJobs
+                    ? 'reported_total'
+                    : 'job_limit'
+                  : 'page_limit'
               next = null
               break
             }
@@ -222,15 +296,20 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             const invalid: string[] = []
             const groups = [
               page.locator(
-                'a[rel~="next"]:visible:not([aria-disabled="true"]), a[data-testid="pagination-next"]:visible:not([aria-disabled="true"])'
+                'a[rel~="next"]:visible:not([aria-disabled="true"]):not([aria-hidden="true"]), a[data-testid="pagination-next"]:visible:not([aria-disabled="true"]):not([aria-hidden="true"])'
               ),
               page.locator(
-                '[aria-label*="pagination" i] a[aria-label="Next"]:visible:not([aria-disabled="true"]), [data-testid="pagination"] a[aria-label="Next"]:visible:not([aria-disabled="true"])'
+                '[aria-label*="pagination" i] a[aria-label="Next"]:visible:not([aria-disabled="true"]):not([aria-hidden="true"]), [data-testid="pagination"] a[aria-label="Next"]:visible:not([aria-disabled="true"]):not([aria-hidden="true"])'
               )
             ]
             for (const group of groups) {
               for (let index = 0; index < (await group.count()); index++) {
                 const candidate = group.nth(index)
+                const [ariaDisabled, ariaHidden] = await Promise.all([
+                  candidate.getAttribute('aria-disabled'),
+                  candidate.getAttribute('aria-hidden')
+                ])
+                if (!isEnabledNextLink({ ariaDisabled, ariaHidden })) continue
                 const href = await candidate.getAttribute('href')
                 if (!href) continue
                 try {
@@ -257,12 +336,19 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             await saveEvidence(page, prefix)
             await saveReport()
           }
-          if (next && report.pages.length < options.maxPages && report.jobs_saved < options.maxJobs) {
+          if (next && report.pages.length < options.maxPages && report.jobs_saved < targetJobs) {
             await pauseBetweenRequests(options.delayMs, delayJitterMs)
           }
         }
         if (!report.jobs_saved) throw new Error('No job listings were extracted')
-        report.stop_reason ??= report.jobs_saved >= options.maxJobs ? 'job_limit' : next ? 'page_limit' : 'no_next_page'
+        report.stop_reason ??=
+          report.jobs_saved >= targetJobs
+            ? report.reported_total_jobs_first !== null && report.reported_total_jobs_first <= options.maxJobs
+              ? 'reported_total'
+              : 'job_limit'
+            : next
+              ? 'page_limit'
+              : 'no_next_page'
       },
       async (profileId) => {
         report.profile_id = profileId
