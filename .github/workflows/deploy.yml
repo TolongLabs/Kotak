@@ -89,3 +89,15 @@ jobs:
             echo "Health check returned HTTP $status"
             exit 1
           fi
+
+      # The MCP server at /api/mcp (#186) must list Kotak's tools. A 2025-era tools/list needs no initialize, and its
+      # reply is SSE-framed, so the JSON is on the "data:" line.
+      - name: Check deployed MCP tools
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          curl --silent --show-error --fail -X POST "$DEPLOYMENT_URL/api/mcp" \
+            -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
+          | sed -n 's/^data: //p' \
+          | jq -e '[.result.tools[].name] | debug | contains(["find_role", "get_checkup_questions", "run_checkup", "what_changed", "national_skill_gaps", "list_sources"])'

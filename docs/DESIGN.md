@@ -125,7 +125,7 @@ The smallest text is 12 px.
 
 - Phone frames are 390 px wide with 24 px side padding. Desktop frames are 1440 px wide.
 - The desktop app shell has a 256 px sidebar (72 px collapsed) and a main column with 48 px padding, so content is 1088 px wide.
-- The top bar is a glass island that stays at the top of the main column. It has no sound button; the mute button lives in Kopi's speech box. Its data chip opens About This Data, which names the snapshot and says whether each role's skills are AI-drafted or hand-checked; a dot on the chip marks AI-drafted skills. Pages carry no inline AI-drafted notice.
+- The top bar is a glass island that stays at the top of the main column. It has no sound button; the mute button lives in Kopi's speech box. Its data chip opens About This Data, which names the snapshot and says whether each role's skills are AI-drafted or hand-checked; a dot on the chip marks AI-drafted skills. Pages carry no inline AI-drafted notice. Its Ask Kopi button opens Kopi's chat as a modal panel: a right-hand drawer on wider screens and the full screen on phones.
 - Columns are symmetrical. Two columns are 532 + 24 + 532 px, three are equal thirds and the four stat cards are equal quarters. Cards in one row share one height.
 - Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the page header, then the content. The Dashboard opens with its greeting, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
 - Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar and What Changed pages and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
@@ -158,6 +158,7 @@ Every component lives on the Components page. Build each one as a custom compone
 - Never show a percentage chance for a verdict.
 - Every claim cites its source with a numbered citation, such as `[2]`, in mono. Each number links to a Source Reference that names the source, the table or rows used, and the read date.
 - Explanations use the Reasoning block: the heading "Why Kopi Says This", two sentences written from the cited rows only, and the fixed footer "Fixed rules set the verdict. Claude wrote these two sentences from the cited rows only."
+- Ask Kopi's chat replies are the exception to the two rules above. A reply answers a free question from whole tool results, not two sentences from cited rows, so it lists the tools Kopi ran and their sources with vintage dates, then its own AI-drafted footer.
 - Label sample data as sample data. Never invent jobs, numbers or statistics.
 - Voice: playful, never childish; curious, not pushy; honest about doubt. Write "Split: the sources disagree, so here are two plans.", not "87% chance this skill will grow."
 

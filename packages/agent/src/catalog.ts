@@ -1,0 +1,77 @@
+// What Kotak's tools are and the rules every agent follows (#184 "Agent layer"). Dependency-free, so the web's
+// Connect page can list the same tools the MCP server and Kopi's chat serve. Each description is a prompt for the
+// model: its first sentence says what the tool does, the rest says when to call it and how to use the result.
+
+/**
+ * The rules every Kotak agent follows: the MCP server's instructions, Kopi's system prompt and the kotak-checkup
+ * skill. Claude Code cuts server instructions at 4,096 characters, so keep it short.
+ */
+export const AGENT_RULES = `Kotak checks how AI is changing the skills of a job in Malaysia. Data decides, the AI explains: Kotak's tools compute every result from fixed rules over dated, sourced data, and your job is to explain those results.
+
+1. Call a Kotak tool for every level, target, verdict, fit score, ranking, hour count and date, and quote it as the tool returned it. Never estimate, recompute or fill a gap from your own knowledge. If no tool gives it, say Kotak doesn't have it.
+2. Cite the source and vintage date behind each verdict or figure, from the result's sources, and name the data snapshot (for example May 2026).
+3. Label uncertainty plainly: a level that is self-reported or estimated from other answers, a target level (always an estimate), a Split verdict (say what each AI pace gives) and an Unknown verdict (say which data is missing).
+4. Ask one question at a time and wait for the answer. Ask Kotak's can-do statements as written, in the order given, and ask the follow-up the answer picks before moving on.
+5. Suggest, never dictate. Show the options and the evidence (the ranked roles, the roadmap, the AI dividend's weekly hours), let the user decide, and end with one step they can take this week.`
+
+export const TOOL_CATALOG = {
+  find_role: {
+    title: 'Find a Role',
+    description:
+      "Find the O*NET roles that match a job title, best first. Call it first in a check-up, then confirm the role with the user; never guess an O*NET code. It searches O*NET's English titles and alternate titles, so translate a Malay or local title to English first (for example jurutera perisian to software engineer). A role with questions_ready false can't be checked up yet: say so and offer the next match."
+  },
+  get_checkup_questions: {
+    title: 'Get the Check-Up Questions',
+    description:
+      "Get a role's can-do questions in Kotak's asking order, Rising corners first. A corner is one skill area of the job. Call it once the user confirms their role (with the target goal, the target role). For each corner, ask the can_do statement as a yes or no question, then follow_up.if_yes after a yes or follow_up.if_no after a no, one question per message. Keep each corner's two answers as { corner_id, can_do, follow_up } for run_checkup."
+  },
+  run_checkup: {
+    title: 'Run the Check-Up',
+    description:
+      "Run a Kotak check-up: each corner's level, target level and verdict with its reason and sources, the user's role and its related roles ranked by fit with the two biggest gaps, and a roadmap of free learning steps with weekly hours and a finish date. Call it once the user has answered every corner, and call it again for each what-if (weekly hours, the fast scenario, another plan role, the April snapshot) instead of working the answer out yourself. Kotak saves nothing, so pass every answer each time. Defaults are the Kotak app's: the May 2026 snapshot, the slow scenario, 4 hours a week, the explore goal and a start date of today in Malaysia."
+  },
+  what_changed: {
+    title: 'What Changed Between Snapshots',
+    description:
+      "Show what changed for the user's answers between two data snapshots, April 2026 to May 2026 by default: each corner's verdict before and after, the verdict flips, and whether the roadmap order and the role ranking moved. Call it when the user asks why their result or plan changed, or what the newest data changed. Pass the same answers and goal as run_checkup."
+  },
+  national_skill_gaps: {
+    title: 'National Skill Gaps',
+    description:
+      "Get Kotak's national view: the average level, from 0 to 3, that people in Malaysia reached on each corner of a role in their Kotak check-ups, with the corner's name and its verdict in the latest data snapshot. Call it when the user asks which skills workers in Malaysia, in an occupation group or in a role lack, for example which Rising corners have the lowest averages. Filter by occupation_group (15-0000) or onet_role_code, or leave both out for every role. A role shows real averages only from 10 or more real check-ups, counted in blocks of 10, so quote checkup_count_label (20+), never an exact count. Every other row is built-in sample data (is_sample true, and every row when database_available is false): call it sample data every time and never present it as what Malaysian workers reported."
+  },
+  list_sources: {
+    title: 'List the Data Sources',
+    description:
+      'List the data sources behind every Kotak result with their vintage dates, licences and credit lines, and the data snapshots with the default one. Call it when the user asks where the data comes from or how current it is.'
+  }
+} as const satisfies Record<string, { title: string; description: string }>
+
+export type ToolName = keyof typeof TOOL_CATALOG
+
+/**
+ * What a tool does: the first sentence of its description. By convention that sentence stands alone, and the rest
+ * tells the model when to call the tool and how to use its result. The Connect page and /llms.txt list tools by it.
+ */
+export const toolSummary = ({ description }: { description: string }): string =>
+  /^.*?\.(?=\s|$)/.exec(description)?.[0] ?? description
+
+// Where an assistant gets Kotak: the build publishes the skill zip and /llms.txt from these, and the Connect page shows
+// them. The kotak plugin (plugins/kotak) repeats the live URLs, and the build fails if any of them drifts.
+
+/** The live site. */
+export const LIVE_SITE = 'https://kotak.tp073654.workers.dev'
+/** The MCP server's path on any Kotak origin. */
+export const MCP_PATH = '/api/mcp'
+/** The kotak-checkup skill as a zip for claude.ai, on any Kotak origin. */
+export const SKILL_ZIP_PATH = '/kotak-checkup.zip'
+/**
+ * The GitHub repository whose .claude-plugin/marketplace.json lists the kotak plugin. The plugin moves to a public
+ * repository before submission, so every install instruction takes the slug from here.
+ */
+export const MARKETPLACE_REPO = 'TolongLabs/sdc-hack'
+/** Claude Code commands that install the kotak plugin: the kotak-checkup skill plus the MCP server. */
+export const PLUGIN_INSTALL_COMMANDS = [
+  `claude plugin marketplace add ${MARKETPLACE_REPO}`,
+  'claude plugin install kotak@kotak'
+] as const

@@ -1,8 +1,13 @@
 import {
+  AgentChatRequestSchema,
+  AgentChatResponseSchema,
+  ApiErrorSchema,
   ExplanationRequestSchema,
   ExplanationResponseSchema,
   RoleMatchRequestSchema,
   RoleMatchResponseSchema,
+  type AgentChatRequest,
+  type AgentChatResponse,
   type ExplanationRequest,
   type ExplanationResponse,
   type RoleMatchResponse
@@ -103,4 +108,31 @@ export function fetchExplanations(roleCode: string, body: ExplanationRequest): P
   )
   explanationPending.set(key, request)
   return request
+}
+
+// Kopi's chat (#189): unavailable is the 503 agent_unavailable answer (no key, over the rate limit or a Claude failure);
+// any other failure is an error worth a retry.
+export type KopiChatResult = ApiResult<AgentChatResponse> | { status: 'error' }
+
+export async function askKopi(body: AgentChatRequest): Promise<KopiChatResult> {
+  const failed = { status: 'error' } as const
+  const request = AgentChatRequestSchema.safeParse(body)
+  if (!request.success) return failed
+
+  try {
+    const response = await fetch('/api/agent/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request.data)
+    })
+    const json: unknown = await response.json().catch(() => null)
+    if (response.status === 200) {
+      const result = AgentChatResponseSchema.safeParse(json)
+      return result.success ? { status: 'available', data: result.data } : failed
+    }
+    const error = ApiErrorSchema.safeParse(json)
+    return response.status === 503 && error.data?.error.code === 'agent_unavailable' ? unavailable : failed
+  } catch {
+    return failed
+  }
 }

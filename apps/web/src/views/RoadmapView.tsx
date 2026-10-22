@@ -1,4 +1,4 @@
-import { DEFAULT_SCENARIO } from '@kotak/shared'
+import { DEFAULT_SCENARIO, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from '@kotak/shared'
 import { Check, Clock3 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
@@ -17,6 +17,7 @@ import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
 import { useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, computeCheckup } from '../engine/checkup'
+import { toIsoDate } from '../engine/dates'
 import { toReadinessPoints, toRoadmapSources, toRoadmapSteps } from '../engine/roadmapModel'
 import { cornerReasoning } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
@@ -25,12 +26,6 @@ import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
 import { type TimelineStep } from './roadmap/planSupport'
-
-function toIsoDate(date: Date) {
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}-${month}-${day}`
-}
 
 function fromIsoDate(value: string) {
   const [year, month, day] = value.split('-').map(Number)
@@ -202,7 +197,7 @@ export function RoadmapView() {
     const dividend = checkup.roadmap.dividend
     if (!(dividend.sources.length > 0 && dividend.weekly_hours_saved > 0)) return null
     const base = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
-    const proposed = Math.min(10, Math.round((base + dividend.weekly_hours_saved) * 2) / 2)
+    const proposed = Math.min(MAX_WEEKLY_HOURS, Math.round((base + dividend.weekly_hours_saved) * 2) / 2)
     if (proposed <= base + 0.001) return { proposed: null, readyWeek: null }
     const data = bundle.data
     const role =
@@ -414,8 +409,8 @@ export function RoadmapView() {
           <div className="space-y-2">
             <Slider
               label="Hours Per Week"
-              min={1}
-              max={10}
+              min={MIN_WEEKLY_HOURS}
+              max={MAX_WEEKLY_HOURS}
               step={1}
               value={session.custom_weekly_hours ?? checkup.roadmap.weekly_hours}
               onChange={(value) => updateGuestSession({ custom_weekly_hours: value })}

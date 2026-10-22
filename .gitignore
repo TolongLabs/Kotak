@@ -109,6 +109,10 @@ docs/meetings/
 dist/
 # The static client bundle, written by bun run build:data
 apps/web/public/data/
+# The published skill and /llms.txt, written by bun run build:skill
+apps/web/public/kotak-checkup.zip
+apps/web/public/skills/
+apps/web/public/llms.txt
 .wrangler/
 
 # Local caches: downloaded source data and the Bun server's Claude responses

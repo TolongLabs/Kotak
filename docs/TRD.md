@@ -1,6 +1,6 @@
 # Technical requirements
 
-Kotak's technical specification: how the app is built, which data it uses, the exact engine rules, the API routes, the AI models and how it deploys. The builders work from it, and the team copies the [Technical Tools Declaration][td] from it ([#73]). It records decisions made in the [locked idea][kotak] and in issues #26 to #105, plus the hosting and database set-up of 22 October 2026; where a detail is not decided, it names the issue that owns it.
+Kotak's technical specification: how the app is built, which data it uses, the exact engine rules, the API routes, the AI models and how it deploys. The builders work from it, and the team copies the [Technical Tools Declaration][td] from it ([#73]). It records decisions made in the [locked idea][kotak] and in issues #26 to #105, the hosting and database set-up of 22 October 2026, and the SDK and agent layer of #184 to #193; where a detail is not decided, it names the issue that owns it.
 
 Contents:
 
@@ -32,6 +32,13 @@ Contents:
     1.  [Gaps and roadmap order](#gaps-and-roadmap-order)
     1.  [What changed diff](#what-changed-diff)
     1.  [Static build](#static-build)
+1.  [SDK layer](#sdk-layer)
+1.  [Agent layer](#agent-layer)
+    1.  [Tool registry](#tool-registry)
+    1.  [Agent rules](#agent-rules)
+    1.  [MCP server and clients](#mcp-server-and-clients)
+    1.  [Skill, plugin and llms.txt](#skill-plugin-and-llmstxt)
+    1.  [Ask Kopi](#ask-kopi)
 1.  [API routes](#api-routes)
     1.  [Rules for every route](#rules-for-every-route)
     1.  [Job match route](#job-match-route)
@@ -39,6 +46,8 @@ Contents:
     1.  [Job-ad extractor route](#job-ad-extractor-route)
     1.  [TTS route](#tts-route)
     1.  [National view routes](#national-view-routes)
+    1.  [MCP route](#mcp-route)
+    1.  [Kopi's chat route](#kopis-chat-route)
     1.  [Health check](#health-check)
 1.  [AI models](#ai-models)
     1.  [Models by task](#models-by-task)
@@ -78,7 +87,7 @@ Kotak shows a Malaysian worker which of their skills are rising or declining wit
 
 Fixed rules over dated, sourced data set every number and every verdict. AI only names, drafts and explains. The rule comes from CareerSphere's team: "the data decides; the AI interprets" ([winner teardowns][teardowns]). Every number on screen shows its source and its date.
 
-Rules decide question order, levels, verdicts, targets, fit scores, role ranking, roadmap order, finish dates and the What Changed list. The engine functions that compute them make zero AI calls ([#37]).
+Rules decide question order, levels, verdicts, targets, fit scores, role ranking, roadmap order, finish dates and the What Changed list. The engine functions that compute them make zero AI calls ([#37]). AI agents, Kopi's chat included, reach these rules only through Kotak's read-only tools, which return each result with its sources ([#184]).
 
 [teardowns]: /docs/research/winner-teardowns.md
 
@@ -92,10 +101,12 @@ AI may:
 - Write a 2-sentence explanation per corner and a short What Changed summary, citing the source names and dates it is given ([#43]).
 - Pull skills from a pasted public job ad, as word-for-word quotes ([#48]).
 - Voice Kopi's lines through text to speech ([#46]).
+- Answer a user's follow-up and what-if questions in Kopi's chat, and run a check-up in the user's own AI assistant, by calling Kotak's tools and explaining what they return ([#184], [#186], [#189]).
 
 AI may not:
 
 - Set or change a level, target, verdict, fit score, role rank, roadmap position or finish date ([#27]).
+- Work out, estimate or recompute a number or date in place of Kotak's tools, in Kopi's chat or in an outside assistant ([#184]).
 - Invent a task, job, course, statistic or quote. A claim without its source and date is a failure even if the app works ([anti-goals][anti-goals]).
 
 Code enforces the boundary:
@@ -104,6 +115,8 @@ Code enforces the boundary:
 - A verifier rejects or strips any explanation that alters a verdict label or omits a dated citation, then falls back to a deterministic template ([#43]).
 - The job-ad route keeps only quotes that appear word for word in the ad ([#48]).
 - Every route validates its request and response with shared Zod schemas ([#27]).
+- Kopi's chat and the MCP server give the model only Kotak's read-only tools, which compute every result with the engine rules. One [agent rules](#agent-rules) text tells every agent to quote tool results and cite their sources. Kopi's chat fills in the user's own answers, so the model can't retype or change them ([#184], [#186], [#189]).
+- An outside assistant is not Kotak's code. The MCP server's instructions and the kotak-checkup skill give it the same rules, and the build fails if the skill's rules drift from them ([#188]).
 
 ### Declaration crosswalk
 
@@ -128,23 +141,26 @@ Copy each declaration section from the part of this document shown. The [declara
 
 This paragraph fits declaration section 2.1 (under 200 words).
 
-Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights and Quarterly Employment Statistics, TalentCorp MyCOL, OpenDOSM and Epoch AI. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. The Claude Message Batches API fills any job that fails validation. A build step checks every file with Zod and fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker. It serves the React app, the JSON snapshots and a Hono API. Fixed rules in the browser set every level, verdict, target, fit score and roadmap position. The API calls Claude Haiku 5.5 to match local job titles, write cited explanations and read pasted job ads, and calls ElevenLabs for the cat's voice. It caches every answer. A Neon Postgres database stores anonymous check-ups for the national view. A copy runs on Replit for the proof of use.
+Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights and Quarterly Employment Statistics, TalentCorp MyCOL, OpenDOSM and Epoch AI. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. Claude's Message Batches API fills any failed job. A Zod-checked build fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker serving the React app, the JSON snapshots and a Hono API. Fixed rules in a TypeScript SDK set every level, verdict, target, fit score and roadmap position, in the browser and on the server. The API calls Claude Haiku 5.5 to match local job titles, write cited explanations and read pasted job ads, and caches each answer. ElevenLabs voices the cat. An agent layer serves the SDK as read-only tools: through an MCP server to any AI assistant, and to Claude in Kopi's in-app chat. A Neon Postgres database stores anonymous check-ups for the national view. A copy runs on Replit for the proof of use.
 
 ### Components
 
-| Component         | What it is                                                                                                                                  | Issues              |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| Bun monorepo      | Root workspaces for `apps/web`, `apps/api` and `packages/shared`, with shared TypeScript, lint and format scripts                           | [#29]               |
-| `apps/web`        | React, Vite, Tailwind CSS, Recharts, Lucide and the Live2D cat. Runs the engine rules in the browser                                        | [#28], [#41]        |
-| `apps/api`        | Hono routes for job match, explanations, job ads, TTS and the national view, with CORS middleware                                           | [#27]               |
-| `packages/shared` | Zod schemas for engine data, guest session state and API payloads. Re-exports the engine schemas from [#40]                                 | [#29], [#40]        |
-| Ingestion scripts | Bun scripts that write dated, validated files to `data/snapshots/`                                                                          | [#30]               |
-| Engine module     | Pure TypeScript functions for verdicts, projections, targets, scoring, transfers, roadmaps and diffs. Runs at build time and in the browser | [#81], [#83], [#86] |
-| Batch generator   | The corner and question prompt harness and its validator, run on a RunPod serverless GPU, with a Claude batch backup                        | [#74], [#77], [#79] |
-| Static build      | `bun run build:data` joins everything into Zod-validated static JSON                                                                        | [#88]               |
-| National view     | A Postgres table on Neon, its seed script and two Hono routes                                                                               | [#34]               |
+| Component         | What it is                                                                                                                                  | Issues                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Bun monorepo      | Root workspaces for `apps/*` and `packages/*`, with shared TypeScript, lint and format scripts                                              | [#29]                  |
+| `apps/web`        | React, Vite, Tailwind CSS, Recharts, Lucide and the Live2D cat. Runs the engine rules in the browser through `@kotak/sdk`                   | [#28], [#41], [#185]   |
+| `apps/api`        | Hono routes for job match, explanations, job ads, TTS, the national view, the MCP server and Kopi's chat, with CORS middleware              | [#27], [#186], [#189]  |
+| `packages/shared` | Zod schemas for engine data, guest session state and API payloads. Re-exports the engine schemas from [#40]                                 | [#29], [#40]           |
+| `packages/sdk`    | `@kotak/sdk`: the whole check-up from the data bundle, in the browser, Bun and the Worker, plus a typed client for the API                  | [#185], [#187]         |
+| `packages/agent`  | `@kotak/agent`: the tool registry, the agent rules, and adapters to an MCP server and to Claude's tool runner                               | [#186], [#189], [#190] |
+| `plugins/kotak`   | The Claude Code plugin: the kotak-checkup skill and an `.mcp.json` for the live MCP server, listed by `.claude-plugin/marketplace.json`     | [#188]                 |
+| Ingestion scripts | Bun scripts that write dated, validated files to `data/snapshots/`                                                                          | [#30]                  |
+| Engine module     | Pure TypeScript functions for verdicts, projections, targets, scoring, transfers, roadmaps and diffs. Runs at build time and in the browser | [#81], [#83], [#86]    |
+| Batch generator   | The corner and question prompt harness and its validator, run on a RunPod serverless GPU, with a Claude batch backup                        | [#74], [#77], [#79]    |
+| Static build      | `bun run build:data` joins everything into Zod-validated static JSON                                                                        | [#88]                  |
+| National view     | A Postgres table on Neon, its seed script and two Hono routes                                                                               | [#34]                  |
 
-Hono runs on the Cloudflare Workers runtime in production and on Bun locally and on Replit. Code in `apps/api` and in the engine module must therefore avoid Bun-only and Node-only APIs. Ingestion and build scripts run only under Bun.
+Hono runs on the Cloudflare Workers runtime in production and on Bun locally and on Replit. Code in `apps/api`, `packages/sdk`, `packages/agent` and the engine module must therefore avoid Bun-only and Node-only APIs. The Bun entry point, `apps/api/src/bun.ts`, injects what needs the disk: the data bundle reader and the AI cache. Ingestion and build scripts run only under Bun.
 
 ### Data flow
 
@@ -152,10 +168,12 @@ Hono runs on the Cloudflare Workers runtime in production and on Bun locally and
 2.  **Generate.** The batch reads O\*NET tasks and writes `data/generated/role-corners.json`. Every role starts with `quality: "auto-generated"` ([#77]). The 3 demo roles are checked by hand and set to `"human-checked"` ([#104]).
 3.  **Build.** `bun run build:data` joins roles, the alternate-title index, corners, the four-layer signals for `2026-04` and `2026-05`, and the demo diffs into static JSON. It fails on any missing source or date ([#88]).
 4.  **Serve.** The Worker serves the app and the JSON as static assets. The app never runs ingestion or build scripts at runtime ([#28]).
-5.  **Score.** The browser loads the active snapshot and runs the engine rules on the guest's answers ([#41]).
+5.  **Score.** The browser loads the active snapshot and runs the engine rules on the guest's answers through `@kotak/sdk` ([#41], [#185]).
 6.  **Explain.** The browser sends computed verdicts, levels and source metadata to the API. The API returns cited explanations and never changes a number ([#43]).
-7.  **Aggregate.** A finished check-up posts its role code, corner levels (one per corner, up to 6) and date to Postgres ([#34], [#67]).
-8.  **Refresh.** A scheduled workflow checks for new upstream releases, rebuilds the JSON and opens a commit or pull request with the snapshot diff ([#90]).
+7.  **Ask.** Kopi's chat sends the conversation and the guest's check-up to the API. Claude answers by calling Kotak's tools, which run the same SDK over the same bundle on the server, and the API returns the reply, the tools Claude ran and their sources ([#189], [#191]).
+8.  **Connect.** An outside AI assistant calls the same tools through the MCP server at `/api/mcp` ([#186]).
+9.  **Aggregate.** A finished check-up posts its role code, corner levels (one per corner, up to 6) and date to Postgres ([#34], [#67]).
+10. **Refresh.** A scheduled workflow checks for new upstream releases, rebuilds the JSON and opens a commit or pull request with the snapshot diff ([#90]).
 
 ### Architecture diagram
 
@@ -176,28 +194,44 @@ flowchart LR
     RP["RunPod serverless GPU batch<br/>data/generated/role-corners.json"]
     CB["Claude Message Batches backup"]
     BD["bun run build:data<br/>Zod-validated static JSON<br/>2026-04 and 2026-05"]
+    SK["bun run build:skill<br/>skill zip and llms.txt"]
   end
   subgraph Edge["Cloudflare Worker"]
-    ASSETS["Static assets<br/>React app and JSON"]
+    ASSETS["Static assets<br/>React app, JSON, skill zip, llms.txt"]
     API["Hono API at /api/*"]
+    MCP["MCP server<br/>/api/mcp"]
+    CHAT["Kopi's chat<br/>/api/agent/chat"]
+    TOOLS["@kotak/agent tool registry<br/>on @kotak/sdk"]
   end
   subgraph Client["Browser"]
-    WEB["apps/web<br/>engine rules, guest session, Kopi"]
+    WEB["apps/web on @kotak/sdk<br/>guest session, Kopi, Ask Kopi"]
   end
+  PLUGIN["plugins/kotak<br/>kotak-checkup skill, .mcp.json"]
+  ASSIST["AI assistants<br/>Claude, Claude Code, VS Code, Cursor"]
   CLAUDE["Claude API<br/>Claude Haiku 5.5"]
   EL["ElevenLabs TTS"]
   NEON["Neon Postgres 18<br/>national view"]
-  REPLIT["Replit copy<br/>proof of use"]
+  REPLIT["Replit copy<br/>proof of use, fallback MCP URL"]
   ONET & AEI & DOSM & MYCOL & ODOSM & EPOCH --> ING
   ONET --> RP
   RP -. failed or missing roles .-> CB
   ING --> BD
   RP --> BD
   CB --> BD
+  PLUGIN --> SK
   BD -- "GitHub Actions deploy" --> ASSETS
+  SK --> ASSETS
   BD -. "published by hand" .-> REPLIT
   ASSETS --> WEB
   WEB -- "match, explain, job ad, TTS, national view" --> API
+  WEB -- "Ask Kopi" --> CHAT
+  PLUGIN -. "claude plugin install" .-> ASSIST
+  ASSIST -- "MCP over HTTP" --> MCP
+  MCP --> TOOLS
+  CHAT --> TOOLS
+  CHAT --> CLAUDE
+  ASSETS -- "data bundle through ASSETS" --> TOOLS
+  TOOLS --> NEON
   API --> CLAUDE
   API --> EL
   API --> NEON
@@ -206,8 +240,8 @@ flowchart LR
 ### Client runtime
 
 - **Guest session.** A Zod-validated `localStorage` store holds guest status, role code, goal, impact area, target role code, the 12 answers, follow-up answers, ticked milestones, custom weekly hours, pasted job-ad quotes, the TTS mute state and the active snapshot ID (`2026-04` or `2026-05`). A stored value that fails validation resets to clean defaults. A reset action clears the session ([#41]).
-- **Snapshot loader.** It reads the precomputed slow and fast targets for the active snapshot, defaulting to April 2026, and calls the engine functions from [#83] for levels, fit scores, estimate labels and roadmap order. Switching to `2026-05` recomputes them synchronously ([#41]).
-- **Screens.** Landing ([#54]), guest sign-in and dashboard ([#57]), check-up start and 12 questions ([#59]), Future Skills Radar ([#61]), matched roles ([#64]), roadmap ([#67]), What Changed and the demo switcher ([#69]), national view ([#72]) and the paste-a-job-ad panel ([#105]). The shell, transitions and the Loading, AI Error and No Match states are in [#51]. Kopi is in [#49].
+- **Snapshot loader.** It reads the precomputed slow and fast targets for the active snapshot, defaulting to April 2026, and calls the engine functions from [#83], through `@kotak/sdk`, for levels, fit scores, estimate labels and roadmap order. Switching to `2026-05` recomputes them synchronously ([#41], [#185]).
+- **Screens.** Landing ([#54]), guest sign-in and dashboard ([#57]), check-up start and 12 questions ([#59]), Future Skills Radar ([#61]), matched roles ([#64]), roadmap ([#67]), What Changed and the demo switcher ([#69]), national view ([#72]), the paste-a-job-ad panel ([#105]) and Connect your AI ([#192]). The shell, transitions and the Loading, AI Error and No Match states are in [#51]. Kopi is in [#49]. The [Ask Kopi](#ask-kopi) chat panel opens from the shell on every `/app` page ([#191]).
 - **Visual design.** `DESIGN.md` governs tokens, type, surfaces and components ([#31], [#32]).
 
 ## Stack
@@ -216,42 +250,45 @@ flowchart LR
 
 The issues pin no library versions. `bun.lock` records them once [#29] scaffolds the workspace. A dash means no version is set in the issues.
 
-| Name                                                                  | Version | Purpose                                                               | Issues              |
-| --------------------------------------------------------------------- | ------- | --------------------------------------------------------------------- | ------------------- |
-| TypeScript                                                            | —       | The language of the app, API, engine and scripts                      | [#29]               |
-| Bun                                                                   | —       | Package manager, workspaces, script runner and local server           | [#29]               |
-| React                                                                 | —       | `apps/web` user interface                                             | [#29]               |
-| Vite                                                                  | —       | `apps/web` build                                                      | [#29]               |
-| Tailwind CSS                                                          | —       | Theme, tokens and utilities from `DESIGN.md`                          | [#32]               |
-| Recharts                                                              | —       | Radar chart, readiness graph and national view charts                 | [#61], [#67], [#72] |
-| Lucide                                                                | —       | The 60-icon registry                                                  | [#32]               |
-| pixi-live2d-display, a PixiJS plugin                                  | —       | Renders the Live2D cat                                                | [#49]               |
-| Live2D sample model Hijiki                                            | —       | Kopi the cat counsellor                                               | [#49]               |
-| Hono                                                                  | —       | API routes, on the Workers runtime in production and on Bun elsewhere | [#27]               |
-| Zod                                                                   | —       | Shared schemas for data files, session state and API payloads         | [#29], [#40]        |
-| `@anthropic-ai/sdk`                                                   | —       | Claude Messages and Message Batches calls                             | [#43], [#79]        |
-| Postgres on Neon                                                      | 18      | National view storage                                                 | [#34]               |
-| Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono, Shantell Sans | —       | Interface type, figures and Kopi's speech box                         | [#32]               |
-| `cloudflare/wrangler-action`                                          | v4      | Deploy step in GitHub Actions ([deploy notes][deploy])                | [#62]               |
-| RunPod serverless worker                                              | —       | vLLM, or an embedding and structured-output worker, for the batch     | [#77]               |
+| Name                                                                  | Version | Purpose                                                                             | Issues               |
+| --------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------- | -------------------- |
+| TypeScript                                                            | —       | The language of the app, API, engine and scripts                                    | [#29]                |
+| Bun                                                                   | —       | Package manager, workspaces, script runner and local server                         | [#29]                |
+| React                                                                 | —       | `apps/web` user interface                                                           | [#29]                |
+| Vite                                                                  | —       | `apps/web` build                                                                    | [#29]                |
+| Tailwind CSS                                                          | —       | Theme, tokens and utilities from `DESIGN.md`                                        | [#32]                |
+| Recharts                                                              | —       | Radar chart, readiness graph and national view charts                               | [#61], [#67], [#72]  |
+| Lucide                                                                | —       | The 60-icon registry                                                                | [#32]                |
+| pixi-live2d-display, a PixiJS plugin                                  | —       | Renders the Live2D cat                                                              | [#49]                |
+| Live2D sample model Hijiki                                            | —       | Kopi the cat counsellor                                                             | [#49]                |
+| Hono                                                                  | —       | API routes, on the Workers runtime in production and on Bun elsewhere               | [#27]                |
+| Zod                                                                   | —       | Shared schemas for data files, session state and API payloads                       | [#29], [#40]         |
+| `@anthropic-ai/sdk`                                                   | —       | Claude Messages and Message Batches calls, and the beta tool runner for Kopi's chat | [#43], [#79], [#189] |
+| `@modelcontextprotocol/server`, the MCP TypeScript SDK                | v2      | Serves Kotak's tools over MCP at `/api/mcp`, on the Worker and on Bun               | [#186]               |
+| `@kotak/sdk` and `@kotak/agent`, Kotak's own packages                 | —       | The check-up engine for any runtime; Kotak's tools and agent rules                  | [#185], [#186]       |
+| fflate                                                                | —       | Zips the kotak-checkup skill for claude.ai                                          | [#188]               |
+| Postgres on Neon                                                      | 18      | National view storage                                                               | [#34]                |
+| Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono, Shantell Sans | —       | Interface type, figures and Kopi's speech box                                       | [#32]                |
+| `cloudflare/wrangler-action`                                          | v4      | Deploy step in GitHub Actions ([deploy notes][deploy])                              | [#62]                |
+| RunPod serverless worker                                              | —       | vLLM, or an embedding and structured-output worker, for the batch                   | [#77]                |
 
 Licences go in `NOTICE.md` ([#47]). The repo docs state two of them: Lucide is ISC, and the Live2D model is under the Live2D Free Material License Agreement.
 
 ### External APIs and cloud services
 
-| Service                       | Purpose                                                               | Access tier, plan or region                                                                                |
-| ----------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Anthropic Claude API          | Job-title match, explanations, job-ad extraction and the batch backup | Team API key; [#73] records the tier                                                                       |
-| ElevenLabs Text to Speech API | Kopi's voice                                                          | A 34,000-credit budget ([deploy notes][deploy]); [#73] records the plan                                    |
-| UN SDG API                    | Official target text and Malaysia's indicator 4.4.1 values            | Free, no key                                                                                               |
-| OpenDOSM and data.gov.my API  | Malaysian labour and wage series                                      | Free, no key, 4 requests a minute                                                                          |
-| Hugging Face Hub              | Economic Index files and new-release polling                          | Free, no key; anonymous limit of 3,000 resolver requests per 5 minutes                                     |
-| O\*NET bulk downloads         | The occupation and task backbone                                      | Free, no key                                                                                               |
-| Cloudflare Workers            | Hosts the app, the static JSON and the API                            | One Worker; the free plan allows 100,000 requests a day and 10 ms CPU per request ([deploy notes][deploy]) |
-| GitHub Actions                | Deploys, data refresh and checks                                      | Repository workflows                                                                                       |
-| Neon                          | Postgres 18 for the national view                                     | Project `kotak`, region `aws-ap-southeast-1`                                                               |
-| Replit                        | A hand-published copy for the compulsory proof of use                 | Sponsor Replit Core, or the one free Starter app ([#99])                                                   |
-| RunPod                        | Serverless GPU for the one-time batch                                 | Sponsor credit of US$25 per team ([brief][brief-credits])                                                  |
+| Service                       | Purpose                                                                            | Access tier, plan or region                                                                                |
+| ----------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Anthropic Claude API          | Job-title match, explanations, job-ad extraction, Kopi's chat and the batch backup | Team API key; [#73] records the tier                                                                       |
+| ElevenLabs Text to Speech API | Kopi's voice                                                                       | A 34,000-credit budget ([deploy notes][deploy]); [#73] records the plan                                    |
+| UN SDG API                    | Official target text and Malaysia's indicator 4.4.1 values                         | Free, no key                                                                                               |
+| OpenDOSM and data.gov.my API  | Malaysian labour and wage series                                                   | Free, no key, 4 requests a minute                                                                          |
+| Hugging Face Hub              | Economic Index files and new-release polling                                       | Free, no key; anonymous limit of 3,000 resolver requests per 5 minutes                                     |
+| O\*NET bulk downloads         | The occupation and task backbone                                                   | Free, no key                                                                                               |
+| Cloudflare Workers            | Hosts the app, the static JSON and the API                                         | One Worker; the free plan allows 100,000 requests a day and 10 ms CPU per request ([deploy notes][deploy]) |
+| GitHub Actions                | Deploys, data refresh and checks                                                   | Repository workflows                                                                                       |
+| Neon                          | Postgres 18 for the national view                                                  | Project `kotak`, region `aws-ap-southeast-1`                                                               |
+| Replit                        | A hand-published copy for the compulsory proof of use                              | Sponsor Replit Core, or the one free Starter app ([#99])                                                   |
+| RunPod                        | Serverless GPU for the one-time batch                                              | Sponsor credit of US$25 per team ([brief][brief-credits])                                                  |
 
 [brief-credits]: /docs/BRIEF.md#support-and-contacts
 
@@ -329,7 +366,7 @@ Layer 1 and the OpenDOSM series are shown as context. The verdict uses only the 
 
 ## Engine
 
-The engine is pure TypeScript. It runs at build time and in the browser, so the scenario toggle and the snapshot switch update the radar at once ([#81]). The rules below come from the [locked idea][kotak] and [#81], [#83] and [#86]; they agree unless a note says otherwise.
+The engine is pure TypeScript. It runs at build time and in the browser, so the scenario toggle and the snapshot switch update the radar at once ([#81]). The rules below come from the [locked idea][kotak] and [#81], [#83] and [#86]; they agree unless a note says otherwise. The [SDK layer](#sdk-layer) composes them into a whole check-up for the browser, Bun and the Worker.
 
 ### Engine schemas
 
@@ -463,6 +500,91 @@ The demo roles come from a scan of the O\*NET catalogue between `2026-04` and `2
 - **Seed rows**: the build also writes labelled synthetic aggregates for the national view, at least 10 per occupation group ([#88]): the demo roles and one role for each other group, and each deploy re-seeds them ([#147]). They never count toward the 10-check-up threshold, which counts only rows where `is_sample = false` ([#34]). [#88] says the seed rows let "k-anonymity thresholds pass"; [#34] governs.
 - **File budget**: each Economic Index snapshot file stays under 2 MB ([#50]).
 
+## SDK layer
+
+`@kotak/sdk` (`packages/sdk`) runs the whole check-up from the data bundle in the browser, in Bun and in the Worker, so the app, the MCP server and Kopi's chat give the same results for the same answers ([#184], [#185]). It only composes the [engine](#engine) rules in `packages/shared`, and depends on `@kotak/shared` and Zod alone, with no React, DOM or Node built-ins. The [SDK README](/packages/sdk/README.md) has runnable examples.
+
+- **Bundle source**: the SDK never reads files or the clock itself. A bundle source returns the file at a bundle path, and `fetchSource` builds one from a base URL and a `fetch`. The web passes the page's origin, the Worker its `ASSETS` binding, and `apps/api/src/bun.ts` a reader for the built bundle on disk, so no `node:` import reaches the Worker. A missing file throws `BundleFileError`; an HTML answer counts as missing, because the Worker answers unknown paths with `index.html` and status 200.
+- **Cache and trust**: a `Kotak` keeps every file it parsed for its life. The server holds one per isolate and marks its source trusted, which skips the Zod parse of files the build already checked, to save Worker CPU.
+- **Facade**: `createKotak({ source })` returns `manifest()`, `role(code)`, `questions(code)` in asking order with each corner's two follow-ups, `checkup(input)` and `whatChanged(input)`.
+- **Inputs**: answers are `{ corner_id, can_do, follow_up }` per corner, which the SDK maps onto the engine's 12 slots. `start_date` is required. The rest default to the web app's: snapshot `2026-05`, the slow scenario, 4 weekly hours (1 to 10, the Roadmap page's range; `null` lets the AI dividend decide) and the `explore` goal. With the `target` goal, the target role is assessed. A role whose `questions_ready` is false is refused, never given made-up levels, and so is a plan role outside the ranked roles.
+- **Report**: per corner, the level and whether it is self-reported or estimated, the target, the verdict (both scenarios' rows when Split), a rule-written reason and dated sources; the ranked roles with fit score and the two biggest gaps; the roadmap with weekly hours, the AI dividend and the finish date; and every input used, defaults included. `CheckupReportSchema` validates it.
+- **Web app**: `apps/web/src/engine` re-exports the check-up from the SDK and keeps only its React hooks and the session store ([#185]).
+- **API client**: `createKotakClient({ baseUrl })` calls the health, job match, explanations and national view summary routes, checking each request and response with the schemas in `packages/shared`. It returns `available` or `unavailable` and never throws ([#187]). The web keeps its own calls.
+
+## Agent layer
+
+`@kotak/agent` (`packages/agent`) defines Kotak's tools once over the SDK, with one rules text every agent follows, and adapts them to an MCP server for any AI assistant and to Claude's tool runner for Kopi's chat ([#184]). The [agent layer README](/packages/agent/README.md) explains how to add a tool.
+
+### Tool registry
+
+Each tool is `{ name, title, description, inputSchema, outputSchema, annotations, run }`, with Zod schemas. Name, title and description come from a dependency-free catalogue, `@kotak/agent/catalog`, which the Connect your AI page and the skill build also import, so neither can drift from the server ([#186], [#192]). Every tool is read-only, idempotent and closed-world. `run` gets the validated input and its dependencies: a `Kotak`, the O\*NET title search, today's date in Malaysia (UTC+8) and the national view reader.
+
+| Tool                    | What it returns                                                                                                                                                                                | Issues |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `find_role`             | The best O\*NET roles for an English job title, from the [job match route](#job-match-route)'s title and alternate-title search, with no Claude call. Flags roles whose questions aren't ready | [#186] |
+| `get_checkup_questions` | A role's corners and can-do questions in asking order, Rising first, each with its two follow-ups                                                                                              | [#186] |
+| `run_checkup`           | The SDK's check-up report. A missing start date becomes today in Malaysia                                                                                                                      | [#186] |
+| `what_changed`          | Each corner's verdict in two snapshots for the same answers, the verdict flips, and whether the roadmap order and the role ranking moved                                                       | [#186] |
+| `national_skill_gaps`   | The national view summary, each average joined to its corner's name and verdict. Keeps the 10-or-more rule and labels sample rows                                                              | [#190] |
+| `list_sources`          | The data sources with vintage dates, licences and credit lines, and the snapshots                                                                                                              | [#186] |
+
+`national_skill_gaps` calls `nationalViewSummary`, the function behind `GET /api/national-view/summary`, so the tool and the route return the same rows ([#190]).
+
+Two adapters serve the registry:
+
+- **MCP**: `createKotakMcpServer` registers each tool with its output schema and returns each result as `structuredContent` and as JSON text. Its instructions are the agent rules, and a `kotak://about` resource adds the snapshots and sources ([#186]).
+- **Claude tool runner**: `createKotakClaudeTools` turns each tool into a runnable tool for the Anthropic SDK's beta [tool runner][tool-runner], bound to the user's check-up ([#189]); see [Ask Kopi](#ask-kopi).
+
+[tool-runner]: https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-runner
+
+### Agent rules
+
+`AGENT_RULES` in `packages/agent/src/catalog.ts` is the one rules text for every Kotak agent: the MCP server's instructions, the start of Kopi's system prompt and the Rules section of the kotak-checkup skill ([#184]). In short:
+
+1.  Call a Kotak tool for every level, target, verdict, fit score, ranking, hour count and date, and quote it as returned. Never estimate, recompute or fill a gap.
+2.  Cite the source and vintage date behind each figure, and name the snapshot.
+3.  Label self-reported and estimated levels, targets, and Split and Unknown verdicts plainly.
+4.  Ask one question at a time: Kotak's can-do statements as written, in order.
+5.  Suggest, never dictate, and end with one step the user can take this week.
+
+The text stays well under the 4,096 characters at which Claude Code cuts a server's instructions ([Claude Code MCP docs][cc-mcp]).
+
+[cc-mcp]: https://code.claude.com/docs/en/mcp#tool-search-for-mcp-server-authors
+
+### MCP server and clients
+
+The Worker and the Bun server both serve the registry at `/api/mcp`; on the live link that is `https://kotak.tp073654.workers.dev/api/mcp` ([#186]). It speaks MCP's Streamable HTTP through the [MCP TypeScript SDK v2][mcp-sdk]'s stateless `createMcpHandler`, a web-standard `fetch` handler that runs on both runtimes with no sessions or Durable Objects. The [MCP route](#mcp-route) gives the details.
+
+Clients connect with no sign-in:
+
+- **Claude and Claude Desktop**: add the URL as a custom connector. Claude calls connectors from Anthropic's cloud, so it needs the public URL.
+- **Claude Code**: `claude mcp add --transport http kotak <url>`, or the kotak plugin, which adds the server and the skill.
+- **VS Code and Cursor**: an `http` server entry in `.vscode/mcp.json` or `.cursor/mcp.json`.
+
+The Connect your AI page at `/app/connect` shows the MCP URL of the site the user is on, with copy buttons, each client's setup, the plugin commands, the skill download and the tool list from the catalogue. On a local or private host it gives Claude's connector the live URL instead ([#192]).
+
+[mcp-sdk]: https://ts.sdk.modelcontextprotocol.io/v2/
+
+### Skill, plugin and llms.txt
+
+- **Skill**: `plugins/kotak/skills/kotak-checkup/SKILL.md` follows the open [Agent Skills specification][skills-spec], with spec frontmatter fields only, so it loads in Claude Code and uploads to claude.ai. It says when to use Kotak, the check-up flow over the tools, the agent rules and how to present results ([#188]).
+- **Plugin**: `plugins/kotak` holds the skill and an `.mcp.json` that points at the live `/api/mcp`. `.claude-plugin/marketplace.json` at the repository root lists it, so `claude plugin marketplace add TolongLabs/sdc-hack`, then `claude plugin install kotak@kotak`, installs both. The repository is private, and the plugin moves to a public repository before submission, so the slug is one constant (`MARKETPLACE_REPO`) and the connector URL and the skill zip are the main install paths.
+- **Downloads**: `bun run build:skill`, part of `bun run build` and `bun run dev`, writes the skill zip for claude.ai (`/kotak-checkup.zip`), the skill's `SKILL.md` and `/llms.txt` to `apps/web/public`. `/llms.txt` describes Kotak and points to the MCP server, the skill and the tool list.
+- **Drift check**: the same script exits 1 before writing anything if the skill's Rules section isn't `AGENT_RULES` word for word, if the skill doesn't name every tool, if the plugin's `.mcp.json` doesn't point at the live MCP URL, or if any URL in the plugin isn't on the live site. CI and the deploy run the build, so drift fails both.
+
+[skills-spec]: https://agentskills.io/specification
+
+### Ask Kopi
+
+Ask Kopi is Kopi's chat panel, on every `/app` page ([#191]). A user who finished a check-up asks a follow-up or what-if question ("what if I study 6 hours a week?"). The panel sends the guest session as the check-up context, so the user retypes nothing, and shows Kopi's reply with the tools Kopi ran, their sources and the app's AI-drafted label. It has loading, error, unavailable and "no check-up yet" states, and follows WCAG 2.2 AA. The conversation stays in the page's memory and is never saved. Before the user picks a job, Kopi points to the check-up and answers general questions about Kotak's data.
+
+The [chat route](#kopis-chat-route) runs Claude with Kotak's tools in process ([#189]):
+
+- **In process**: the Anthropic API's `mcp_servers` connector needs a public HTTPS URL and a network hop back into the Worker, so the route runs the tool runner with the registry in the same isolate.
+- **Bound tools**: `run_checkup` and `what_changed` are bound to the user's check-up. Their input schema drops the user's own fields (role, answers, goal, target role and start date), and the what-if fields (weekly hours, snapshot and plan role) default to the user's values, so the model sets only what a what-if changes, or the scenario. With no check-up, or a role picked with no corner answered yet, the tools that need answers are left out, so the model can't make answers up.
+- **System prompt**: the agent rules, then Kopi's voice (plain text, the answer first, at most 120 words), then whether the user has a check-up, has picked a role but answered nothing yet, or has neither.
+
 ## API routes
 
 ### Rules for every route
@@ -517,10 +639,36 @@ The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels
 - **`GET /api/national-view/summary`**: aggregates rising skill gaps by role and occupation group. It returns real averages only when `COUNT(*) >= 10` over rows where `is_sample = false`. Otherwise it returns the labelled sample rows with `is_sample: true`. Once 10 real rows exist for a role code, it returns the real aggregate with `is_sample: false` ([#34]).
 - **Screen**: filters by major occupation group or demo role. It shows the badge "Shown only for groups of 10 or more anonymous check-ups" and tags seed-backed groups "Sample Data (until n >= 10)". No single check-up row or identifier ever appears in the UI or a network response ([#72]).
 - **Seed**: a seed script inserts labelled sample rows for the demo occupations and groups ([#34]).
+- **Shared summary**: the summary route and the `national_skill_gaps` tool both call `nationalViewSummary`, so they give the same rows ([#190]).
+
+### MCP route
+
+- **Route**: `POST /api/mcp`, MCP's Streamable HTTP transport ([#186]). It serves the 2026-07-28 protocol revision and, statelessly, 2025-era requests, which need no `initialize`. `GET` answers 405, because the server keeps no sessions to stream.
+- **Input**: a JSON-RPC message of at most 16 KiB. Each tool's arguments follow its input schema in the [tool registry](#tool-registry).
+- **Output**: each tool result as `structuredContent` in the tool's published output schema, plus the same JSON as text for clients that ignore structured output. The server skips the MCP SDK's own check of each result against its schema, which cost about 2.5 ms of a cold Worker request's CPU; results come from the SDK's rules, and clients that validate still check them.
+- **Auth**: none. Every tool only reads public data, and the server stores nothing. The route sits under `/api/*`, so the Worker runs first and the app's CORS applies.
+- **`/.well-known/*`**: MCP clients probe it for OAuth metadata, so it answers a JSON 404 `not_found`, not the app's `index.html`. `wrangler.jsonc` sends it to the Worker first.
+- **Data**: one `Kotak` per isolate, shared with Kopi's chat, reading the bundle through `ASSETS` on the Worker and from disk on Bun, as a trusted source. A cold isolate warms the MCP and Zod code at startup with an in-memory `tools/list` and `run_checkup` that read no data.
+- **Failure**: without a data bundle the route answers 503 `mcp_unavailable`. A tool that fails, such as for an unknown role code, returns an MCP tool error whose message tells the model what to do next.
+- **CPU**: see [Performance and availability](#performance-and-availability).
+
+### Kopi's chat route
+
+- **Route**: `POST /api/agent/chat` ([#189]). [Ask Kopi](#ask-kopi) describes the panel and the bound tools.
+- **Origin**: Kotak's own pages only, since the route spends Kotak's Claude key. A request whose `Origin` names another host answers 403 `cross_origin` before CORS applies; a request with no `Origin` passes.
+- **Input** (`AgentChatRequestSchema` in `packages/shared/src/api.ts`, at most 64 KiB):
+  - `messages`: 1 to 20 turns that start and end with the user, each `{ role, content }`, with at most 1,000 characters for a user turn and 4,000 for Kopi's.
+  - `checkup`: the guest session's check-up, or `null` before the user picks a job. It holds `role_code`, `goal`, `target_role_code`, `plan_role_code`, the 12 `answers` slots in the assessed role's corner order, `snapshot_id`, `weekly_hours` (1 to 10; `null` takes the AI dividend) and `start_date`, the app's today, so Kopi's dates match the Roadmap page.
+- **Output** (`AgentChatResponseSchema`): `reply`, Kopi's plain-text answer; `tools`, each tool call in order as `{ name, label }`, such as "Run the Check-Up: 6 h a week"; and `sources`, every `{ source_name, vintage_date }` in those tools' results, once.
+- **Model**: Claude Haiku 5.5 with effort `low`, at most 5 Claude requests per chat request, tool rounds included, and at most 8,192 output tokens per Claude request.
+- **Rate limit**: the route's own limit of 30 Claude requests a minute, on the limiter the other Claude routes use, counted before every Claude request in the tool loop, so one chat request counts up to 5 times ([#155]).
+- **Caching**: none. Each conversation differs.
+- **Failure**: an invalid body, or a check-up for a role Kotak doesn't have, answers 400 `invalid_request`. No API key, no data bundle, the rate limit (even mid-loop), a Claude failure (including running out of requests) or any other error answers 503 `agent_unavailable`: "Kopi can't chat right now. Your check-up, roles and roadmap still work." The panel then points to the rest of the app.
+- **Logging**: the route never logs the user's messages or answers.
 
 ### Health check
 
-The deploy workflow's smoke check calls a live health endpoint and a static data file to confirm the app is awake ([#62]). [#62] names the paths.
+`GET /api/health` returns `{ "status": "ok" }`. After each deploy, the workflow checks that it answers 200 ([#62]) and that an MCP `tools/list` at `/api/mcp` names all six Kotak tools ([#186]).
 
 ## AI models
 
@@ -533,6 +681,7 @@ The deploy workflow's smoke check calls a live health endpoint and a static data
 | Local and Malay job titles to the closest O\*NET occupation                   | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, cached                   | [#43]        |
 | Corner explanations and the What Changed summary                              | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, cached, verified         | [#43]        |
 | Skills from a pasted job ad                                                   | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, cached by ad hash        | [#48]        |
+| Kopi's answers to follow-up and what-if questions, over Kotak's tools         | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, tool runner, not cached  | [#189]       |
 | Kopi's voice                                                                  | ElevenLabs `eleven_v4` (fixed lines) and `eleven_v4_turbo` (live lines)         | Pre-generated and live, cached | [#46]        |
 
 All models are pre-trained and used as provided. None is fine-tuned or self-trained. The team chose live Claude calls through the Claude API on 22 October ([decisions][decisions]). The same day it moved from Claude Opus 5.5 to Claude Sonnet 5.5, then to Claude Haiku 5.5, for speed and cost.
@@ -547,8 +696,9 @@ These rules come from Anthropic's [models overview][models] and [migration guide
 
 - **Model ID**: `claude-haiku-5-5`, with no date suffix.
 - **Sampling**: Claude Haiku 5.5 rejects non-default `temperature`, `top_p` and `top_k` values with HTTP 400. The issues ask for `temperature: 0` ([#43], [#79]). Requests leave these fields out. Repeatable answers come from the response cache and the verifier, not from sampling settings.
-- **Thinking**: adaptive by default, and Kotak leaves it on. `output_config.effort` defaults to `medium`, and each route sets it: `low` for title matching, where the user waits, and `medium` for explanations, which load in the background.
+- **Thinking**: adaptive by default, and Kotak leaves it on. `output_config.effort` defaults to `medium`, and each route sets it: `low` for title matching and Kopi's chat, where the user waits, and `medium` for explanations, which load in the background.
 - **Structured output**: use `output_config.format` for JSON. Forced tool use (`tool_choice` of `any` or `tool`) skips thinking on this model, so requests do not use it.
+- **Tool use**: Kopi's chat leaves `tool_choice` unset, so Claude picks its tools, and the Anthropic SDK's beta tool runner calls them until Claude answers ([#189]).
 - **Overload**: the API returns `529 overloaded_error` when it is "temporarily overloaded" ([errors][errors]). The routes then serve cached, labelled answers.
 
 [models]: https://platform.claude.com/docs/en/about-claude/models/overview
@@ -561,6 +711,7 @@ These rules come from Anthropic's [models overview][models] and [migration guide
 - **Repeat speed**: an identical request returns the cached payload in under 50 ms without calling the Anthropic API ([#43]).
 - **Job ads**: keyed by a hash of the ad ([#48]).
 - **Audio**: keyed by a hash of text, voice and model ([#46]).
+- **Kopi's chat**: not cached, because each conversation differs ([#189]).
 - **Pre-warming**: the cache is filled for the 2 or 3 demo roles before the demo, and Kopi's fixed lines are pre-generated, so the live demo never waits on an external API ([#43], [#46]). `bun run prewarm:ai scripts/demo-requests.json` sends the requests `scripts/demo-requests.ts` builds with the app's own code, and each deploy pre-generates the lines in `scripts/kopi-lines.ts`, recorded from the demo walk ([#150]).
 
 ### Explanation verifier
@@ -606,17 +757,17 @@ This set-up, fixed on 22 October, replaces the Replit Reserved VM plan in [#65],
 1.  Install Bun.
 2.  Run typecheck and tests.
 3.  Pre-generate Kopi's fixed lines with the `ELEVENLABS_API_KEY` secret, reusing cached files ([#150]).
-4.  Build the Vite frontend and the Hono server bundle.
+4.  Build the Vite frontend and the Hono server bundle. The build also publishes the skill zip and `/llms.txt`, and fails if the skill drifts from the agent rules ([#188]).
 5.  Apply the Neon migrations (`bun run db:migrate`).
 6.  Deploy with `cloudflare/wrangler-action@v4`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. The token uses the "Edit Cloudflare Workers" template.
 7.  Re-seed the national view's labelled sample rows (`bun run db:seed`), after the deploy so the old Worker never reads rows it can't parse ([#147]).
-8.  Run the post-deploy smoke check against the live link.
+8.  Run the post-deploy smoke checks against the live link: `/api/health` answers 200, and an MCP `tools/list` at `/api/mcp` names all six Kotak tools ([#186]).
 
 Worker routing ([deploy notes][deploy]):
 
 - One Worker serves the Vite build and the API.
 - `not_found_handling = "single-page-application"` sends unknown paths to the app.
-- `run_worker_first = ["/api/*"]` sends API paths to Hono.
+- `run_worker_first = ["/api/*", "/.well-known/*"]` sends API paths to Hono, and the `.well-known` paths that MCP clients probe to its JSON 404 ([#186]).
 - Static asset requests are free and unlimited.
 
 Who can ship: any member with write access, by merging to `main` or by clicking "Run workflow". Secrets are not passed to workflows triggered from a fork, except `GITHUB_TOKEN` ([deploy notes][deploy]).
@@ -638,6 +789,7 @@ Replit is compulsory, and proof must come from the team's own account ([brief][b
 
 - `.replit` at the repository root installs dependencies and starts the Bun server and the frontend.
 - Replit Secrets hold the runtime variables, by the names in `.env.example`.
+- The Bun server also serves `/api/mcp` and Kopi's chat, reading the data bundle from disk. Its `/api/mcp` is the fallback MCP URL if the Worker can't fit an MCP call in its CPU limit ([#186]).
 - Screenshots show the account name, the project URL, the run or version history, the Secrets names and the running app ([#68]). [#102] compiles them into `submission/REPLIT PROOF OF USE.pdf`.
 - Plan: Replit Core from the sponsor code, if [#99] gets a working code and [#100] redeems it. Otherwise the one free Starter app, which "Includes 1 free published app. The deployment expires after 30 days" ([deploy notes][deploy], [#99]).
 
@@ -689,6 +841,7 @@ Kotak meets WCAG 2.2 AA in light and dark themes ([#75]):
 - Screen readers announce corner names, user levels, target levels and verdicts on the radar. The radar and the readiness graph have ARIA labels and visually hidden summary tables.
 - Every control and chip has a visible focus ring and ARIA attributes ([#36]).
 - The landing page scores 95 or more for accessibility in Lighthouse ([#54]).
+- The Ask Kopi panel opens as a modal dialog that keeps focus inside and returns it on close, labels its controls, announces replies in a live region, works by keyboard and fits a phone ([#191]).
 
 Reduced motion: `prefers-reduced-motion`, or the in-app toggle, replaces the Live2D animation with static pose art and instant text, and replaces the box-opening transition with a simple fade ([#49], [#51], [#75]).
 
@@ -709,7 +862,10 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 
 - **Live link**: the link must load without cold-start failures and stay up through judging ([#33]). The post-deploy smoke check confirms it after each deploy ([#62]). A remote smoke test from another network and device runs the judge path before submission ([#94]).
 - **No live dependency for the demo**: scores, verdicts and the snapshot switch run in the browser from static JSON. Demo explanations and fixed voice lines are pre-warmed.
-- **Worker limits**: the free plan allows 100,000 requests a day and 10 ms of CPU per request, not counting network waits ([deploy notes][deploy]). Heavy work stays in the browser and the build.
+- **Worker limits**: the free plan allows 100,000 requests a day and 10 ms of CPU per request, not counting network waits ([deploy notes][deploy]). Heavy work stays in the browser and the build. The Worker bundle is about 6.9 MiB, or 1.1 MiB gzipped; Cloudflare counts only the uncompressed size, against a 64 MiB limit ([Workers limits][cf-limits]).
+- **MCP CPU budget**: a check-up reads 21 role files, which is the heaviest work the Worker does. The MCP server parses each file once per isolate and skips its Zod parse, skips the MCP SDK's output check, and warms its code at isolate startup rather than in a request. Measured locally after the warm-up, a cold `run_checkup` costs about 16 ms of CPU in V8 and 8 ms in Bun, down from about 25 ms, and a warm one about 2 ms. The real figure is the `cpuTime` in Workers Logs after a deploy. If cold calls exceed the limit, the Bun server on Replit is the fallback MCP URL ([#186]).
+
+[cf-limits]: https://developers.cloudflare.com/workers/platform/limits/
 
 ### Privacy
 
@@ -718,12 +874,14 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 - **No personal data.** No CV upload, no real CVs and no free-text profile. The demo uses synthetic profiles only ([non-goals][anti-goals]).
 - **Anonymous aggregates.** The national view stores only role code, corner levels and date, and shows totals only for groups of 10 or more real check-ups ([#34]).
 - **Third parties.** A typed job title and a pasted public job ad go to the Anthropic API. Kopi's lines go to ElevenLabs as text.
+- **Kopi's chat.** A question to Kopi sends the conversation and the guest's check-up (role codes, goal, the 12 answers, snapshot, weekly hours and start date) to Kotak's API, which sends them, with the tool results, to the Anthropic API. The API doesn't store, cache or log them, and the panel keeps the conversation only in the page's memory ([#189], [#191]).
+- **MCP.** The MCP server is stateless: it uses an assistant's tool inputs, such as a job title or answers, for that call only, and stores and logs none of them. What the assistant keeps is up to its provider ([#186]).
 
 ### Privacy summary
 
 This paragraph fits declaration section 6.1 (under 150 words).
 
-Kotak has no accounts. Users sign in as a guest, and their check-up stays in the browser's local storage until they reset it. Kotak asks for no name, email, CV or free-text profile, and the demo uses synthetic profiles only. A finished check-up sends only the role code, up to 6 corner levels from 0 to 3 and the date to a Postgres database on Neon. It stores no names, IDs or free text. The national view shows totals only for groups of 10 or more real check-ups and labels sample rows. A typed job title or a pasted public job ad goes to the Anthropic API to find a role or skills. The result is cached by a hash and changes no other user's results. The cat's lines go to ElevenLabs as text. API keys stay in server secrets and never reach the browser or the repository.
+Kotak has no accounts. Users sign in as a guest, and their check-up stays in the browser's local storage until they reset it. Kotak asks for no name, email, CV or free-text profile, and the demo uses synthetic profiles only. A finished check-up sends only the role code, up to 6 corner levels from 0 to 3 and the date to a Postgres database on Neon. The national view shows totals only for groups of 10 or more real check-ups and labels sample rows. A typed job title or a pasted public job ad goes to the Anthropic API to find a role or skills, and the result is cached by a hash. A question to Kopi's chat goes there too, with the check-up's answers; Kotak stores and logs neither. The cat's lines go to ElevenLabs as text. API keys stay in server secrets and never reach the browser.
 
 ### Security
 
@@ -731,30 +889,33 @@ Kotak has no accounts. Users sign in as a guest, and their check-up stays in the
 - Keys stay on the server; the browser calls only Kotak's own API ([#46]).
 - Every route rejects payloads that fail its Zod schema ([#27]).
 - Rendered job-ad quotes are text found in the visitor's own ad, checked word for word ([#48]).
+- The MCP server and Kopi's chat offer only read-only tools over public data, so the MCP server needs no auth and keeps no sessions. No tool writes anything ([#184], [#186]).
 
 ## Known limitations and risks
 
 ### Risk register
 
-| Risk                                                                           | Effect                                    | Mitigation or fallback                                                                                                                                                | Issues               |
-| ------------------------------------------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| The Claude API is overloaded (`529`) or down                                   | Explanations and title matches stall      | Cached, labelled answers; the deterministic explanation template; pre-warmed demo roles                                                                               | [#43], [#78]         |
-| A model invents a claim or changes a verdict                                   | A wrong or uncited explanation            | The verifier strips it and falls back to the template; engine functions make no AI calls                                                                              | [#43], [#37]         |
-| A model invents a job-ad quote                                                 | A fake skill on the visitor's view        | Code drops any quote not found word for word in the ad                                                                                                                | [#48]                |
-| The Economic Index measures Claude usage, not jobs, and suppresses small cells | Biased or missing signals                 | Label it an AI usage signal; store suppressed cells as `null`; borrow from the layer above with a label                                                               | [#50], [#71]         |
-| Two monthly points drive a 12-month projection                                 | Rough projections                         | Every projection is labelled an estimate; fewer than two points gives Unknown; Split shows both futures                                                               | [#81]                |
-| No open Malaysian series tracks demand for single skills                       | Corners share their role's demand         | Corners differ through their AI data; the data card states the gap                                                                                                    | [#71], [#93]         |
-| O\*NET is a US taxonomy, and the MASCO match is lossy                          | Wrong local labels                        | The user confirms AI title matches; unmatched roles carry `masco_unmatched: true`                                                                                     | [#43], [#44]         |
-| The batch makes uneven or vague corners                                        | Weak questions for some jobs              | The task-ID validator; the "auto-generated" label; hand-checked demo and legal roles                                                                                  | [#74], [#104], [#91] |
-| The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | The Claude Message Batches backup for any subset of codes                                                                                                             | [#79]                |
-| ElevenLabs fails or the credits run out                                        | No voice                                  | Pre-generated static MP3s; text-only fallback; a persistent mute                                                                                                      | [#46]                |
-| The Worker hits its free-plan limits                                           | Failed API calls                          | Scoring runs in the browser; static assets are free and unlimited                                                                                                     | [#62]                |
-| An open AI or TTS route is called by others                                    | Spent credits                             | Response caches; at most 30 uncached Claude calls a minute per route, per Cloudflare location and approximate ([#155]); a TTS-only ElevenLabs key with a credit quota | [#46], [#53], [#155] |
-| MyCOL and MASCO have no open licence; Job Market Insights has DOSM's terms     | A breach if raw tables ship or uncredited | Store only cited figures and codes; commit no restricted raw data; every Job Market Insights figure carries DOSM's attribution and the snapshot links its terms       | [#47], [#52], [#60]  |
-| The Live2D sample model cannot be redistributed under its licence              | A conflict with the Apache 2.0 repository | Risk accepted on 22 October; credit and terms in `NOTICE.md`                                                                                                          | [#47]                |
-| pixi-live2d-display loads Live2D's Cubism Core runtime script                  | An undeclared third-party component       | Declare it in `NOTICE.md` and the declaration                                                                                                                         | [#47], [#73]         |
-| A scheduled workflow commits after the deadline                                | Disqualification                          | Pause every committing workflow before the freeze                                                                                                                     | [#89]                |
-| The Replit Core code stays expired                                             | No paid Replit plan                       | The one free Starter app, with the project link and history as proof                                                                                                  | [#99]                |
+| Risk                                                                           | Effect                                    | Mitigation or fallback                                                                                                                                                                                                                                                    | Issues                       |
+| ------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| The Claude API is overloaded (`529`) or down                                   | Explanations and title matches stall      | Cached, labelled answers; the deterministic explanation template; pre-warmed demo roles                                                                                                                                                                                   | [#43], [#78]                 |
+| A model invents a claim or changes a verdict                                   | A wrong or uncited explanation            | The verifier strips it and falls back to the template; engine functions make no AI calls                                                                                                                                                                                  | [#43], [#37]                 |
+| A model invents a job-ad quote                                                 | A fake skill on the visitor's view        | Code drops any quote not found word for word in the ad                                                                                                                                                                                                                    | [#48]                        |
+| Kopi or a connected assistant states a number no tool returned                 | A made-up result in a chat                | One agent rules text for every agent; read-only tools compute every number; Kopi's tools carry the user's own answers; replies are labelled AI-drafted; the build fails if the skill's rules drift                                                                        | [#184], [#188], [#189]       |
+| The Economic Index measures Claude usage, not jobs, and suppresses small cells | Biased or missing signals                 | Label it an AI usage signal; store suppressed cells as `null`; borrow from the layer above with a label                                                                                                                                                                   | [#50], [#71]                 |
+| Two monthly points drive a 12-month projection                                 | Rough projections                         | Every projection is labelled an estimate; fewer than two points gives Unknown; Split shows both futures                                                                                                                                                                   | [#81]                        |
+| No open Malaysian series tracks demand for single skills                       | Corners share their role's demand         | Corners differ through their AI data; the data card states the gap                                                                                                                                                                                                        | [#71], [#93]                 |
+| O\*NET is a US taxonomy, and the MASCO match is lossy                          | Wrong local labels                        | The user confirms AI title matches; unmatched roles carry `masco_unmatched: true`                                                                                                                                                                                         | [#43], [#44]                 |
+| The batch makes uneven or vague corners                                        | Weak questions for some jobs              | The task-ID validator; the "auto-generated" label; hand-checked demo and legal roles                                                                                                                                                                                      | [#74], [#104], [#91]         |
+| The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | The Claude Message Batches backup for any subset of codes                                                                                                                                                                                                                 | [#79]                        |
+| ElevenLabs fails or the credits run out                                        | No voice                                  | Pre-generated static MP3s; text-only fallback; a persistent mute                                                                                                                                                                                                          | [#46]                        |
+| The Worker hits its free-plan limits                                           | Failed API or MCP calls                   | Scoring runs in the browser; static assets are free and unlimited; the MCP server parses role files once per isolate, without Zod, and warms up at startup; the Bun server on Replit is the fallback MCP URL                                                              | [#62], [#186]                |
+| An open AI or TTS route is called by others                                    | Spent credits                             | Response caches; at most 30 uncached Claude calls a minute per route, per Cloudflare location and approximate ([#155]); Kopi's chat checks the limit before every Claude request and caps its requests and tokens ([#189]); a TTS-only ElevenLabs key with a credit quota | [#46], [#53], [#155], [#189] |
+| The repository that lists the plugin is private                                | No one-command plugin install             | The connector URL and the skill zip are the main install paths; the marketplace slug is one constant, moved to a public repository before submission                                                                                                                      | [#188]                       |
+| MyCOL and MASCO have no open licence; Job Market Insights has DOSM's terms     | A breach if raw tables ship or uncredited | Store only cited figures and codes; commit no restricted raw data; every Job Market Insights figure carries DOSM's attribution and the snapshot links its terms                                                                                                           | [#47], [#52], [#60]          |
+| The Live2D sample model cannot be redistributed under its licence              | A conflict with the Apache 2.0 repository | Risk accepted on 22 October; credit and terms in `NOTICE.md`                                                                                                                                                                                                              | [#47]                        |
+| pixi-live2d-display loads Live2D's Cubism Core runtime script                  | An undeclared third-party component       | Declare it in `NOTICE.md` and the declaration                                                                                                                                                                                                                             | [#47], [#73]                 |
+| A scheduled workflow commits after the deadline                                | Disqualification                          | Pause every committing workflow before the freeze                                                                                                                                                                                                                         | [#89]                        |
+| The Replit Core code stays expired                                             | No paid Replit plan                       | The one free Starter app, with the project link and history as proof                                                                                                                                                                                                      | [#99]                        |
 
 ### Limitations summary
 
@@ -764,19 +925,21 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 
 ## Traceability
 
-| Section                                                     | Issues that implement it                                                                      |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| [Overview](#overview)                                       | [#27], [#37], [#56], [#93]                                                                    |
-| [System architecture](#system-architecture)                 | [#26], [#28], [#29], [#41], [#51], [#56], [#88]                                               |
-| [Stack](#stack)                                             | [#29], [#32], [#49], [#61], [#73]                                                             |
-| [Data sources](#data-sources)                               | [#30], [#44], [#47], [#50], [#52], [#55], [#60], [#63], [#66], [#71], [#93], [#95]            |
-| [Engine](#engine)                                           | [#37], [#40], [#59], [#64], [#67], [#69], [#81], [#83], [#86], [#88]                          |
-| [API routes](#api-routes)                                   | [#27], [#34], [#43], [#46], [#48], [#72], [#105]                                              |
-| [AI models](#ai-models)                                     | [#35], [#43], [#46], [#48], [#74], [#77], [#79], [#91], [#104]                                |
-| [Deployment and environments](#deployment-and-environments) | [#33], [#53], [#62], [#65], [#68], [#70], [#89], [#90], [#99], [#100], [#101], [#102], [#103] |
-| [Non-functional requirements](#non-functional-requirements) | [#28], [#34], [#36], [#41], [#49], [#51], [#54], [#57], [#75], [#78], [#94]                   |
-| [Known limitations and risks](#known-limitations-and-risks) | [#43], [#46], [#47], [#48], [#79], [#89], [#99]                                               |
-| Declaration and README that copy from this document         | [#39], [#56], [#73], [#76]                                                                    |
+| Section                                                     | Issues that implement it                                                                                      |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [Overview](#overview)                                       | [#27], [#37], [#56], [#93]                                                                                    |
+| [System architecture](#system-architecture)                 | [#26], [#28], [#29], [#41], [#51], [#56], [#88]                                                               |
+| [Stack](#stack)                                             | [#29], [#32], [#49], [#61], [#73]                                                                             |
+| [Data sources](#data-sources)                               | [#30], [#44], [#47], [#50], [#52], [#55], [#60], [#63], [#66], [#71], [#93], [#95]                            |
+| [Engine](#engine)                                           | [#37], [#40], [#59], [#64], [#67], [#69], [#81], [#83], [#86], [#88]                                          |
+| [SDK layer](#sdk-layer)                                     | [#184], [#185], [#187]                                                                                        |
+| [Agent layer](#agent-layer)                                 | [#184], [#186], [#188], [#189], [#190], [#191], [#192]                                                        |
+| [API routes](#api-routes)                                   | [#27], [#34], [#43], [#46], [#48], [#72], [#105], [#186], [#189], [#190]                                      |
+| [AI models](#ai-models)                                     | [#35], [#43], [#46], [#48], [#74], [#77], [#79], [#91], [#104], [#189]                                        |
+| [Deployment and environments](#deployment-and-environments) | [#33], [#53], [#62], [#65], [#68], [#70], [#89], [#90], [#99], [#100], [#101], [#102], [#103], [#186], [#188] |
+| [Non-functional requirements](#non-functional-requirements) | [#28], [#34], [#36], [#41], [#49], [#51], [#54], [#57], [#75], [#78], [#94], [#186], [#189], [#191]           |
+| [Known limitations and risks](#known-limitations-and-risks) | [#43], [#46], [#47], [#48], [#79], [#89], [#99], [#186], [#188], [#189]                                       |
+| Declaration and README that copy from this document         | [#39], [#56], [#73], [#76]                                                                                    |
 
 ## See also
 
@@ -784,6 +947,8 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 - [Idea page](/docs/IDEA.md) and [product](/docs/PRODUCT.md)
 - [Brief](/docs/BRIEF.md) and [context](/docs/CONTEXT.md)
 - [Technical Tools Declaration template](/docs/sources/drive.google.com/technical-tools-declaration-template.md)
+- [SDK README](/packages/sdk/README.md) and [agent layer README](/packages/agent/README.md)
+- [Issue #184](https://github.com/TolongLabs/sdc-hack/issues/184), the SDK and agent layer spec
 - Research: [trend data](/docs/research/trend-data.md), [official demand](/docs/research/demand-official.md), [published demand](/docs/research/demand-published.md), [skill signals](/docs/research/demand-skills.md), and [deploy and TTS](/docs/research/deploy-and-tts.md)
 
 [td]: /docs/sources/drive.google.com/technical-tools-declaration-template.md
@@ -872,3 +1037,12 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 [#152]: https://github.com/TolongLabs/sdc-hack/issues/152
 [#154]: https://github.com/TolongLabs/sdc-hack/issues/154
 [#155]: https://github.com/TolongLabs/sdc-hack/issues/155
+[#184]: https://github.com/TolongLabs/sdc-hack/issues/184
+[#185]: https://github.com/TolongLabs/sdc-hack/issues/185
+[#186]: https://github.com/TolongLabs/sdc-hack/issues/186
+[#187]: https://github.com/TolongLabs/sdc-hack/issues/187
+[#188]: https://github.com/TolongLabs/sdc-hack/issues/188
+[#189]: https://github.com/TolongLabs/sdc-hack/issues/189
+[#190]: https://github.com/TolongLabs/sdc-hack/issues/190
+[#191]: https://github.com/TolongLabs/sdc-hack/issues/191
+[#192]: https://github.com/TolongLabs/sdc-hack/issues/192

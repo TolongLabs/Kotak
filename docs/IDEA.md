@@ -18,6 +18,7 @@ Contents:
 - **Flow**: the user picks a job, a goal and an impact area. A cat counsellor asks 12 yes/no can-do questions. Kotak draws the user's 6 skill corners against what the role will need in 12 months, ranks the roles they fit and builds a roadmap of free steps with a finish date ([product flow][k-flow]).
 - **Engine**: dated snapshots from the Anthropic Economic Index, DOSM, MyCOL and O\*NET feed a four-layer hierarchy. Fixed rules set every verdict, target, fit score and ranking ([engine][k-engine]).
 - **Core rule**: data decides, the AI explains. AI writes corner names, questions and explanations, but never sets a score or a verdict ([where AI works][k-ai]).
+- **AI assistants**: an SDK and an agent layer give any AI assistant Kotak's check-up as read-only tools over MCP, and Kopi answers follow-up questions in the app with the same tools ([agent layer][trd-agent]).
 - **Government side**: an anonymous national view of the rising skills Malaysian workers lack most, with totals only for groups of 10 or more ([users][k-users]).
 - **Live demo**: one button switches the Economic Index snapshot from April to May 2026, and the radar, verdicts, role ranking and roadmap update ([live demo][k-demo]).
 
@@ -26,6 +27,7 @@ Contents:
 [k-engine]: /docs/ideas/0007-kotak.md#engine
 [k-ai]: /docs/ideas/0007-kotak.md#where-ai-works-and-where-rules-decide
 [k-demo]: /docs/ideas/0007-kotak.md#must-haves-and-the-live-demo
+[trd-agent]: /docs/TRD.md#agent-layer
 
 ## How the idea was built
 
@@ -41,15 +43,17 @@ Contents:
 
 ## Where the detail lives
 
-| Document              | Holds                                                                     |
-| --------------------- | ------------------------------------------------------------------------- |
-| [BRIEF](BRIEF.md)     | The hackathon's rules, deadlines, deliverables and judging                |
-| [CONTEXT](CONTEXT.md) | What wins marks, who judges, and the trend and skills data                |
-| IDEA                  | This page: the chosen idea and how it was built                           |
-| [PRODUCT](PRODUCT.md) | Users, purpose, brand personality and design principles                   |
-| [DESIGN](DESIGN.md)   | The visual design system and the Figma file                               |
-| [PRD](PRD.md)         | Product requirements, in the organisers' preliminary proposal template    |
-| [TRD](TRD.md)         | Technical requirements: architecture, data, engine rules, APIs and deploy |
+| Document                                 | Holds                                                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [BRIEF](BRIEF.md)                        | The hackathon's rules, deadlines, deliverables and judging                                     |
+| [CONTEXT](CONTEXT.md)                    | What wins marks, who judges, and the trend and skills data                                     |
+| IDEA                                     | This page: the chosen idea and how it was built                                                |
+| [PRODUCT](PRODUCT.md)                    | Users, purpose, brand personality and design principles                                        |
+| [DESIGN](DESIGN.md)                      | The visual design system and the Figma file                                                    |
+| [PRD](PRD.md)                            | Product requirements, in the organisers' preliminary proposal template                         |
+| [TRD](TRD.md)                            | Technical requirements: architecture, data, engine rules, APIs and deploy                      |
+| [SDK](/packages/sdk/README.md)           | `@kotak/sdk`: Kotak's check-up from code, in the browser, Bun or a Worker                      |
+| [Agent layer](/packages/agent/README.md) | `@kotak/agent`: Kotak's tools for AI assistants over MCP, the kotak-checkup skill and Ask Kopi |
 
 The [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) supports local breadth collection and depth description enrichment, plus production persistence through Neon Postgres. The production admin panel queues runs for four seeded search titles; a separate Bun runner launches the browser, and a Cloudflare cron queues daily breadth refreshes. Initial Neon credentials and local-capture import still need to be configured by an operator.
 
