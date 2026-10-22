@@ -22,7 +22,7 @@ const beforeSnapshot: SnapshotId = '2026-04'
 const afterSnapshot: SnapshotId = '2026-05'
 
 function DashboardState({ children }: { children: ReactNode }) {
-  return <div className="mx-auto w-full max-w-[45rem] space-y-6">{children}</div>
+  return <div className="space-y-5 lg:space-y-6">{children}</div>
 }
 
 function formatEstimate(value: number) {
