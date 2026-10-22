@@ -3,11 +3,11 @@ import { Banner } from '../../components/ui/Banner'
 import { Button } from '../../components/ui/Button'
 import { CatDialogue } from '../../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../../components/kotak/FutureSkillsRadar'
-import { GapCard } from '../../components/kotak/GapCard'
 import { KopiFigure } from '../../components/kopi/KopiFigure'
 import { KopiSpeechBox } from '../../components/kopi/KopiSpeechBox'
 import { routes } from '../../app/routes'
 import { LandingActionLink } from './LandingActionLink'
+import { LandingExampleCard } from './LandingExampleCard'
 import { LandingNav } from './LandingNav'
 import { useLandingExample } from './landingExample'
 
@@ -87,7 +87,7 @@ export function LandingHero() {
               </div>
 
               <div className="w-[360px] shrink-0">
-                <GapCard
+                <LandingExampleCard
                   corner={featuredCorner}
                   sources={cornerSources}
                   scenario={example.checkup.scenario}
@@ -101,7 +101,7 @@ export function LandingHero() {
               </div>
             </div>
 
-            {/* Phone composition (390px / below xl): Radar, CatDialogue, and GapCard stacked */}
+            {/* Phone composition (390px / below xl): Radar, CatDialogue, and LandingExampleCard stacked */}
             <div className="flex w-full max-w-[342px] flex-col items-center gap-5 xl:hidden">
               <FutureSkillsRadar
                 corners={example.corners}
@@ -116,7 +116,7 @@ export function LandingHero() {
               </div>
 
               <div className="w-full">
-                <GapCard
+                <LandingExampleCard
                   corner={featuredCorner}
                   sources={cornerSources}
                   scenario={example.checkup.scenario}
