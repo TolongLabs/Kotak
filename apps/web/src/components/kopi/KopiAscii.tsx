@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { KopiPose } from './poses'
 
 // Kopi's entrance (DESIGN.md "Motion"), after ascii-magic.com's image-to-ASCII looks: the pose art rebuilt from glyphs
 // that rise row by row from the bottom. Each cell scrambles in the text colour, then settles on the glyph for its
-// density in the art's own colour, and the art takes over.
+// density in the art's own colour. The settled glyphs stay on screen until the caller hands over to Live2D.
 const RAMP = ' .:-=+*#%@'
 const SCRAMBLE = '01<>/\\|[]{}=+*?'
 const ART_WIDTH = 561
@@ -25,13 +25,21 @@ interface Cell {
   seed: number
 }
 
-export function KopiAscii({ pose, onDone }: { pose: KopiPose; onDone: () => void }) {
+export interface KopiAsciiProps {
+  pose: KopiPose
+  // Draw the glyphs already settled, for a second Kopi on a page whose entrance has played.
+  instant?: boolean
+  onSettled: () => void
+}
+
+export function KopiAscii({ pose, instant = false, onSettled }: KopiAsciiProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const onDoneRef = useRef(onDone)
+  const onSettledRef = useRef(onSettled)
+  const [startSettled] = useState(instant)
 
   useEffect(() => {
-    onDoneRef.current = onDone
-  }, [onDone])
+    onSettledRef.current = onSettled
+  }, [onSettled])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -40,7 +48,7 @@ export function KopiAscii({ pose, onDone }: { pose: KopiPose; onDone: () => void
     let cancelled = false
     // Any failure just lets Kopi appear; the entrance never holds him back.
     const finish = () => {
-      if (!cancelled) onDoneRef.current()
+      if (!cancelled) onSettledRef.current()
     }
 
     const image = new Image()
@@ -116,7 +124,7 @@ export function KopiAscii({ pose, onDone }: { pose: KopiPose; onDone: () => void
       context.textBaseline = 'top'
       // Scrambling glyphs use the text colour so they read on dark surfaces, where the black cat's own tone wouldn't.
       const scrambleColor = getComputedStyle(target).color
-      const began = performance.now()
+      const began = performance.now() - (startSettled ? END_MS : 0)
 
       const draw = (now: number) => {
         const elapsed = now - began
@@ -141,7 +149,7 @@ export function KopiAscii({ pose, onDone }: { pose: KopiPose; onDone: () => void
       cancelled = true
       cancelAnimationFrame(frame)
     }
-  }, [pose])
+  }, [pose, startSettled])
 
   return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full text-text-primary" />
 }
