@@ -55,6 +55,14 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SCRAPER_ADMIN_TOKEN: ${{ secrets.SCRAPER_ADMIN_TOKEN }}
 
+      # TRD.md: the build writes the national view's labelled sample rows, at least 10 per occupation group (#147).
+      # The seed replaces only rows where is_sample is true. It runs after the deploy, because the Worker it replaces
+      # parses only 6-corner rows, and one sample role has 5 corners (#152).
+      - name: Seed national view sample rows
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: bun run db:seed
+
       - name: Check deployed health endpoint
         env:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}

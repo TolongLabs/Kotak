@@ -154,7 +154,7 @@ Hono runs on the Cloudflare Workers runtime in production and on Bun locally and
 4.  **Serve.** The Worker serves the app and the JSON as static assets. The app never runs ingestion or build scripts at runtime ([#28]).
 5.  **Score.** The browser loads the active snapshot and runs the engine rules on the guest's answers ([#41]).
 6.  **Explain.** The browser sends computed verdicts, levels and source metadata to the API. The API returns cited explanations and never changes a number ([#43]).
-7.  **Aggregate.** A finished check-up posts its role code, 6 corner levels and date to Postgres ([#34], [#67]).
+7.  **Aggregate.** A finished check-up posts its role code, corner levels (one per corner, up to 6) and date to Postgres ([#34], [#67]).
 8.  **Refresh.** A scheduled workflow checks for new upstream releases, rebuilds the JSON and opens a commit or pull request with the snapshot diff ([#90]).
 
 ### Architecture diagram
@@ -458,7 +458,7 @@ The demo roles come from a scan of the O\*NET catalogue between `2026-04` and `2
 - **Inputs**: O\*NET roles, the alternate-title search index, the corner batch output, the four-layer signals for `2026-04` and `2026-05`, and the demo role diffs.
 - **Checks**: Zod validation of every file. The build exits non-zero if a number lacks a source URL or date, or if a demo role no longer flips a verdict.
 - **Speed**: under 30 seconds.
-- **Seed rows**: the build also writes labelled synthetic aggregates for the national view, at least 10 per occupation group ([#88]). They never count toward the 10-check-up threshold, which counts only rows where `is_sample = false` ([#34]). [#88] says the seed rows let "k-anonymity thresholds pass"; [#34] governs.
+- **Seed rows**: the build also writes labelled synthetic aggregates for the national view, at least 10 per occupation group ([#88]): the demo roles and one role for each other group, and each deploy re-seeds them ([#147]). They never count toward the 10-check-up threshold, which counts only rows where `is_sample = false` ([#34]). [#88] says the seed rows let "k-anonymity thresholds pass"; [#34] governs.
 - **File budget**: each Economic Index snapshot file stays under 2 MB ([#50]).
 
 ## API routes
@@ -474,7 +474,7 @@ The demo roles come from a scan of the O\*NET catalogue between `2026-04` and `2
 
 - **Route**: `POST /api/roles/match` ([#43]).
 - **Input**: a job title, in English, Malay or a local form.
-- **Logic**: search O\*NET 30.1 titles and alternate titles first. When there is no exact match, ask Claude Haiku 5.5 for the closest O\*NET occupation.
+- **Logic**: search O\*NET 30.1 titles and alternate titles first. When there is no exact match, ask Claude Haiku 5.5 for the closest O\*NET occupation. When several occupations share the exact title ("Teacher" is an exact title of 23), Claude Haiku 5.5 picks one of them, and the user confirms it ([#145]).
 - **Output**: the matched occupation. An AI suggestion carries `needs_confirmation: true`, and the start screen shows a confirmation card and the "auto-generated" badge for unchecked roles ([#59]).
 - **Acceptance**: "Jurutera Perisian" and "akauntan" return the closest O\*NET occupation with `needs_confirmation: true`.
 - **Caching**: see [Caching and pre-warming](#caching-and-pre-warming).
@@ -509,9 +509,9 @@ The demo roles come from a scan of the O\*NET catalogue between `2026-04` and `2
 
 ### National view routes
 
-The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels` (JSONB of 6 numbers from 0 to 3), `is_sample` (boolean) and `created_date` (date). It holds no names, user IDs or free text ([#34]).
+The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels` (JSONB of 1 to 6 numbers from 0 to 3, one per corner of the role), `is_sample` (boolean) and `created_date` (date). It holds no names, user IDs or free text ([#34]).
 
-- **`POST /api/national-view/checkups`**: records a finished check-up. The Zod schema rejects any payload with extra personal fields. It stores only role code, 6 corner levels and date ([#34]). The roadmap screen posts it when the check-up finishes ([#67]).
+- **`POST /api/national-view/checkups`**: records a finished check-up. The Zod schema rejects any payload with extra personal fields. It stores only role code, 1 to 6 corner levels and date ([#34], [#152]). The roadmap screen posts it when the check-up finishes ([#67]).
 - **`GET /api/national-view/summary`**: aggregates rising skill gaps by role and occupation group. It returns real averages only when `COUNT(*) >= 10` over rows where `is_sample = false`. Otherwise it returns the labelled sample rows with `is_sample: true`. Once 10 real rows exist for a role code, it returns the real aggregate with `is_sample: false` ([#34]).
 - **Screen**: filters by major occupation group or demo role. It shows the badge "Shown only for groups of 10 or more anonymous check-ups" and tags seed-backed groups "Sample Data (until n >= 10)". No single check-up row or identifier ever appears in the UI or a network response ([#72]).
 - **Seed**: a seed script inserts labelled sample rows for the demo occupations and groups ([#34]).
@@ -567,7 +567,8 @@ After each generation, the verifier checks every explanation ([#43]):
 
 1.  It rejects or strips any text that alters a verdict label.
 2.  It rejects or strips any text that omits a dated citation.
-3.  On rejection, it returns a deterministic template built from the same verdict, levels and sources.
+3.  It rejects any text that cites no Anthropic Economic Index source when the corner, or a changed corner in the What Changed summary, has one: its AI-use trend sets the verdict, so demand alone can't explain it ([#151]).
+4.  On rejection, it returns a deterministic template built from the same verdict, levels and sources.
 
 The explanation never changes a numeric score or a verdict ([#43]).
 
@@ -603,8 +604,10 @@ This set-up, fixed on 22 October, replaces the Replit Reserved VM plan in [#65],
 1.  Install Bun.
 2.  Run typecheck and tests.
 3.  Build the Vite frontend and the Hono server bundle.
-4.  Deploy with `cloudflare/wrangler-action@v4`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. The token uses the "Edit Cloudflare Workers" template.
-5.  Run the post-deploy smoke check against the live link.
+4.  Apply the Neon migrations (`bun run db:migrate`).
+5.  Deploy with `cloudflare/wrangler-action@v4`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. The token uses the "Edit Cloudflare Workers" template.
+6.  Re-seed the national view's labelled sample rows (`bun run db:seed`), after the deploy so the old Worker never reads rows it can't parse ([#147]).
+7.  Run the post-deploy smoke check against the live link.
 
 Worker routing ([deploy notes][deploy]):
 
@@ -710,14 +713,14 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 - **Guest only.** Email and password fields are disabled; only "Sign In as Guest" works ([#57]).
 - **Local state.** The check-up lives in the browser's `localStorage` ([#41]).
 - **No personal data.** No CV upload, no real CVs and no free-text profile. The demo uses synthetic profiles only ([non-goals][anti-goals]).
-- **Anonymous aggregates.** The national view stores only role code, 6 corner levels and date, and shows totals only for groups of 10 or more real check-ups ([#34]).
+- **Anonymous aggregates.** The national view stores only role code, corner levels and date, and shows totals only for groups of 10 or more real check-ups ([#34]).
 - **Third parties.** A typed job title and a pasted public job ad go to the Anthropic API. Kopi's lines go to ElevenLabs as text.
 
 ### Privacy summary
 
 This paragraph fits declaration section 6.1 (under 150 words).
 
-Kotak has no accounts. Users sign in as a guest, and their check-up stays in the browser's local storage until they reset it. Kotak asks for no name, email, CV or free-text profile, and the demo uses synthetic profiles only. A finished check-up sends only the role code, 6 corner levels from 0 to 3 and the date to a Postgres database on Neon. It stores no names, IDs or free text. The national view shows totals only for groups of 10 or more real check-ups and labels sample rows. A typed job title or a pasted public job ad goes to the Anthropic API to find a role or skills. The result is cached by a hash and changes no other user's results. The cat's lines go to ElevenLabs as text. API keys stay in server secrets and never reach the browser or the repository.
+Kotak has no accounts. Users sign in as a guest, and their check-up stays in the browser's local storage until they reset it. Kotak asks for no name, email, CV or free-text profile, and the demo uses synthetic profiles only. A finished check-up sends only the role code, up to 6 corner levels from 0 to 3 and the date to a Postgres database on Neon. It stores no names, IDs or free text. The national view shows totals only for groups of 10 or more real check-ups and labels sample rows. A typed job title or a pasted public job ad goes to the Anthropic API to find a role or skills. The result is cached by a hash and changes no other user's results. The cat's lines go to ElevenLabs as text. API keys stay in server secrets and never reach the browser or the repository.
 
 ### Security
 
@@ -730,25 +733,25 @@ Kotak has no accounts. Users sign in as a guest, and their check-up stays in the
 
 ### Risk register
 
-| Risk                                                                           | Effect                                    | Mitigation or fallback                                                                                  | Issues               |
-| ------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------- |
-| The Claude API is overloaded (`529`) or down                                   | Explanations and title matches stall      | Cached, labelled answers; the deterministic explanation template; pre-warmed demo roles                 | [#43], [#78]         |
-| A model invents a claim or changes a verdict                                   | A wrong or uncited explanation            | The verifier strips it and falls back to the template; engine functions make no AI calls                | [#43], [#37]         |
-| A model invents a job-ad quote                                                 | A fake skill on the visitor's view        | Code drops any quote not found word for word in the ad                                                  | [#48]                |
-| The Economic Index measures Claude usage, not jobs, and suppresses small cells | Biased or missing signals                 | Label it an AI usage signal; store suppressed cells as `null`; borrow from the layer above with a label | [#50], [#71]         |
-| Two monthly points drive a 12-month projection                                 | Rough projections                         | Every projection is labelled an estimate; fewer than two points gives Unknown; Split shows both futures | [#81]                |
-| No open Malaysian series tracks demand for single skills                       | Corners share their role's demand         | Corners differ through their AI data; the data card states the gap                                      | [#71], [#93]         |
-| O\*NET is a US taxonomy, and the MASCO match is lossy                          | Wrong local labels                        | The user confirms AI title matches; unmatched roles carry `masco_unmatched: true`                       | [#43], [#44]         |
-| The batch makes uneven or vague corners                                        | Weak questions for some jobs              | The task-ID validator; the "auto-generated" label; hand-checked demo and legal roles                    | [#74], [#104], [#91] |
-| The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | The Claude Message Batches backup for any subset of codes                                               | [#79]                |
-| ElevenLabs fails or the credits run out                                        | No voice                                  | Pre-generated static MP3s; text-only fallback; a persistent mute                                        | [#46]                |
-| The Worker hits its free-plan limits                                           | Failed API calls                          | Scoring runs in the browser; static assets are free and unlimited                                       | [#62]                |
-| An open AI or TTS route is called by others                                    | Spent credits                             | Response caches; a TTS-only ElevenLabs key with a credit quota                                          | [#46], [#53]         |
-| Job Market Insights, MyCOL and MASCO carry no open licence                     | A licence breach if raw tables ship       | Store only cited figures and codes; commit no restricted raw data                                       | [#47], [#52], [#60]  |
-| The Live2D sample model cannot be redistributed under its licence              | A conflict with the Apache 2.0 repository | Risk accepted on 22 October; credit and terms in `NOTICE.md`                                            | [#47]                |
-| pixi-live2d-display loads Live2D's Cubism Core runtime script                  | An undeclared third-party component       | Declare it in `NOTICE.md` and the declaration                                                           | [#47], [#73]         |
-| A scheduled workflow commits after the deadline                                | Disqualification                          | Pause every committing workflow before the freeze                                                       | [#89]                |
-| The Replit Core code stays expired                                             | No paid Replit plan                       | The one free Starter app, with the project link and history as proof                                    | [#99]                |
+| Risk                                                                           | Effect                                    | Mitigation or fallback                                                                                                                                                | Issues               |
+| ------------------------------------------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| The Claude API is overloaded (`529`) or down                                   | Explanations and title matches stall      | Cached, labelled answers; the deterministic explanation template; pre-warmed demo roles                                                                               | [#43], [#78]         |
+| A model invents a claim or changes a verdict                                   | A wrong or uncited explanation            | The verifier strips it and falls back to the template; engine functions make no AI calls                                                                              | [#43], [#37]         |
+| A model invents a job-ad quote                                                 | A fake skill on the visitor's view        | Code drops any quote not found word for word in the ad                                                                                                                | [#48]                |
+| The Economic Index measures Claude usage, not jobs, and suppresses small cells | Biased or missing signals                 | Label it an AI usage signal; store suppressed cells as `null`; borrow from the layer above with a label                                                               | [#50], [#71]         |
+| Two monthly points drive a 12-month projection                                 | Rough projections                         | Every projection is labelled an estimate; fewer than two points gives Unknown; Split shows both futures                                                               | [#81]                |
+| No open Malaysian series tracks demand for single skills                       | Corners share their role's demand         | Corners differ through their AI data; the data card states the gap                                                                                                    | [#71], [#93]         |
+| O\*NET is a US taxonomy, and the MASCO match is lossy                          | Wrong local labels                        | The user confirms AI title matches; unmatched roles carry `masco_unmatched: true`                                                                                     | [#43], [#44]         |
+| The batch makes uneven or vague corners                                        | Weak questions for some jobs              | The task-ID validator; the "auto-generated" label; hand-checked demo and legal roles                                                                                  | [#74], [#104], [#91] |
+| The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | The Claude Message Batches backup for any subset of codes                                                                                                             | [#79]                |
+| ElevenLabs fails or the credits run out                                        | No voice                                  | Pre-generated static MP3s; text-only fallback; a persistent mute                                                                                                      | [#46]                |
+| The Worker hits its free-plan limits                                           | Failed API calls                          | Scoring runs in the browser; static assets are free and unlimited                                                                                                     | [#62]                |
+| An open AI or TTS route is called by others                                    | Spent credits                             | Response caches; at most 30 uncached Claude calls a minute per route, per Cloudflare location and approximate ([#155]); a TTS-only ElevenLabs key with a credit quota | [#46], [#53], [#155] |
+| Job Market Insights, MyCOL and MASCO carry no open licence                     | A licence breach if raw tables ship       | Store only cited figures and codes; commit no restricted raw data                                                                                                     | [#47], [#52], [#60]  |
+| The Live2D sample model cannot be redistributed under its licence              | A conflict with the Apache 2.0 repository | Risk accepted on 22 October; credit and terms in `NOTICE.md`                                                                                                          | [#47]                |
+| pixi-live2d-display loads Live2D's Cubism Core runtime script                  | An undeclared third-party component       | Declare it in `NOTICE.md` and the declaration                                                                                                                         | [#47], [#73]         |
+| A scheduled workflow commits after the deadline                                | Disqualification                          | Pause every committing workflow before the freeze                                                                                                                     | [#89]                |
+| The Replit Core code stays expired                                             | No paid Replit plan                       | The one free Starter app, with the project link and history as proof                                                                                                  | [#99]                |
 
 ### Limitations summary
 
@@ -858,3 +861,8 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 [#103]: https://github.com/TolongLabs/sdc-hack/issues/103
 [#104]: https://github.com/TolongLabs/sdc-hack/issues/104
 [#105]: https://github.com/TolongLabs/sdc-hack/issues/105
+[#145]: https://github.com/TolongLabs/sdc-hack/issues/145
+[#147]: https://github.com/TolongLabs/sdc-hack/issues/147
+[#151]: https://github.com/TolongLabs/sdc-hack/issues/151
+[#152]: https://github.com/TolongLabs/sdc-hack/issues/152
+[#155]: https://github.com/TolongLabs/sdc-hack/issues/155

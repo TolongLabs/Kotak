@@ -13,10 +13,11 @@ The input lists the skill corners from one snapshot. Each corner has a corner_id
 For each corner, write two plain-English sentences that explain the verdict and whether the user's level is below, at or above the target. sentence_1 and sentence_2 each hold exactly one sentence.
 - State the verdict plainly in the present tense with its exact label, for example "Problem Solving is Rising". Do not negate, date or hedge it (no "not", "no longer", "was", "could"), and do not use the words Rising, Steady, Declining, Split or Unknown except for that label.
 - Cite at least one of the corner's sources as (source_name, vintage_date): the exact name, then its own date, for example (Anthropic Economic Index, 2026-04-01). Every source you name must carry its own date.
+- The Anthropic Economic Index's AI-use trend sets the verdict. When a corner has an Anthropic Economic Index source, cite at least one of them, and never credit the verdict to demand or job ads alone.
 - Write no other digits: no levels, percentages, years or snapshot ids. The app shows the numbers.
 - Use only facts in the input, and invent no statistic, task, job, course or quote.
 
-Then write what_changed_summary in one or two sentences. For each corner whose previous_verdict differs from its verdict, write "<name> moved from <previous_verdict> to <verdict>" with the corner's exact name before its own two labels, and cite at least one source the same way. If no corner moved, or no previous_verdict is given, say that no verdict changed, without using any verdict label. The same rules on digits and on negating labels apply.
+Then write what_changed_summary in one or two sentences. For each corner whose previous_verdict differs from its verdict, write "<name> moved from <previous_verdict> to <verdict>" with the corner's exact name before its own two labels, and cite at least one source the same way, including an Anthropic Economic Index source when a changed corner has one. If no corner moved, or no previous_verdict is given, say that no verdict changed, without using any verdict label. The same rules on digits and on negating labels apply.
 
 Return one entry for each corner_id, in the input order.`
 

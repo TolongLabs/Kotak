@@ -67,7 +67,7 @@ for (const [index, request] of explanations.entries()) {
   } else {
     const fromClaude = response.explanations.filter((explanation) => explanation.source === 'claude').length
     console.info(
-      `${label}: ${fromClaude} of 6 corners from Claude, summary from ${response.what_changed_source}, ${state(response.cached)}`
+      `${label}: ${fromClaude} of ${response.explanations.length} corners from Claude, summary from ${response.what_changed_source}, ${state(response.cached)}`
     )
   }
 }
