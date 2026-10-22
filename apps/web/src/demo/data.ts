@@ -262,7 +262,14 @@ export const readiness: Readiness = {
   readyBy: 'Ready by Week 8 · 81%',
   threshold: 'Ready = 80% Fit',
   yLabels: ['60%', '80%', '100%'],
-  xLabels: ['W0', 'W4', 'W8', 'W12']
+  xLabels: ['W0', 'W4', 'W8', 'W12'],
+  // Read off the approved mockup's chart markers and lines.
+  points: [
+    { week: 0, plan: 61, fast: 61 },
+    { week: 4, plan: 70, fast: 72 },
+    { week: 8, plan: 81, fast: 82 },
+    { week: 12, plan: 88, fast: 93 }
+  ]
 }
 
 export const dividend: DividendNote = {
