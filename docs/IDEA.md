@@ -51,6 +51,8 @@ Contents:
 | [PRD](PRD.md)         | Product requirements, in the organisers' preliminary proposal template    |
 | [TRD](TRD.md)         | Technical requirements: architecture, data, engine rules, APIs and deploy |
 
+The local [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) is implemented with breadth collection and depth description enrichment. Its contributor guide covers Kameleo setup, deduplication, sorting, contributor-file merging and dated observations for trend analysis. Depth produces a unified enriched view and reuses descriptions by default; refresh is opt-in. Database storage remains deferred.
+
 ## Ideas we compared
 
 - The [20 October ranking](/docs/ideas/0000-ranking.md) compared five ideas and recommended [Dividen](/docs/ideas/0001-dividen.md). The others were [Tanding](/docs/ideas/0002-tanding.md), [Baki](/docs/ideas/0003-baki.md), [Cermin](/docs/ideas/0004-cermin.md) and [Seberang](/docs/ideas/0005-seberang.md).

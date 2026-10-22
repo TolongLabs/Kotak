@@ -10,6 +10,7 @@ Contents:
     1.  [AI-advancement feeds](#ai-advancement-feeds)
     1.  [Job-market and labour signals relevant to Malaysia](#job-market-and-labour-signals-relevant-to-malaysia)
 1.  [Recommended minimal stack](#recommended-minimal-stack)
+1.  [JobStreet research implementation](#jobstreet-research-implementation)
 1.  [Risks and fallbacks](#risks-and-fallbacks)
 1.  [Open questions](#open-questions)
 1.  [See also](#see-also)
@@ -189,6 +190,10 @@ Contents:
 1.  **Trend source A, the primary signal: the Anthropic Economic Index** monthly `soc_occupation` and `onet` rows for `MYS` and `GLOBAL`. The 2026-06-26 file already holds two months, April and May 2026, so the demo can switch snapshots and watch role scores move, with source and date shown. Role scores use the `soc_occupation` usage share. For `MYS`, the `collaboration_bucket_automation_pct` and `collaboration_bucket_augmentation_pct` metrics aren't published per detailed occupation, only by major group, work activity, request cluster and overall, so the two scenarios, automation-led versus augmentation-led, work at occupation-group level. Older releases add more snapshots.
 1.  **Trend source B, the live feed: the arXiv API** for cs.AI and cs.LG, or the HF trending API. Count mentions of O\*NET Hot Technology and skill terms in the newest papers to get a skill-momentum weight, stamped with the fetch time. Re-run it in the demo to show the feed is live.
 1.  Optional Malaysia context: OpenDOSM `lfs_month` and `wages_occupation` CSVs (CC BY 4.0), MyCOL 2024/2025 flags, and the World Bank and ISIS figures, all as cited static references.
+
+## JobStreet research implementation
+
+As of 22 October 2026, the repository includes a local [JobStreet research scraper and contributor guide](/apps/api/src/scrapers/jobstreet/README.md), using Kameleo and Playwright. `bun run scrape:jobstreet --mode breadth` paginates validated search-card observations; `--mode depth --input PATH` fetches descriptions for saved IDs and writes a unified enriched view. Known descriptions are reused by default, with refresh available only as an explicit option. `bun run jobs:prepare` merges contributor breadth captures, preserves dated observation history and first/last-seen summaries, and writes a sorted latest-job view. Repeat sightings remain available for trend analysis; absence from a bounded scrape is not treated as closure. Depth retains explicit posting/closing dates when matching job metadata supplies them, otherwise `null`. Data remains in Git-ignored local JSONL files, with database storage deferred. The pipeline is separate from the app's scoring engine and does not change the source-access findings above or the recommended minimal stack.
 
 ## Risks and fallbacks
 
