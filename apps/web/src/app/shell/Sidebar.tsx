@@ -1,4 +1,4 @@
-import { Lock } from 'lucide-react'
+import { Lock, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { useId } from 'react'
 import { Logo } from '../../components/brand/Logo'
 import { Tooltip } from '../../components/ui/Tooltip'
@@ -8,11 +8,10 @@ import { routes } from '../routes'
 import { navItems } from './nav'
 
 interface BrandProps {
-  compact?: boolean
   onNavigate?: () => void
 }
 
-export function Brand({ compact = false, onNavigate }: BrandProps) {
+export function Brand({ onNavigate }: BrandProps) {
   return (
     <Link
       to={routes.home}
@@ -20,13 +19,42 @@ export function Brand({ compact = false, onNavigate }: BrandProps) {
       aria-label="Kotak Home"
       className="inline-flex items-center gap-2 rounded-sm"
     >
-      <Logo variant="icon" />
-      {!compact && (
-        <span aria-hidden="true" className="text-title-m font-extrabold lowercase">
-          kotak
-        </span>
-      )}
+      <Logo variant="lockup" />
     </Link>
+  )
+}
+
+function SidebarBrand({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+  const ActionIcon = collapsed ? PanelLeftOpen : PanelLeftClose
+
+  return (
+    <button
+      type="button"
+      aria-label={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+      aria-expanded={!collapsed}
+      aria-controls="sidebar-navigation"
+      onClick={onToggle}
+      className={cn(
+        'group relative inline-flex h-8 w-full items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-panel',
+        collapsed ? 'justify-center' : 'justify-start px-2'
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className="transition-opacity duration-150 group-hover:opacity-0 group-focus-visible:opacity-0"
+      >
+        <Logo variant={collapsed ? 'icon' : 'lockup'} />
+      </span>
+      <span
+        aria-hidden="true"
+        className={cn(
+          'absolute inset-0 flex items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100',
+          collapsed ? 'justify-center' : 'justify-start px-2'
+        )}
+      >
+        <ActionIcon className="h-5 w-5 stroke-current" />
+      </span>
+    </button>
   )
 }
 
@@ -96,20 +124,21 @@ export function GuestCard({ collapsed = false }: { collapsed?: boolean }) {
 interface SidebarProps {
   path: string
   collapsed?: boolean
+  onToggleCollapsed: () => void
   className?: string
 }
 
-export function Sidebar({ path, collapsed = false, className }: SidebarProps) {
+export function Sidebar({ path, collapsed = false, onToggleCollapsed, className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'sticky top-0 h-dvh shrink-0 flex-col gap-8 border-r border-border-subtle bg-bg-panel py-6',
+        'sticky top-0 h-dvh shrink-0 flex-col gap-7 border-r border-border-subtle bg-bg-panel py-6',
         collapsed ? 'w-18 items-center px-3' : 'w-64 px-4',
         className
       )}
     >
-      <Brand compact={collapsed} />
-      <nav aria-label="Main">
+      <SidebarBrand collapsed={collapsed} onToggle={onToggleCollapsed} />
+      <nav id="sidebar-navigation" aria-label="Main">
         <NavList path={path} collapsed={collapsed} />
       </nav>
       <div className="mt-auto">

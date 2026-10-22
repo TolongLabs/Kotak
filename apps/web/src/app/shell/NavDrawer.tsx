@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, type RefObject } from 'react'
+import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { Brand, GuestCard, NavList } from './Sidebar'
 
 interface NavDrawerProps {
@@ -48,7 +49,11 @@ export function NavDrawer({ open, path, onClose, returnFocusRef }: NavDrawerProp
         <nav aria-label="Main">
           <NavList path={path} onNavigate={onClose} />
         </nav>
-        <div className="mt-auto">
+        <div className="mt-auto space-y-4">
+          <div className="flex items-center justify-between border-t border-border-subtle pt-4">
+            <span className="text-label-m text-text-primary">Appearance</span>
+            <ThemeToggle />
+          </div>
           <GuestCard />
         </div>
       </div>

@@ -5,6 +5,7 @@ import type { RoadmapStep } from '../../demo/types'
 interface RoadmapTimelineProps {
   steps: RoadmapStep[]
   startDate: Date
+  today: Date
 }
 
 function formatMonth(date: Date) {
@@ -23,6 +24,13 @@ function getStepStart(step: RoadmapStep, totalWeeks: number) {
 
 function getStepWidth(step: RoadmapStep, totalWeeks: number) {
   return ((step.weeks[1] - step.weeks[0] + 1) / totalWeeks) * 100
+}
+
+function getTodayPosition(startDate: Date, today: Date, totalWeeks: number) {
+  const start = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+  const current = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+  const daysFromStart = (current - start) / (24 * 60 * 60 * 1000)
+  return Math.max(0, Math.min(100, (daysFromStart / (totalWeeks * 7)) * 100))
 }
 
 function WeekGrid({ totalWeeks, compact = false }: { totalWeeks: number; compact?: boolean }) {
@@ -64,10 +72,10 @@ function MonthGrid({ labels }: { labels: string[] }) {
   )
 }
 
-function WeekLines({ totalWeeks }: { totalWeeks: number }) {
+function WeekLines({ totalWeeks, className = 'absolute inset-0' }: { totalWeeks: number; className?: string }) {
   return (
     <div
-      className="absolute inset-0 grid"
+      className={`${className} grid`}
       style={{ gridTemplateColumns: `repeat(${totalWeeks}, minmax(0, 1fr))` }}
       aria-hidden="true"
     >
@@ -81,12 +89,12 @@ function WeekLines({ totalWeeks }: { totalWeeks: number }) {
 function TimelineBar({ step, totalWeeks }: { step: RoadmapStep; totalWeeks: number }) {
   const start = getStepStart(step, totalWeeks)
   const width = getStepWidth(step, totalWeeks)
-  const label = `About ${step.hoursPerWeek} h/wk · ${step.title}`
+  const label = `${step.hoursPerWeek} h/wk · ${step.title}`
 
   return (
     <span
       title={label}
-      className={`absolute top-1/2 z-10 flex h-8 -translate-y-1/2 items-center overflow-hidden rounded-sm border-[1.5px] px-2 font-sans text-label-s text-text-primary ${
+      className={`absolute top-0 z-10 flex h-7 items-center overflow-hidden rounded-md border-[1.5px] px-2 font-sans text-label-s text-text-primary lg:h-11 lg:px-3 ${
         step.conditional
           ? 'border-dashed border-border-control bg-bg-panel'
           : step.state === 'next'
@@ -102,9 +110,9 @@ function TimelineBar({ step, totalWeeks }: { step: RoadmapStep; totalWeeks: numb
 
 function StepLabel({ step }: { step: RoadmapStep }) {
   return (
-    <div className="flex min-w-0 flex-col justify-center gap-1 py-2">
-      <p className="text-label-m text-text-primary">{step.skill}</p>
-      <div className="flex flex-wrap gap-1">
+    <div className="flex min-w-0 flex-col gap-1 px-3 pt-1.5 lg:px-0 lg:pt-0">
+      <p className="text-label-s text-text-primary lg:text-label-m">{step.skill}</p>
+      <div className="hidden flex-wrap gap-1 lg:flex">
         {step.sdgs.map((goal) => (
           <SdgChip key={goal} goal={goal} compact />
         ))}
@@ -113,11 +121,43 @@ function StepLabel({ step }: { step: RoadmapStep }) {
   )
 }
 
-export function RoadmapTimeline({ steps, startDate }: RoadmapTimelineProps) {
+function TodayMarker({
+  position,
+  label = false,
+  lineClassName = 'inset-y-0'
+}: {
+  position: number
+  label?: boolean
+  lineClassName?: string
+}) {
+  const labelPosition = position < 8 ? 'translate-x-0' : position > 92 ? '-translate-x-full' : '-translate-x-1/2'
+
+  return (
+    <>
+      <span
+        className={`pointer-events-none absolute ${lineClassName} z-20 border-l-2 border-text-primary`}
+        style={{ left: `${position}%` }}
+        aria-hidden="true"
+      />
+      {label && (
+        <span
+          className={`pointer-events-none absolute bottom-0 z-20 rounded-full bg-text-primary px-2 py-0.5 text-label-s text-bg-default ${labelPosition}`}
+          style={{ left: `${position}%` }}
+          aria-hidden="true"
+        >
+          Today
+        </span>
+      )}
+    </>
+  )
+}
+
+export function RoadmapTimeline({ steps, startDate, today }: RoadmapTimelineProps) {
   const totalWeeks = Math.max(1, ...steps.map((step) => step.weeks[1]))
   const weeksPerMonth = Math.ceil(totalWeeks / 3)
   const monthCount = Math.ceil(totalWeeks / weeksPerMonth)
   const monthLabels = getMonthLabels(startDate, monthCount)
+  const todayPosition = getTodayPosition(startDate, today, totalWeeks)
 
   return (
     <section
@@ -132,33 +172,45 @@ export function RoadmapTimeline({ steps, startDate }: RoadmapTimelineProps) {
         <>
           <div className="hidden grid-cols-[minmax(0,236px)_minmax(0,1fr)] gap-x-3 lg:grid">
             <div aria-hidden="true" />
-            <div className="space-y-1">
+            <div className="space-y-1 pb-3">
               <MonthGrid labels={monthLabels} />
               <WeekGrid totalWeeks={totalWeeks} />
             </div>
-            {steps.map((step) => (
+            {steps.map((step, index) => (
               <Fragment key={step.id}>
                 <StepLabel step={step} />
-                <div className="relative min-h-12">
-                  <WeekLines totalWeeks={totalWeeks} />
+                <div className="relative h-[68px]">
+                  <WeekLines totalWeeks={totalWeeks} className="absolute -top-3 inset-x-0 bottom-0" />
+                  <TodayMarker
+                    position={todayPosition}
+                    label={index === steps.length - 1}
+                    lineClassName={index === 0 ? '-top-4 bottom-0' : 'inset-y-0'}
+                  />
                   <TimelineBar step={step} totalWeeks={totalWeeks} />
                 </div>
               </Fragment>
             ))}
           </div>
 
-          <div className="space-y-2 lg:hidden">
-            <MonthGrid labels={monthLabels} />
-            <WeekGrid totalWeeks={totalWeeks} compact />
-            {steps.map((step) => (
-              <div key={step.id} className="space-y-1">
-                <StepLabel step={step} />
-                <div className="relative h-10">
-                  <WeekLines totalWeeks={totalWeeks} />
-                  <TimelineBar step={step} totalWeeks={totalWeeks} />
-                </div>
+          <div className="lg:hidden">
+            <div className="space-y-0">
+              <MonthGrid labels={monthLabels} />
+              <WeekGrid totalWeeks={totalWeeks} compact />
+            </div>
+            <div className="relative mt-0 min-h-[260px]">
+              <WeekLines totalWeeks={totalWeeks} className="absolute inset-x-0 top-0 bottom-7" />
+              <div className="relative z-10 space-y-2.5">
+                {steps.map((step) => (
+                  <div key={step.id} className="space-y-1">
+                    <StepLabel step={step} />
+                    <div className="relative h-7">
+                      <TimelineBar step={step} totalWeeks={totalWeeks} />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+              <TodayMarker position={todayPosition} label lineClassName="top-0 bottom-7" />
+            </div>
           </div>
         </>
       ) : (

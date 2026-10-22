@@ -10,7 +10,6 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { ScenarioSwitch } from '../components/ui/ScenarioSwitch'
 import { Stepper } from '../components/ui/Stepper'
-import { cn } from '../components/ui/cn'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
 import { useCheckup } from '../engine/checkup'
 import { useRoleBundle } from '../engine/bundle'
@@ -23,6 +22,26 @@ const stepLabels: [string, string, string, string, string] = ['Home', 'Check-Up'
 function gapFor(corner: Corner, scenario: Scenario) {
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
   return needed - corner.you
+}
+
+function quarterLabels(snapshotId: string) {
+  const [year, month] = snapshotId.split('-').map(Number)
+  const quarter = Math.floor((month - 1) / 3) + 1
+  const nextQuarter = quarter === 4 ? 1 : quarter + 1
+  const nextYear = quarter === 4 ? year + 1 : year
+
+  return {
+    current: `Q${quarter} ${year}`,
+    next: `Q${nextQuarter} ${nextYear}`
+  }
+}
+
+function RadarCatDialogue({ pose, speech }: { pose: 'explaining' | 'worried'; speech: string }) {
+  return (
+    <div className="[&>div]:flex-row [&>div]:items-end [&>div]:gap-3 [&>div>div:first-child]:h-28 [&>div>div:first-child]:self-end">
+      <CatDialogue pose={pose} speech={speech} size="md" />
+    </div>
+  )
 }
 
 export function RadarView() {
@@ -75,7 +94,8 @@ export function RadarView() {
   const corners = toCorners(checkup, numbers)
   const roles = toRoles(checkup, [role, ...related], session.role_code)
   const swot = deriveSwot(corners, roles, scenario)
-  const neededLabel = `${neededByLabel(checkup)} (estimate)`
+  const neededLabel = neededByLabel(checkup)
+  const snapshotQuarters = quarterLabels(checkup.snapshotId)
 
   const biggestRisingGap = corners
     .filter((corner) => corner.verdict === 'rising' && gapFor(corner, scenario) > 0)
@@ -99,17 +119,68 @@ export function RadarView() {
     .filter((corner) => weaknessNames.has(corner.name))
     .sort((left, right) => gapFor(right, scenario) - gapFor(left, scenario))
   const sourceByNumber = new Map(sources.map((source) => [source.n, source]))
+  const pausedGapCorners = weaknessCorners.filter(
+    (corner) => corner.verdict === 'rising' && gapFor(corner, scenario) > 0
+  )
 
-  return (
-    <div className="space-y-5 lg:space-y-6">
-      <Stepper step={3} labels={stepLabels} />
-      {explanationsPaused && (
+  const renderGapCard = (corner: Corner) => {
+    const cornerSources: SourceRef[] = (corner.sources ?? []).flatMap((number) => {
+      const source = sourceByNumber.get(number)
+      return source ? [source] : []
+    })
+
+    return (
+      <GapCard
+        key={corner.id}
+        corner={corner}
+        sources={cornerSources}
+        scenario={scenario}
+        neededLabel={neededLabel}
+        paused={explanationsPaused}
+      />
+    )
+  }
+
+  if (explanationsPaused) {
+    return (
+      <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <Banner
           type="error"
           title="Explanations Are Paused"
           body="We couldn't reach the AI. Your verdicts, roles and plan still work."
         />
-      )}
+        {role.quality === 'auto-generated' && (
+          <Banner
+            type="info"
+            title="AI-Drafted Skills"
+            body="Kopi drafted these skills from the job’s O*NET tasks. The team has not checked them by hand yet."
+          />
+        )}
+        <RadarCatDialogue
+          pose="worried"
+          speech="The AI is resting. Your verdicts still stand. I’ll explain them when it’s back."
+        />
+
+        {pausedGapCorners.map(renderGapCard)}
+
+        <div className="surface-glass sticky bottom-3 z-10 grid grid-cols-1 gap-3 rounded-md p-3 sm:grid-cols-2 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
+          <Button variant="secondary" size="lg" fullWidth onClick={retryExplanations}>
+            Try the Explanations Again
+          </Button>
+          <Link
+            to={routes.roles}
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          >
+            See Roles That Fit
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-5 lg:space-y-6">
+      <Stepper step={3} labels={stepLabels} />
       {role.quality === 'auto-generated' && (
         <Banner
           type="info"
@@ -118,19 +189,11 @@ export function RadarView() {
         />
       )}
 
-      <CatDialogue
-        pose={explanationsPaused ? 'worried' : 'explaining'}
-        speech={
-          explanationsPaused
-            ? 'The AI is resting. Your verdicts still stand. I’ll explain them when it’s back.'
-            : speech
-        }
-        size="lg"
-      />
+      <RadarCatDialogue pose="explaining" speech={speech} />
 
       <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">
-          {role.title}, {neededLabel}
+          {role.title}, {neededLabel.replace(/^Needed by /, '')}
         </h1>
         <p className="text-body-s text-text-muted">
           Where the job is heading, and where you stand. Targets and dates are estimates; every verdict comes from fixed
@@ -144,6 +207,11 @@ export function RadarView() {
             <ScenarioSwitch value={scenario} onChange={setScenario} aria-label="AI Uptake Scenario" />
           </div>
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
+          <Banner
+            type="info"
+            title={`Data as of ${snapshotQuarters.current}`}
+            body={`Next DOSM release: ${snapshotQuarters.next}. We refresh the day it lands.`}
+          />
         </section>
 
         <div className="space-y-4">
@@ -159,23 +227,7 @@ export function RadarView() {
               </span>
             </header>
 
-            {weaknessCorners.map((corner) => {
-              const cornerSources: SourceRef[] = (corner.sources ?? []).flatMap((number) => {
-                const source = sourceByNumber.get(number)
-                return source ? [source] : []
-              })
-
-              return (
-                <GapCard
-                  key={corner.id}
-                  corner={corner}
-                  sources={cornerSources}
-                  scenario={scenario}
-                  neededLabel={neededLabel}
-                  paused={explanationsPaused}
-                />
-              )
-            })}
+            {weaknessCorners.map(renderGapCard)}
           </section>
 
           {sources.length > 0 && (
@@ -193,17 +245,7 @@ export function RadarView() {
             </section>
           )}
 
-          <div
-            className={cn(
-              'surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none',
-              explanationsPaused && 'grid grid-cols-1 gap-3 sm:grid-cols-2'
-            )}
-          >
-            {explanationsPaused && (
-              <Button variant="secondary" fullWidth onClick={retryExplanations}>
-                Try the Explanations Again
-              </Button>
-            )}
+          <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
             <Link
               to={routes.roles}
               className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"

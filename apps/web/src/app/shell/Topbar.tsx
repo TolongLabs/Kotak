@@ -1,5 +1,5 @@
-import { CalendarDays, Menu, UserRound } from 'lucide-react'
-import { useEffect, useRef, type RefObject } from 'react'
+import { CalendarDays, ChevronDown, Menu, UserRound } from 'lucide-react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { cn } from '../../components/ui/cn'
@@ -7,15 +7,24 @@ import { navigate } from '../router'
 import { routes } from '../routes'
 import { Brand } from './Sidebar'
 
-export function DataChip({ label, className }: { label: string; className?: string }) {
+export function DataChip({
+  label,
+  compact = false,
+  className
+}: {
+  label: string
+  compact?: boolean
+  className?: string
+}) {
   return (
     <span
       className={cn(
-        'inline-flex h-8 shrink-0 items-center gap-2 rounded-full border border-border-subtle bg-bg-default px-3 font-mono text-mono-s text-text-muted',
+        'inline-flex h-7 shrink-0 items-center gap-2 rounded-full border border-border-subtle bg-bg-default px-3 font-mono text-mono-s text-text-muted',
+        compact && 'gap-1 px-2',
         className
       )}
     >
-      <CalendarDays className="h-4 w-4 stroke-current" aria-hidden="true" />
+      <CalendarDays className={cn('shrink-0 stroke-current', compact ? 'h-3.5 w-3.5' : 'h-4 w-4')} aria-hidden="true" />
       {label}
     </span>
   )
@@ -30,6 +39,9 @@ function isTyping(target: EventTarget | null) {
 
 export function Topbar({ dataLabel, className }: { dataLabel: string; className?: string }) {
   const searchRef = useRef<HTMLInputElement>(null)
+  const guestMenuRef = useRef<HTMLDivElement>(null)
+  const guestMenuButtonRef = useRef<HTMLButtonElement>(null)
+  const [guestMenuOpen, setGuestMenuOpen] = useState(false)
 
   useEffect(() => {
     function focusSearch(event: KeyboardEvent) {
@@ -42,11 +54,32 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
     return () => window.removeEventListener('keydown', focusSearch)
   }, [])
 
+  useEffect(() => {
+    if (!guestMenuOpen) return
+
+    function closeMenu(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return
+      setGuestMenuOpen(false)
+      guestMenuButtonRef.current?.focus()
+    }
+
+    function closeOnOutsideClick(event: PointerEvent) {
+      if (guestMenuRef.current && !guestMenuRef.current.contains(event.target as Node)) setGuestMenuOpen(false)
+    }
+
+    window.addEventListener('keydown', closeMenu)
+    document.addEventListener('pointerdown', closeOnOutsideClick)
+    return () => {
+      window.removeEventListener('keydown', closeMenu)
+      document.removeEventListener('pointerdown', closeOnOutsideClick)
+    }
+  }, [guestMenuOpen])
+
   return (
     <header className={cn('surface-glass h-16 items-center gap-4 rounded-md px-4', className)}>
       <form
         role="search"
-        className="w-full max-w-sm"
+        className="w-full max-w-[360px]"
         onSubmit={(event) => {
           event.preventDefault()
           const job = String(new FormData(event.currentTarget).get('job') ?? '').trim()
@@ -55,15 +88,35 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
       >
         <SearchField ref={searchRef} name="job" label="Search Jobs" hideLabel placeholder="Search 900 Jobs" />
       </form>
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-6">
         <DataChip label={`Data ${dataLabel}`} />
-        <ThemeToggle />
-        <span className="inline-flex items-center gap-2 text-label-l text-text-primary">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
-            <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
-          </span>
-          Guest
-        </span>
+        <div className="relative shrink-0" ref={guestMenuRef}>
+          <button
+            ref={guestMenuButtonRef}
+            type="button"
+            aria-label="Guest Menu"
+            aria-expanded={guestMenuOpen}
+            aria-controls="guest-menu"
+            onClick={() => setGuestMenuOpen((open) => !open)}
+            className="inline-flex items-center gap-2 rounded-sm text-label-m text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-default"
+          >
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
+              <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
+            </span>
+            Guest
+            <ChevronDown className="h-4 w-4 stroke-current" aria-hidden="true" />
+          </button>
+          <div
+            id="guest-menu"
+            className={cn(
+              'surface-card absolute right-0 top-full z-30 mt-2 min-w-48 items-center justify-between gap-4 p-3 shadow-popover',
+              guestMenuOpen ? 'flex' : 'hidden'
+            )}
+          >
+            <span className="text-label-m text-text-primary">Appearance</span>
+            <ThemeToggle />
+          </div>
+        </div>
       </div>
     </header>
   )
@@ -89,8 +142,7 @@ export function PhoneTopBar({ dataLabel, onOpenMenu, menuButtonRef, className }:
         <Menu className="h-5 w-5 stroke-current" aria-hidden="true" />
       </button>
       <Brand />
-      <DataChip label={dataLabel} className="ml-auto" />
-      <ThemeToggle />
+      <DataChip label={dataLabel} compact className="ml-auto" />
     </header>
   )
 }

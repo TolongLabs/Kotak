@@ -6,10 +6,10 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Kotak</title>
     <script>
-      // Apply a stored theme pick before first paint (see src/components/ui/theme.ts).
+      // Start light unless the visitor saved dark mode, before the first paint.
+      document.documentElement.dataset.theme = 'light'
       try {
-        const theme = localStorage.getItem('kotak:theme')
-        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+        if (localStorage.getItem('kotak:theme') === 'dark') document.documentElement.dataset.theme = 'dark'
       } catch {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

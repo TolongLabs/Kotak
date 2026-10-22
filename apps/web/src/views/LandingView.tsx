@@ -4,7 +4,7 @@ import { LandingSections } from './landing/LandingSections'
 
 export function LandingView() {
   return (
-    <main id="top" className="min-h-screen bg-bg-default text-text-primary">
+    <main id="top" className="min-h-screen overflow-x-clip bg-bg-default text-text-primary">
       <LandingHero />
       <LandingSections />
       <LandingEvidence />
