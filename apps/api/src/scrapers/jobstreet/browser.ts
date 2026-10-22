@@ -18,6 +18,8 @@ export interface NavigationState {
   attempts: number
   retry_errors: string[]
   verification?: VerificationState
+  navigation_kind?: 'goto' | 'click' | 'retry'
+  interaction?: { scroll_notches: number; pointer_moves: number; press_ms: number }
 }
 
 export class VerificationTimeoutError extends Error {}
@@ -129,10 +131,17 @@ export async function navigate(
   maxRetries: number,
   delay: number,
   save: () => Promise<void>,
-  verification: { timeoutMs: number; evidencePrefix?: string } = { timeoutMs: 120_000 }
+  verification: {
+    timeoutMs: number
+    evidencePrefix?: string
+    open?: (entry: NavigationState) => Promise<Response | null>
+  } = {
+    timeoutMs: 120_000
+  }
 ) {
   for (let attempt = 0; ; attempt++) {
     entry.attempts++
+    entry.navigation_kind = attempt > 0 ? 'retry' : verification.open ? 'click' : 'goto'
     entry.http_status = null
     let response: Response | null = null
     const observeResponse = (next: Response) => {
@@ -145,7 +154,10 @@ export async function navigate(
     let retryError: string | null = null
     page.on('response', observeResponse)
     try {
-      const initial = await page.goto(entry.url, { waitUntil: 'domcontentloaded', timeout: 60_000 })
+      const initial =
+        attempt === 0 && verification.open
+          ? await verification.open(entry)
+          : await page.goto(entry.url, { waitUntil: 'domcontentloaded', timeout: 60_000 })
       response ??= initial
       entry.http_status = response?.status() ?? null
       await waitForVerification(page, () => response, entry, save, verification)
