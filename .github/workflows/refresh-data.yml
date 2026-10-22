@@ -60,6 +60,13 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # bun run ingest:dosm-jmi needs pdftotext and unzip. The Ubuntu 24.04 and 26.04 runner images both ship unzip but
+      # not poppler-utils, which has pdftotext (https://github.com/actions/runner-images/tree/main/images/ubuntu).
+      - name: Install pdftotext
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+
       # The Snapshot Diff summary compares this build of the checked-out data with the one after the ingest scripts.
       - name: Build static data before the ingest scripts
         run: |
