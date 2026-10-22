@@ -164,7 +164,7 @@ Every component lives on the Components page. Build each one as a custom compone
 ## Kopi, the counsellor
 
 - Kopi is a black cat who opens the box with the user, one question and one verdict at a time. The name comes from kopi-O, Malaysia's black coffee.
-- Kopi uses the Live2D sample model Hijiki (© Live2D Inc.). Credit the model in the app footer and in the technical and tools declaration.
+- Kopi uses the Live2D sample model Hijiki (© Live2D Inc.). Credit the model in the app footer and in the technical and tools declaration with the notice [Live2D designates](https://www.live2d.com/en/learn/sample/model-terms/) for apps, word for word: "This content uses sample data owned and copyrighted by Live2D Inc. The sample data are utilized in accordance with terms and conditions set by Live2D Inc. This content itself is created at the author’s sole discretion."
 - Kopi has six poses, one per moment: Idle (start, waiting), Asking (a yes/no question), Thinking (verdicts loading), Happy (plan ready, milestone done), Worried (error or missing data) and Explaining (reading a verdict out).
 - Kopi speaks out loud through ElevenLabs text to speech. The mute button sits in the speech box.
 - The logo is a black cat peeking out of an open yellow box, with "kotak" in lowercase Atkinson Hyperlegible Next ExtraBold. Never recolour the cat, and keep clear space of half the mark's height on every side.

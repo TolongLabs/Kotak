@@ -559,7 +559,7 @@ These rules come from Anthropic's [models overview][models] and [migration guide
 - **Repeat speed**: an identical request returns the cached payload in under 50 ms without calling the Anthropic API ([#43]).
 - **Job ads**: keyed by a hash of the ad ([#48]).
 - **Audio**: keyed by a hash of text, voice and model ([#46]).
-- **Pre-warming**: the cache is filled for the 2 or 3 demo roles before the demo, and Kopi's fixed lines are pre-generated, so the live demo never waits on an external API ([#43], [#46]).
+- **Pre-warming**: the cache is filled for the 2 or 3 demo roles before the demo, and Kopi's fixed lines are pre-generated, so the live demo never waits on an external API ([#43], [#46]). `bun run prewarm:ai scripts/demo-requests.json` sends the requests `scripts/demo-requests.ts` builds with the app's own code, and each deploy pre-generates the lines in `scripts/kopi-lines.ts`, recorded from the demo walk ([#150]).
 
 ### Explanation verifier
 
@@ -603,11 +603,12 @@ This set-up, fixed on 22 October, replaces the Replit Reserved VM plan in [#65],
 
 1.  Install Bun.
 2.  Run typecheck and tests.
-3.  Build the Vite frontend and the Hono server bundle.
-4.  Apply the Neon migrations (`bun run db:migrate`).
-5.  Deploy with `cloudflare/wrangler-action@v4`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. The token uses the "Edit Cloudflare Workers" template.
-6.  Re-seed the national view's labelled sample rows (`bun run db:seed`), after the deploy so the old Worker never reads rows it can't parse ([#147]).
-7.  Run the post-deploy smoke check against the live link.
+3.  Pre-generate Kopi's fixed lines with the `ELEVENLABS_API_KEY` secret, reusing cached files ([#150]).
+4.  Build the Vite frontend and the Hono server bundle.
+5.  Apply the Neon migrations (`bun run db:migrate`).
+6.  Deploy with `cloudflare/wrangler-action@v4`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. The token uses the "Edit Cloudflare Workers" template.
+7.  Re-seed the national view's labelled sample rows (`bun run db:seed`), after the deploy so the old Worker never reads rows it can't parse ([#147]).
+8.  Run the post-deploy smoke check against the live link.
 
 Worker routing ([deploy notes][deploy]):
 
@@ -656,16 +657,16 @@ Any GPU work must run on RunPod, proved by a screenshot of the Pod ID or endpoin
 
 Names only. Real values never enter the repository, `.env.example` or any submission document.
 
-| Name                    | Used by                                   | Stored in                                                             | Status                                  |
-| ----------------------- | ----------------------------------------- | --------------------------------------------------------------------- | --------------------------------------- |
-| `ANTHROPIC_API_KEY`     | Claude routes and the batch backup script | GitHub repository secret; Worker secret; Replit Secrets; local `.env` | Set as a repository secret              |
-| `ELEVENLABS_API_KEY`    | The TTS route and the line pre-generation | Same as above                                                         | Set as a repository secret              |
-| `ELEVENLABS_VOICE_ID`   | The TTS route                             | Same as above                                                         | Named in [#53]                          |
-| `DATABASE_URL`          | The national view routes                  | Same as above; Neon's pooled connection URL                           | Set as a repository secret              |
-| `CLOUDFLARE_API_TOKEN`  | The deploy workflow                       | GitHub repository secret                                              | Set; "Edit Cloudflare Workers" template |
-| `CLOUDFLARE_ACCOUNT_ID` | The deploy workflow                       | GitHub repository secret                                              | Set                                     |
-| `RUNPOD_API_KEY`        | The batch script                          | GitHub repository secret; local `.env`                                | Added once the [#77] endpoint exists    |
-| `RUNPOD_ENDPOINT_ID`    | The batch script                          | GitHub repository secret; local `.env`                                | Added once the [#77] endpoint exists    |
+| Name                    | Used by                                                                             | Stored in                                                             | Status                                       |
+| ----------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------- |
+| `ANTHROPIC_API_KEY`     | Claude routes and the batch backup script                                           | GitHub repository secret; Worker secret; Replit Secrets; local `.env` | Set as a repository secret                   |
+| `ELEVENLABS_API_KEY`    | The TTS route and the line pre-generation                                           | Same as above                                                         | Set as a repository secret                   |
+| `ELEVENLABS_VOICE_ID`   | The TTS route, only to override Kopi's voice, Johari (`KOPI_VOICE_ID` in the route) | Optional; Worker secret or Replit Secrets                             | Not set; the deploy doesn't pass it ([#143]) |
+| `DATABASE_URL`          | The national view routes                                                            | Same as above; Neon's pooled connection URL                           | Set as a repository secret                   |
+| `CLOUDFLARE_API_TOKEN`  | The deploy workflow                                                                 | GitHub repository secret                                              | Set; "Edit Cloudflare Workers" template      |
+| `CLOUDFLARE_ACCOUNT_ID` | The deploy workflow                                                                 | GitHub repository secret                                              | Set                                          |
+| `RUNPOD_API_KEY`        | The batch script                                                                    | GitHub repository secret; local `.env`                                | Added once the [#77] endpoint exists         |
+| `RUNPOD_ENDPOINT_ID`    | The batch script                                                                    | GitHub repository secret; local `.env`                                | Added once the [#77] endpoint exists         |
 
 Rules:
 
@@ -861,8 +862,10 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 [#103]: https://github.com/TolongLabs/sdc-hack/issues/103
 [#104]: https://github.com/TolongLabs/sdc-hack/issues/104
 [#105]: https://github.com/TolongLabs/sdc-hack/issues/105
+[#143]: https://github.com/TolongLabs/sdc-hack/issues/143
 [#145]: https://github.com/TolongLabs/sdc-hack/issues/145
 [#147]: https://github.com/TolongLabs/sdc-hack/issues/147
+[#150]: https://github.com/TolongLabs/sdc-hack/issues/150
 [#151]: https://github.com/TolongLabs/sdc-hack/issues/151
 [#152]: https://github.com/TolongLabs/sdc-hack/issues/152
 [#155]: https://github.com/TolongLabs/sdc-hack/issues/155

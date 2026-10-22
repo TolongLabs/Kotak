@@ -29,6 +29,23 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
+      # TRD.md: Kopi's fixed lines are pre-generated with eleven_v4 and served as static MP3 files (#46, #150). Files are
+      # named by a hash of the line, voice and model, and the script keeps existing ones, so credits go only to new
+      # lines. A cache entry is never overwritten, so each run saves its own under the run id and restores the latest.
+      # A line without a file is still spoken live, so a failure doesn't stop the deploy.
+      - name: Restore pre-generated Kopi lines
+        uses: actions/cache@v6
+        with:
+          path: apps/web/public/tts
+          key: kopi-tts-${{ github.run_id }}
+          restore-keys: kopi-tts-
+
+      - name: Pre-generate Kopi's fixed lines
+        continue-on-error: true
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: bun run tts:pregenerate
+
       - name: Build
         run: bun run build
 

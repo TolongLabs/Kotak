@@ -1,0 +1,830 @@
+{
+  "role_titles": ["Jurutera Perisian", "akauntan", "front-end developer"],
+  "explanations": [
+    {
+      "snapshot_id": "2026-05",
+      "corners": [
+        {
+          "corner_id": "web-site-building",
+          "name": "Web site building",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.1841359773371105,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/task"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/task"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "web-testing-and-updates",
+          "name": "Web testing and updates",
+          "verdict": "Steady",
+          "user_level": 1,
+          "target_level": 2,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "technical-documentation",
+          "name": "Technical documentation",
+          "verdict": "Rising",
+          "user_level": 1,
+          "target_level": 2.854368932038835,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "web-design-and-databases",
+          "name": "Web design and databases",
+          "verdict": "Steady",
+          "user_level": 1,
+          "target_level": 2,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "web-specifications-and-standards",
+          "name": "Web specifications and standards",
+          "verdict": "Rising",
+          "user_level": 1,
+          "target_level": 2.791208791208791,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "web-performance-and-support",
+          "name": "Web performance and support",
+          "verdict": "Steady",
+          "user_level": 1,
+          "target_level": 2,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "snapshot_id": "2026-05",
+      "corners": [
+        {
+          "corner_id": "user-research-and-testing",
+          "name": "User research and testing",
+          "verdict": "Steady",
+          "user_level": 1,
+          "target_level": 2,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "web-development-and-coding",
+          "name": "Web development and coding",
+          "verdict": "Steady",
+          "user_level": 1,
+          "target_level": 2,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "technical-specifications-and-standards",
+          "name": "Technical specifications and standards",
+          "verdict": "Rising",
+          "user_level": 1,
+          "target_level": 2.791208791208791,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "visual-design-and-prototyping",
+          "name": "Visual design and prototyping",
+          "verdict": "Steady",
+          "user_level": 1,
+          "target_level": 2,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "team-collaboration-and-strategy",
+          "name": "Team collaboration and strategy",
+          "verdict": "Rising",
+          "user_level": 1,
+          "target_level": 2.8727272727272726,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/dwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "site-maintenance-and-seo",
+          "name": "Site maintenance and SEO",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.4725274725274722,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/task"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/task"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "snapshot_id": "2026-05",
+      "corners": [
+        {
+          "corner_id": "accounting-software-entry",
+          "name": "Accounting software entry",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.5294117647058822,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "financial-data-accuracy",
+          "name": "Financial data accuracy",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.3739130434782612,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "regulatory-compliance",
+          "name": "Regulatory compliance",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.5687815833801233,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "financial-calculations",
+          "name": "Financial calculations",
+          "verdict": "Rising",
+          "user_level": 1,
+          "target_level": 2.770642201834862,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "office-administration",
+          "name": "Office administration",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.2561669829222013,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/iwa"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/gwa"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        },
+        {
+          "corner_id": "cash-handling",
+          "name": "Cash handling",
+          "verdict": "Declining",
+          "user_level": 1,
+          "target_level": 1.384615384615385,
+          "sources": [
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-04-01",
+              "geo_or_layer": "MYS/occupation"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/occupation"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/major_group"
+            },
+            {
+              "source_name": "DOSM Big Data Analytics: Job Market Insights",
+              "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260818075331.xlsx",
+              "vintage_date": "2026-08-18",
+              "geo_or_layer": "MYS/L2"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "MYS/overall"
+            },
+            {
+              "source_name": "Anthropic Economic Index, release 2026-06-26 (Claude.ai)",
+              "source_url": "https://huggingface.co/datasets/Anthropic/EconomicIndex/blob/4e5f69fab13a9c3f7d0dcc31a6f893a9818738f6/release_2026_06_26/data/aei_claude_ai_2026-06-26.csv",
+              "vintage_date": "2026-05-01",
+              "geo_or_layer": "SGP/overall"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
