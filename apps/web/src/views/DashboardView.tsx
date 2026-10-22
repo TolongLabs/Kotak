@@ -3,7 +3,6 @@ import { useEffect, type ReactNode } from 'react'
 import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
-import { AiDraftedBanner } from '../components/kotak/AiDraftedBanner'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { StatCard } from '../components/kotak/StatCard'
@@ -329,8 +328,6 @@ export function DashboardView() {
           </div>
         )}
       </header>
-
-      {role.quality === 'auto-generated' && <AiDraftedBanner roleCode={role.onet_code} />}
 
       <CatDialogue pose="explaining" speech={kopiSpeech} />
 
