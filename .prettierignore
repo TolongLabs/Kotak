@@ -1,3 +1,6 @@
 .agents/
 .claude/
 docs/demo/example-pitch-deck.html
+# Generated O*NET data, one record per line
+data/onet/
+data/generated/

@@ -1,6 +1,11 @@
 import { EngineSnapshotSchema, HealthResponseSchema, sampleSnapshot } from '@kotak/shared'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { defaultAiDeps } from './ai/deps'
+import { createExplanationsRoute } from './routes/explanations'
+import { createRolesRoute } from './routes/roles'
+import { nationalView } from './routes/national-view'
+import { tts } from './routes/tts'
 
 export const app = new Hono()
 
@@ -15,3 +20,8 @@ app.get('/api/sample', (context) => {
   const response = EngineSnapshotSchema.parse(sampleSnapshot)
   return context.json(response)
 })
+
+app.route('/api/national-view', nationalView)
+app.route('/api/tts', tts)
+app.route('/api/roles', createRolesRoute(defaultAiDeps))
+app.route('/api/explanations', createExplanationsRoute(defaultAiDeps))

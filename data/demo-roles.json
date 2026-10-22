@@ -1,0 +1,22 @@
+{
+  "roles": [
+    {
+      "onet_code": "15-1254.00",
+      "persona": "Aiman, a front-end developer in Kuala Lumpur",
+      "why": "The locked idea's main case. All 6 corners take AI use from Malaysian task or DWA rows; May shows Rising, Steady and Declining corners; the fit-score ranking and the roadmap both move.",
+      "sample_level": 1
+    },
+    {
+      "onet_code": "15-1255.00",
+      "persona": "Farah, a designer in Penang who does web and interface work",
+      "why": "The design case. Graphic Designers (27-1024.00) fails the criteria: 2 of its 6 corners borrow Malaysian GWA rows and its fit-score ranking does not move. This is Farah's UX designer role from the locked idea: all 6 corners use Malaysian task or DWA rows, May shows Rising, Steady and Declining corners, and the ranking and roadmap move.",
+      "sample_level": 1
+    },
+    {
+      "onet_code": "43-3031.00",
+      "persona": "A bookkeeping and accounting clerk",
+      "why": "The clerk case #104 names. All 6 corners use Malaysian IWA or occupation rows; May shows Rising and Declining corners; the ranking and roadmap move.",
+      "sample_level": 1
+    }
+  ]
+}

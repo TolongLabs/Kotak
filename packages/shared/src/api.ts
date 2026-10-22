@@ -3,17 +3,38 @@ import { EngineSnapshotSchema, OccupationSchema, SnapshotIdSchema, SourceSchema,
 
 const UserLevelSchema = z.number().int().min(0).max(3)
 const TargetLevelSchema = z.number().min(1).max(3)
+// O*NET-SOC codes such as 15-1254.00, and SOC major groups such as 15-0000.
+const OnetRoleCodeSchema = z.string().regex(/^\d{2}-\d{4}\.\d{2}$/)
+const OccupationGroupCodeSchema = z.string().regex(/^\d{2}-0000$/)
+// Who wrote a piece of explanation text: Claude, checked by the verifier, or the fixed template.
+const AiTextSourceSchema = z.enum(['claude', 'template'])
+
+// Every non-2xx API response has this body.
+export const ApiErrorSchema = z
+  .object({
+    error: z
+      .object({
+        code: z.string().min(1),
+        message: z.string().min(1)
+      })
+      .strict()
+  })
+  .strict()
 
 export const HealthResponseSchema = z.object({ status: z.literal('ok') }).strict()
 
 export const SampleResponseSchema = EngineSnapshotSchema
 
-export const RoleMatchRequestSchema = z.object({ job_title: z.string().trim().min(1) }).strict()
+// The longest O*NET 30.1 alternate title has 128 characters.
+export const RoleMatchRequestSchema = z.object({ job_title: z.string().trim().min(1).max(150) }).strict()
 
 export const RoleMatchResponseSchema = z
   .object({
-    occupation: OccupationSchema,
-    needs_confirmation: z.boolean()
+    occupation: OccupationSchema.nullable(),
+    needs_confirmation: z.boolean(),
+    match_source: z.enum(['title_search', 'claude', 'none']).optional(),
+    cached: z.boolean().optional(),
+    fallback_reason: z.enum(['ai_unavailable', 'no_valid_suggestion']).optional()
   })
   .strict()
 
@@ -25,7 +46,10 @@ export const ExplanationRequestSchema = z
         z
           .object({
             corner_id: z.string().min(1),
+            // Corner-group names join their work activities; the longest has 327 characters.
+            name: z.string().trim().min(1).max(400).optional(),
             verdict: VerdictSchema,
+            previous_verdict: VerdictSchema.optional(),
             user_level: UserLevelSchema,
             target_level: TargetLevelSchema,
             sources: z.array(SourceSchema).min(1)
@@ -53,12 +77,16 @@ export const ExplanationResponseSchema = z
                   })
                   .strict()
               )
-              .min(1)
+              .min(1),
+            source: AiTextSourceSchema.optional()
           })
           .strict()
       )
       .length(6),
-    what_changed_summary: z.string().min(1)
+    what_changed_summary: z.string().min(1),
+    what_changed_source: AiTextSourceSchema.optional(),
+    cached: z.boolean().optional(),
+    fallback_reason: z.enum(['ai_unavailable', 'verifier_rejected']).optional()
   })
   .strict()
 
@@ -77,7 +105,8 @@ export const JobAdExtractResponseSchema = z
   })
   .strict()
 
-export const TtsRequestSchema = z.object({ text: z.string().trim().min(1) }).strict()
+// The length cap is the TTS route's cheap guard on ElevenLabs credits.
+export const TtsRequestSchema = z.object({ text: z.string().trim().min(1).max(600) }).strict()
 
 export const TtsResponseSchema = z
   .object({
@@ -88,7 +117,7 @@ export const TtsResponseSchema = z
 
 export const NationalCheckupRequestSchema = z
   .object({
-    onet_role_code: z.string().min(1),
+    onet_role_code: OnetRoleCodeSchema,
     corner_levels: z.array(UserLevelSchema).length(6)
   })
   .strict()
@@ -97,22 +126,39 @@ export const NationalCheckupResponseSchema = z.object({ recorded: z.literal(true
 
 export const NationalViewSummaryRequestSchema = z
   .object({
-    occupation_group: z.string().optional(),
-    onet_role_code: z.string().optional()
+    occupation_group: OccupationGroupCodeSchema.optional(),
+    onet_role_code: OnetRoleCodeSchema.optional()
   })
   .strict()
 
+// One row per role. Real averages need 10 or more real check-ups; otherwise the row is labelled sample data.
+// Averages are rounded to one decimal.
 export const NationalViewGroupSchema = z
   .object({
-    onet_role_code: z.string().min(1),
-    occupation_group: z.string().min(1),
+    onet_role_code: OnetRoleCodeSchema,
+    occupation_group: OccupationGroupCodeSchema,
+    occupation_group_title: z.string().min(1),
     average_corner_levels: z.array(z.number().min(0).max(3)).length(6),
+    // Rows behind the averages. Real groups give a bucket floor, a multiple of 10 (show 20 as "20+"), never the
+    // exact count. Sample groups give the number of sample rows.
+    checkup_count: z.number().int().min(1),
     is_sample: z.boolean()
   })
   .strict()
+  .refine((group) => group.is_sample || group.checkup_count % 10 === 0, {
+    message: 'A real checkup_count is a multiple of 10.',
+    path: ['checkup_count']
+  })
 
-export const NationalViewSummaryResponseSchema = z.object({ groups: z.array(NationalViewGroupSchema) }).strict()
+export const NationalViewSummaryResponseSchema = z
+  .object({
+    groups: z.array(NationalViewGroupSchema),
+    // false when the database is unset or unreachable; every group is then built-in sample data.
+    database_available: z.boolean()
+  })
+  .strict()
 
+export type ApiError = z.infer<typeof ApiErrorSchema>
 export type HealthResponse = z.infer<typeof HealthResponseSchema>
 export type SampleResponse = z.infer<typeof SampleResponseSchema>
 export type RoleMatchRequest = z.infer<typeof RoleMatchRequestSchema>

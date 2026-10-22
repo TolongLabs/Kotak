@@ -44,7 +44,6 @@ export function CheckUpView() {
   const [hoursPerWeek, setHoursPerWeek] = useState(roadmap[1]?.hoursPerWeek ?? 1)
   const [startDate, setStartDate] = useState(getDefaultStartDate)
   const [anonymousResult, setAnonymousResult] = useState(false)
-  const [muted, setMuted] = useState(true)
 
   const normalizedQuery = jobQuery.trim().toLocaleLowerCase()
   const matchingSuggestions = jobSuggestions.filter(
@@ -77,12 +76,7 @@ export function CheckUpView() {
         <h1 className="sr-only">Find Your Job</h1>
         <Stepper step={1} labels={stepLabels} />
         <Banner type="sample" />
-        <CatDialogue
-          pose="worried"
-          speech="Hmm, I couldn’t find that job. Try a simpler title?"
-          muted={muted}
-          onToggleVoice={() => setMuted((value) => !value)}
-        />
+        <CatDialogue pose="worried" speech="Hmm, I couldn’t find that job. Try a simpler title?" />
 
         <TextFieldForNoMatch value={jobQuery} onChange={updateJobQuery} />
 
@@ -112,12 +106,7 @@ export function CheckUpView() {
     <div className="mx-auto w-full max-w-[45rem] space-y-6">
       <Stepper step={1} labels={stepLabels} />
       <Banner type="sample" />
-      <CatDialogue
-        pose="idle"
-        speech="Hi, I’m Kopi. Let’s open the box on your job."
-        muted={muted}
-        onToggleVoice={() => setMuted((value) => !value)}
-      />
+      <CatDialogue pose="idle" speech="Hi, I’m Kopi. Let’s open the box on your job." />
 
       <section className="space-y-1.5" aria-labelledby="work-heading">
         <h1 id="work-heading" className="text-title-m text-text-primary">

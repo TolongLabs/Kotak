@@ -86,7 +86,6 @@ export function RoadmapView() {
   )
   const [startDate, setStartDate] = useState(getInitialStartDate)
   const [scenario, setScenario] = useState<ScenarioValue>('slow')
-  const [muted, setMuted] = useState(true)
 
   const visibleSteps = roadmap.filter((step) => !step.conditional || scenario === 'fast')
   const reasoningCorner = corners.find((corner) => corner.name === roadmap[0]?.skill)
@@ -127,7 +126,7 @@ export function RoadmapView() {
         }
       `}</style>
       <div className="roadmap-view space-y-5 lg:space-y-6">
-        <CatDialogue pose="happy" speech={speech} muted={muted} onToggleVoice={() => setMuted((current) => !current)} />
+        <CatDialogue pose="happy" speech={speech} />
 
         <Banner type="sample" />
 

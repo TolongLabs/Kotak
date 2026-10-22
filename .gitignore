@@ -107,7 +107,12 @@ docs/meetings/
 
 # Build outputs
 dist/
+# The static client bundle, written by bun run build:data
+apps/web/public/data/
 .wrangler/
+
+# Local caches: downloaded source data and the Bun server's Claude responses
+.cache/
 
 # Local scraper runs and browser tooling
 .local/
