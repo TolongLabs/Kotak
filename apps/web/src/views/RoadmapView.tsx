@@ -1,12 +1,12 @@
 import { DEFAULT_SCENARIO } from '@kotak/shared'
 import { Check, Clock3, MoreHorizontal } from 'lucide-react'
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoadmapStepCard } from '../components/kotak/RoadmapStepCard'
-import { SourceReference } from '../components/kotak/SourceReference'
+import { SourceList } from '../components/kotak/SourceList'
 import { renderCited } from '../components/kotak/renderCited'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
@@ -20,8 +20,10 @@ import { toReadinessPoints, toRoadmapSources, toRoadmapSteps } from '../engine/r
 import { cornerReasoning } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { updateGuestSession, useGuestSession } from '../session/store'
+import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
+import { type TimelineStep } from './roadmap/planSupport'
 
 function toIsoDate(date: Date) {
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -66,43 +68,12 @@ interface LessImportantItem {
   text: string
 }
 
-function DividendCard({ body, lessImportant }: { body: string; lessImportant: LessImportantItem[] }) {
-  return (
-    <section aria-labelledby="dividend-title" className="space-y-3">
-      <div className="space-y-2 rounded-md border-[1.5px] border-text-primary bg-accent-box p-4 text-accent-on-box">
-        <h3 id="dividend-title" className="flex items-center gap-2 text-label-l">
-          <Clock3 className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
-          Your AI Dividend
-        </h3>
-        <p className="text-body-s">{renderCited(body)}</p>
-      </div>
-      <div className="space-y-2">
-        {lessImportant.length > 0 ? (
-          lessImportant.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center gap-2.5 rounded-md border border-border-subtle bg-bg-default px-4 py-3"
-            >
-              {item.verdict && <VerdictChip verdict={item.verdict} size="sm" />}
-              <p className="min-w-0 text-body-s text-text-primary">{renderCited(item.text)}</p>
-            </div>
-          ))
-        ) : (
-          <div className="rounded-md border border-border-subtle bg-bg-default p-3">
-            <p className="text-body-s text-text-muted">No skills are marked as less important in this plan.</p>
-          </div>
-        )}
-      </div>
-    </section>
-  )
-}
-
 function RoadmapActionMenu({ onPrint }: { onPrint: () => void }) {
   return (
     <details className="relative shrink-0">
       <summary
         aria-label="More Roadmap Actions"
-        className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border-[1.5px] border-text-primary bg-bg-default text-text-primary transition-colors hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
+        className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-bg-default text-text-primary transition-colors hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
       >
         <MoreHorizontal className="h-5 w-5 stroke-current" aria-hidden="true" />
       </summary>
@@ -159,12 +130,18 @@ function RoadmapStepWithoutResource({
   step,
   index,
   last,
-  highlighted
+  highlighted,
+  selected,
+  onSelect,
+  stepRef
 }: {
   step: RoadmapStep
   index: number
   last: boolean
   highlighted: boolean
+  selected: boolean
+  onSelect: () => void
+  stepRef: (element: HTMLElement | null) => void
 }) {
   const border = step.conditional
     ? 'border-[1.5px] border-dashed border-border-control bg-bg-panel'
@@ -190,9 +167,12 @@ function RoadmapStepWithoutResource({
         </span>
       </div>
       <article
-        className={`min-w-0 flex-1 space-y-2 rounded-md p-4 ${border} ${
+        ref={stepRef}
+        aria-current={selected ? 'true' : undefined}
+        onClick={onSelect}
+        className={`min-w-0 flex-1 cursor-pointer space-y-2 rounded-md p-4 ${border} ${
           highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
-        }`}
+        } ${selected ? 'outline outline-2 outline-offset-2 outline-text-primary' : ''}`}
       >
         <p className="font-mono text-mono-s text-text-muted">{formatStepWhen(step.when)}</p>
         <h3 className="text-title-s text-text-primary">{step.title || step.skill}</h3>
@@ -218,15 +198,16 @@ export function RoadmapView() {
   const scenario = DEFAULT_SCENARIO
   const [today] = useState(() => toIsoDate(new Date()))
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null)
-  const roleBundle = bundle.status === 'ready' ? bundle.data : null
+  const [selectedStepId, setSelectedStepId] = useState<string | null>(null)
+  const cardRefs = useRef(new Map<string, HTMLElement | null>())
   const startDate = selectedStartDate ?? today
 
   const checkup = useMemo(() => {
-    if (!roleBundle) return null
+    if (bundle.status !== 'ready') return null
 
     return computeCheckup({
-      role: roleBundle.role,
-      related: roleBundle.related,
+      role: bundle.data.role,
+      related: bundle.data.related,
       answers: session.answers,
       snapshotId: session.active_snapshot_id,
       scenario: DEFAULT_SCENARIO,
@@ -235,13 +216,45 @@ export function RoadmapView() {
       planRoleCode: session.plan_role_code
     })
   }, [
-    roleBundle,
+    bundle,
     session.answers,
     session.custom_weekly_hours,
     session.active_snapshot_id,
     session.plan_role_code,
     startDate
   ])
+
+  // Clicking a step bar or a readiness point scrolls its Step Details card into view.
+  useEffect(() => {
+    if (!selectedStepId) return
+    cardRefs.current.get(selectedStepId)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [selectedStepId])
+
+  // The Weekly Hours after applying the AI dividend, with the readiness week it would bring.
+  const projection = useMemo(() => {
+    if (!checkup || bundle.status !== 'ready') return null
+    const dividend = checkup.roadmap.dividend
+    if (!(dividend.sources.length > 0 && dividend.weekly_hours_saved > 0)) return null
+    const base = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
+    const proposed = Math.min(10, Math.round((base + dividend.weekly_hours_saved) * 2) / 2)
+    if (proposed <= base + 0.001) return { proposed: null, readyWeek: null }
+    const data = bundle.data
+    const role =
+      [data.role, ...data.related].find((candidate) => candidate.onet_code === checkup.planRoleCode) ?? data.role
+    const checkupWithHours = computeCheckup({
+      role: data.role,
+      related: data.related,
+      answers: session.answers,
+      snapshotId: checkup.snapshotId,
+      scenario: checkup.scenario,
+      weeklyHours: proposed,
+      startDate,
+      planRoleCode: checkup.planRoleCode
+    })
+    const points = toReadinessPoints(checkupWithHours, role)
+    const readyWeek = points.find((point) => point.plan >= 80)?.week ?? null
+    return { proposed, readyWeek }
+  }, [checkup, bundle, session.answers, session.custom_weekly_hours, startDate])
 
   if (!session.role_code) {
     return (
@@ -292,15 +305,29 @@ export function RoadmapView() {
     [bundle.data.role, ...bundle.data.related].find((candidate) => candidate.onet_code === checkup?.planRoleCode) ??
     bundle.data.role
   const steps = toRoadmapSteps(checkup, role, session.ticked_milestones)
+  const stepHours = new Map(checkup.roadmap.items.map((item) => [`${item.corner_id}:${item.statement}`, item.hours]))
+  const timelineSteps: TimelineStep[] = steps.map((step) => ({ ...step, totalHours: stepHours.get(step.id) ?? 0 }))
   const readinessPoints = toReadinessPoints(checkup, role)
   const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
   const selectedImpactArea = impactAreaGoals.find((goal) => String(goal) === session.impact_area) ?? null
   const sourceRefs = toRoadmapSources(checkup)
+
+  const cornerNames = new Map(checkup.corners.map((corner) => [corner.corner_id, corner.name]))
   const dividend = checkup.roadmap.dividend
-  const dividendBody =
-    dividend.sources.length > 0 && dividend.weekly_hours_saved > 0
-      ? `AI could save about ${formatEstimate(dividend.weekly_hours_saved)} hours a week. About ${formatEstimate(dividend.default_weekly_hours)} hours a week could go to learning. ${sourceRefs.dividendNumbers.map((number) => `[${number}]`).join('')}`
-      : 'There is no source-backed estimate of time saved for this role yet.'
+  const hasEstimate = dividend.sources.length > 0 && dividend.weekly_hours_saved > 0
+  const dividendTasks = hasEstimate
+    ? [...dividend.corners]
+        .filter((row) => row.weekly_hours_saved > 0)
+        .sort((left, right) => right.weekly_hours_saved - left.weekly_hours_saved)
+        .slice(0, 3)
+        .map((row) => ({
+          id: row.corner_id,
+          name: cornerNames.get(row.corner_id) ?? row.corner_id,
+          weeklyHoursSaved: row.weekly_hours_saved
+        }))
+    : []
+  const currentWeeklyHours = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
+
   const lessImportant: LessImportantItem[] = checkup.roadmap.items
     .filter((item) => item.tag !== null)
     .map((item) => {
@@ -328,6 +355,13 @@ export function RoadmapView() {
       ? `${cornerReasoning(reasonCorner.verdict, scenario)} Kopi marks this skill ${reasonCorner.verdict.status.toLocaleLowerCase()}. ${reasonNumbers.map((number) => `[${number}]`).join('')}`
       : ''
 
+  function recordRef(stepId: string) {
+    return (element: HTMLElement | null) => {
+      if (element) cardRefs.current.set(stepId, element)
+      else cardRefs.current.delete(stepId)
+    }
+  }
+
   function toggleMilestone(id: string, checked: boolean) {
     const ticked = new Set(session.ticked_milestones)
     if (checked) ticked.add(id)
@@ -337,6 +371,15 @@ export function RoadmapView() {
 
   function selectImpactArea(goal: number | null) {
     updateGuestSession({ impact_area: goal === null ? null : String(goal) })
+  }
+
+  function applyDividend() {
+    if (!projection?.proposed) return
+    updateGuestSession({ custom_weekly_hours: projection.proposed })
+  }
+
+  function selectStep(stepId: string) {
+    setSelectedStepId(stepId)
   }
 
   function printPlan() {
@@ -424,7 +467,14 @@ export function RoadmapView() {
           />
         </section>
 
-        <ReadinessChart points={readinessPoints} roleTitle={role.title} />
+        <ReadinessChart
+          points={readinessPoints}
+          roleTitle={role.title}
+          startIso={checkup.roadmap.start_date}
+          todayIso={today}
+          steps={timelineSteps}
+          onSelectStep={selectStep}
+        />
 
         {impactAreaGoals.length > 0 && (
           <section
@@ -473,10 +523,12 @@ export function RoadmapView() {
         )}
 
         <RoadmapTimeline
-          steps={steps}
+          steps={timelineSteps}
           startDate={fromIsoDate(checkup.roadmap.start_date)}
           today={fromIsoDate(today)}
           impactArea={selectedImpactArea}
+          selectedStepId={selectedStepId}
+          onSelectStep={selectStep}
         />
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-6">
@@ -501,6 +553,9 @@ export function RoadmapView() {
                         index={index}
                         last={index === steps.length - 1}
                         highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
+                        selected={selectedStepId === step.id}
+                        onSelect={() => selectStep(step.id)}
+                        stepRef={recordRef(step.id)}
                       />
                     ) : (
                       <RoadmapStepWithoutResource
@@ -508,6 +563,9 @@ export function RoadmapView() {
                         index={index}
                         last={index === steps.length - 1}
                         highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
+                        selected={selectedStepId === step.id}
+                        onSelect={() => selectStep(step.id)}
+                        stepRef={recordRef(step.id)}
                       />
                     )}
                   </RoadmapStepToggle>
@@ -526,26 +584,50 @@ export function RoadmapView() {
                 <Reasoning text={reasonText} />
               </section>
             )}
-            <DividendCard body={dividendBody} lessImportant={lessImportant} />
+            <FreeUpTimeCard
+              estimate={
+                hasEstimate
+                  ? {
+                      weeklyHoursSaved: dividend.weekly_hours_saved,
+                      tasks: dividendTasks,
+                      citations: sourceRefs.dividendNumbers
+                    }
+                  : null
+              }
+              currentWeeklyHours={currentWeeklyHours}
+              proposedWeeklyHours={projection?.proposed ?? null}
+              readyWeekBefore={readyPoint?.week ?? null}
+              readyWeekAfter={projection?.readyWeek ?? null}
+              planWeeks={planWeeks}
+              onApply={applyDividend}
+            />
+            <div className="space-y-2">
+              {lessImportant.length > 0 ? (
+                lessImportant.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-2.5 rounded-md border border-border-subtle bg-bg-default px-4 py-3"
+                  >
+                    {item.verdict && <VerdictChip verdict={item.verdict} size="sm" />}
+                    <p className="min-w-0 text-body-s text-text-primary">{renderCited(item.text)}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-md border border-border-subtle bg-bg-default p-3">
+                  <p className="text-body-s text-text-muted">No skills are marked as less important in this plan.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <section aria-labelledby="sources-title" className="space-y-3">
-          <h2 id="sources-title" className="text-title-s text-text-primary">
-            Sources
-          </h2>
-          {sourceRefs.sources.length > 0 ? (
-            <div className="overflow-hidden rounded-md border border-border-subtle bg-bg-default [&>div]:rounded-none [&>div]:border-0 [&>div]:bg-bg-default [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-border-subtle">
-              {sourceRefs.sources.map((source) => (
-                <SourceReference key={source.n} source={source} />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
-              No sources are available for this role yet.
-            </p>
-          )}
-        </section>
+        {sourceRefs.sources.length > 0 ? (
+          <SourceList sources={sourceRefs.sources} />
+        ) : (
+          <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
+            No sources are available for this role yet.
+          </p>
+        )}
 
         <div className="roadmap-print-actions hidden lg:block">
           <Button variant="primary" fullWidth onClick={printPlan}>

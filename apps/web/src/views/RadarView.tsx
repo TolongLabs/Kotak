@@ -7,15 +7,16 @@ import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
 import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
-import { SourceReference } from '../components/kotak/SourceReference'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
+import { SourceList } from '../components/kotak/SourceList'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { SdgChip } from '../components/ui/SdgChip'
 import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
-import { computeCheckup, type Checkup } from '../engine/checkup'
+import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
+import { occupationSdgs } from '../engine/occupationSdg'
 import { useRoleBundle } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
 import { useGuestSession } from '../session/store'
@@ -64,7 +65,7 @@ function RadarCatDialogue({ pose, speech }: { pose: 'explaining' | 'worried'; sp
 
 export function RadarView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(session.role_code)
+  const bundle = useRoleBundle(assessedRoleCode(session))
   const roleData = bundle.status === 'ready' ? bundle.data : null
   const [today] = useState(() => new Date().toISOString().slice(0, 10))
   const checkup = useMemo(
@@ -150,6 +151,7 @@ export function RadarView() {
   }
 
   const { role, related } = bundle.data
+  const workSdgs = occupationSdgs(assessedRoleCode(session))
   const { sources, numbers } = sourceRefs(checkup)
   const explanationByCorner = new Map(
     explanationState?.roleCode === role.onet_code && explanationState.snapshotId === checkup.snapshotId
@@ -290,6 +292,14 @@ export function RadarView() {
             </button>
           </Tooltip>
         </h1>
+        {workSdgs && workSdgs.goals.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-label-s text-text-muted">This Work Supports</span>
+            {workSdgs.goals.map((goal) => (
+              <SdgChip key={goal} goal={goal} title={workSdgs.reason} />
+            ))}
+          </div>
+        )}
         <p className="text-body-s text-text-muted">
           Where the job is heading, and where you stand. Targets and dates are estimates; every verdict comes from fixed
           rules over dated public data.
@@ -322,20 +332,7 @@ export function RadarView() {
             {weaknessCorners.map(renderGapCard)}
           </section>
 
-          {sources.length > 0 && (
-            <section className="space-y-3" aria-labelledby="all-sources-title">
-              <h2 id="all-sources-title" className="text-title-s text-text-primary">
-                All Sources
-              </h2>
-              <ul className="surface-card space-y-2 p-3">
-                {sources.map((source) => (
-                  <li key={source.n}>
-                    <SourceReference source={source} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          <SourceList sources={sources} label="All Sources" />
 
           <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
             <Link

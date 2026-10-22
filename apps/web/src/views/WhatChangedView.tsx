@@ -1,7 +1,7 @@
 import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { RefreshCw } from 'lucide-react'
 import { CatDialogue } from '../components/kotak/CatDialogue'
-import { SourceReference } from '../components/kotak/SourceReference'
+import { SourceList } from '../components/kotak/SourceList'
 import { WhatChangedCard } from '../components/kotak/WhatChangedCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
@@ -9,7 +9,7 @@ import { Toast } from '../components/ui/Toast'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
-import { answeredLevels, computeCheckup } from '../engine/checkup'
+import { answeredLevels, assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { sourceRefs, toCorners } from '../engine/viewModel'
 import { useGuestSession } from '../session/store'
 import { useActiveSnapshot } from '../session/snapshot'
@@ -53,7 +53,7 @@ function changeSpeech(
 
 export function WhatChangedView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(session.role_code)
+  const bundle = useRoleBundle(assessedRoleCode(session))
   const [activeSnapshot, setActiveSnapshot] = useActiveSnapshot()
   const isMay = activeSnapshot === afterSnapshot
   const beforeLabel = snapshotMonthLabel(beforeSnapshot)
@@ -236,11 +236,7 @@ export function WhatChangedView() {
             neededNowLabel="Needed Now (May)"
             beforeLabel="Before (April)"
           />
-          <div className="space-y-2 rounded-md border border-border-subtle bg-bg-default p-4">
-            {comparisonSources.map((source) => (
-              <SourceReference key={source.n} source={source} />
-            ))}
-          </div>
+          <SourceList sources={comparisonSources} />
         </section>
       </div>
 
