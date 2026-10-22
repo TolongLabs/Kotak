@@ -111,7 +111,7 @@ function RoadmapStepWithoutResource({
       : 'border border-border-subtle bg-bg-default'
 
   return (
-    <div className="relative flex gap-3 sm:gap-4">
+    <div className={`relative flex gap-3 sm:gap-4 ${last ? '' : 'pb-3'}`}>
       <div className="relative flex w-7 shrink-0 justify-center">
         {!last && <span className="absolute bottom-0 top-7 w-px bg-border-subtle" aria-hidden="true" />}
         <span
