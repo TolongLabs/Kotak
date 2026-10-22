@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from '../app/router'
+import { useState } from 'react'
+import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
@@ -11,7 +11,10 @@ import { Button } from '../components/ui/Button'
 import { ScenarioSwitch } from '../components/ui/ScenarioSwitch'
 import { Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
-import { corners, roadmap, roles, sources, user } from '../demo/data'
+import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
+import { useCheckup } from '../engine/checkup'
+import { useRoleBundle } from '../engine/bundle'
+import { useGuestSession } from '../session/store'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
 
@@ -22,50 +25,15 @@ function gapFor(corner: Corner, scenario: Scenario) {
   return needed - corner.you
 }
 
-function getTargetDateLabel(lastCheckUp: string) {
-  const [, , month, year] = lastCheckUp.split(' ')
-  return `${month} ${Number(year) + 1}`
-}
-
 export function RadarView() {
   const [scenario, setScenario] = useState<Scenario>('slow')
+  const session = useGuestSession()
+  const loaded = useCheckup({ scenario })
+  const bundle = useRoleBundle(session.role_code)
   // Explanations come from the AI route (#43). Until it exists, ?ai=off shows the paused state for demos.
   const [explanationsPaused, setExplanationsPaused] = useState(
     () => new URLSearchParams(window.location.search).get('ai') === 'off'
   )
-  const swot = useMemo(() => deriveSwot(corners, roles, scenario), [scenario])
-  const targetDate = getTargetDateLabel(user.lastCheckUp)
-  const targetYear = targetDate.split(' ').slice(-1)[0] ?? ''
-  const neededDateLabel = `Needed by ${targetDate}`
-  const neededYearLabel = `Needed by ${targetYear}`
-
-  const biggestRisingGap = corners
-    .filter((corner) => corner.verdict === 'rising')
-    .sort((left, right) => {
-      const gapDifference = gapFor(right, scenario) - gapFor(left, scenario)
-      return gapDifference || corners.indexOf(right) - corners.indexOf(left)
-    })[0]
-  const firstRoadmapStepTitle = roadmap[0]?.title
-  const speech =
-    biggestRisingGap && firstRoadmapStepTitle
-      ? `Your biggest rising gap is ${biggestRisingGap.name}. Your first roadmap step is ${firstRoadmapStepTitle}.`
-      : ''
-
-  const weaknessNames = new Set(swot.weaknesses.map((item) => item.label))
-  const weaknessCorners = corners
-    .filter((corner) => weaknessNames.has(corner.name))
-    .sort((left, right) => {
-      const gapDifference = gapFor(right, scenario) - gapFor(left, scenario)
-      return gapDifference || corners.indexOf(right) - corners.indexOf(left)
-    })
-  const sourceByNumber = new Map(sources.map((source) => [source.n, source]))
-  const citedSourceNumbers = [...new Set(weaknessCorners.flatMap((corner) => corner.sources ?? []))].sort(
-    (left, right) => left - right
-  )
-  const citedSources: SourceRef[] = citedSourceNumbers.flatMap((number) => {
-    const source = sourceByNumber.get(number)
-    return source ? [source] : []
-  })
 
   const retryExplanations = () => {
     const url = new URL(window.location.href)
@@ -73,6 +41,64 @@ export function RadarView() {
     window.history.replaceState(null, '', url)
     setExplanationsPaused(false)
   }
+
+  if (!session.role_code) {
+    return (
+      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+        <h1 className="sr-only">Future Skills Radar</h1>
+        <Stepper step={3} labels={stepLabels} />
+        <CatDialogue pose="worried" speech="Tell me your job first, then I can map its skills." />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
+          Choose Your Job
+        </Button>
+      </div>
+    )
+  }
+
+  if (loaded.status !== 'ready' || bundle.status !== 'ready') {
+    return (
+      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+        <h1 className="sr-only">Future Skills Radar</h1>
+        <Stepper step={3} labels={stepLabels} />
+        {loaded.status === 'error' || bundle.status === 'error' ? (
+          <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+        ) : (
+          <CatDialogue pose="thinking" speech="Opening the box on your job…" />
+        )}
+      </div>
+    )
+  }
+
+  const { checkup } = loaded.data
+  const { role, related } = bundle.data
+  const { sources, numbers } = sourceRefs(checkup)
+  const corners = toCorners(checkup, numbers)
+  const roles = toRoles(checkup, [role, ...related], session.role_code)
+  const swot = deriveSwot(corners, roles, scenario)
+  const neededLabel = `${neededByLabel(checkup)} (estimate)`
+
+  const biggestRisingGap = corners
+    .filter((corner) => corner.verdict === 'rising' && gapFor(corner, scenario) > 0)
+    .sort((left, right) => gapFor(right, scenario) - gapFor(left, scenario))[0]
+  const firstRoadmapItem = checkup.roadmap.items[0]
+  const firstRoadmapCorner = firstRoadmapItem
+    ? role.corners.find((corner) => corner.corner_id === firstRoadmapItem.corner_id)
+    : undefined
+  const firstRoadmapStatement =
+    firstRoadmapItem && firstRoadmapCorner?.statements
+      ? firstRoadmapCorner.statements[firstRoadmapItem.statement]
+      : null
+  const speech = biggestRisingGap
+    ? firstRoadmapStatement
+      ? `Your biggest rising gap is ${biggestRisingGap.name}. Try this: ${firstRoadmapStatement}`
+      : 'I don’t have a ready skill statement for your first step yet.'
+    : 'No rising skill gap stands out for this job yet.'
+
+  const weaknessNames = new Set(swot.weaknesses.map((item) => item.label))
+  const weaknessCorners = corners
+    .filter((corner) => weaknessNames.has(corner.name))
+    .sort((left, right) => gapFor(right, scenario) - gapFor(left, scenario))
+  const sourceByNumber = new Map(sources.map((source) => [source.n, source]))
 
   return (
     <div className="space-y-5 lg:space-y-6">
@@ -84,7 +110,13 @@ export function RadarView() {
           body="We couldn't reach the AI. Your verdicts, roles and plan still work."
         />
       )}
-      <Banner type="sample" />
+      {role.quality === 'auto-generated' && (
+        <Banner
+          type="info"
+          title="AI-Drafted Skills"
+          body="Kopi drafted these skills from the job’s O*NET tasks. The team has not checked them by hand yet."
+        />
+      )}
 
       <CatDialogue
         pose={explanationsPaused ? 'worried' : 'explaining'}
@@ -98,10 +130,11 @@ export function RadarView() {
 
       <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">
-          {user.jobTitle}, {targetDate}
+          {role.title}, {neededLabel}
         </h1>
         <p className="text-body-s text-text-muted">
-          Where the job is heading, and where you stand. Every verdict comes from fixed rules over dated public data.
+          Where the job is heading, and where you stand. Targets and dates are estimates; every verdict comes from fixed
+          rules over dated public data.
         </p>
       </header>
 
@@ -110,7 +143,7 @@ export function RadarView() {
           <div className="flex justify-center">
             <ScenarioSwitch value={scenario} onChange={setScenario} aria-label="AI Uptake Scenario" />
           </div>
-          <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededDateLabel} />
+          <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
         </section>
 
         <div className="space-y-4">
@@ -138,25 +171,27 @@ export function RadarView() {
                   corner={corner}
                   sources={cornerSources}
                   scenario={scenario}
-                  neededLabel={neededYearLabel}
+                  neededLabel={neededLabel}
                   paused={explanationsPaused}
                 />
               )
             })}
           </section>
 
-          <section className="space-y-3" aria-labelledby="all-sources-title">
-            <h2 id="all-sources-title" className="text-title-s text-text-primary">
-              All Sources
-            </h2>
-            <ul className="surface-card space-y-2 p-3">
-              {citedSources.map((source) => (
-                <li key={source.n}>
-                  <SourceReference source={source} />
-                </li>
-              ))}
-            </ul>
-          </section>
+          {sources.length > 0 && (
+            <section className="space-y-3" aria-labelledby="all-sources-title">
+              <h2 id="all-sources-title" className="text-title-s text-text-primary">
+                All Sources
+              </h2>
+              <ul className="surface-card space-y-2 p-3">
+                {sources.map((source) => (
+                  <li key={source.n}>
+                    <SourceReference source={source} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <div
             className={cn(

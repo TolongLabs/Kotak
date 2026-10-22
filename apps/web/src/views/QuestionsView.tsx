@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { DEFAULT_SCENARIO, followUpStatement, type BundleRole } from '@kotak/shared'
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
@@ -6,15 +7,29 @@ import { PageTransition } from '../components/kotak/PageTransition'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
-import { corners } from '../demo/data'
-import { questions } from '../demo/questions'
-import type { Question } from '../demo/types'
+import { useRoleBundle } from '../engine/bundle'
+import { useCheckup } from '../engine/checkup'
+import { updateGuestSession, useGuestSession } from '../session/store'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
-const totalQuestions = corners.length * 2
+
+// Answers arrive in asking order (rising corners first); the session stores them by the corner's place in the
+// role's batch order: [2i] is corner i's working answer, [2i + 1] its follow-up (see engine/checkup.ts).
+function toSessionAnswers(role: BundleRole, order: string[], asked: boolean[]) {
+  const answers = Array<boolean | null>(12).fill(null)
+  role.corners.forEach((corner, i) => {
+    const k = order.indexOf(corner.corner_id)
+    answers[2 * i] = asked[2 * k] ?? null
+    answers[2 * i + 1] = asked[2 * k + 1] ?? null
+  })
+  return answers
+}
 
 export function QuestionsView() {
-  const [answers, setAnswers] = useState<boolean[]>([])
+  const session = useGuestSession()
+  const bundle = useRoleBundle(session.role_code)
+  const loaded = useCheckup({ scenario: DEFAULT_SCENARIO })
+  const [asked, setAsked] = useState<boolean[]>([])
   const [thinking, setThinking] = useState(false)
   const thinkingTimer = useRef<number | null>(null)
 
@@ -25,19 +40,62 @@ export function QuestionsView() {
     []
   )
 
-  // After the 12th answer the box opens, then the results load.
-  if (answers.length >= totalQuestions) return <PageTransition onDone={() => navigate(routes.radar)} />
+  if (!session.role_code) {
+    return (
+      <QuestionsFrame>
+        <CatDialogue pose="worried" speech="Tell me your job first, then I can ask about it." />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
+          Choose Your Job
+        </Button>
+      </QuestionsFrame>
+    )
+  }
 
-  const questionIndex = answers.length
-  const questionNumber = questionIndex + 1
-  const corner = corners[Math.floor(questionIndex / 2)]!
-  const isWorkingQuestion = questionIndex % 2 === 0
-  const followUpLevel: Question['level'] = answers[questionIndex - 1] ? 'advanced' : 'basic'
-  const questionLevel = isWorkingQuestion ? 'working' : followUpLevel
-  const question = questions.find((item) => item.cornerId === corner.id && item.level === questionLevel)!
+  if (loaded.status !== 'ready' || bundle.status !== 'ready') {
+    return (
+      <QuestionsFrame>
+        {loaded.status === 'error' || bundle.status === 'error' ? (
+          <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+        ) : (
+          <CatDialogue pose="thinking" speech="Opening the box on your job…" />
+        )}
+      </QuestionsFrame>
+    )
+  }
+
+  const { checkup } = loaded.data
+  const { role } = bundle.data
+  const order = checkup.questionOrder.map((corner) => corner.corner_id)
+  const totalQuestions = order.length * 2
+
+  if (!checkup.questionsReady) {
+    return (
+      <QuestionsFrame>
+        <Banner
+          type="info"
+          title="Questions Not Written Yet"
+          body="Kopi has no questions for this job yet. Choose a related job for now."
+        />
+        <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
+          Choose Another Job
+        </Button>
+      </QuestionsFrame>
+    )
+  }
+
+  // After the last answer the box opens, then the results load.
+  if (asked.length >= totalQuestions) return <PageTransition onDone={() => navigate(routes.radar)} />
+
+  const questionIndex = asked.length
+  const cornerId = order[Math.floor(questionIndex / 2)]!
+  const corner = role.corners.find((item) => item.corner_id === cornerId)!
+  const level = questionIndex % 2 === 0 ? 'working' : followUpStatement(asked[questionIndex - 1]!)
+  const statement = corner.statements![level]
 
   const saveAnswer = (answer: boolean) => {
-    setAnswers((current) => [...current, answer])
+    const next = [...asked, answer]
+    if (next.length === totalQuestions) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
+    setAsked(next)
   }
 
   const answerQuestion = (answer: boolean) => {
@@ -70,20 +128,28 @@ export function QuestionsView() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[45rem] space-y-6">
-      <h1 className="sr-only">Check-Up Questions</h1>
-      <Stepper step={2} labels={stepLabels} />
-      <Banner type="sample" />
+    <QuestionsFrame>
+      {role.quality === 'auto-generated' && (
+        <Banner
+          type="info"
+          title="AI-Drafted Questions"
+          body="Kopi drafted these from the job’s O*NET tasks. The team has not checked them by hand yet."
+        />
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" aria-live="polite">
         <span className="font-mono text-mono-s text-text-muted">
-          Question {questionNumber} of {totalQuestions}
+          Question {questionIndex + 1} of {totalQuestions}
         </span>
         <span className="font-mono text-mono-s text-text-primary">{corner.name}</span>
       </div>
 
       <section className="space-y-4" aria-label="Question Card" onKeyDown={handleQuestionKeyDown}>
-        <CatDialogue pose={thinking ? 'thinking' : 'asking'} speech={question.text} size="lg" />
+        <CatDialogue
+          pose={thinking ? 'thinking' : 'asking'}
+          speech={`Is this true for you? “${statement}”`}
+          size="lg"
+        />
 
         <p className="text-center text-body-s text-text-muted">
           Answer for real work, not tutorials. Not sure? Choose Not Yet.
@@ -103,13 +169,23 @@ export function QuestionsView() {
         <Button
           variant="ghost"
           size="lg"
-          disabled={answers.length === 0 || thinking}
-          onClick={() => setAnswers((current) => current.slice(0, -1))}
+          disabled={asked.length === 0 || thinking}
+          onClick={() => setAsked((current) => current.slice(0, -1))}
         >
           Previous Question
         </Button>
         <span className="hidden font-mono text-mono-s text-text-muted lg:block">Press Y or N</span>
       </div>
+    </QuestionsFrame>
+  )
+}
+
+function QuestionsFrame({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <h1 className="sr-only">Check-Up Questions</h1>
+      <Stepper step={2} labels={stepLabels} />
+      {children}
     </div>
   )
 }

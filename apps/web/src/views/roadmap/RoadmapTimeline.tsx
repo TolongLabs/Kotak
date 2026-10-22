@@ -1,20 +1,10 @@
 import { Fragment } from 'react'
 import { SdgChip } from '../../components/ui/SdgChip'
-import { user } from '../../demo/data'
 import type { RoadmapStep } from '../../demo/types'
 
 interface RoadmapTimelineProps {
   steps: RoadmapStep[]
   startDate: Date
-}
-
-const monthNumbers = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-function getSampleToday() {
-  const dateMatch = user.lastCheckUp.match(/(\d{1,2}) ([A-Za-z]{3}) (\d{4})/)
-  const monthIndex = monthNumbers.indexOf(dateMatch?.[2] ?? '')
-
-  return new Date(Number(dateMatch?.[3]), monthIndex, Number(dateMatch?.[1]))
 }
 
 function formatMonth(date: Date) {
@@ -91,7 +81,7 @@ function WeekLines({ totalWeeks }: { totalWeeks: number }) {
 function TimelineBar({ step, totalWeeks }: { step: RoadmapStep; totalWeeks: number }) {
   const start = getStepStart(step, totalWeeks)
   const width = getStepWidth(step, totalWeeks)
-  const label = `${step.hoursPerWeek} h/wk · ${step.title}`
+  const label = `About ${step.hoursPerWeek} h/wk · ${step.title}`
 
   return (
     <span
@@ -124,13 +114,10 @@ function StepLabel({ step }: { step: RoadmapStep }) {
 }
 
 export function RoadmapTimeline({ steps, startDate }: RoadmapTimelineProps) {
-  const totalWeeks = Math.max(...steps.map((step) => step.weeks[1]))
+  const totalWeeks = Math.max(1, ...steps.map((step) => step.weeks[1]))
   const weeksPerMonth = Math.ceil(totalWeeks / 3)
   const monthCount = Math.ceil(totalWeeks / weeksPerMonth)
   const monthLabels = getMonthLabels(startDate, monthCount)
-  const today = getSampleToday()
-  const weeksUntilToday = (today.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000)
-  const todayPosition = Math.max(0, Math.min(100, (weeksUntilToday / totalWeeks) * 100))
 
   return (
     <section
@@ -141,66 +128,44 @@ export function RoadmapTimeline({ steps, startDate }: RoadmapTimelineProps) {
         Timeline
       </h2>
 
-      <div className="hidden grid-cols-[minmax(0,236px)_minmax(0,1fr)] gap-x-3 lg:grid">
-        <div aria-hidden="true" />
-        <div className="space-y-1">
-          <MonthGrid labels={monthLabels} />
-          <WeekGrid totalWeeks={totalWeeks} />
-        </div>
-        <div aria-hidden="true" />
-        <div className="relative h-5">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 z-20 border-l-2 border-text-primary"
-            style={{ left: `${todayPosition}%` }}
-          >
-            <span className="absolute left-0 rounded-full bg-text-primary px-2 py-0.5 text-label-s text-bg-default">
-              Today
-            </span>
-          </div>
-        </div>
-        {steps.map((step) => (
-          <Fragment key={step.id}>
-            <StepLabel step={step} />
-            <div className="relative min-h-12">
-              <WeekLines totalWeeks={totalWeeks} />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 z-20 border-l-2 border-text-primary"
-                style={{ left: `${todayPosition}%` }}
-              />
-              <TimelineBar step={step} totalWeeks={totalWeeks} />
+      {steps.length > 0 ? (
+        <>
+          <div className="hidden grid-cols-[minmax(0,236px)_minmax(0,1fr)] gap-x-3 lg:grid">
+            <div aria-hidden="true" />
+            <div className="space-y-1">
+              <MonthGrid labels={monthLabels} />
+              <WeekGrid totalWeeks={totalWeeks} />
             </div>
-          </Fragment>
-        ))}
-      </div>
+            {steps.map((step) => (
+              <Fragment key={step.id}>
+                <StepLabel step={step} />
+                <div className="relative min-h-12">
+                  <WeekLines totalWeeks={totalWeeks} />
+                  <TimelineBar step={step} totalWeeks={totalWeeks} />
+                </div>
+              </Fragment>
+            ))}
+          </div>
 
-      <div className="space-y-2 lg:hidden">
-        <MonthGrid labels={monthLabels} />
-        <WeekGrid totalWeeks={totalWeeks} compact />
-        <div className="relative h-6">
-          <span
-            className="absolute rounded-full bg-text-primary px-2 py-0.5 text-label-s text-bg-default"
-            style={{ left: `${todayPosition}%` }}
-          >
-            Today
-          </span>
-        </div>
-        {steps.map((step) => (
-          <div key={step.id} className="space-y-1">
-            <StepLabel step={step} />
-            <div className="relative h-10">
-              <WeekLines totalWeeks={totalWeeks} />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 z-20 border-l-2 border-text-primary"
-                style={{ left: `${todayPosition}%` }}
-              />
-              <TimelineBar step={step} totalWeeks={totalWeeks} />
-            </div>
+          <div className="space-y-2 lg:hidden">
+            <MonthGrid labels={monthLabels} />
+            <WeekGrid totalWeeks={totalWeeks} compact />
+            {steps.map((step) => (
+              <div key={step.id} className="space-y-1">
+                <StepLabel step={step} />
+                <div className="relative h-10">
+                  <WeekLines totalWeeks={totalWeeks} />
+                  <TimelineBar step={step} totalWeeks={totalWeeks} />
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      ) : (
+        <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
+          No Roadmap Steps Are Available For This Snapshot.
+        </p>
+      )}
 
       <div className="sr-only">
         <table>
