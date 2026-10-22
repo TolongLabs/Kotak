@@ -6,11 +6,14 @@ export interface SearchFieldProps extends ComponentPropsWithoutRef<'input'> {
   placeholder: string
   shortcutHint?: string
   label?: string
+  // Keeps the label for screen readers only, for search bars with no visible label.
+  hideLabel?: boolean
 }
 
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
     label = 'Search',
+    hideLabel = false,
     placeholder,
     shortcutHint = '/',
     id: providedId,
@@ -27,7 +30,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
 
   return (
     <div className="space-y-2">
-      <label htmlFor={id} className="block text-label-m text-text-primary">
+      <label htmlFor={id} className={cn('block text-label-m text-text-primary', hideLabel && 'sr-only')}>
         {label}
       </label>
       <div
