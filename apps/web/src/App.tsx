@@ -8,13 +8,13 @@ import { useActiveSnapshot } from './session/snapshot'
 import { CheckUpView } from './views/CheckUpView'
 import { DashboardView } from './views/DashboardView'
 import { LandingView } from './views/LandingView'
-import { NationalView } from './views/NationalView'
 import { NotFoundView } from './views/NotFoundView'
 import { QuestionsView } from './views/QuestionsView'
 import { RadarView } from './views/RadarView'
 import { RoadmapView } from './views/RoadmapView'
 import { RolesView } from './views/RolesView'
 import { SignInView } from './views/SignInView'
+import { SettingsView } from './views/SettingsView'
 import { WhatChangedView } from './views/WhatChangedView'
 
 // Validates the sample engine snapshot at startup (#29).
@@ -28,7 +28,7 @@ const appViews: Record<string, ComponentType> = {
   [routes.roles]: RolesView,
   [routes.roadmap]: RoadmapView,
   [routes.changes]: WhatChangedView,
-  [routes.national]: NationalView
+  [routes.settings]: SettingsView
 }
 
 function Screen({ path, dataLabel }: { path: string; dataLabel: string }) {
@@ -51,7 +51,7 @@ export function App() {
 
   if (window.location.hash === '#gallery') return <Gallery />
 
-  // The data date the shell shows, e.g. "Apr 2026" for the 2026-04 snapshot.
+  // The data date the shell shows, e.g. "May 2026" for the 2026-05 snapshot.
   const dataLabel = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(`${activeSnapshot}-01T00:00:00Z`)
   )

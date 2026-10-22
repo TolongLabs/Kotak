@@ -17,7 +17,7 @@ const cleanSession: GuestSession = {
   pasted_job_ad_quotes: [],
   // Kopi starts muted, as every view did before this store (#133); one tap on the speech box unmutes.
   tts_muted: true,
-  active_snapshot_id: '2026-04'
+  active_snapshot_id: '2026-05'
 }
 
 const listeners = new Set<() => void>()

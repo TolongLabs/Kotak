@@ -1,3 +1,4 @@
+import { DEFAULT_SCENARIO } from '@kotak/shared'
 import { Check, Clock3, MoreHorizontal } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
@@ -10,7 +11,6 @@ import { renderCited } from '../components/kotak/renderCited'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { DatePicker } from '../components/ui/DatePicker'
-import { ScenarioSwitch, type ScenarioValue } from '../components/ui/ScenarioSwitch'
 import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
 import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
@@ -155,7 +155,17 @@ function RoadmapStepToggle({
   )
 }
 
-function RoadmapStepWithoutResource({ step, index, last }: { step: RoadmapStep; index: number; last: boolean }) {
+function RoadmapStepWithoutResource({
+  step,
+  index,
+  last,
+  highlighted
+}: {
+  step: RoadmapStep
+  index: number
+  last: boolean
+  highlighted: boolean
+}) {
   const border = step.conditional
     ? 'border-[1.5px] border-dashed border-border-control bg-bg-panel'
     : step.state === 'next'
@@ -179,7 +189,11 @@ function RoadmapStepWithoutResource({ step, index, last }: { step: RoadmapStep; 
           {step.state === 'done' ? <Check className="h-4 w-4 stroke-current" /> : index + 1}
         </span>
       </div>
-      <article className={`min-w-0 flex-1 space-y-2 rounded-md p-4 ${border}`}>
+      <article
+        className={`min-w-0 flex-1 space-y-2 rounded-md p-4 ${border} ${
+          highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
+        }`}
+      >
         <p className="font-mono text-mono-s text-text-muted">{formatStepWhen(step.when)}</p>
         <h3 className="text-title-s text-text-primary">{step.title || step.skill}</h3>
         {step.description && <p className="text-body-s text-text-primary">{step.description}</p>}
@@ -201,29 +215,25 @@ function RoadmapStepWithoutResource({ step, index, last }: { step: RoadmapStep; 
 export function RoadmapView() {
   const session = useGuestSession()
   const bundle = useRoleBundle(session.role_code)
-  const [scenario, setScenario] = useState<ScenarioValue>('slow')
+  const scenario = DEFAULT_SCENARIO
   const [today] = useState(() => toIsoDate(new Date()))
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null)
   const roleBundle = bundle.status === 'ready' ? bundle.data : null
   const startDate = selectedStartDate ?? today
 
-  const checkups = useMemo(() => {
+  const checkup = useMemo(() => {
     if (!roleBundle) return null
 
-    const common = {
+    return computeCheckup({
       role: roleBundle.role,
       related: roleBundle.related,
       answers: session.answers,
-      snapshotId: session.active_snapshot_id,
+      snapshotId: '2026-05',
+      scenario: DEFAULT_SCENARIO,
       weeklyHours: session.custom_weekly_hours,
       startDate
-    }
-
-    return {
-      slow: computeCheckup({ ...common, scenario: 'slow' }),
-      fast: computeCheckup({ ...common, scenario: 'fast' })
-    }
-  }, [roleBundle, session.active_snapshot_id, session.answers, session.custom_weekly_hours, startDate])
+    })
+  }, [roleBundle, session.answers, session.custom_weekly_hours, startDate])
 
   if (!session.role_code) {
     return (
@@ -247,7 +257,7 @@ export function RoadmapView() {
     )
   }
 
-  if (!checkups || bundle.status !== 'ready') {
+  if (!checkup || bundle.status !== 'ready') {
     return (
       <div className="mx-auto w-full max-w-[45rem]">
         <CatDialogue pose="thinking" speech="Opening the box on your job…" />
@@ -255,7 +265,7 @@ export function RoadmapView() {
     )
   }
 
-  if (!checkups.slow.questionsReady) {
+  if (!checkup.questionsReady) {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <Banner
@@ -271,9 +281,10 @@ export function RoadmapView() {
   }
 
   const role = bundle.data.role
-  const checkup = scenario === 'fast' ? checkups.fast : checkups.slow
   const steps = toRoadmapSteps(checkup, role, session.ticked_milestones)
-  const readinessPoints = toReadinessPoints(checkups.slow, checkups.fast, role)
+  const readinessPoints = toReadinessPoints(checkup, role)
+  const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
+  const selectedImpactArea = impactAreaGoals.find((goal) => String(goal) === session.impact_area) ?? null
   const sourceRefs = toRoadmapSources(checkup)
   const dividend = checkup.roadmap.dividend
   const dividendBody =
@@ -292,7 +303,7 @@ export function RoadmapView() {
         text: `${corner?.name ?? item.corner_id}: ${corner?.statements?.[item.statement] ?? ''}${numbers.length > 0 ? ` ${numbers.map((number) => `[${number}]`).join('')}` : ''}`
       }
     })
-  const readyPoint = readinessPoints.find((point) => point[scenario === 'fast' ? 'fast' : 'plan'] >= 80)
+  const readyPoint = readinessPoints.find((point) => point.plan >= 80)
   const readyCopy = readyPoint
     ? `Ready by Week ${readyPoint.week}`
     : readinessPoints.length > 1
@@ -312,6 +323,10 @@ export function RoadmapView() {
     if (checked) ticked.add(id)
     else ticked.delete(id)
     updateGuestSession({ ticked_milestones: [...ticked] })
+  }
+
+  function selectImpactArea(goal: number | null) {
+    updateGuestSession({ impact_area: goal === null ? null : String(goal) })
   }
 
   function printPlan() {
@@ -378,7 +393,7 @@ export function RoadmapView() {
 
         <section
           aria-label="Plan Controls"
-          className="grid gap-6 rounded-md border border-border-subtle bg-bg-panel p-5 lg:grid-cols-3"
+          className="grid gap-6 rounded-md border border-border-subtle bg-bg-panel p-5 lg:grid-cols-2"
         >
           <div className="space-y-2">
             <Slider
@@ -397,15 +412,62 @@ export function RoadmapView() {
             onChange={(date) => setSelectedStartDate(toIsoDate(date))}
             className="w-full"
           />
-          <div className="space-y-2">
-            <span className="block text-label-m text-text-primary">AI Uptake Scenario</span>
-            <ScenarioSwitch value={scenario} onChange={setScenario} className="w-full sm:w-fit" />
-          </div>
         </section>
 
-        <ReadinessChart scenario={scenario} points={readinessPoints} roleTitle={role.title} />
+        <ReadinessChart points={readinessPoints} roleTitle={role.title} />
 
-        <RoadmapTimeline steps={steps} startDate={fromIsoDate(checkup.roadmap.start_date)} today={fromIsoDate(today)} />
+        {impactAreaGoals.length > 0 && (
+          <section
+            aria-labelledby="impact-area-title"
+            className="space-y-3 rounded-md border border-border-subtle bg-bg-panel p-4"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 id="impact-area-title" className="text-label-l text-text-primary">
+                Impact Area
+              </h2>
+              <p className="text-body-s text-text-muted">Highlight Steps By SDG</p>
+            </div>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter Steps By SDG Impact Area">
+              <button
+                type="button"
+                aria-pressed={selectedImpactArea === null}
+                onClick={() => selectImpactArea(null)}
+                className={`inline-flex min-h-11 items-center rounded-full border px-3 py-2 text-label-s transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
+                  selectedImpactArea === null
+                    ? 'border-text-primary bg-text-primary text-bg-default'
+                    : 'border-border-control bg-bg-default text-text-primary hover:bg-bg-panel'
+                }`}
+              >
+                Show All
+              </button>
+              {impactAreaGoals.map((goal) => (
+                <button
+                  key={goal}
+                  type="button"
+                  aria-pressed={selectedImpactArea === goal}
+                  onClick={() => selectImpactArea(goal)}
+                  className="inline-flex min-h-11 items-center rounded-full p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                >
+                  <SdgChip
+                    goal={goal}
+                    className={
+                      selectedImpactArea === goal
+                        ? 'outline outline-2 outline-offset-2 outline-text-primary'
+                        : undefined
+                    }
+                  />
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <RoadmapTimeline
+          steps={steps}
+          startDate={fromIsoDate(checkup.roadmap.start_date)}
+          today={fromIsoDate(today)}
+          impactArea={selectedImpactArea}
+        />
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-6">
           <section
@@ -428,9 +490,15 @@ export function RoadmapView() {
                         step={{ ...step, when: formatStepWhen(step.when) }}
                         index={index}
                         last={index === steps.length - 1}
+                        highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
                       />
                     ) : (
-                      <RoadmapStepWithoutResource step={step} index={index} last={index === steps.length - 1} />
+                      <RoadmapStepWithoutResource
+                        step={step}
+                        index={index}
+                        last={index === steps.length - 1}
+                        highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
+                      />
                     )}
                   </RoadmapStepToggle>
                 ))}

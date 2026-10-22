@@ -3,6 +3,8 @@ import type { RoadmapStep, SourceRef } from '../demo/types'
 import type { Checkup } from './checkup'
 
 type RoleFit = Checkup['roles'][number]
+type PlanReadinessPoint = { week: number; plan: number }
+type ScenarioReadinessPoint = PlanReadinessPoint & { fast: number }
 
 const sourceKey = (source: Source) => [source.source_url, source.vintage_date, source.geo_or_layer].join('|')
 
@@ -56,7 +58,10 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
       hoursPerWeek: weeklyHours,
       resource: resource
         ? {
-            label: resource.kind === 'search' ? `Search: ${resource.title}` : resource.title,
+            label:
+              resource.kind === 'search' && !resource.title.startsWith('Search:')
+                ? `Search: ${resource.title}`
+                : resource.title,
             href: resource.url
           }
         : { label: '', href: '' },
@@ -72,10 +77,18 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
   })
 }
 
-export function toReadinessPoints(slow: Checkup, fast: Checkup, role: BundleRole) {
-  const slowRole = slow.roles.find((item) => item.onet_code === role.onet_code)
-  const fastRole = fast.roles.find((item) => item.onet_code === role.onet_code)
-  if (!slowRole || !fastRole) return []
+export function toReadinessPoints(checkup: Checkup, role: BundleRole): PlanReadinessPoint[]
+export function toReadinessPoints(slow: Checkup, fast: Checkup, role: BundleRole): ScenarioReadinessPoint[]
+export function toReadinessPoints(
+  planCheckup: Checkup,
+  fastCheckupOrRole: Checkup | BundleRole,
+  maybeRole?: BundleRole
+): PlanReadinessPoint[] | ScenarioReadinessPoint[] {
+  const role = maybeRole ?? (fastCheckupOrRole as BundleRole)
+  const fastCheckup = maybeRole ? (fastCheckupOrRole as Checkup) : null
+  const planRole = planCheckup.roles.find((item) => item.onet_code === role.onet_code)
+  const fastRole = fastCheckup?.roles.find((item) => item.onet_code === role.onet_code)
+  if (!planRole || (fastCheckup && !fastRole)) return []
 
   const schedule = (checkup: Checkup) => {
     const endWeekById = new Map(toRoadmapSteps(checkup, role, []).map((step) => [step.id, step.weeks[1]]))
@@ -84,11 +97,10 @@ export function toReadinessPoints(slow: Checkup, fast: Checkup, role: BundleRole
       endWeek: endWeekById.get(`${item.corner_id}:${item.statement}`) ?? 0
     }))
   }
-
-  const slowSchedule = schedule(slow)
-  const fastSchedule = schedule(fast)
+  const planSchedule = schedule(planCheckup)
+  const fastSchedule = fastCheckup ? schedule(fastCheckup) : null
   const weeks = [
-    ...new Set([0, ...slowSchedule.map((step) => step.endWeek), ...fastSchedule.map((step) => step.endWeek)])
+    ...new Set([0, ...planSchedule.map((step) => step.endWeek), ...(fastSchedule?.map((step) => step.endWeek) ?? [])])
   ].sort((left, right) => left - right)
 
   const scoreAt = (roleFit: RoleFit, steps: ReturnType<typeof schedule>, week: number) => {
@@ -107,11 +119,10 @@ export function toReadinessPoints(slow: Checkup, fast: Checkup, role: BundleRole
     ).score
   }
 
-  return weeks.map((week) => ({
-    week,
-    plan: scoreAt(slowRole, slowSchedule, week),
-    fast: scoreAt(fastRole, fastSchedule, week)
-  }))
+  return weeks.map((week) => {
+    const point = { week, plan: scoreAt(planRole, planSchedule, week) }
+    return fastRole && fastSchedule ? { ...point, fast: scoreAt(fastRole, fastSchedule, week) } : point
+  })
 }
 
 export function toRoadmapSources(checkup: Checkup): {

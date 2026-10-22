@@ -16,6 +16,9 @@ import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
 import { toReadinessPoints, toRoadmapSteps } from '../engine/roadmapModel'
 import { useGuestSession } from '../session/store'
 
+const beforeSnapshot: SnapshotId = '2026-04'
+const afterSnapshot: SnapshotId = '2026-05'
+
 const quadrantDetails = [
   {
     title: 'Strengths',
@@ -47,7 +50,7 @@ const quadrantDetails = [
   }
 ] as const
 
-function DashboardSwot({ swot }: { swot: Swot }) {
+function DashboardSwot({ swot, snapshotId }: { swot: Swot; snapshotId: SnapshotId }) {
   return (
     <section className="surface-card space-y-4 p-4 lg:p-5" aria-labelledby="dashboard-swot-title">
       <header className="flex items-start justify-between gap-3">
@@ -89,7 +92,9 @@ function DashboardSwot({ swot }: { swot: Swot }) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-body-s text-text-muted">No items from the current role data.</p>
+                <p className="text-body-s text-text-muted">
+                  Not enough data yet to place skills here for {formatSnapshotMonth(snapshotId)}.
+                </p>
               )}
             </section>
           )
@@ -315,20 +320,12 @@ export function DashboardView() {
 
   const engine = engineInputs(role, [role, ...bundle.data.related])
   const answers = transferAnswers(role, answeredLevels(role, session.answers))
-  const snapshots = Object.values(engine.snapshots)
-    .map((snapshot) => snapshot.snapshot_id)
-    .sort((left, right) => left.localeCompare(right))
-  const newerSnapshots = snapshots.filter((snapshotId) => snapshotId > currentCheckup.snapshotId)
-  const newerSnapshot = newerSnapshots[newerSnapshots.length - 1]
-  const snapshotDiff = newerSnapshot
-    ? diffSnapshots(
-        engine.role,
-        answers,
-        engine.snapshots[currentCheckup.snapshotId],
-        engine.snapshots[newerSnapshot],
-        currentCheckup.scenario
-      )
-    : null
+  const aprilSnapshot = engine.snapshots[beforeSnapshot]
+  const maySnapshot = engine.snapshots[afterSnapshot]
+  const snapshotDiff =
+    aprilSnapshot && maySnapshot
+      ? diffSnapshots(engine.role, answers, aprilSnapshot, maySnapshot, DEFAULT_SCENARIO)
+      : null
   const changedSkills = snapshotDiff?.corners.length ?? 0
   const exampleChange =
     snapshotDiff?.corners.find((item) => item.changes.includes('verdict')) ?? snapshotDiff?.corners[0]
@@ -354,7 +351,7 @@ export function DashboardView() {
       ? role.corners.find((corner) => corner.corner_id === biggestRisingGap.corner_id)?.statements?.working
       : undefined)
   const nextStepDescription = nextStep
-    ? `Weeks ${nextStep.weeks[0]}–${nextStep.weeks[1]} · ${nextStep.hoursPerWeek} h a week${nextStep.resource.label ? ` · ${nextStep.resource.label}` : ''}`
+    ? `Weeks ${nextStep.weeks[0]}–${nextStep.weeks[1]} · ${formatEstimate(nextStep.hoursPerWeek)} h a week${nextStep.resource.label ? ` · ${nextStep.resource.label}` : ''}`
     : steps.length > 0
       ? 'All roadmap steps are ticked.'
       : 'No learning steps are available for this snapshot.'
@@ -424,7 +421,7 @@ export function DashboardView() {
         <div className="flex h-full flex-col [&>section]:flex-1">
           <StatCard
             label="What Changed"
-            value={`${changedSkills} ${changedSkills === 1 ? 'Update' : 'Updates'} Waiting`}
+            value={snapshotDiff ? `${changedSkills} Skills Changed in May` : 'Comparison Unavailable'}
           >
             {exampleChange ? (
               <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
@@ -434,17 +431,20 @@ export function DashboardView() {
                 <VerdictChip verdict={verdictId(exampleChange.after.status)} size="sm" />
               </div>
             ) : (
-              <p className="text-body-s text-text-muted">No skill changes in the available snapshot diff.</p>
+              <p className="text-body-s text-text-muted">
+                {snapshotDiff
+                  ? 'No skill changes between April and May.'
+                  : 'April and May data are not both available yet.'}
+              </p>
             )}
             <p className="text-body-s text-text-muted">
-              {newerSnapshot ? 'Newer data is in. ' : 'No newer data is waiting. '}
               <Link
                 to={routes.changes}
                 className="font-medium text-text-primary underline decoration-current underline-offset-2 transition-colors hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
               >
-                {newerSnapshot ? 'Open What Changed' : 'Review What Changed'}
+                Open What Changed
               </Link>{' '}
-              {newerSnapshot ? 'to apply it.' : 'to review the snapshots.'}
+              to review April and May.
             </p>
           </StatCard>
         </div>
@@ -458,7 +458,7 @@ export function DashboardView() {
       </section>
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_1fr]">
-        <DashboardSwot swot={swot} />
+        <DashboardSwot swot={swot} snapshotId={currentCheckup.snapshotId} />
 
         <div className="flex min-w-0 flex-col gap-4 xl:h-full">
           <div className="min-w-0 [&>div]:!flex-row [&>div]:!items-end [&>div]:!gap-4 [&>div>div:first-child]:!h-28">

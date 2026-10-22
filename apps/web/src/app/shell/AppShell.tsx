@@ -1,4 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react'
+import { readGuestSession, startGuestSession } from '../../session/store'
 import { NavDrawer } from './NavDrawer'
 import { Sidebar } from './Sidebar'
 import { PhoneTopBar, Topbar } from './Topbar'
@@ -23,6 +24,8 @@ function readSidebarPreference(): boolean | null {
 }
 
 export function AppShell({ path, dataLabel, collapsed = false, children }: AppShellProps) {
+  if (!readGuestSession()) startGuestSession()
+
   const [menuOpen, setMenuOpen] = useState(false)
   const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -48,7 +51,7 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
       </a>
       <Sidebar path={path} collapsed={sidebarCollapsed} onToggleCollapsed={toggleSidebar} className="hidden lg:flex" />
       <div className="min-w-0 flex-1">
-        <div className="sticky top-0 z-20 px-3 pt-3 lg:px-12 lg:pt-4">
+        <div className="sticky top-0 z-20 mx-auto w-full max-w-[1184px] px-3 pt-3 lg:px-12 lg:pt-4">
           <Topbar dataLabel={dataLabel} className="hidden lg:flex" />
           <PhoneTopBar
             dataLabel={dataLabel}
@@ -57,7 +60,11 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
             className="flex lg:hidden"
           />
         </div>
-        <main id="main" tabIndex={-1} className="px-6 pb-8 pt-4 focus:outline-none lg:px-12 lg:pb-12 lg:pt-8">
+        <main
+          id="main"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-[1184px] px-6 pb-8 pt-4 focus:outline-none lg:px-12 lg:pb-12 lg:pt-8"
+        >
           {children}
         </main>
       </div>
