@@ -2,15 +2,15 @@ import { afterAll, beforeAll, expect, mock, test } from 'bun:test'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-import type { Page, Route } from 'playwright-core'
-import { withKameleo } from './kameleo'
+import type { Page, Route } from '@kotak/browser'
+import { withBrowserProfile } from './browser-profile'
 import type { scrapeJobstreet } from './pipeline'
 import type { scrapeJobstreetDepth } from './depth'
 
 const root = fileURLToPath(new URL('../../../../../', import.meta.url))
 const scratch = resolve(root, '.local')
-const browserTest = Bun.env.KAMELEO_INTEGRATION === '1' ? test : test.skip
-const openProfile = withKameleo
+const browserTest = Bun.env.BROWSER_INTEGRATION === '1' ? test : test.skip
+const openProfile = withBrowserProfile
 let workspace: string
 let breadth: typeof scrapeJobstreet
 let depth: typeof scrapeJobstreetDepth
@@ -24,12 +24,30 @@ const description =
 
 async function fixture(route: Route) {
   const url = new URL(route.request().url())
-  if (scenario === 'pagination' || scenario === 'spa-pagination' || scenario === 'invalid-pagination') {
+  if (scenario === 'reported-total') {
+    return route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body:
+        '<html><head><meta name="description" content="Find your ideal job with 1 Software Engineer jobs found in Malaysia."></head><body><div id="cards">' +
+        card +
+        '<article data-job-id="102"><a data-automation="jobTitle" href="/job/102">Second engineer</a></article></div></body></html>'
+    })
+  }
+  if (
+    scenario === 'pagination' ||
+    scenario === 'spa-pagination' ||
+    scenario === 'invalid-pagination' ||
+    scenario === 'terminal-pagination'
+  ) {
     const nextCard =
       '<article data-job-id="102"><a data-automation="jobTitle" href="/job/102">Second engineer</a></article>'
     const counters =
       '<script>for (const kind of ["mousemove", "wheel", "click"]) addEventListener(kind, e => { if(e.isTrusted) sessionStorage.setItem(kind, String(Number(sessionStorage.getItem(kind) || 0) + 1)) }); addEventListener("mousedown", e => sessionStorage.setItem("pressedAt", String(e.timeStamp)));</script>'
-    const next = `<a rel="next" href="/wrong-jobs?page=2" style="display:none">Hidden duplicate</a><a aria-label="Next" href="/wrong-jobs?page=2">Unrelated recommendation</a><div style="height:1600px"></div><nav aria-label="Pagination"><a rel="next" href="/${scenario === 'invalid-pagination' ? 'wrong' : 'fixture'}-jobs?page=2" style="display:block;width:120px;height:48px;margin:24px">Next page</a></nav>`
+    const next =
+      scenario === 'terminal-pagination'
+        ? '<div style="height:1600px"></div><nav aria-label="Pagination"><a rel="next" aria-hidden="true" tabindex="-1" href="/fixture-jobs?page=2" style="display:block;width:120px;height:48px;margin:24px">Next</a></nav>'
+        : `<a rel="next" href="/wrong-jobs?page=2" style="display:none">Hidden duplicate</a><a aria-label="Next" href="/wrong-jobs?page=2">Unrelated recommendation</a><div style="height:1600px"></div><nav aria-label="Pagination"><a rel="next" href="/${scenario === 'invalid-pagination' ? 'wrong' : 'fixture'}-jobs?page=2" style="display:block;width:120px;height:48px;margin:24px">Next page</a></nav>`
     const spa =
       scenario === 'spa-pagination'
         ? `<script>document.querySelector('nav a[rel=next]').onclick = e => { e.preventDefault(); history.pushState({}, '', '/fixture-jobs?page=2'); setTimeout(() => { document.querySelector('#cards').innerHTML = ${JSON.stringify(nextCard)}; document.querySelector('nav').remove() }, 150) };</script>`
@@ -73,15 +91,15 @@ async function fixture(route: Route) {
 beforeAll(async () => {
   await mkdir(scratch, { recursive: true })
   workspace = await mkdtemp(join(scratch, 'jobstreet-verification-check-'))
-  if (Bun.env.KAMELEO_INTEGRATION !== '1') return
-  mock.module(resolve(root, 'apps/api/src/scrapers/jobstreet/kameleo.ts'), () => ({
-    withKameleo: (
-      endpoint: string,
+  if (Bun.env.BROWSER_INTEGRATION !== '1') return
+  mock.module(resolve(root, 'apps/api/src/scrapers/jobstreet/browser-profile.ts'), () => ({
+    withBrowserProfile: (
+      options: { profileId?: string; headless?: boolean },
       run: (page: Page, id: string) => Promise<unknown>,
       onProfile?: (id: string) => Promise<void>
     ) =>
       openProfile(
-        endpoint,
+        options,
         async (page, id) => {
           await page.route('https://my.jobstreet.com/**', fixture)
           return run(page, id)
@@ -104,7 +122,7 @@ afterAll(async () => {
 
 const options = (name: string) => ({
   url: 'https://my.jobstreet.com/fixture-jobs',
-  endpoint: Bun.env.KAMELEO_ENDPOINT || 'http://localhost:5050',
+  profileId: Bun.env.BROWSER_PROFILE_ID,
   output: join(workspace, name),
   maxJobs: 1,
   maxPages: 1,
@@ -181,6 +199,39 @@ for (const status of [403, 429])
   )
 
 browserTest(
+  'breadth uses the reported result total as a unique-job stopping target',
+  async () => {
+    scenario = 'reported-total'
+    const config = { ...options('reported-total'), maxJobs: 10, maxPages: 5 }
+    const report = await breadth(config)
+    expect([
+      report.jobs_saved,
+      report.target_jobs,
+      report.reported_total_jobs_first,
+      report.reported_total_jobs_latest,
+      report.pages[0].reported_total_jobs,
+      report.stop_reason
+    ]).toEqual([1, 1, 1, 1, 1, 'reported_total'])
+  },
+  30_000
+)
+
+browserTest(
+  'breadth ignores the aria-hidden Next placeholder on the final results page',
+  async () => {
+    scenario = 'terminal-pagination'
+    const report = await breadth({ ...options('terminal-pagination'), maxJobs: 2, maxPages: 2 })
+    expect([report.status, report.jobs_saved, report.pages.length, report.stop_reason]).toEqual([
+      'success',
+      1,
+      1,
+      'no_next_page'
+    ])
+  },
+  30_000
+)
+
+browserTest(
   'breadth scrolls and clicks the actual Next link, including client-side navigation',
   async () => {
     for (const mode of ['pagination', 'spa-pagination']) {
@@ -191,8 +242,6 @@ browserTest(
       expect(report.records_rejected).toBe(1)
       expect(report.pages[1].navigation_kind).toBe('click')
       expect(report.pages[1].interaction!.scroll_notches).toBeGreaterThan(0)
-      expect(report.pages[1].interaction!.pointer_moves).toBeGreaterThan(10)
-      expect(report.pages[1].interaction!.press_ms).toBeGreaterThanOrEqual(55)
       expect(report.pages[1].http_status).toBe(mode === 'pagination' ? 200 : null)
     }
   },

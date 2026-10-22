@@ -34,15 +34,15 @@ try {
   --previous-depth PATH  Depth: additional details.jsonl or jobs.enriched.jsonl; local depth runs are discovered automatically
   --refresh-after-hours N  Depth: optional refresh interval; 0 forces refresh (default: never refresh cached descriptions)
   --url URL        Breadth: Malaysian JobStreet search URL (default software-engineer-jobs)
-  --max-pages N    Breadth: maximum search pages (1–50, default 1)
-  --max-jobs N     Maximum unique jobs (1–1000; default 20 breadth, 100 depth)
+  --max-pages N    Breadth: maximum search pages (1–200, default 1)
+  --max-jobs N     Maximum unique jobs (1–5000 breadth, 1–1000 depth; default 20 breadth, 100 depth)
   --delay-ms N     Base delay between pages/jobs (minimum 2000, default 30000)
   --delay-jitter-ms N  Extra random delay (0–60000, default 30000)
   --retries N      Transient navigation retries (0–3, default 2)
-  --verification-timeout-ms N  Wait for verification (0–600000, default 120000); complete any checkbox in the Kameleo window
+  --verification-timeout-ms N  Wait for verification (0–600000, default 120000); complete any check manually in the browser window
   --sort MODE      Breadth view: newest, title, company, location, job-id, scraped-at
   --output PATH    New directory (default data/jobstreet/[depth/]<timestamp>-<suffix>)
-  KAMELEO_ENDPOINT defaults to http://localhost:5050`)
+  BROWSER_PROFILE_ID reuses a saved local browser profile; otherwise a temporary profile is created`)
   } else {
     // Stable relative to the repo, even when invoked from apps/api.
     const root = fileURLToPath(new URL('../../../../../', import.meta.url))
@@ -54,7 +54,7 @@ try {
     if (mode === 'depth' && (values.url || values['max-pages'] || values.sort))
       throw new Error('--url, --max-pages and --sort are breadth-only options')
     const common = {
-      endpoint: Bun.env.KAMELEO_ENDPOINT || 'http://localhost:5050',
+      profileId: Bun.env.BROWSER_PROFILE_ID,
       output:
         values.output ||
         resolve(
