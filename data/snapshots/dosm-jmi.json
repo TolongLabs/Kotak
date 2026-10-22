@@ -2,7 +2,7 @@
   "dataset": "dosm-jmi",
   "source_name": "DOSM Big Data Analytics: Job Market Insights",
   "publisher": "Department of Statistics Malaysia (DOSM)",
-  "licence": "DOSM copyright. No open reuse licence was found for Job Market Insights, so Kotak stores only the figures it needs and cites each one with its release.",
+  "licence": "DOSM's Terms of Use (https://www.dosm.gov.my/portal-main/article/term-of-use) authorise copying, publishing, adapting and commercial or non-commercial use of the content on DOSM's portal, Job Market Insights included, under the Government Open Data Terms of Use 1.0 (https://www.dosm.gov.my/assets/img/article/Terms-of-Use-Government-Open-Data-1-Appendix-B.pdf), with the attribution \"Data source: Department of Statistics Malaysia\". Kotak stores only the figures it needs and cites each one with its release.",
   "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
   "retrieved_date": "2026-10-22",
   "first_quarter": "2019-Q3",
@@ -4747,26 +4747,11 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 14742,
           "quarter": "2024-Q1",
           "quarter_label": "Q1 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q12024",
-          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, First Quarter of 2024",
-          "vintage_date": "2025-05-27",
-          "geo_or_layer": "MYS/L3",
-          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
-          "rank": 4
-        },
-        {
-          "metric": "online_job_offerings",
-          "value": null,
-          "quarter": "2024-Q2",
-          "quarter_label": "Q2 2024",
-          "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q224",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
           "vintage_date": "2025-09-29",
           "geo_or_layer": "MYS/L3",
@@ -4777,17 +4762,32 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 11389,
+          "quarter": "2024-Q2",
+          "quarter_label": "Q2 2024",
+          "source_name": "DOSM Big Data Analytics: Job Market Insights",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
+          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
+          "vintage_date": "2025-09-29",
+          "geo_or_layer": "MYS/L3",
+          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
+          "qoq": { "from_quarter": "2024-Q1", "change_pct": -22.7, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q2", "change_pct": 5.6, "direction": "up" },
+          "rank": 4
+        },
+        {
+          "metric": "online_job_offerings",
+          "value": 10578,
           "quarter": "2024-Q3",
           "quarter_label": "Q3 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q324",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260327201219.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Third Quarter of 2024",
           "vintage_date": "2025-11-26",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
+          "qoq": { "from_quarter": "2024-Q2", "change_pct": -7.1, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q3", "change_pct": -24.7, "direction": "down" },
           "rank": 4
         },
         {
@@ -4801,7 +4801,7 @@
           "vintage_date": "2025-12-22",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
+          "qoq": { "from_quarter": "2024-Q3", "change_pct": -10.9, "direction": "down" },
           "yoy": null,
           "rank": 4
         },
@@ -4817,7 +4817,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2024-Q4", "change_pct": 0.4, "direction": "flat" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q1", "change_pct": -35.8, "direction": "down" },
           "rank": 4
         },
         {
@@ -4832,7 +4832,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q1", "change_pct": 5.6, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q2", "change_pct": -12.3, "direction": "down" },
           "rank": 4
         },
         {
@@ -4847,7 +4847,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q2", "change_pct": 76, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q3", "change_pct": 66.3, "direction": "up" },
           "rank": 5
         },
         {
@@ -5064,26 +5064,11 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 14830,
           "quarter": "2024-Q1",
           "quarter_label": "Q1 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q12024",
-          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, First Quarter of 2024",
-          "vintage_date": "2025-05-27",
-          "geo_or_layer": "MYS/L3",
-          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
-          "rank": 3
-        },
-        {
-          "metric": "online_job_offerings",
-          "value": null,
-          "quarter": "2024-Q2",
-          "quarter_label": "Q2 2024",
-          "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q224",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
           "vintage_date": "2025-09-29",
           "geo_or_layer": "MYS/L3",
@@ -5094,17 +5079,32 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 12114,
+          "quarter": "2024-Q2",
+          "quarter_label": "Q2 2024",
+          "source_name": "DOSM Big Data Analytics: Job Market Insights",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
+          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
+          "vintage_date": "2025-09-29",
+          "geo_or_layer": "MYS/L3",
+          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
+          "qoq": { "from_quarter": "2024-Q1", "change_pct": -18.3, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q2", "change_pct": -1.4, "direction": "flat" },
+          "rank": 3
+        },
+        {
+          "metric": "online_job_offerings",
+          "value": 12198,
           "quarter": "2024-Q3",
           "quarter_label": "Q3 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q324",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260327201219.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Third Quarter of 2024",
           "vintage_date": "2025-11-26",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
+          "qoq": { "from_quarter": "2024-Q2", "change_pct": 0.7, "direction": "flat" },
+          "yoy": { "from_quarter": "2023-Q3", "change_pct": -25.5, "direction": "down" },
           "rank": 3
         },
         {
@@ -5118,7 +5118,7 @@
           "vintage_date": "2025-12-22",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
+          "qoq": { "from_quarter": "2024-Q3", "change_pct": 7.8, "direction": "up" },
           "yoy": null,
           "rank": 2
         },
@@ -5134,7 +5134,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2024-Q4", "change_pct": -1.1, "direction": "flat" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q1", "change_pct": -12.3, "direction": "down" },
           "rank": 3
         },
         {
@@ -5149,7 +5149,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q1", "change_pct": 161.8, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q2", "change_pct": 180.9, "direction": "up" },
           "rank": 1
         },
         {
@@ -5164,7 +5164,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q2", "change_pct": -10.3, "direction": "down" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q3", "change_pct": 150.2, "direction": "up" },
           "rank": 3
         },
         {
@@ -5381,26 +5381,11 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 27757,
           "quarter": "2024-Q1",
           "quarter_label": "Q1 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q12024",
-          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, First Quarter of 2024",
-          "vintage_date": "2025-05-27",
-          "geo_or_layer": "MYS/L3",
-          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
-          "rank": 1
-        },
-        {
-          "metric": "online_job_offerings",
-          "value": null,
-          "quarter": "2024-Q2",
-          "quarter_label": "Q2 2024",
-          "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q224",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
           "vintage_date": "2025-09-29",
           "geo_or_layer": "MYS/L3",
@@ -5411,17 +5396,32 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 24087,
+          "quarter": "2024-Q2",
+          "quarter_label": "Q2 2024",
+          "source_name": "DOSM Big Data Analytics: Job Market Insights",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
+          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
+          "vintage_date": "2025-09-29",
+          "geo_or_layer": "MYS/L3",
+          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
+          "qoq": { "from_quarter": "2024-Q1", "change_pct": -13.2, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q2", "change_pct": 15.5, "direction": "up" },
+          "rank": 1
+        },
+        {
+          "metric": "online_job_offerings",
+          "value": 24542,
           "quarter": "2024-Q3",
           "quarter_label": "Q3 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q324",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260327201219.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Third Quarter of 2024",
           "vintage_date": "2025-11-26",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
+          "qoq": { "from_quarter": "2024-Q2", "change_pct": 1.9, "direction": "flat" },
+          "yoy": { "from_quarter": "2023-Q3", "change_pct": -6.5, "direction": "down" },
           "rank": 1
         },
         {
@@ -5435,7 +5435,7 @@
           "vintage_date": "2025-12-22",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
+          "qoq": { "from_quarter": "2024-Q3", "change_pct": -2.9, "direction": "flat" },
           "yoy": null,
           "rank": 1
         },
@@ -5451,7 +5451,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2024-Q4", "change_pct": -10.1, "direction": "down" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q1", "change_pct": -22.9, "direction": "down" },
           "rank": 1
         },
         {
@@ -5466,7 +5466,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q1", "change_pct": 1.2, "direction": "flat" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q2", "change_pct": -10.1, "direction": "down" },
           "rank": 2
         },
         {
@@ -5481,7 +5481,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q2", "change_pct": 85.6, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q3", "change_pct": 63.9, "direction": "up" },
           "rank": 1
         },
         {
@@ -5698,26 +5698,11 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 22482,
           "quarter": "2024-Q1",
           "quarter_label": "Q1 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q12024",
-          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, First Quarter of 2024",
-          "vintage_date": "2025-05-27",
-          "geo_or_layer": "MYS/L3",
-          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
-          "rank": 2
-        },
-        {
-          "metric": "online_job_offerings",
-          "value": null,
-          "quarter": "2024-Q2",
-          "quarter_label": "Q2 2024",
-          "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q224",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
           "vintage_date": "2025-09-29",
           "geo_or_layer": "MYS/L3",
@@ -5728,17 +5713,32 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 18068,
+          "quarter": "2024-Q2",
+          "quarter_label": "Q2 2024",
+          "source_name": "DOSM Big Data Analytics: Job Market Insights",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
+          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
+          "vintage_date": "2025-09-29",
+          "geo_or_layer": "MYS/L3",
+          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
+          "qoq": { "from_quarter": "2024-Q1", "change_pct": -19.6, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q2", "change_pct": 42.2, "direction": "up" },
+          "rank": 2
+        },
+        {
+          "metric": "online_job_offerings",
+          "value": 14409,
           "quarter": "2024-Q3",
           "quarter_label": "Q3 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q324",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260327201219.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Third Quarter of 2024",
           "vintage_date": "2025-11-26",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
+          "qoq": { "from_quarter": "2024-Q2", "change_pct": -20.3, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q3", "change_pct": -20.3, "direction": "down" },
           "rank": 2
         },
         {
@@ -5752,7 +5752,7 @@
           "vintage_date": "2025-12-22",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
+          "qoq": { "from_quarter": "2024-Q3", "change_pct": -20.6, "direction": "down" },
           "yoy": null,
           "rank": 3
         },
@@ -5768,7 +5768,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2024-Q4", "change_pct": 14.4, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q1", "change_pct": -41.8, "direction": "down" },
           "rank": 2
         },
         {
@@ -5783,7 +5783,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q1", "change_pct": -1, "direction": "flat" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q2", "change_pct": -28.3, "direction": "down" },
           "rank": 3
         },
         {
@@ -5798,7 +5798,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q2", "change_pct": 174.9, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q3", "change_pct": 147.1, "direction": "up" },
           "rank": 2
         },
         {
@@ -6047,26 +6047,11 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 12764,
           "quarter": "2024-Q1",
           "quarter_label": "Q1 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q12024",
-          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, First Quarter of 2024",
-          "vintage_date": "2025-05-27",
-          "geo_or_layer": "MYS/L3",
-          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
-          "rank": 5
-        },
-        {
-          "metric": "online_job_offerings",
-          "value": null,
-          "quarter": "2024-Q2",
-          "quarter_label": "Q2 2024",
-          "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q224",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
           "vintage_date": "2025-09-29",
           "geo_or_layer": "MYS/L3",
@@ -6077,17 +6062,32 @@
         },
         {
           "metric": "online_job_offerings",
-          "value": null,
+          "value": 11246,
+          "quarter": "2024-Q2",
+          "quarter_label": "Q2 2024",
+          "source_name": "DOSM Big Data Analytics: Job Market Insights",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20250924161519.pdf",
+          "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024",
+          "vintage_date": "2025-09-29",
+          "geo_or_layer": "MYS/L3",
+          "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
+          "qoq": { "from_quarter": "2024-Q1", "change_pct": -11.9, "direction": "down" },
+          "yoy": null,
+          "rank": 5
+        },
+        {
+          "metric": "online_job_offerings",
+          "value": 9447,
           "quarter": "2024-Q3",
           "quarter_label": "Q3 2024",
           "source_name": "DOSM Big Data Analytics: Job Market Insights",
-          "source_url": "https://www.dosm.gov.my/portal-main/release-content/big-data-analytics-job-market-insights-and-my-job-profile-q324",
+          "source_url": "https://www.dosm.gov.my/uploads/release-content/file_20260327201219.pdf",
           "release_title": "Big Data Analytics: Job Market Insights and My Job Profile, Third Quarter of 2024",
           "vintage_date": "2025-11-26",
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
-          "qoq": null,
-          "yoy": null,
+          "qoq": { "from_quarter": "2024-Q2", "change_pct": -16, "direction": "down" },
+          "yoy": { "from_quarter": "2023-Q3", "change_pct": -14.7, "direction": "down" },
           "rank": 5
         },
         {
@@ -6102,7 +6102,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": null,
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q1", "change_pct": -37.4, "direction": "down" },
           "rank": 5
         },
         {
@@ -6117,7 +6117,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q1", "change_pct": -5.7, "direction": "down" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q2", "change_pct": -32.9, "direction": "down" },
           "rank": 5
         },
         {
@@ -6132,7 +6132,7 @@
           "geo_or_layer": "MYS/L3",
           "attribution": "Data source: Department of Statistics Malaysia. © Department of Statistics Malaysia (DOSM), all rights reserved.",
           "qoq": { "from_quarter": "2025-Q2", "change_pct": 150, "direction": "up" },
-          "yoy": null,
+          "yoy": { "from_quarter": "2024-Q3", "change_pct": 99.6, "direction": "up" },
           "rank": 4
         },
         {
@@ -6294,25 +6294,11 @@
       "quarter": "2023-Q4",
       "part": "named_role_counts",
       "reason": "\"Big Data Analytics: Job Market Insights and My Job Profile, Fourth Quarter of 2023\" names the top roles without counts."
-    },
-    {
-      "quarter": "2024-Q1",
-      "part": "named_role_counts",
-      "reason": "\"Big Data Analytics: Job Market Insights and My Job Profile, First Quarter of 2024\" names the top roles without counts."
-    },
-    {
-      "quarter": "2024-Q2",
-      "part": "named_role_counts",
-      "reason": "\"Big Data Analytics: Job Market Insights and My Job Profile, Second Quarter of 2024\" names the top roles without counts."
-    },
-    {
-      "quarter": "2024-Q3",
-      "part": "named_role_counts",
-      "reason": "\"Big Data Analytics: Job Market Insights and My Job Profile, Third Quarter of 2024\" names the top roles without counts."
     }
   ],
   "notes": [
     "Totals and major groups for every quarter come from one vintage: the data file of \"Big Data Analytics: Job Market Insights, Second Quarter of 2026\". Named roles come from each quarter's own release.",
+    "The releases for Q1 2024, Q2 2024 and Q3 2024 name the top roles without counts, so those counts come from the \"Top 5 Hottest Jobs\" charts in DOSM's infographics, which print each role's previous and current quarter.",
     "A cell DOSM prints as \"-\" or leaves blank is stored as null, never 0. A role absent from a quarter's top list has no point for that quarter.",
     "DOSM's 2021 releases say MASCO major group 9 (elementary occupations) and 0 (armed forces) were excluded from the series.",
     "Changes are percentages against the previous quarter (qoq) and the same quarter a year earlier (yoy). Above +5% is up, below -5% is down, anything else is flat. No change is computed from a null or zero base.",

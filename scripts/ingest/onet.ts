@@ -1,6 +1,7 @@
 // Ingest the O*NET 30.1 database into data/onet/: occupations with ISCO-08 and MASCO 2020 crosswalks, tasks
-// with their work-activity links, the GWA > IWA > DWA reference, and the title search index.
-// Run: bun run ingest:onet [--refresh]. Downloads go to .cache/onet/30.1/ and are reused unless --refresh.
+// with their work-activity links, the GWA > IWA > DWA reference, and the title search index. On the same
+// O*NET-SOC codes it adds two supplements: Hot Technologies from O*NET 30.3 and Emerging Tasks from O*NET 31.0.
+// Run: bun run ingest:onet [--refresh]. Downloads go to .cache/onet/<version>/ and are reused unless --refresh.
 // Docs: https://www.onetcenter.org/dictionary/30.1/text/ and https://www.onetcenter.org/crosswalks.html
 
 import { mkdir } from 'node:fs/promises'
@@ -10,12 +11,16 @@ import {
   ONET_LICENCE,
   ONET_LICENCE_URL,
   ONET_MODIFICATION_NOTICE,
+  OnetEmergingTasksFileSchema,
+  OnetHotTechnologiesFileSchema,
   OnetMascoMatchSchema,
   OnetOccupationsFileSchema,
   OnetTasksFileSchema,
   OnetTitleIndexSchema,
   OnetWorkActivitiesFileSchema,
   onetCredit,
+  type OnetEmergingTask,
+  type OnetHotTechnology,
   type OnetMeta,
   type OnetOccupation,
   type OnetTask,
@@ -54,6 +59,46 @@ const FILES = {
 const ESCO_FILE = 'ESCO_to_ONET-SOC.xlsx'
 const ESCO_HEADER = ['ESCO/ISCO Code', 'ESCO/ISCO Title', 'O*NET-SOC 2019 Code', 'O*NET-SOC 2019 Title']
 
+// The supplements docs/TRD.md lists. O*NET 30.3 renamed Technology Skills to Software Skills, and O*NET 31.0
+// documents its files as Excel, CSV and JSON, not text.
+// Docs: https://www.onetcenter.org/dictionary/30.3/text/software_skills.html and
+// https://www.onetcenter.org/dictionary/31.0/json/emerging_tasks.html
+const HOT_TECHNOLOGIES = {
+  version: '30.3',
+  release_label: 'May 2026',
+  vintage_date: '2026-05-01',
+  download_url: 'https://www.onetcenter.org/dl_files/database/db_30_3_text/',
+  file: 'Software Skills.txt',
+  columns: ['O*NET-SOC Code', 'Workplace Example', 'Element ID', 'Element Name', 'Hot Technology', 'In Demand']
+} as const
+const EMERGING_TASKS = {
+  version: '31.0',
+  release_label: 'August 2026',
+  vintage_date: '2026-08-01',
+  download_url: 'https://www.onetcenter.org/dl_files/database/db_31_0_json/',
+  file: 'emerging_tasks.json',
+  columns: [
+    'onetsoc_code',
+    'title',
+    'task',
+    'category',
+    'original_task_id',
+    'original_task',
+    'date_updated',
+    'domain_source'
+  ]
+} as const
+type Supplement = typeof HOT_TECHNOLOGIES | typeof EMERGING_TASKS
+type EmergingTaskRow = {
+  onetsoc_code: string
+  task: string
+  category: OnetEmergingTask['category']
+  original_task_id: number | null
+  original_task: string | null
+  date_updated: string
+  domain_source: string
+}
+
 /** Fetch once into the cache, backing off on 429 and 5xx. Returns true when it downloaded. */
 async function download(url: string, path: string): Promise<boolean> {
   if (!REFRESH && (await Bun.file(path).exists())) return false
@@ -70,8 +115,23 @@ async function download(url: string, path: string): Promise<boolean> {
   }
 }
 
-async function readTsv(name: string, columns: readonly string[]): Promise<string[][]> {
-  const lines = (await Bun.file(join(CACHE_DIR, name)).text()).split(/\r?\n/).filter((line) => line.length > 0)
+/** The date in the folder's retrieved-date.txt, set to today when this run downloaded into the folder. */
+async function retrievedOn(dir: string, downloaded: boolean): Promise<string> {
+  const stamp = Bun.file(join(dir, 'retrieved-date.txt'))
+  if (downloaded || !(await stamp.exists())) await Bun.write(stamp, new Date().toISOString().slice(0, 10))
+  return (await stamp.text()).trim()
+}
+
+/** Downloads a supplement's one file into .cache/onet/<version>/. */
+async function fetchSupplement(supplement: Supplement): Promise<{ dir: string; retrievedDate: string }> {
+  const dir = join(ROOT, '.cache/onet', supplement.version)
+  await mkdir(dir, { recursive: true })
+  const url = `${supplement.download_url}${encodeURIComponent(supplement.file)}`
+  return { dir, retrievedDate: await retrievedOn(dir, await download(url, join(dir, supplement.file))) }
+}
+
+async function readTsv(name: string, columns: readonly string[], dir = CACHE_DIR): Promise<string[][]> {
+  const lines = (await Bun.file(join(dir, name)).text()).split(/\r?\n/).filter((line) => line.length > 0)
   if (lines[0] !== columns.join('\t')) throw new Error(`${name}: unexpected header "${lines[0]}"`)
   return lines.slice(1).map((line, i) => {
     const cells = line.split('\t')
@@ -134,9 +194,7 @@ async function main(): Promise<void> {
     downloaded = (await download(`${DOWNLOAD_URL}${encodeURIComponent(name)}`, join(CACHE_DIR, name))) || downloaded
   }
   downloaded = (await download(ESCO_CROSSWALK_URL, join(CACHE_DIR, ESCO_FILE))) || downloaded
-  const stamp = Bun.file(join(CACHE_DIR, 'retrieved-date.txt'))
-  if (downloaded || !(await stamp.exists())) await Bun.write(stamp, new Date().toISOString().slice(0, 10))
-  const retrievedDate = (await stamp.text()).trim()
+  const retrievedDate = await retrievedOn(CACHE_DIR, downloaded)
 
   const [occupationRows, alternateRows, taskRows, taskDwaRows, dwaRows, iwaRows, modelRows, relatedRows] =
     await Promise.all(Object.values(FILES).map(([name, columns]) => readTsv(name, columns)))
@@ -294,6 +352,62 @@ async function main(): Promise<void> {
       }
     ]
   }
+  const supplementMeta = (supplement: Supplement, retrieved: string, modifications: string[]): OnetMeta => ({
+    ...meta,
+    source_name: `O*NET ${supplement.version} Database`,
+    vintage_date: supplement.vintage_date,
+    credit: onetCredit(supplement.version),
+    version: supplement.version,
+    release_label: supplement.release_label,
+    download_url: supplement.download_url,
+    retrieved_date: retrieved,
+    modifications,
+    crosswalks: []
+  })
+
+  // Hot Technologies: the Software Skills examples flagged as hot, joined on the 30.1 O*NET-SOC codes.
+  const hot = await fetchSupplement(HOT_TECHNOLOGIES)
+  const softwareRows = await readTsv(HOT_TECHNOLOGIES.file, HOT_TECHNOLOGIES.columns, hot.dir)
+  const hotTechnologies: Record<string, OnetHotTechnology[]> = {}
+  for (const [code, example, elementId, elementName, isHot, inDemand] of softwareRows) {
+    if (!/^[YN]$/.test(isHot) || !/^[YN]$/.test(inDemand))
+      throw new Error(`${code} ${example}: flags ${isHot} ${inDemand}`)
+    if (isHot === 'N') continue
+    if (!kept.has(code)) throw new Error(`hot technology for unknown occupation ${code}`)
+    ;(hotTechnologies[code] ??= []).push({
+      example,
+      element_id: elementId,
+      element_name: elementName,
+      in_demand: inDemand === 'Y'
+    })
+  }
+  const hotLinks = Object.values(hotTechnologies).flat()
+
+  // Emerging Tasks, joined on the 30.1 O*NET-SOC codes; a revision's original task must be one of the 30.1 tasks.
+  const emerging = await fetchSupplement(EMERGING_TASKS)
+  const emergingFile: { column: { column_id: string }[]; row: EmergingTaskRow[] } = await Bun.file(
+    join(emerging.dir, EMERGING_TASKS.file)
+  ).json()
+  const emergingColumns = emergingFile.column.map((column) => column.column_id)
+  if (emergingColumns.join('|') !== EMERGING_TASKS.columns.join('|')) {
+    throw new Error(`${EMERGING_TASKS.file}: unexpected columns "${emergingColumns.join(', ')}"`)
+  }
+  const emergingTasks: Record<string, OnetEmergingTask[]> = {}
+  for (const row of emergingFile.row) {
+    const code = row.onetsoc_code
+    if (!kept.has(code)) throw new Error(`emerging task for unknown occupation ${code}`)
+    if (row.original_task_id !== null && !tasks[code].some((task) => task.task_id === row.original_task_id)) {
+      throw new Error(`emerging task revises unknown task ${row.original_task_id} of ${code}`)
+    }
+    ;(emergingTasks[code] ??= []).push({
+      statement: row.task,
+      category: row.category,
+      original_task_id: row.original_task_id,
+      original_task: row.original_task,
+      date_updated: row.date_updated,
+      domain_source: row.domain_source
+    })
+  }
 
   const outputs = {
     'occupations.json': OnetOccupationsFileSchema.parse({ meta, occupations }),
@@ -304,6 +418,19 @@ async function main(): Promise<void> {
       key_version: TITLE_KEY_VERSION,
       occupations: occupations.map((o) => [o.onet_code, o.title, o.masco_2020]),
       entries: titleEntries
+    }),
+    'hot-technologies.json': OnetHotTechnologiesFileSchema.parse({
+      meta: supplementMeta(HOT_TECHNOLOGIES, hot.retrievedDate, [
+        `Kept the ${hotLinks.length} Software Skills examples flagged as Hot Technology and dropped the ${softwareRows.length - hotLinks.length} others.`,
+        'Grouped them by O*NET-SOC code, the codes of occupations.json, and recorded the In Demand flag (Y or N) as a boolean.'
+      ]),
+      hot_technologies: hotTechnologies
+    }),
+    'emerging-tasks.json': OnetEmergingTasksFileSchema.parse({
+      meta: supplementMeta(EMERGING_TASKS, emerging.retrievedDate, [
+        'Grouped the rows by O*NET-SOC code, the codes of occupations.json, and left out the occupation title.'
+      ]),
+      emerging_tasks: emergingTasks
     })
   }
   const sizes: string[] = []
@@ -328,6 +455,8 @@ async function main(): Promise<void> {
       `related links: ${occupations.reduce((n, o) => n + o.related.length, 0)}`,
       `ISCO-08: ${occupations.filter((o) => o.isco08.length > 0).length} occupations linked`,
       `MASCO 2020: ${occupations.filter((o) => !o.masco_unmatched).length} matched, ${occupations.filter((o) => o.masco_unmatched).length} unmatched`,
+      `hot technologies (O*NET ${HOT_TECHNOLOGIES.version}, retrieved ${hot.retrievedDate}): ${new Set(hotLinks.map((h) => h.example)).size} technologies, ${hotLinks.length} links to ${Object.keys(hotTechnologies).length} occupations`,
+      `emerging tasks (O*NET ${EMERGING_TASKS.version}, retrieved ${emerging.retrievedDate}): ${emergingFile.row.length} for ${Object.keys(emergingTasks).length} occupations, ${emergingFile.row.filter((r) => r.date_updated === EMERGING_TASKS.vintage_date).length} dated ${EMERGING_TASKS.release_label}`,
       `wrote ${sizes.join(', ')}`
     ].join('\n')
   )

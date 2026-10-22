@@ -217,6 +217,58 @@ export const OnetTitleIndexSchema = z
     })
   })
 
+/** Content Model element of a Software Skills example, such as `2.E.5.b` (O*NET 30.3 and later). */
+export const OnetSoftwareElementIdSchema = z.string().regex(/^2\.E\.\d+\.[a-z]$/)
+
+/** A Software Skills example that O*NET flags as a Hot Technology: frequently included across all job postings. */
+export const OnetHotTechnologySchema = z
+  .object({
+    example: z.string().min(1),
+    element_id: OnetSoftwareElementIdSchema,
+    element_name: z.string().min(1),
+    /** Frequently included in job postings for this occupation. */
+    in_demand: z.boolean()
+  })
+  .strict()
+
+/** `data/onet/hot-technologies.json`: each occupation's Hot Technologies, keyed by O*NET-SOC code. */
+export const OnetHotTechnologiesFileSchema = z
+  .object({
+    meta: OnetMetaSchema,
+    hot_technologies: z.record(OnetSocCodeSchema, z.array(OnetHotTechnologySchema).min(1))
+  })
+  .strict()
+
+export const OnetEmergingTaskCategorySchema = z.enum(['New', 'Revision'])
+
+/** A new or revised task statement that O*NET proposes for future data collection. */
+export const OnetEmergingTaskSchema = z
+  .object({
+    statement: z.string().min(1),
+    category: OnetEmergingTaskCategorySchema,
+    /** For a revision, the task in `data/onet/tasks.json` it rewrites; null for a new task. */
+    original_task_id: OnetTaskIdSchema.nullable(),
+    original_task: z.string().min(1).nullable(),
+    /** The month O*NET updated the row, as its first day. */
+    date_updated: IsoDateSchema,
+    /** Such as `Incumbent`, `Occupational Expert` or `AI/SME`. */
+    domain_source: z.string().min(1)
+  })
+  .strict()
+  .refine(
+    (task) =>
+      [task.original_task_id, task.original_task].every((value) => (value !== null) === (task.category === 'Revision')),
+    { message: 'a revision, and only a revision, names its original task', path: ['original_task_id'] }
+  )
+
+/** `data/onet/emerging-tasks.json`: emerging task statements, keyed by O*NET-SOC code. */
+export const OnetEmergingTasksFileSchema = z
+  .object({
+    meta: OnetMetaSchema,
+    emerging_tasks: z.record(OnetSocCodeSchema, z.array(OnetEmergingTaskSchema).min(1))
+  })
+  .strict()
+
 export type OnetSocCode = z.infer<typeof OnetSocCodeSchema>
 export type OnetAttribution = z.infer<typeof OnetAttributionSchema>
 export type OnetCrosswalkSource = z.infer<typeof OnetCrosswalkSourceSchema>
@@ -238,3 +290,8 @@ export type OnetTitleKind = z.infer<typeof OnetTitleKindSchema>
 export type OnetTitleEntry = z.infer<typeof OnetTitleEntrySchema>
 export type OnetTitleOccupation = z.infer<typeof OnetTitleOccupationSchema>
 export type OnetTitleIndex = z.infer<typeof OnetTitleIndexSchema>
+export type OnetHotTechnology = z.infer<typeof OnetHotTechnologySchema>
+export type OnetHotTechnologiesFile = z.infer<typeof OnetHotTechnologiesFileSchema>
+export type OnetEmergingTaskCategory = z.infer<typeof OnetEmergingTaskCategorySchema>
+export type OnetEmergingTask = z.infer<typeof OnetEmergingTaskSchema>
+export type OnetEmergingTasksFile = z.infer<typeof OnetEmergingTasksFileSchema>

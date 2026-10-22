@@ -1,7 +1,8 @@
 // Checks the upstream feeds behind the snapshots (#90). Lists the Anthropic Economic Index release folders on the
-// Hugging Face Hub and reports any newer than the pinned one, without re-pinning, then runs the OpenDOSM and
-// Epoch AI ingest scripts if package.json has them. Writes .cache/refresh/result.json (machine-readable) and
-// .cache/refresh/summary.md (the refresh pull request body), and exits non-zero if a feed or script failed.
+// Hugging Face Hub and reports any newer than the pinned one, without re-pinning, then runs the DOSM Job Market
+// Insights, OpenDOSM and Epoch AI ingest scripts if package.json has them. Writes .cache/refresh/result.json
+// (machine-readable) and .cache/refresh/summary.md (the refresh pull request body), and exits non-zero if a feed or
+// script failed.
 // Run with `bun run refresh:check`; the Refresh data workflow runs it weekly.
 import { mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -16,8 +17,10 @@ const RELEASE_FOLDER = /^release_\d{4}_\d{2}_\d{2}$/
 const REQUEST_TIMEOUT_MS = 30_000
 const REQUEST_ATTEMPTS = 3
 const INGEST_TIMEOUT_MS = 20 * 60_000
-// The scripts for #63 and #66 should be registered in package.json under these names.
+// The scripts for #63 and #66 should be registered in package.json under these names. The DOSM Job Market Insights
+// script needs pdftotext (poppler-utils) and unzip on PATH.
 const INGESTS = [
+  { source: 'DOSM Job Market Insights', issue: 52, script: 'ingest:dosm-jmi' },
   { source: 'OpenDOSM', issue: 63, script: 'ingest:opendosm' },
   { source: 'Epoch AI', issue: 66, script: 'ingest:epoch' }
 ]
