@@ -1,5 +1,5 @@
 import { Briefcase, PackageOpen, Route } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { Button } from '../components/ui/Button'
@@ -10,12 +10,14 @@ import { Slider } from '../components/ui/Slider'
 import { TextField } from '../components/ui/TextField'
 import { Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
-import type { BundleRoleIndexEntry } from '@kotak/shared'
+import type { BundleRoleIndexEntry, Occupation } from '@kotak/shared'
 import { goals } from '../demo/data'
 import type { Goal } from '../demo/types'
 import { useRoleIndex } from '../engine/bundle'
+import { fetchRoleMatch, type ApiResult } from '../engine/api'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
+import type { RoleMatchResponse } from '@kotak/shared'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 const goalIcons = { stay: Briefcase, target: Route, explore: PackageOpen }
@@ -26,11 +28,15 @@ const suggestedTitles: Record<string, string> = {
 }
 const maxSuggestions = 8
 
-function getRoleDisplayTitle(role: BundleRoleIndexEntry) {
+function normalizeJobQuery(value: string) {
+  return value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase()
+}
+
+function getRoleDisplayTitle(role: Pick<Occupation, 'onet_code' | 'title'>) {
   return suggestedTitles[role.onet_code] ?? role.title
 }
 
-function getRoleCodeLine(role: BundleRoleIndexEntry) {
+function getRoleCodeLine(role: Pick<Occupation, 'onet_code' | 'title'>) {
   const customTitle = suggestedTitles[role.onet_code]
   return customTitle ? `O*NET ${role.onet_code} · ${role.title}` : `O*NET ${role.onet_code}`
 }
@@ -75,20 +81,74 @@ export function CheckUpView() {
   const roles = roleIndex.status === 'ready' ? roleIndex.data.roles : []
   const searchRef = useRef<HTMLInputElement>(null)
   const [jobQuery, setJobQuery] = useState(getInitialJobQuery)
-  const [acceptedJob, setAcceptedJob] = useState<BundleRoleIndexEntry | null>(null)
+  const [acceptedJob, setAcceptedJob] = useState<Occupation | null>(null)
   const [suggestionsOpen, setSuggestionsOpen] = useState(true)
+  const [roleMatchState, setRoleMatchState] = useState<
+    | { queryKey: string; status: 'loading' }
+    | { queryKey: string; status: 'settled'; result: ApiResult<RoleMatchResponse> }
+    | null
+  >(null)
+  const [submittedQuery, setSubmittedQuery] = useState<string | null>(null)
+  const [submitVersion, setSubmitVersion] = useState(0)
   const [goalId, setGoalId] = useState<Goal['id']>('explore')
   const [hoursPerWeek, setHoursPerWeek] = useState(session.custom_weekly_hours ?? 4)
   const [startDate, setStartDate] = useState(() => new Date())
 
   const normalizedQuery = jobQuery.trim().toLocaleLowerCase()
+  const queryKey = normalizeJobQuery(jobQuery)
+  const hasExactLocalMatch =
+    queryKey.length > 0 &&
+    roles.some(
+      (role) => normalizeJobQuery(role.title) === queryKey || normalizeJobQuery(getRoleDisplayTitle(role)) === queryKey
+    )
   const matchingSuggestions = normalizedQuery
     ? roles.filter((role) => matchesQuery(role, normalizedQuery)).slice(0, maxSuggestions)
     : getSuggestedRoles(roles)
+  const currentRoleMatch = roleMatchState?.queryKey === queryKey ? roleMatchState : null
+  const waitingForRoleMatch =
+    roleIndex.status === 'ready' &&
+    queryKey.length > 0 &&
+    !hasExactLocalMatch &&
+    !acceptedJob &&
+    currentRoleMatch?.status !== 'settled'
+  const roleMatchResponse = currentRoleMatch?.status === 'settled' ? currentRoleMatch.result : null
+  const remoteOccupation = roleMatchResponse?.status === 'available' ? roleMatchResponse.data.occupation : null
+  const hasRemoteSuggestion =
+    remoteOccupation !== null &&
+    roleMatchResponse?.status === 'available' &&
+    !roleMatchResponse.data.fallback_reason &&
+    roleMatchResponse.data.match_source !== 'none'
+  const roleMatchFallback =
+    currentRoleMatch?.status === 'settled' &&
+    (currentRoleMatch.result.status === 'unavailable' ||
+      !currentRoleMatch.result.data.occupation ||
+      Boolean(currentRoleMatch.result.data.fallback_reason) ||
+      currentRoleMatch.result.data.match_source === 'none')
   const noJobMatch =
-    roleIndex.status === 'ready' && normalizedQuery.length > 0 && matchingSuggestions.length === 0 && !acceptedJob
+    roleIndex.status === 'ready' &&
+    normalizedQuery.length > 0 &&
+    !acceptedJob &&
+    (roleMatchFallback || (matchingSuggestions.length === 0 && !waitingForRoleMatch && !hasRemoteSuggestion))
   const closeMatches = noJobMatch ? closestRoles(roles, normalizedQuery) : []
   const noMatchSuggestions = closeMatches.length ? closeMatches : noJobMatch ? getSuggestedRoles(roles) : []
+
+  useEffect(() => {
+    if (roleIndex.status !== 'ready' || !queryKey || hasExactLocalMatch || acceptedJob) return
+
+    let current = true
+    const delay = submittedQuery === queryKey ? 0 : 600
+    const timer = window.setTimeout(() => {
+      setRoleMatchState({ queryKey, status: 'loading' })
+      void fetchRoleMatch(jobQuery.trim()).then((result) => {
+        if (current) setRoleMatchState({ queryKey, status: 'settled', result })
+      })
+    }, delay)
+
+    return () => {
+      current = false
+      window.clearTimeout(timer)
+    }
+  }, [acceptedJob, hasExactLocalMatch, jobQuery, queryKey, roleIndex.status, submittedQuery, submitVersion])
 
   const updateJobQuery = (value: string) => {
     setJobQuery(value)
@@ -96,10 +156,16 @@ export function CheckUpView() {
     setSuggestionsOpen(true)
   }
 
-  const acceptJob = (role: BundleRoleIndexEntry) => {
+  const acceptJob = (role: Pick<Occupation, 'onet_code' | 'title'>) => {
     setJobQuery(getRoleDisplayTitle(role))
     setAcceptedJob(role)
     setSuggestionsOpen(false)
+  }
+
+  const submitTitleMatch = () => {
+    if (!queryKey || hasExactLocalMatch || acceptedJob) return
+    setSubmittedQuery(queryKey)
+    setSubmitVersion((version) => version + 1)
   }
 
   // A new check-up starts from blank answers, so the radar never mixes two jobs' answers.
@@ -186,16 +252,51 @@ export function CheckUpView() {
           shortcutHint=""
           value={jobQuery}
           onChange={(event) => updateJobQuery(event.currentTarget.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              submitTitleMatch()
+            }
+          }}
           onFocus={() => setSuggestionsOpen(true)}
-          aria-controls={suggestionsOpen && matchingSuggestions.length > 0 ? 'job-suggestions' : undefined}
-          aria-expanded={suggestionsOpen && matchingSuggestions.length > 0}
+          aria-controls={
+            suggestionsOpen && (matchingSuggestions.length > 0 || waitingForRoleMatch || hasRemoteSuggestion)
+              ? 'job-suggestions'
+              : undefined
+          }
+          aria-expanded={
+            suggestionsOpen && (matchingSuggestions.length > 0 || waitingForRoleMatch || hasRemoteSuggestion)
+          }
         />
-        {suggestionsOpen && matchingSuggestions.length > 0 && (
+        {suggestionsOpen && (matchingSuggestions.length > 0 || waitingForRoleMatch || hasRemoteSuggestion) && (
           <ul
             id="job-suggestions"
             aria-label="Job Suggestions"
             className="w-full min-w-0 space-y-0.5 rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
           >
+            {waitingForRoleMatch && (
+              <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
+                Kopi is matching your title…
+              </li>
+            )}
+            {hasRemoteSuggestion && remoteOccupation && roleMatchResponse?.status === 'available' && (
+              <li>
+                <button
+                  type="button"
+                  onClick={() => acceptJob(remoteOccupation)}
+                  className="flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm bg-bg-panel px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2"
+                >
+                  <span className="w-full break-words text-label-l">
+                    Kopi thinks you mean {getRoleDisplayTitle(remoteOccupation)}
+                  </span>
+                  <span className="font-mono text-mono-s text-text-muted">
+                    {getRoleCodeLine(remoteOccupation)}
+                    {roleMatchResponse.data.match_source === 'claude' && ' · Matched by Claude'}
+                    {roleMatchResponse.data.match_source === 'title_search' && ' · Matched by Title Search'}
+                  </span>
+                </button>
+              </li>
+            )}
             {matchingSuggestions.map((role, index) => (
               <li key={role.onet_code}>
                 <button
@@ -211,9 +312,11 @@ export function CheckUpView() {
                 </button>
               </li>
             ))}
-            <li className="px-2 py-1 text-body-s text-text-muted">
-              Can’t find it? Type any title and Kopi will match it.
-            </li>
+            {matchingSuggestions.length > 0 && (
+              <li className="px-2 py-1 text-body-s text-text-muted">
+                Can’t find it? Type any title and Kopi will match it.
+              </li>
+            )}
           </ul>
         )}
       </div>

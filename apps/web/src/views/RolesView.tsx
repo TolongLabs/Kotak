@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { DEFAULT_SCENARIO } from '@kotak/shared'
+import { useEffect, useState } from 'react'
+import { DEFAULT_SCENARIO, type ExplanationResponse } from '@kotak/shared'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
@@ -12,10 +12,11 @@ import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
 import { useCheckup } from '../engine/checkup'
+import { fetchExplanations } from '../engine/api'
 import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { MathsModal } from './roles/MathsModal'
-import { deriveRoleEvidence, kopiRoleSpeech } from './roles/derived'
+import { buildExplanationRequest, deriveRoleEvidence, kopiRoleSpeech } from './roles/derived'
 import { formatFitPercent } from './roles/fit'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
@@ -27,6 +28,52 @@ export function RolesView() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [mathsId, setMathsId] = useState<string | null>(null)
   const [askOpen, setAskOpen] = useState(false)
+  const [explanationState, setExplanationState] = useState<{
+    roleCode: string
+    snapshotId: string
+    explanations: ExplanationResponse['explanations']
+  } | null>(null)
+  const roleData = bundle.status === 'ready' ? bundle.data : null
+  const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
+  const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
+
+  useEffect(() => {
+    if (aiOff || !roleData || !checkup) return
+
+    const ranked = toRoles(checkup, [roleData.role, ...roleData.related], session.role_code)
+    const currentJob = ranked.find((candidate) => candidate.isCurrentJob)
+    const otherRoles = ranked.filter((candidate) => !candidate.isCurrentJob)
+    const displayRoles = currentJob ? [currentJob, ...otherRoles.slice(0, 2)] : ranked.slice(0, 3)
+    const defaultSelected =
+      displayRoles.find((candidate) => !candidate.isCurrentJob && candidate.outlook === 'rising') ??
+      (displayRoles.length > 2 ? displayRoles[2] : displayRoles[0])
+    const selected = displayRoles.find((candidate) => candidate.id === selectedId) ?? defaultSelected
+    if (!selected) return
+
+    const detailCheckupRole = checkup.roles.find((candidate) => candidate.onet_code === selected.id)
+    const detailBundleRole = [roleData.role, ...roleData.related].find(
+      (candidate) => candidate.onet_code === selected.id
+    )
+    if (!detailBundleRole) return
+
+    const request = buildExplanationRequest(detailBundleRole, detailCheckupRole, checkup.snapshotId, checkup.scenario)
+    if (!request) return
+
+    let current = true
+    void fetchExplanations(detailBundleRole.onet_code, request).then((result) => {
+      if (current && result.status === 'available') {
+        setExplanationState({
+          roleCode: detailBundleRole.onet_code,
+          snapshotId: checkup.snapshotId,
+          explanations: result.data.explanations
+        })
+      }
+    })
+
+    return () => {
+      current = false
+    }
+  }, [aiOff, checkup, roleData, selectedId, session.role_code])
 
   if (!session.role_code) {
     return (
@@ -41,7 +88,7 @@ export function RolesView() {
     )
   }
 
-  if (loaded.status !== 'ready' || bundle.status !== 'ready') {
+  if (loaded.status !== 'ready' || bundle.status !== 'ready' || !checkup) {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
@@ -55,7 +102,6 @@ export function RolesView() {
     )
   }
 
-  const { checkup } = loaded.data
   const { role, related } = bundle.data
   const bundleRoles = [role, ...related]
   const ranked = toRoles(checkup, bundleRoles, session.role_code)
@@ -83,7 +129,16 @@ export function RolesView() {
     ? deriveRoleEvidence(detailCheckupRole, detailBundleRole, role, checkup.snapshotId)
     : null
   const displaySources = roleEvidence?.sources ?? []
-  const reasoningText = roleEvidence?.reasoning ?? ''
+  const currentExplanations =
+    selected && explanationState?.roleCode === selected.id && explanationState.snapshotId === checkup.snapshotId
+      ? explanationState.explanations
+      : null
+  const apiReasoning = currentExplanations?.map((explanation) => explanation.sentences.join(' ')).join(' ')
+  const reasoningText =
+    roleEvidence && apiReasoning ? `${roleEvidence.reasoningPrefix} ${apiReasoning}` : (roleEvidence?.reasoning ?? '')
+  const reasoningSource = currentExplanations?.every((explanation) => explanation.source === 'claude')
+    ? 'claude'
+    : 'template'
 
   const fitNumerator = detailCheckupRole?.fit.numerator ?? 0
   const fitDenominator = detailCheckupRole?.fit.denominator ?? 0
@@ -171,7 +226,7 @@ export function RolesView() {
 
           {/* Why This Role */}
           <section aria-label="Why This Role" className="flex flex-col gap-3">
-            <Reasoning text={reasoningText} />
+            <Reasoning text={reasoningText} source={reasoningSource} paused={aiOff} />
             {displaySources.length > 0 && (
               <div className="divide-y divide-border-subtle rounded-md border border-border-subtle bg-bg-default [&>div]:rounded-none [&>div]:border-0">
                 {displaySources.map((source) => (

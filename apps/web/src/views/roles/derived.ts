@@ -1,4 +1,13 @@
-import { roleVerdicts, uniqueSources, type BundleRole, type SnapshotId, type Source } from '@kotak/shared'
+import {
+  ExplanationRequestSchema,
+  roleVerdicts,
+  uniqueSources,
+  type BundleRole,
+  type ExplanationRequest,
+  type Scenario,
+  type SnapshotId,
+  type Source
+} from '@kotak/shared'
 import type { Role, SourceRef } from '../../demo/types'
 import type { CheckupRole } from '../../engine/checkup'
 
@@ -21,7 +30,7 @@ export function deriveRoleEvidence(
   bundleRole: BundleRole | undefined,
   currentRole: BundleRole,
   snapshotId: SnapshotId
-): { reasoning: string; sources: SourceRef[] } {
+): { reasoning: string; reasoningPrefix: string; sources: SourceRef[] } {
   const verdicts = bundleRole ? roleVerdicts(bundleRole.signals[snapshotId]).corners : []
   const allSources = uniqueSources(verdicts.flatMap((verdict) => verdict.sources))
   const sourceNumber = new Map(allSources.map((source, i) => [sourceKey(source), i + 1]))
@@ -69,5 +78,39 @@ export function deriveRoleEvidence(
     ? `Verdict statuses are ${statuses.join('; ')}.`
     : 'Verdict statuses are unavailable.'
 
-  return { reasoning: `${fitAndSkills} ${statusSummary}`, sources }
+  return { reasoning: `${fitAndSkills} ${statusSummary}`, reasoningPrefix: fitAndSkills, sources }
+}
+
+export function buildExplanationRequest(
+  bundleRole: BundleRole,
+  checkupRole: CheckupRole | undefined,
+  snapshotId: SnapshotId,
+  scenario: Scenario
+): ExplanationRequest | null {
+  if (!checkupRole || checkupRole.onet_code !== bundleRole.onet_code || bundleRole.corners.length !== 6) return null
+
+  const verdicts = new Map(
+    roleVerdicts(bundleRole.signals[snapshotId]).corners.map((verdict) => [verdict.corner_id, verdict])
+  )
+  const levels = new Map(checkupRole.levels.map((level) => [level.corner_id, level.level]))
+  const request = {
+    snapshot_id: snapshotId,
+    corners: bundleRole.corners.map((corner) => {
+      const verdict = verdicts.get(corner.corner_id)
+      const userLevel = levels.get(corner.corner_id)
+      if (!verdict || userLevel === undefined) return null
+      return {
+        corner_id: corner.corner_id,
+        name: corner.name,
+        verdict: verdict.status,
+        user_level: userLevel,
+        target_level: verdict.scenarios[scenario].target.value,
+        sources: verdict.sources
+      }
+    })
+  }
+
+  if (request.corners.some((corner) => corner === null)) return null
+  const parsed = ExplanationRequestSchema.safeParse(request)
+  return parsed.success ? parsed.data : null
 }
