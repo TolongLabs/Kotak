@@ -7,7 +7,7 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
 import { useRoleBundle } from '../engine/bundle'
-import { useCheckup } from '../engine/checkup'
+import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside, KopiStage } from './checkup/KopiDialogue'
 
@@ -27,8 +27,9 @@ function toSessionAnswers(role: BundleRole, order: string[], asked: boolean[]) {
 
 export function QuestionsView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(session.role_code)
-  const loaded = useCheckup({ scenario: DEFAULT_SCENARIO })
+  const assessedCode = assessedRoleCode(session)
+  const bundle = useRoleBundle(assessedCode)
+  const loaded = useCheckup({ onetCode: assessedCode, scenario: DEFAULT_SCENARIO })
   const [asked, setAsked] = useState<boolean[]>([])
   const [thinking, setThinking] = useState(false)
   const thinkingTimer = useRef<number | null>(null)
@@ -40,7 +41,7 @@ export function QuestionsView() {
     []
   )
 
-  if (!session.role_code) {
+  if (!assessedCode) {
     return (
       <QuestionsFrame>
         <KopiAside pose="worried" speech="Tell me your job first, then I can ask about it." />
@@ -129,6 +130,8 @@ export function QuestionsView() {
 
   return (
     <QuestionsFrame>
+      <h2 className="text-title-s text-text-primary">Testing You Against {role.title}</h2>
+
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" aria-live="polite">
         <span className="font-mono text-mono-s text-text-muted">
           Question {questionIndex + 1} of {totalQuestions}

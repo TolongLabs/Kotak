@@ -11,6 +11,7 @@ import {
   type BundleRole,
   type CornerVerdict,
   type FitScore,
+  type GuestSession,
   type Roadmap,
   type Scenario,
   type SnapshotId,
@@ -33,6 +34,8 @@ export interface CheckupInput {
   scenario: Scenario
   weeklyHours: number | null
   startDate: string
+  /** The role the roadmap plans for; null, or a role outside `related`, plans for `role`. */
+  planRoleCode?: string | null
 }
 
 export interface CheckupCorner {
@@ -65,6 +68,8 @@ export interface Checkup {
   /** The role and its related roles, best fit first. */
   roles: CheckupRole[]
   roadmap: Roadmap
+  /** The role the roadmap plans for. */
+  planRoleCode: string
 }
 
 /** Levels 0 to 3 by corner ID for every corner with both questions answered. */
@@ -87,7 +92,6 @@ export function computeCheckup(input: CheckupInput): Checkup {
   const verdicts = verdictsOf(role)
   const levels = new Map(transferLevels(role, answers, links).map((level) => [level.corner_id, level]))
   const names = new Map(role.corners.map((corner) => [corner.corner_id, corner.name]))
-  const signals = new Map(role.signals[snapshotId].corners.map((corner) => [corner.corner_id, corner]))
 
   const scored = matched.map((m) => {
     const targets = new Map(verdictsOf(m).map((v) => [v.corner_id, v.scenarios[scenario].target.value]))
@@ -97,6 +101,14 @@ export function computeCheckup(input: CheckupInput): Checkup {
     )
     return { onet_code: m.onet_code, title: m.title, fit, levels: roleLevels }
   })
+
+  const planRole = matched.find((m) => m.onet_code === input.planRoleCode) ?? role
+  const planVerdicts = planRole === role ? verdicts : verdictsOf(planRole)
+  const planLevels =
+    planRole === role
+      ? levels
+      : new Map(transferLevels(planRole, answers, links).map((level) => [level.corner_id, level]))
+  const planSignals = new Map(planRole.signals[snapshotId].corners.map((corner) => [corner.corner_id, corner]))
 
   return {
     snapshotId,
@@ -112,13 +124,14 @@ export function computeCheckup(input: CheckupInput): Checkup {
       level: levels.get(verdict.corner_id)!
     })),
     roles: [...scored].sort((a, b) => b.fit.score - a.fit.score).map((r, i) => ({ ...r, rank: i + 1 })),
+    planRoleCode: planRole.onet_code,
     roadmap: buildRoadmap({
-      verdicts,
-      corners: role.corners.map((corner) => ({
+      verdicts: planVerdicts,
+      corners: planRole.corners.map((corner) => ({
         corner_id: corner.corner_id,
-        user_level: levels.get(corner.corner_id)!.level,
+        user_level: planLevels.get(corner.corner_id)!.level,
         milestone_hours: corner.hours ?? PENDING_HOURS,
-        time_saving: signals.get(corner.corner_id)?.time_saving ?? null
+        time_saving: planSignals.get(corner.corner_id)?.time_saving ?? null
       })),
       start_date: input.startDate,
       scenario,
@@ -133,8 +146,22 @@ export interface LoadedCheckup {
   unavailable: string[]
 }
 
+/** The role the check-up is about: the target role for the target goal, otherwise the current job. */
+export function assessedRoleCode(
+  session: Pick<GuestSession, 'goal' | 'role_code' | 'target_role_code'>
+): string | null {
+  return session.goal === 'target' && session.target_role_code ? session.target_role_code : session.role_code
+}
+
+/** The role the roadmap plans for: the role picked on the Roles page, otherwise the assessed role. */
+export function planRoleCodeOf(
+  session: Pick<GuestSession, 'goal' | 'role_code' | 'target_role_code' | 'plan_role_code'>
+): string | null {
+  return session.plan_role_code ?? assessedRoleCode(session)
+}
+
 /**
- * The check-up for `onetCode` (default: the session's role) from the session's answers, active snapshot and weekly
+ * The check-up for `onetCode` (default: the assessed role) from the session's answers, active snapshot and weekly
  * hours. The scenario is the caller's, since the session does not store it.
  */
 export function useCheckup({
@@ -145,7 +172,7 @@ export function useCheckup({
   scenario: Scenario
 }): Loaded<LoadedCheckup> {
   const session = useGuestSession()
-  const bundle = useRoleBundle(onetCode === undefined ? session.role_code : onetCode)
+  const bundle = useRoleBundle(onetCode === undefined ? assessedRoleCode(session) : onetCode)
   const [today] = useState(() => new Date().toISOString().slice(0, 10))
   const data = bundle.status === 'ready' ? bundle.data : null
   const { answers, active_snapshot_id: snapshotId, custom_weekly_hours: weeklyHours } = session
@@ -160,9 +187,10 @@ export function useCheckup({
         snapshotId,
         scenario,
         weeklyHours,
-        startDate: today
+        startDate: today,
+        planRoleCode: session.plan_role_code
       }),
-    [data, answers, snapshotId, scenario, weeklyHours, today]
+    [data, answers, snapshotId, scenario, weeklyHours, today, session.plan_role_code]
   )
 
   if (bundle.status !== 'ready') return bundle
