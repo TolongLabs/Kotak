@@ -13,6 +13,7 @@ import { deriveSwot } from '../demo/swot'
 import type { Swot, SwotItem } from '../demo/types'
 import { useRoleBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
+import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
 import { toReadinessPoints, toRoadmapSteps } from '../engine/roadmapModel'
 import { useGuestSession } from '../session/store'
@@ -309,6 +310,10 @@ export function DashboardView() {
     .sort((left, right) => right[1] - left[1] || left[0] - right[0])
     .slice(0, 3)
     .map(([goal]) => goal)
+  const workSdgs = occupationSdgs(planRoleCodeOf(session))
+  const workGoals = workSdgs?.goals ?? []
+  const workGoalSet = new Set(workGoals)
+  const planGoals = topPlanGoals.filter((goal) => !workGoalSet.has(goal))
   const fitRoleCode = planRoleCodeOf(session)
   const fitRole = currentCheckup.roles.find((entry) => entry.onet_code === fitRoleCode)
   const fitBundleRole = [role, ...bundle.data.related].find((entry) => entry.onet_code === fitRoleCode) ?? role
@@ -383,12 +388,29 @@ export function DashboardView() {
       <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">Good Morning, Guest</h1>
         <p className="text-body-s text-text-muted">{role.title}</p>
-        {topPlanGoals.length > 0 && (
+        {(workGoals.length > 0 || planGoals.length > 0) && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-label-s text-text-muted">Your Plan Supports</span>
-            {topPlanGoals.map((goal) => (
-              <SdgChip key={goal} goal={goal} />
-            ))}
+            {workGoals.length > 0 && (
+              <>
+                <span className="text-label-s text-text-muted">Your Work Supports</span>
+                {workGoals.map((goal) => (
+                  <SdgChip key={goal} goal={goal} title={workSdgs?.reason} />
+                ))}
+              </>
+            )}
+            {workGoals.length > 0 && planGoals.length > 0 && (
+              <span aria-hidden="true" className="text-text-muted">
+                ·
+              </span>
+            )}
+            {planGoals.length > 0 && (
+              <>
+                <span className="text-label-s text-text-muted">Your Plan Supports</span>
+                {planGoals.map((goal) => (
+                  <SdgChip key={goal} goal={goal} />
+                ))}
+              </>
+            )}
           </div>
         )}
       </header>
