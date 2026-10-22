@@ -1,4 +1,4 @@
-import { Ban, Check, Lock, Mail } from 'lucide-react'
+import { Check, Lock, Mail } from 'lucide-react'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { Logo } from '../components/brand/Logo'
@@ -66,20 +66,14 @@ export function SignInView() {
             </p>
           </div>
 
-          <div className="relative">
-            <TextField
-              label="Email"
-              type="email"
-              placeholder="name@example.com"
-              helper="Email sign-in opens after the pilot."
-              icon={Mail}
-              disabled
-            />
-            <Ban
-              className="pointer-events-none absolute top-[34px] right-[92px] h-6 w-6 stroke-current text-state-error"
-              aria-hidden="true"
-            />
-          </div>
+          <TextField
+            label="Email"
+            type="email"
+            placeholder="name@example.com"
+            helper="Email sign-in opens after the pilot."
+            icon={Mail}
+            disabled
+          />
 
           <PasswordField label="Password" placeholder="••••••••" disabled />
 
