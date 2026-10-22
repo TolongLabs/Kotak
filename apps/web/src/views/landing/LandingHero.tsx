@@ -58,19 +58,20 @@ export function LandingHero() {
     : 'Kopi will open the example check-up soon.'
 
   return (
-    <section className="bg-bg-panel px-6 pb-12 pt-3 lg:px-[120px] lg:pb-16 lg:pt-6">
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 lg:gap-8">
+    <section className="flex min-h-svh flex-col bg-bg-panel px-6 pb-6 pt-3 lg:px-16 lg:pt-6">
+      <div className="mx-auto flex w-full max-w-[1312px] flex-1 flex-col items-center gap-6">
         <LandingNav />
 
-        <div className="flex w-full flex-col items-center gap-4 pt-2 text-center">
-          <h1 className="max-w-[900px] text-balance font-extrabold text-display-l text-text-primary lg:text-display-xl">
+        {/* Below xl the headline centres over the stacked example; at xl it sets a masthead over the stage. */}
+        <div className="flex w-full flex-col items-center gap-4 pt-2 text-center xl:grid xl:grid-cols-12 xl:items-end xl:gap-x-6 xl:gap-y-4 xl:pt-2 xl:text-left">
+          <h1 className="max-w-[900px] text-balance font-extrabold text-display-l text-text-primary lg:text-display-xl xl:col-span-12 xl:max-w-none">
             Open the Box on Your Job.
           </h1>
-          <p className="max-w-[660px] text-body-m text-text-muted lg:text-body-l">
+          <p className="max-w-[660px] text-body-m text-text-muted lg:text-body-l xl:col-span-7">
             Kotak tracks how AI is changing Malaysian work, shows which of your skills are rising or fading, and builds
             your next 12 weeks. Every verdict cites its source.
           </p>
-          <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
+          <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 xl:col-span-5 xl:justify-end">
             <LandingActionLink to={routes.checkUp} variant="primary" showArrow className="w-full sm:w-auto">
               Start
             </LandingActionLink>
@@ -88,7 +89,7 @@ export function LandingHero() {
           <>
             {/* Desktop Stage Card (1440px): Radar, GapCard, and Kopi side by side */}
             {wide ? (
-              <div className="flex min-h-[520px] w-full max-w-[1134px] items-center justify-center gap-10 rounded-[24px] border border-border-subtle bg-bg-default p-12">
+              <div className="relative flex w-full flex-1 items-center justify-between gap-10 rounded-[24px] border border-border-subtle bg-bg-default px-12 pb-10 pt-6">
                 <div className="flex w-[393px] shrink-0 items-center justify-center">
                   <FutureSkillsRadar
                     corners={example.corners}
@@ -99,10 +100,11 @@ export function LandingHero() {
                   />
                 </div>
 
-                <div className="w-[360px] shrink-0">
+                <div className="min-w-0 max-w-[440px] flex-1">
                   <LandingExampleCard
                     corner={featuredCorner}
                     sources={cornerSources}
+                    maxSources={1}
                     scenario={example.checkup.scenario}
                     neededLabel="Needed by 2027"
                   />
@@ -162,7 +164,8 @@ export function LandingHero() {
           <div className="flex w-full justify-center">{exampleState}</div>
         )}
 
-        <p className="rounded-full border border-border-subtle bg-bg-default px-4 py-2 text-label-s text-text-muted">
+        {/* At xl the cue sits on the stage's bottom edge. */}
+        <p className="relative mt-auto rounded-full border border-border-subtle bg-bg-default px-4 py-2 text-label-s text-text-muted xl:-mt-10">
           Keep scrolling. Kopi is opening the box.
         </p>
       </div>
