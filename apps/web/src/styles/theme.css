@@ -1,4 +1,4 @@
-@theme {
+@theme static {
   --color-bg-default: var(--k-color-bg-default);
   --color-bg-panel: var(--k-color-bg-panel);
   --color-text-primary: var(--k-color-text-primary);
