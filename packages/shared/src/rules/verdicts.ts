@@ -56,7 +56,8 @@ export function fastGrowthMultiplier(anchors: UsageAnchors): number {
 
 /**
  * Projects a corner's AI use HORIZON_MONTHS past its latest data month. Slow keeps the observed pace, a least-squares
- * line through the dated points. Fast multiplies growing use by `fastGrowthMultiplier`; shrinking use stays as observed.
+ * line through the dated points. Fast raises every corner's growth (TRD.md, #146): growing use grows `fastGrowthMultiplier`
+ * times faster and shrinking use shrinks that many times slower, so it never changes a shrinking corner's verdict.
  * The change is relative to the latest value; a latest value of 0 gives no relative change and counts as not rising.
  * Returns null with fewer than 2 dated points (published values with distinct vintage dates).
  */
@@ -75,7 +76,7 @@ export function projectAiUsage(series: AiUsageSeries, anchors: UsageAnchors, sce
 
   const observed = latest.value > 0 ? Math.max(-1, (slope * HORIZON_MONTHS) / latest.value) : 0
   const multiplier = scenario === 'fast' ? fastGrowthMultiplier(anchors) : 1
-  const change = observed > 0 ? observed * multiplier : observed
+  const change = observed > 0 ? observed * multiplier : observed / multiplier
   return {
     latest_date: latest.date,
     latest_value: latest.value,
