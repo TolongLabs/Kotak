@@ -108,3 +108,7 @@ docs/meetings/
 # Build outputs
 dist/
 .wrangler/
+
+# Local scraper runs and browser tooling
+.local/
+data/jobstreet/
