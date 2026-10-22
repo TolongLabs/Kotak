@@ -2,10 +2,10 @@ import Anthropic from '@anthropic-ai/sdk'
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod'
 import type { z } from 'zod'
 
-export const CLAUDE_MODEL = 'claude-opus-5-5'
+export const CLAUDE_MODEL = 'claude-sonnet-5-5'
 
-// One structured-output call. The request carries no temperature, top_p or top_k (this model rejects them),
-// no thinking setting (adaptive thinking is always on) and no forced tool_choice: JSON comes from output_config.format.
+// One structured-output call. The request carries no temperature, top_p or top_k (this model rejects non-default values),
+// no thinking setting (adaptive thinking is the default) and no forced tool_choice: JSON comes from output_config.format.
 export interface StructuredRequest {
   system: string
   user: string

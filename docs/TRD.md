@@ -42,7 +42,7 @@ Contents:
     1.  [Health check](#health-check)
 1.  [AI models](#ai-models)
     1.  [Models by task](#models-by-task)
-    1.  [Claude Opus 5.5 request rules](#claude-opus-55-request-rules)
+    1.  [Claude Sonnet 5.5 request rules](#claude-sonnet-55-request-rules)
     1.  [Caching and pre-warming](#caching-and-pre-warming)
     1.  [Explanation verifier](#explanation-verifier)
     1.  [Batch generation and the Claude backup](#batch-generation-and-the-claude-backup)
@@ -128,7 +128,7 @@ Copy each declaration section from the part of this document shown. The [declara
 
 This paragraph fits declaration section 2.1 (under 200 words).
 
-Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights and Quarterly Employment Statistics, TalentCorp MyCOL, OpenDOSM and Epoch AI. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. The Claude Message Batches API fills any job that fails validation. A build step checks every file with Zod and fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker. It serves the React app, the JSON snapshots and a Hono API. Fixed rules in the browser set every level, verdict, target, fit score and roadmap position. The API calls Claude Opus 5.5 to match local job titles, write cited explanations and read pasted job ads, and calls ElevenLabs for the cat's voice. It caches every answer. A Neon Postgres database stores anonymous check-ups for the national view. A copy runs on Replit for the proof of use.
+Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights and Quarterly Employment Statistics, TalentCorp MyCOL, OpenDOSM and Epoch AI. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. The Claude Message Batches API fills any job that fails validation. A build step checks every file with Zod and fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker. It serves the React app, the JSON snapshots and a Hono API. Fixed rules in the browser set every level, verdict, target, fit score and roadmap position. The API calls Claude Sonnet 5.5 to match local job titles, write cited explanations and read pasted job ads, and calls ElevenLabs for the cat's voice. It caches every answer. A Neon Postgres database stores anonymous check-ups for the national view. A copy runs on Replit for the proof of use.
 
 ### Components
 
@@ -184,7 +184,7 @@ flowchart LR
   subgraph Client["Browser"]
     WEB["apps/web<br/>engine rules, guest session, Kopi"]
   end
-  CLAUDE["Claude API<br/>Claude Opus 5.5"]
+  CLAUDE["Claude API<br/>Claude Sonnet 5.5"]
   EL["ElevenLabs TTS"]
   NEON["Neon Postgres 18<br/>national view"]
   REPLIT["Replit copy<br/>proof of use"]
@@ -474,7 +474,7 @@ The demo roles come from a scan of the O\*NET catalogue between `2026-04` and `2
 
 - **Route**: `POST /api/roles/match` ([#43]).
 - **Input**: a job title, in English, Malay or a local form.
-- **Logic**: search O\*NET 30.1 titles and alternate titles first. When there is no exact match, ask Claude Opus 5.5 for the closest O\*NET occupation.
+- **Logic**: search O\*NET 30.1 titles and alternate titles first. When there is no exact match, ask Claude Sonnet 5.5 for the closest O\*NET occupation.
 - **Output**: the matched occupation. An AI suggestion carries `needs_confirmation: true`, and the start screen shows a confirmation card and the "auto-generated" badge for unchecked roles ([#59]).
 - **Acceptance**: "Jurutera Perisian" and "akauntan" return the closest O\*NET occupation with `needs_confirmation: true`.
 - **Caching**: see [Caching and pre-warming](#caching-and-pre-warming).
@@ -528,24 +528,24 @@ The deploy workflow's smoke check calls a live health endpoint and a static data
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------ | ------------ |
 | Corners, can-do statements, SDG tags, hours, resource links, title embeddings | An open-weights model on a RunPod serverless GPU; [#77] names the model and GPU | One batch before the demo      | [#74], [#77] |
 | Backup for occupations that fail validation or are missing                    | Claude, through the Message Batches API; [#79] names the model                  | Batch, on demand               | [#79]        |
-| Local and Malay job titles to the closest O\*NET occupation                   | Claude Opus 5.5 (`claude-opus-5-5`)                                             | Live, cached                   | [#43]        |
-| Corner explanations and the What Changed summary                              | Claude Opus 5.5 (`claude-opus-5-5`)                                             | Live, cached, verified         | [#43]        |
-| Skills from a pasted job ad                                                   | Claude Opus 5.5 (`claude-opus-5-5`)                                             | Live, cached by ad hash        | [#48]        |
+| Local and Malay job titles to the closest O\*NET occupation                   | Claude Sonnet 5.5 (`claude-sonnet-5-5`)                                         | Live, cached                   | [#43]        |
+| Corner explanations and the What Changed summary                              | Claude Sonnet 5.5 (`claude-sonnet-5-5`)                                         | Live, cached, verified         | [#43]        |
+| Skills from a pasted job ad                                                   | Claude Sonnet 5.5 (`claude-sonnet-5-5`)                                         | Live, cached by ad hash        | [#48]        |
 | Kopi's voice                                                                  | ElevenLabs `eleven_v4` (fixed lines) and `eleven_v4_turbo` (live lines)         | Pre-generated and live, cached | [#46]        |
 
-All models are pre-trained and used as provided. None is fine-tuned or self-trained. The team chose live Claude calls through the Claude API, with Claude Opus 5.5, on 22 October ([decisions][decisions]).
+All models are pre-trained and used as provided. None is fine-tuned or self-trained. The team chose live Claude calls through the Claude API on 22 October ([decisions][decisions]). The same day it moved from Claude Opus 5.5 to Claude Sonnet 5.5 for speed and cost.
 
 [#77] also makes multilingual title embeddings in the batch. The job match route in [#43] searches titles and then asks Claude; it does not use the embeddings.
 
 [decisions]: /docs/ideas/0007-kotak.md#decisions-so-far
 
-### Claude Opus 5.5 request rules
+### Claude Sonnet 5.5 request rules
 
 These rules come from Anthropic's [models overview][models] and [migration guide][migration]:
 
-- **Model ID**: `claude-opus-5-5`, with no date suffix.
-- **Sampling**: Claude Opus 5.5 rejects `temperature`, `top_p` and `top_k` with HTTP 400. The issues ask for `temperature: 0` ([#43], [#79]). Requests leave these fields out. Repeatable answers come from the response cache and the verifier, not from sampling settings.
-- **Thinking**: cannot be turned off on this model. `output_config.effort` controls depth and defaults to `medium`.
+- **Model ID**: `claude-sonnet-5-5`, with no date suffix.
+- **Sampling**: Claude Sonnet 5.5 rejects non-default `temperature`, `top_p` and `top_k` values with HTTP 400. The issues ask for `temperature: 0` ([#43], [#79]). Requests leave these fields out. Repeatable answers come from the response cache and the verifier, not from sampling settings.
+- **Thinking**: adaptive by default, and Kotak leaves it on. `output_config.effort` defaults to `high`, so each route sets it: `low` for title matching, where the user waits, and `medium` for explanations, which load in the background.
 - **Structured output**: use `output_config.format` for JSON. Forced tool use (`tool_choice` of `any` or `tool`) returns HTTP 400.
 - **Overload**: the API returns `529 overloaded_error` when it is "temporarily overloaded" ([errors][errors]). The routes then serve cached, labelled answers.
 
