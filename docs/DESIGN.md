@@ -129,7 +129,7 @@ The smallest text is 12 px.
 - Columns are symmetrical. Two columns are 532 + 24 + 532 px, three are equal thirds and the four stat cards are equal quarters. Cards in one row share one height.
 - Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the AI-Drafted Skills banner, the page header, then the content. The Dashboard opens with its greeting and the banner, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
 - Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar and What Changed pages and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
-- Single-column pages centre the column: Check-Up Start, Questions, No Job Match and AI Unavailable.
+- Questions and the loading, error and AI Unavailable states centre a single column. Every other app page, Check-Up Start and No Job Match included, uses the full content width.
 
 ## Components
 

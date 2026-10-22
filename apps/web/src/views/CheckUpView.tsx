@@ -232,12 +232,14 @@ export function CheckUpView() {
 
   if (noJobMatch) {
     return (
-      <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
+      <div className="flex w-full min-w-0 flex-col gap-5 lg:gap-6">
         <h1 className="sr-only">Find Your Job</h1>
         <Stepper step={1} labels={checkUpSteps} />
         <KopiAside pose="worried" speech="Hmm, I couldn’t find that job. Try a simpler title?" />
 
-        <TextFieldForNoMatch value={jobQuery} onChange={updateJobQuery} />
+        <div className="w-full min-w-0 max-w-[532px]">
+          <TextFieldForNoMatch value={jobQuery} onChange={updateJobQuery} />
+        </div>
 
         <section className="space-y-3" aria-labelledby="did-you-mean-heading">
           <h2 id="did-you-mean-heading" className="text-label-l text-text-primary">
@@ -258,7 +260,7 @@ export function CheckUpView() {
           </div>
         </section>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center lg:justify-start">
           <button
             type="button"
             onClick={browseJobs}
@@ -272,12 +274,12 @@ export function CheckUpView() {
   }
 
   return (
-    <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
+    <div className="flex w-full min-w-0 flex-col gap-5 lg:gap-6">
       <Stepper step={1} labels={checkUpSteps} />
       <KopiAside pose="idle" speech="Hi, I’m Kopi. Let’s open the box on your job." />
 
       <section className="space-y-1.5" aria-labelledby="work-heading">
-        <h1 id="work-heading" className="text-title-m text-text-primary">
+        <h1 id="work-heading" className="text-title-m text-text-primary lg:text-title-l">
           Tell Kopi About Your Work
         </h1>
         <p className="text-body-s text-text-muted">
@@ -285,7 +287,7 @@ export function CheckUpView() {
         </p>
       </section>
 
-      <div className="w-full min-w-0 space-y-2 lg:max-w-[342px]">
+      <div className="w-full min-w-0 max-w-[532px] space-y-2">
         <SearchField
           ref={searchRef}
           label="Your Job Title"
@@ -367,7 +369,7 @@ export function CheckUpView() {
         <h2 id="goal-heading" className="text-label-l text-text-primary">
           What Do You Want?
         </h2>
-        <div className="space-y-3">
+        <div className="grid gap-4 xl:grid-cols-3">
           {goals.map((goal) => {
             const Icon = goalIcons[goal.id]
 
@@ -392,7 +394,7 @@ export function CheckUpView() {
           <h2 id="target-role-heading" className="text-label-l text-text-primary">
             Which Role Do You Want?
           </h2>
-          <div className="w-full min-w-0 space-y-2 lg:max-w-[342px]">
+          <div className="w-full min-w-0 max-w-[532px] space-y-2">
             <SearchField
               label="Target Role"
               hideLabel
