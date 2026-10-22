@@ -51,7 +51,8 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
       </a>
       <Sidebar path={path} collapsed={sidebarCollapsed} onToggleCollapsed={toggleSidebar} className="hidden lg:flex" />
       <div className="min-w-0 flex-1">
-        <div className="sticky top-0 z-20 mx-auto w-full max-w-[1184px] px-3 pt-3 lg:px-12 lg:pt-4">
+        {/* z-30 keeps the top bar and its data popover above page parts (z-20 and below); overlays use z-50. */}
+        <div className="sticky top-0 z-30 mx-auto w-full max-w-[1184px] px-3 pt-3 lg:px-12 lg:pt-4">
           <Topbar dataLabel={dataLabel} className="hidden lg:flex" />
           <PhoneTopBar
             dataLabel={dataLabel}

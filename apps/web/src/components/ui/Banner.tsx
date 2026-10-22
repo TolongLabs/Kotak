@@ -1,14 +1,11 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ComponentType } from 'react'
-import { FlaskConical, Info, TriangleAlert, X } from 'lucide-react'
-import { IconButton } from './IconButton'
+import { FlaskConical, Info, TriangleAlert } from 'lucide-react'
 import { cn } from './cn'
 
 export type BannerType = 'info' | 'error' | 'sample'
 
 interface BannerBaseProps extends Omit<ComponentPropsWithoutRef<'div'>, 'title'> {
   body?: string
-  // Adds a close button; the caller hides the banner and remembers the choice.
-  onDismiss?: () => void
 }
 
 export type BannerProps = BannerBaseProps &
@@ -45,7 +42,7 @@ const iconClassesByType: Record<BannerType, string> = {
 }
 
 export const Banner = forwardRef<HTMLDivElement, BannerProps>(function Banner(
-  { type, title, body, onDismiss, className, ...props },
+  { type, title, body, className, ...props },
   ref
 ) {
   const Icon = iconByType[type]
@@ -61,19 +58,10 @@ export const Banner = forwardRef<HTMLDivElement, BannerProps>(function Banner(
       {...props}
     >
       <Icon className={cn('h-5 w-5 shrink-0', iconClassesByType[type])} aria-hidden="true" />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <div className="flex min-w-0 flex-col gap-0.5">
         {label ? <span className="text-label-m">{label}</span> : null}
         {body ? <span className="text-body-s text-text-muted">{body}</span> : null}
       </div>
-      {onDismiss ? (
-        <IconButton
-          label={`Close ${label ?? 'Notice'}`}
-          icon={X}
-          variant="plain"
-          className="-my-1"
-          onClick={onDismiss}
-        />
-      ) : null}
     </div>
   )
 })
