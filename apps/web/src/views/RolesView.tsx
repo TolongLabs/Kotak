@@ -29,7 +29,7 @@ export function RolesView() {
 
   if (!session.role_code) {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
         <Stepper step={4} labels={checkUpSteps} />
         <CatDialogue pose="worried" speech="Tell me your job first, then I can find roles that fit." />
@@ -42,7 +42,7 @@ export function RolesView() {
 
   if (loaded.status !== 'ready' || bundle.status !== 'ready' || !checkup) {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
         <Stepper step={4} labels={checkUpSteps} />
         {loaded.status === 'error' || bundle.status === 'error' ? (

@@ -224,7 +224,7 @@ export function RoadmapView() {
 
   if (!session.role_code) {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <Stepper step={5} labels={checkUpSteps} />
         <CatDialogue pose="worried" speech="Tell me your job first, then I can make a roadmap for it." />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
@@ -236,7 +236,7 @@ export function RoadmapView() {
 
   if (bundle.status === 'error') {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <Stepper step={5} labels={checkUpSteps} />
         <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         <Button variant="secondary" size="lg" fullWidth onClick={bundle.retry}>
@@ -248,7 +248,7 @@ export function RoadmapView() {
 
   if (!checkup || bundle.status !== 'ready') {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <Stepper step={5} labels={checkUpSteps} />
         <CatDialogue pose="thinking" speech="Opening the box on your job…" />
       </div>
@@ -257,7 +257,7 @@ export function RoadmapView() {
 
   if (!checkup.questionsReady) {
     return (
-      <div className="mx-auto w-full max-w-[45rem] space-y-6">
+      <div className="space-y-5 lg:space-y-6">
         <Stepper step={5} labels={checkUpSteps} />
         <Banner
           type="info"
