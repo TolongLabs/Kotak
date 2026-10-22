@@ -5,6 +5,7 @@ import {
   type ExplanationResponse,
   type Verdict
 } from '@kotak/shared'
+import { formatLevel } from '@kotak/sdk'
 import { z } from 'zod'
 
 // What Claude returns. Two sentence fields make "exactly two sentences" part of the shape.
@@ -210,7 +211,7 @@ function verifySummary(request: ExplanationRequest, summary: string): string | n
 
 export function templateExplanation(corner: Corner, snapshotId: string): Explanation {
   const citations = uniqueCitations(corner.sources)
-  const levels = `You are at level ${corner.user_level} and the target is ${corner.target_level}`
+  const levels = `You are at level ${corner.user_level} and the target is ${formatLevel(corner.target_level)}`
   return {
     corner_id: corner.corner_id,
     sentences: [
