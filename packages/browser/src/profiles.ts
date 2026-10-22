@@ -18,7 +18,7 @@ export interface Profile {
   accept_language: string
   timezone: string
   proxy: string | null
-  // Opt-in: match timezone, languages, location and WebRTC IP to the exit IP at each launch, as Kameleo does.
+  // Opt-in: match timezone, languages, location and WebRTC IP to the exit IP at each launch.
   geoip: boolean
   // This machine's real values when the profile was created; they override the seed's persona.
   machine: Machine

@@ -30,6 +30,7 @@ export interface ScrapeOptions {
   maxRetries?: number
   verificationTimeoutMs?: number
   sort?: SortMode
+  headless?: boolean
 }
 
 interface PageResult extends NavigationState {
@@ -151,7 +152,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     verification_timeout_ms: verificationTimeoutMs,
     delay_ms: options.delayMs,
     delay_jitter_ms: delayJitterMs,
-    browser_mode: 'headed',
+    browser_mode: options.headless ? 'headless' : 'headed',
     profile_id: null as string | null,
     pages: [] as PageResult[],
     jobs_saved: 0,
@@ -165,7 +166,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
   await saveReport()
   try {
     await withBrowserProfile(
-      { profileId: options.profileId, headless: false },
+      { profileId: options.profileId, headless: options.headless ?? false },
       async (page) => {
         const hand = new PaginationHand(page)
         let targetJobs = options.maxJobs

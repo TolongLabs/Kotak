@@ -29,6 +29,7 @@ export interface DepthOptions {
   verificationTimeoutMs?: number
   previousDetails?: string[]
   refreshAfterHours?: number
+  headless?: boolean
 }
 
 type Outcome = 'fetched' | 'unavailable' | 'failed'
@@ -283,7 +284,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     verification_timeout_ms: verificationTimeoutMs,
     delay_ms: options.delayMs,
     delay_jitter_ms: delayJitterMs,
-    browser_mode: 'headed',
+    browser_mode: options.headless ? 'headless' : 'headed',
     rows_read: 0,
     input_duplicates: 0,
     records_rejected: 0,
@@ -362,7 +363,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     await save()
     if (pending.length)
       await withBrowserProfile(
-        { profileId: options.profileId, headless: false },
+        { profileId: options.profileId, headless: options.headless ?? false },
         async (page) => {
           for (const [index, breadth] of pending.entries()) {
             const entry: DetailAttempt = {

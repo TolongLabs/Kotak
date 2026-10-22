@@ -8,7 +8,7 @@ export interface SessionOptions {
   headless?: boolean
 }
 
-// Same shape as the scraper's withKameleo(): run on one page, then always close the browser.
+// Run the operation on one page, then always close the browser.
 export async function withProfile<T>(
   options: SessionOptions,
   run: (page: Page, profileId: string) => Promise<T>,

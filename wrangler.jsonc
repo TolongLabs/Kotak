@@ -3,6 +3,9 @@
   "name": "kotak",
   "main": "./apps/api/src/worker.ts",
   "compatibility_date": "2026-10-22",
+  "triggers": {
+    "crons": ["0 16 * * *"]
+  },
   "assets": {
     "directory": "./apps/web/dist",
     "binding": "ASSETS",

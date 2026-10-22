@@ -6,6 +6,7 @@ import { createExplanationsRoute } from './routes/explanations'
 import { createRolesRoute } from './routes/roles'
 import { nationalView } from './routes/national-view'
 import { tts } from './routes/tts'
+import { jobstreetAdmin } from './routes/jobstreet-admin'
 
 export const app = new Hono()
 
@@ -25,3 +26,4 @@ app.route('/api/national-view', nationalView)
 app.route('/api/tts', tts)
 app.route('/api/roles', createRolesRoute(defaultAiDeps))
 app.route('/api/explanations', createExplanationsRoute(defaultAiDeps))
+app.route('/api/admin/scraper', jobstreetAdmin)

@@ -8,5 +8,6 @@ export const routes = {
   roles: '/app/roles',
   roadmap: '/app/roadmap',
   changes: '/app/changes',
-  settings: '/app/settings'
+  settings: '/app/settings',
+  adminScraping: '/admin/scraping'
 } as const
