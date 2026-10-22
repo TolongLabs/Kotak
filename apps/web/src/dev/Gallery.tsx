@@ -1,8 +1,10 @@
 import { ActionsGallery } from './gallery/ActionsGallery'
 import { FormsGallery } from './gallery/FormsGallery'
+import { KopiGallery } from './gallery/KopiGallery'
 import { KotakGallery } from './gallery/KotakGallery'
 import { OverlaysGallery } from './gallery/OverlaysGallery'
 import { ShellGallery } from './gallery/ShellGallery'
+import { SnapshotLoaderGallery } from './gallery/SnapshotLoaderGallery'
 
 export function Gallery() {
   return (
@@ -13,6 +15,8 @@ export function Gallery() {
       <OverlaysGallery />
       <ShellGallery />
       <KotakGallery />
+      <KopiGallery />
+      <SnapshotLoaderGallery />
     </main>
   )
 }

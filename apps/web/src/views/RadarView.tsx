@@ -29,7 +29,6 @@ function getTargetDateLabel(lastCheckUp: string) {
 
 export function RadarView() {
   const [scenario, setScenario] = useState<Scenario>('slow')
-  const [muted, setMuted] = useState(true)
   // Explanations come from the AI route (#43). Until it exists, ?ai=off shows the paused state for demos.
   const [explanationsPaused, setExplanationsPaused] = useState(
     () => new URLSearchParams(window.location.search).get('ai') === 'off'
@@ -94,8 +93,6 @@ export function RadarView() {
             ? 'The AI is resting. Your verdicts still stand. I’ll explain them when it’s back.'
             : speech
         }
-        muted={muted}
-        onToggleVoice={() => setMuted((current) => !current)}
         size="lg"
       />
 

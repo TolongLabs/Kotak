@@ -1,6 +1,8 @@
 import { relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { serveStatic } from 'hono/bun'
+import { createDiskStore } from './ai/disk-store'
+import type { AiBindings } from './ai/env'
 import { app } from './app'
 
 // Outside Cloudflare (local Bun, Replit) this process also serves the built web app.
@@ -13,8 +15,13 @@ app.get('*', (context, next) =>
 
 const port = Number(Bun.env.PORT ?? 8787)
 
+// Workers get AI_CACHE from the KV binding; here the same cache persists to gitignored files.
+const bindings: AiBindings = {
+  AI_CACHE: createDiskStore(fileURLToPath(new URL('../../../.cache/ai', import.meta.url)))
+}
+
 Bun.serve({
-  fetch: app.fetch,
+  fetch: (request) => app.fetch(request, bindings),
   port
 })
 
