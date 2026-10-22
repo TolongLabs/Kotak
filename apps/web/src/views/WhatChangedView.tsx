@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { SnapshotId } from '@kotak/shared'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { WhatChangedCard } from '../components/kotak/WhatChangedCard'
@@ -25,7 +24,6 @@ function changeSpeech() {
 
 export function WhatChangedView() {
   const [activeSnapshot, setActiveSnapshot] = useActiveSnapshot()
-  const [muted, setMuted] = useState(true)
   const isMay = activeSnapshot === '2026-05'
   const aprilLabel = snapshots.find((item) => item.id === '2026-04')?.label ?? ''
   const mayLabel = snapshots.find((item) => item.id === '2026-05')?.label ?? ''
@@ -43,8 +41,6 @@ export function WhatChangedView() {
       <CatDialogue
         pose={isMay ? 'explaining' : 'idle'}
         speech={isMay ? changeSpeech() : 'Nothing new yet. Load May 2026 when you are ready.'}
-        muted={muted}
-        onToggleVoice={() => setMuted((current) => !current)}
         size="lg"
       />
 
