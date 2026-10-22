@@ -9,6 +9,8 @@ import {
   DosmQesSnapshotSchema,
   EpochContextSchema,
   MyColSchema,
+  OnetEmergingTasksFileSchema,
+  OnetHotTechnologiesFileSchema,
   OnetOccupationsFileSchema,
   OnetTasksFileSchema,
   OnetTitleIndexSchema,
@@ -25,12 +27,14 @@ type Schema = {
   safeParse(data: unknown): { success: boolean; error?: { issues: { path: PropertyKey[]; message: string }[] } }
 }
 
-// Files the app reads today. They must exist.
+// Files the app reads today, and the O*NET supplements that no screen reads yet. They must exist.
 const EXPECTED: Record<string, Schema> = {
   'data/onet/occupations.json': OnetOccupationsFileSchema,
   'data/onet/tasks.json': OnetTasksFileSchema,
   'data/onet/work-activities.json': OnetWorkActivitiesFileSchema,
   'data/onet/title-index.json': OnetTitleIndexSchema,
+  'data/onet/hot-technologies.json': OnetHotTechnologiesFileSchema,
+  'data/onet/emerging-tasks.json': OnetEmergingTasksFileSchema,
   'data/snapshots/dosm-jmi.json': DosmDemandSchema,
   ...Object.fromEntries(SnapshotIdSchema.options.map((id) => [`data/snapshots/aei/${id}.json`, AeiSnapshotSchema]))
 }

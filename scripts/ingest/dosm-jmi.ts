@@ -4,9 +4,11 @@
 // Downloads are cached in .cache/dosm-jmi/ (gitignored); delete that folder to fetch everything again.
 //
 // Sources, all from dosm.gov.my:
+// - The release archive: every release in the series, the newest of which sets the last quarter.
 // - Each quarterly release's "Download release" PDF: the top roles it names, with counts where the text gives them.
 // - The latest release's data file (xlsx): totals and MASCO major groups for every quarter since Q3 2019.
-// - The infographic PDFs: the MASCO codes they print next to named roles.
+// - The infographic PDFs: the MASCO codes they print next to named roles, and the role counts in their "Top 5 Hottest
+//   Jobs" charts for releases whose text names the roles without counts.
 // O*NET 30.1 occupation and alternate titles (onetcenter.org) give O*NET-SOC codes for exact title matches only.
 
 import { existsSync } from 'node:fs'
@@ -34,9 +36,10 @@ const ROOT = join(import.meta.dir, '..', '..')
 const CACHE = join(ROOT, '.cache', 'dosm-jmi')
 const OUT = join(ROOT, 'data', 'snapshots', 'dosm-jmi.json')
 const DOSM = 'https://www.dosm.gov.my'
-const LATEST_SLUG = 'big-data-analytics-job-market-insights-q22026'
+// DOSM's release archive page for one release lists every other release in the series, newer ones included, so this
+// release's page and archive give the full list, and the newest release in it sets the last quarter.
+const ANCHOR_SLUG = 'big-data-analytics-job-market-insights-q22026'
 const FIRST_QUARTER = '2019-Q3'
-const LAST_QUARTER = '2026-Q2'
 const ONET_TEXT = 'https://www.onetcenter.org/dl_files/database/db_30_1_text/'
 
 // MASCO 2020 major groups, as DOSM labels them in the Q4 2022 media statement ("Categories of MASCO").
@@ -67,7 +70,8 @@ const manifest: Record<string, CacheEntry> = existsSync(manifestPath) ? await Bu
 
 type Download = { path: string; finalUrl: string }
 
-// Returns null when the file is gone (404) or keeps failing; callers decide whether that is fatal.
+// Returns null only when the file is gone (404); callers decide whether that is fatal. A file that keeps failing
+// throws, so an unattended refresh never mistakes DOSM being down for a missing file and drops its data (#153).
 async function download(name: string, url: string): Promise<Download | null> {
   const path = join(CACHE, name)
   const cached = manifest[name]
@@ -91,10 +95,10 @@ async function download(name: string, url: string): Promise<Download | null> {
       return { path, finalUrl: response.url }
     } catch (error) {
       console.warn(`  attempt ${attempt} failed for ${url}: ${error}`)
-      await Bun.sleep(2000 * 2 ** attempt)
+      if (attempt < 4) await Bun.sleep(2000 * 2 ** attempt)
     }
   }
-  return null
+  throw new Error(`could not download ${url} after 4 attempts`)
 }
 
 async function required(name: string, url: string): Promise<Download> {
@@ -136,6 +140,28 @@ function pdfText(path: string, raw = false): string | null {
   return result.success ? clean(result.stdout.toString()) : null
 }
 
+type PdfWord = { text: string; page: number; block: string; left: number; top: number; right: number; bottom: number }
+
+// Each word with its box in points and its text block, from the word rows (level 5) of pdftotext -tsv.
+function pdfWords(path: string): PdfWord[] {
+  const result = Bun.spawnSync(['pdftotext', '-q', '-tsv', path, '-'])
+  if (!result.success) return []
+  return result.stdout
+    .toString()
+    .split('\n')
+    .map((line) => line.split('\t'))
+    .filter((cells) => cells[0] === '5')
+    .map(([, page, paragraph, block, , , left, top, width, height, , text]) => ({
+      text: clean(text),
+      page: Number(page),
+      block: `${page}-${paragraph}-${block}`,
+      left: Number(left),
+      top: Number(top),
+      right: Number(left) + Number(width),
+      bottom: Number(top) + Number(height)
+    }))
+}
+
 async function isPdf(path: string): Promise<boolean> {
   return (await Bun.file(path).slice(0, 4).text()) === '%PDF'
 }
@@ -172,21 +198,22 @@ function releaseUrl(slug: string): string {
 }
 
 console.log('Release list')
-const latestPage = await Bun.file((await required(`pages/${LATEST_SLUG}.html`, releaseUrl(LATEST_SLUG))).path).text()
-const latestTitle = latestPage.match(/<h3>([^<]*?)\s*<span/)?.[1]
-const latestDate = latestPage.match(/Latest Release\s*:\s*(\d{1,2}) (\w+) (\d{4})/)
-if (!latestTitle || !latestDate) throw new Error('latest release page has no title or release date')
+const anchorPage = await Bun.file((await required(`pages/${ANCHOR_SLUG}.html`, releaseUrl(ANCHOR_SLUG))).path).text()
+const anchorTitle = anchorPage.match(/<h3>([^<]*?)\s*<span/)?.[1]
+// A release page's "Latest Release" date is that release's own date, even after newer releases.
+const anchorDate = anchorPage.match(/Latest Release\s*:\s*(\d{1,2}) (\w+) (\d{4})/)
+if (!anchorTitle || !anchorDate) throw new Error(`release page ${ANCHOR_SLUG} has no title or release date`)
 const archivePage = await Bun.file(
-  (await required('pages/archive.html', `${DOSM}/portal-main/release-archive/${LATEST_SLUG}`)).path
+  (await required('pages/archive.html', `${DOSM}/portal-main/release-archive/${ANCHOR_SLUG}`)).path
 ).text()
 
 const releases: Release[] = [
   {
-    slug: LATEST_SLUG,
-    title: clean(decodeEntities(latestTitle)),
-    release_date: isoDate(latestDate[1], String(MONTHS.indexOf(latestDate[2].toLowerCase()) + 1), latestDate[3]),
+    slug: ANCHOR_SLUG,
+    title: clean(decodeEntities(anchorTitle)),
+    release_date: isoDate(anchorDate[1], String(MONTHS.indexOf(anchorDate[2].toLowerCase()) + 1), anchorDate[3]),
     quarters: [],
-    url: releaseUrl(LATEST_SLUG)
+    url: releaseUrl(ANCHOR_SLUG)
   }
 ]
 for (const match of archivePage.matchAll(
@@ -203,7 +230,13 @@ for (const match of archivePage.matchAll(
 }
 for (const release of releases) release.quarters = titleQuarters(release.title)
 releases.sort((a, b) => a.quarters[0].localeCompare(b.quarters[0]))
-console.log(`  ${releases.length} releases, ${releases[0].quarters[0]} to ${releases.at(-1)!.quarters.at(-1)}`)
+for (const [i, release] of releases.entries())
+  if (i > 0 && release.quarters[0] !== shiftJmiQuarter(releases[i - 1].quarters.at(-1)!, 1))
+    throw new Error(`the release archive goes from ${releases[i - 1].title} to ${release.title}, skipping or repeating`)
+// The newest release's data file gives every quarter's totals and major groups.
+const latestSlug = releases.at(-1)!.slug
+const lastQuarter = releases.at(-1)!.quarters.at(-1)!
+console.log(`  ${releases.length} releases, ${releases[0].quarters[0]} to ${lastQuarter}; newest ${latestSlug}`)
 
 // ---------- Release PDFs: named roles ----------
 
@@ -211,7 +244,7 @@ type ReleaseDocs = {
   release: Release
   pdfUrl: string
   text: string | null
-  infographics: { url: string; text: string }[]
+  infographics: { url: string; text: string; words: PdfWord[] }[]
   dataFile: Download | null
 }
 
@@ -222,7 +255,7 @@ for (const release of releases) {
   const pdfUrl = `${DOSM}/site/downloadrelease?id=${release.slug}&lang=English`
   const pdf = await download(`releases/${release.slug}.pdf`, pdfUrl)
   const text = pdf && (await isPdf(pdf.path)) ? pdfText(pdf.path) : null
-  const infographics: { url: string; text: string }[] = []
+  const infographics: ReleaseDocs['infographics'] = []
   let dataFile: Download | null = null
   const html = page ? await Bun.file(page.path).text() : ''
   for (const link of html.matchAll(
@@ -233,8 +266,9 @@ for (const release of releases) {
     if (url.includes('cat=infographic')) {
       const file = await download(`documents/${id}.pdf`, url)
       const infographicText = file && (await isPdf(file.path)) ? pdfText(file.path, true) : null
-      if (file && infographicText) infographics.push({ url: file.finalUrl, text: infographicText })
-    } else if (release.slug === LATEST_SLUG && /^(data|summary table)/i.test(clean(inner.replace(/<[^>]+>/g, ' ')))) {
+      if (file && infographicText)
+        infographics.push({ url: file.finalUrl, text: infographicText, words: pdfWords(file.path) })
+    } else if (release.slug === latestSlug && /^(data|summary table)/i.test(clean(inner.replace(/<[^>]+>/g, ' ')))) {
       dataFile = await required(`documents/${id}.xlsx`, url)
     }
   }
@@ -260,6 +294,10 @@ for (const { release, text } of docs) {
   }))
   if (roles.length) counted.set(release.slug, roles)
 }
+// Every release since Q4 2024 names its top 5 roles with counts. A newest release that doesn't has changed format, so
+// stop rather than write a snapshot without its roles.
+if (counted.get(latestSlug)?.length !== 5)
+  throw new Error(`"${releases.at(-1)!.title}" does not name 5 top roles with counts in the expected format`)
 
 // Display name per role: the most common spelling among the counted sentences.
 const spellings = new Map<string, Map<string, number>>()
@@ -334,7 +372,7 @@ function readSheet(path: string): Map<number, Map<number, string | number>> {
   return rows
 }
 
-const latestDocs = docs.find((d) => d.release.slug === LATEST_SLUG)!
+const latestDocs = docs.find((d) => d.release.slug === latestSlug)!
 if (!latestDocs.dataFile) throw new Error('the latest release page has no data file link')
 const dataFile = latestDocs.dataFile
 const sheet = readSheet(dataFile.path)
@@ -350,7 +388,7 @@ for (const [column, value] of sheet.get(headerRow) ?? []) {
   const year = yearCells.filter(([c]) => c <= column).sort((a, b) => b[0] - a[0])[0]?.[1]
   quarterColumns.set(`${year}-${value}`, column)
 }
-const quarters = quarterRange(FIRST_QUARTER, LAST_QUARTER)
+const quarters = quarterRange(FIRST_QUARTER, lastQuarter)
 const missingColumns = quarters.filter((q) => !quarterColumns.has(q))
 if (missingColumns.length) throw new Error(`data file has no column for ${missingColumns.join(', ')}`)
 
@@ -414,6 +452,9 @@ function latest(points: DosmFigure[]) {
 
 const totalRow = tableRows.find((row) => row.name === 'Jumlah')
 if (!totalRow) throw new Error('data file Table 2 has no "Jumlah" (total) row')
+// The data file can carry empty columns for quarters not yet published, so the newest quarter must have a total.
+if (totalRow.values.get(lastQuarter) == null)
+  throw new Error(`the data file of "${latestDocs.release.title}" has no total for ${quarterLabel(lastQuarter)}`)
 const totals = quarters.map((q) => figure(totalRow.values, q, 'MYS/total', dataCitation))
 
 const major_groups: DosmMajorGroupSeries[] = tableRows
@@ -436,12 +477,73 @@ const missing: DosmDemand['missing'] = []
 const releaseRecords: DosmRelease[] = []
 const rolePoints = new Map<string, { quarter: string; rank: number; value: number | null; citation: Citation }[]>()
 const releaseByQuarter = new Map(docs.flatMap((d) => d.release.quarters.map((q) => [q, d] as const)))
+const infographicQuarters: string[] = []
 
-for (const { release, pdfUrl, text } of docs) {
+// The two counts an infographic's "Top 5 Hottest Jobs" chart prints on the first line under a role's title, left to
+// right: the previous quarter, then the release's own. Every block with the title, such as the COL list, must agree.
+function printedCounts(words: PdfWord[], key: string): [number, number] | null {
+  const blocks = new Map<string, PdfWord[]>()
+  for (const word of words) blocks.set(word.block, [...(blocks.get(word.block) ?? []), word])
+  const pairs = new Set<string>()
+  for (const title of blocks.values()) {
+    if (titleKey(title.map((word) => word.text).join(' ')) !== key) continue
+    const left = Math.min(...title.map((word) => word.left))
+    const right = Math.max(...title.map((word) => word.right))
+    const bottom = Math.max(...title.map((word) => word.bottom))
+    const below = words.filter((word) => {
+      const middle = (word.left + word.right) / 2
+      return (
+        word.page === title[0].page &&
+        /^\d{1,3}(?:,\d{3})*$/.test(word.text) &&
+        word.top > bottom - 1 &&
+        word.top < bottom + 20 &&
+        middle > left &&
+        middle < right
+      )
+    })
+    const first = Math.min(...below.map((word) => word.top))
+    const line = below.filter((word) => word.top < first + 3).sort((a, b) => a.left - b.left)
+    if (line.length === 2) pairs.add(line.map((word) => word.text.replace(/,/g, '')).join(' '))
+  }
+  if (pairs.size > 1) throw new Error(`an infographic prints different counts for ${key}: ${[...pairs].join(', ')}`)
+  const [pair] = pairs
+  return pair ? (pair.split(' ').map(Number) as [number, number]) : null
+}
+
+// A role's count for a release that names it without one: from the release's own infographic, or else from the next
+// release's, which prints this quarter as its previous one. Where both print it, they must agree.
+function infographicCount(key: string, own: ReleaseDocs, next: ReleaseDocs | undefined) {
+  const read = (source: ReleaseDocs | undefined, column: 0 | 1) => {
+    for (const infographic of source?.infographics ?? []) {
+      const counts = printedCounts(infographic.words, key)
+      if (counts)
+        return {
+          value: counts[column],
+          citation: {
+            source_url: infographic.url,
+            release_title: source!.release.title,
+            vintage_date: source!.release.release_date
+          }
+        }
+    }
+    return null
+  }
+  const current = read(own, 1)
+  const later = read(next, 0)
+  if (current && later && current.value !== later.value)
+    throw new Error(`infographics print ${current.value} and ${later.value} for ${key} in ${own.release.title}`)
+  return current ?? later
+}
+
+for (const [i, { release, pdfUrl, text }] of docs.entries()) {
   const sentence = sentences.get(release.slug)
   const roles = counted.get(release.slug) ?? (sentence ? namedOnly(sentence) : [])
   const quarter = release.quarters.at(-1)!
   const status = !roles.length ? 'not-found' : roles.some((r) => r.value !== null) ? 'with-counts' : 'names-only'
+  const next = docs[i + 1]?.release.quarters[0] === shiftJmiQuarter(quarter, 1) ? docs[i + 1] : undefined
+  const printed = status === 'names-only' ? roles.map((role) => infographicCount(role.key, docs[i], next)) : []
+  const fromInfographics = printed.length > 0 && printed.every((count) => count !== null)
+  if (fromInfographics) infographicQuarters.push(quarterLabel(quarter))
   releaseRecords.push({
     title: release.title,
     url: release.url,
@@ -470,20 +572,25 @@ for (const { release, pdfUrl, text } of docs) {
     })
     continue
   }
-  if (status === 'names-only')
+  if (status === 'names-only' && !fromInfographics)
     missing.push({
       quarter,
       part: 'named_role_counts',
       reason: `"${release.title}" names the top roles without counts.`
     })
   if (roles.length !== 5) console.warn(`  ${release.title}: found ${roles.length} named roles, expected 5`)
-  for (const role of roles) {
+  for (const [j, role] of roles.entries()) {
     const points = rolePoints.get(role.key) ?? []
+    const count = fromInfographics ? printed[j] : null
     points.push({
       quarter,
       rank: role.rank,
-      value: role.value,
-      citation: { source_url: release.url, release_title: release.title, vintage_date: release.release_date }
+      value: count?.value ?? role.value,
+      citation: count?.citation ?? {
+        source_url: release.url,
+        release_title: release.title,
+        vintage_date: release.release_date
+      }
     })
     rolePoints.set(role.key, points)
   }
@@ -592,6 +699,11 @@ const named_roles: DosmNamedRoleSeries[] = [...rolePoints]
 
 const notes = [
   `Totals and major groups for every quarter come from one vintage: the data file of "${latestDocs.release.title}". Named roles come from each quarter's own release.`,
+  ...(infographicQuarters.length
+    ? [
+        `The releases for ${infographicQuarters.join(', ').replace(/, ([^,]+)$/, ' and $1')} name the top roles without counts, so those counts come from the "Top 5 Hottest Jobs" charts in DOSM's infographics, which print each role's previous and current quarter.`
+      ]
+    : []),
   'A cell DOSM prints as "-" or leaves blank is stored as null, never 0. A role absent from a quarter\'s top list has no point for that quarter.',
   "DOSM's 2021 releases say MASCO major group 9 (elementary occupations) and 0 (armed forces) were excluded from the series.",
   `Changes are percentages against the previous quarter (qoq) and the same quarter a year earlier (yoy). Above +${JMI_DIRECTION_THRESHOLD_PCT}% is up, below -${JMI_DIRECTION_THRESHOLD_PCT}% is down, anything else is flat. No change is computed from a null or zero base.`,
@@ -608,12 +720,13 @@ const snapshot: DosmDemand = {
   dataset: 'dosm-jmi',
   source_name: DOSM_JMI_SOURCE_NAME,
   publisher: 'Department of Statistics Malaysia (DOSM)',
+  // https://www.dosm.gov.my/portal-main/article/term-of-use, read on 22 October 2026.
   licence:
-    'DOSM copyright. No open reuse licence was found for Job Market Insights, so Kotak stores only the figures it needs and cites each one with its release.',
+    'DOSM\'s Terms of Use (https://www.dosm.gov.my/portal-main/article/term-of-use) authorise copying, publishing, adapting and commercial or non-commercial use of the content on DOSM\'s portal, Job Market Insights included, under the Government Open Data Terms of Use 1.0 (https://www.dosm.gov.my/assets/img/article/Terms-of-Use-Government-Open-Data-1-Appendix-B.pdf), with the attribution "Data source: Department of Statistics Malaysia". Kotak stores only the figures it needs and cites each one with its release.',
   attribution: DOSM_JMI_ATTRIBUTION,
-  retrieved_date: manifest[`pages/${LATEST_SLUG}.html`].fetched_at.slice(0, 10),
+  retrieved_date: manifest['pages/archive.html'].fetched_at.slice(0, 10),
   first_quarter: FIRST_QUARTER,
-  last_quarter: LAST_QUARTER,
+  last_quarter: lastQuarter,
   direction_rule: {
     threshold_pct: JMI_DIRECTION_THRESHOLD_PCT,
     comparisons: ['qoq', 'yoy'],
@@ -634,8 +747,17 @@ if (!parsed.success) {
   throw new Error('snapshot failed DosmDemandSchema')
 }
 const options = await prettier.resolveConfig(OUT)
+const format = (data: DosmDemand) => prettier.format(JSON.stringify(data), { ...options, filepath: OUT })
+let output = await format(parsed.data)
+// retrieved_date is the only field that changes with the fetch. When nothing else differs from the file on disk, keep
+// its date, so a refresh without new DOSM data leaves the file unchanged.
+const existing = existsSync(OUT) ? await Bun.file(OUT).text() : null
+if (existing && output !== existing) {
+  const unchanged = await format({ ...parsed.data, retrieved_date: JSON.parse(existing).retrieved_date })
+  if (unchanged === existing) output = unchanged
+}
 await mkdir(dirname(OUT), { recursive: true })
-await Bun.write(OUT, await prettier.format(JSON.stringify(parsed.data), { ...options, filepath: OUT }))
+await Bun.write(OUT, output)
 
 // ---------- Report ----------
 
