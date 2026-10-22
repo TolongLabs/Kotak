@@ -55,6 +55,33 @@
     --color-text-muted: var(--k-color-accent-on-box-muted);
   }
 
+  /* Dark surfaces hide the black cat and the ink wordmark, so the logo swaps versions (see Logo.tsx). */
+  .logo-light {
+    display: inline-flex;
+  }
+
+  .logo-dark {
+    display: none;
+  }
+
+  :root[data-theme='dark'] .logo-light {
+    display: none;
+  }
+
+  :root[data-theme='dark'] .logo-dark {
+    display: inline-flex;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .logo-light {
+      display: none;
+    }
+
+    :root:not([data-theme='light']) .logo-dark {
+      display: inline-flex;
+    }
+  }
+
   .surface-card {
     background-color: var(--color-bg-default);
     border: 1px solid var(--color-border-subtle);
