@@ -1,7 +1,14 @@
 import { appendFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import type { Page } from 'playwright-core'
-import { navigate, saveEvidence, verificationTimeout, VerificationTimeoutError } from './browser'
+import {
+  navigate,
+  saveEvidence,
+  verificationTimeout,
+  VerificationTimeoutError,
+  pacingJitter,
+  pauseBetweenRequests
+} from './browser'
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { withKameleo } from './kameleo'
@@ -18,6 +25,7 @@ export interface ScrapeOptions {
   maxPages: number
   maxJobs: number
   delayMs: number
+  delayJitterMs?: number
   maxRetries?: number
   verificationTimeoutMs?: number
   sort?: SortMode
@@ -65,6 +73,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
   let next: string | null = searchUrl(options.url)
   const maxRetries = options.maxRetries ?? 2
   const verificationTimeoutMs = verificationTimeout(options.verificationTimeoutMs)
+  const delayJitterMs = pacingJitter(options.delayJitterMs)
   const sort = parseSort(options.sort ?? 'newest')
   if (!Number.isInteger(options.maxPages) || options.maxPages < 1 || options.maxPages > 50) {
     throw new Error('--max-pages must be an integer from 1 to 50')
@@ -96,6 +105,9 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     sort_by: sort,
     max_retries: maxRetries,
     verification_timeout_ms: verificationTimeoutMs,
+    delay_ms: options.delayMs,
+    delay_jitter_ms: delayJitterMs,
+    browser_mode: 'headed',
     profile_id: null as string | null,
     pages: [] as PageResult[],
     jobs_saved: 0,
@@ -180,7 +192,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             await saveReport()
           }
           if (next && report.pages.length < options.maxPages && report.jobs_saved < options.maxJobs) {
-            await Bun.sleep(options.delayMs)
+            await pauseBetweenRequests(options.delayMs, delayJitterMs)
           }
         }
         if (!report.jobs_saved) throw new Error('No job listings were extracted')

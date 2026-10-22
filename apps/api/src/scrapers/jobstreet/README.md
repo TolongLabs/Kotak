@@ -31,15 +31,17 @@ From the repository root:
 bun install
 bun run scrape:jobstreet --max-jobs 5
 bun run scrape:jobstreet --url https://my.jobstreet.com/data-analyst-jobs --max-pages 2 --max-jobs 40 --sort company
-bun run scrape:jobstreet --mode breadth --max-pages 50 --max-jobs 1000
+bun run scrape:jobstreet --mode breadth --max-pages 50 --max-jobs 1000 --delay-ms 10000 --delay-jitter-ms 2000
 bun run scrape:jobstreet --help
 ```
 
 The Engine defaults to `http://localhost:5050`; set `KAMELEO_ENDPOINT` for another address. Authentication belongs to the Engine, through its desktop login or `PAT` environment variable. Accountless mode is supported by Kameleo, subject to its limits. No credentials are embedded in the scraper.
 
-Verified with Kameleo Engine 5.3.1, SDK 5.2.0 and Playwright Core 1.64.1. Each run creates its own desktop Chrome profile, connects Playwright to its default context, then stops and deletes that profile. Existing profiles are untouched. Run serially to stay within Kameleo browser quotas. The SDK is pinned to the published 5.2 minor; verify compatibility when changing the Engine version.
+Verified with Kameleo Engine 5.3.1, SDK 5.2.0 and Playwright Core 1.64.1. Each run creates a fresh desktop Chrome profile, explicitly starts a visible Chroma browser with no `--headless` argument, connects Playwright to its default context, then stops and deletes that profile. The Engine running in the background is separate from browser headless mode. Existing profiles are untouched. Run serially to stay within Kameleo browser quotas. The SDK is pinned to the published 5.2 minor; verify compatibility when changing the Engine version.
 
 Breadth is the default mode, with one page and 20 unique jobs. Opt in to larger runs with `--max-pages` (up to 50) and `--max-jobs` (up to 1,000). A run stops at either limit or the end of pagination. These bounds limit collection; they do not guarantee that many matching jobs exist.
+
+Both modes default to a **10-second base delay plus 0–2 seconds of random variation** between pages/jobs. Configure the base with `--delay-ms` (minimum 2000) and the extra variation with `--delay-jitter-ms` (0–60000). Set variation to zero for a fixed delay. The scraper logs each chosen pause and records `delay_ms`, `delay_jitter_ms` and `browser_mode` in `run.json`. Slower pacing does not guarantee that verification will be avoided. Navigation currently follows validated URLs with Playwright's `page.goto()`; no pointer or checkbox automation is used.
 
 ## Depth and description reuse
 
@@ -152,15 +154,15 @@ Both modes recognize Cloudflare's `cf-mitigated: challenge` header and known ver
 bun run scrape:jobstreet --max-pages 3 --max-jobs 90 --verification-timeout-ms 300000
 ```
 
-`--verification-timeout-ms` accepts 0–600000; zero disables waiting. Waiting does not reload the challenge, rotate profiles or consume transient-navigation retries. An ordinary HTTP 403 without verification markers, HTTP 401 and HTTP 429 still stop immediately. An unresolved challenge stops with `stop_reason: verification_timeout`, preserves partial data and exits with code 1. The owned profile is cleaned up after the wait ends.
+`--verification-timeout-ms` accepts 0–600000; zero disables waiting. Waiting does not reload the challenge, rotate profiles or consume transient-navigation retries. Cloudflare can return verification pages with HTTP 403 or 429; both get the wait when challenge evidence is present. Ordinary HTTP 403/429 responses without verification markers and HTTP 401 still stop immediately. An unresolved challenge stops with `stop_reason: verification_timeout`, preserves partial data and exits with code 1. The owned profile is cleaned up after the wait ends.
 
 Each affected navigation entry in `run.json` includes `verification`: its `waiting`, `cleared`, `denied`, `timed_out` or `interrupted` status, start/finish times, configured timeout, initial/final HTTP status and Cloudflare Ray ID when supplied. `denied` means verification led to another access-denied response; `interrupted` records an error such as the browser closing during the wait. Successful iframe requests and intermediate redirects do not count as clearance. After clearance, the final page must still pass normal URL and content validation.
 
 ## Reliability and failure handling
 
-Runs are bounded to 50 search pages and 1,000 unique jobs, with at least two seconds between pages or detail requests. Small defaults remain one page/20 jobs for breadth and 100 jobs for depth. `--retries` permits zero to three additional navigation attempts, default two. Only navigation timeouts, selected connection failures and HTTP 500/502/503/504 responses are retried, with exponential waits starting at `--delay-ms`. Profile creation and other SDK mutations are not automatically retried.
+Runs are bounded to 50 search pages and 1,000 unique jobs, with at least two seconds between pages or detail requests. The default pause is 10–12 seconds. Small defaults remain one page/20 jobs for breadth and 100 jobs for depth. `--retries` permits zero to three additional navigation attempts, default two. Only navigation timeouts, selected connection failures and HTTP 500/502/503/504 responses are retried, with exponential waits starting at `--delay-ms`. Profile creation and other SDK mutations are not automatically retried.
 
-HTTP 401/429 and ordinary HTTP 403 responses stop the run; recognized verification pages get the bounded wait described above. Missing card selectors, an entirely invalid page, repeated pagination URLs, repeated sets of page IDs and off-domain pagination also fail. Challenge pages are never counted as successful scrapes. Search URLs drop fragments, `tracking`, `utm_*` and temporary `__cf_chl_*` parameters and sort the remaining parameters; search filters are preserved.
+HTTP 401 and ordinary HTTP 403/429 responses stop the run; recognized verification pages get the bounded wait described above. Missing card selectors, an entirely invalid page, repeated pagination URLs, repeated sets of page IDs and off-domain pagination also fail. Challenge pages are never counted as successful scrapes. Search URLs drop fragments, `tracking`, `utm_*` and temporary `__cf_chl_*` parameters and sort the remaining parameters; search filters are preserved.
 
 A malformed card is quarantined while valid cards continue. Success requires at least one saved job and successful profile cleanup; it can still have rejected records, so inspect report counts. An entirely invalid offline input fails with exit code 1. Reports and sorted views use temporary files followed by rename. Raw observations are appended as accepted, preserving earlier results when a later page fails.
 
@@ -203,6 +205,7 @@ No public API route launches browsers. Scraper database ingestion and integratio
 
 - [Kameleo quickstart](https://developer.kameleo.io/getting-started/quickstart/)
 - [Kameleo Playwright integration](https://developer.kameleo.io/integrations/playwright/)
+- [Kameleo browser headless mode](https://developer.kameleo.io/tutorials/starting-headless-browsers/)
 - [Kameleo configuration](https://developer.kameleo.io/reference/configuration-options/)
 - [Kameleo usage limits](https://developer.kameleo.io/reference/usage-limits/)
 - [Playwright CDP connection](https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp)
