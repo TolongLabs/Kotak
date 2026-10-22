@@ -9,6 +9,8 @@
     "dev": "bun run --parallel --filter './apps/*' dev",
     "build": "bun run --filter @kotak/web build",
     "start": "bun apps/api/src/bun.ts",
+    "scrape:jobstreet": "bun apps/api/src/scrapers/jobstreet/cli.ts",
+    "jobs:prepare": "bun apps/api/src/scrapers/jobstreet/prepare-cli.ts",
     "typecheck": "bun run --parallel --filter '*' typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
