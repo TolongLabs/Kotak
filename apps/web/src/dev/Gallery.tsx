@@ -1,6 +1,7 @@
 import { ActionsGallery } from './gallery/ActionsGallery'
 import { FormsGallery } from './gallery/FormsGallery'
 import { OverlaysGallery } from './gallery/OverlaysGallery'
+import { ShellGallery } from './gallery/ShellGallery'
 
 export function Gallery() {
   return (
@@ -9,6 +10,7 @@ export function Gallery() {
       <ActionsGallery />
       <FormsGallery />
       <OverlaysGallery />
+      <ShellGallery />
     </main>
   )
 }
