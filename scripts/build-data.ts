@@ -180,16 +180,23 @@ const scenarioSplits = [...roles.values()].flatMap((r) => {
   return ids.length > 0 ? [{ onet_code: r.onet_code, title: r.title, corner_ids: ids }] : []
 })
 
-// 5. The national view's labelled sample rows (#34, apps/api/db/sample-checkups.ts) cover every demo role, with at
-// least 10 per occupation group. They never count toward the 10-real-row threshold; the summary route counts only
-// is_sample = false rows.
+// 5. The national view's labelled sample rows (#34, apps/api/db/sample-checkups.ts) cover every demo role and every
+// occupation group in the bundle, with at least 10 per group, and each row has its role's corner count. They never
+// count toward the 10-real-row threshold; the summary route counts only is_sample = false rows.
 const samples = sampleCheckups()
 for (const code of demoRoles.roles.map((r) => r.onet_code)) {
   if (!samples.some((s) => s.onet_role_code === code)) failures.push(`national view: no sample rows for ${code}`)
 }
-for (const group of new Set(samples.map((s) => s.onet_role_code.slice(0, 2)))) {
+for (const group of new Set([...roles.keys()].map((code) => code.slice(0, 2)))) {
   const rows = samples.filter((s) => s.onet_role_code.startsWith(group)).length
   if (rows < SAMPLE_THRESHOLD) failures.push(`national view: group ${group}-0000 has ${rows} sample rows`)
+}
+for (const s of samples) {
+  const corners = roles.get(s.onet_role_code)?.corners.length
+  if (s.corner_levels.length !== corners)
+    failures.push(
+      `national view: ${s.onet_role_code} sample rows have ${s.corner_levels.length} levels, not ${corners}`
+    )
 }
 
 // 6. The manifest.

@@ -1,4 +1,10 @@
-import { VerdictSchema, type ExplanationRequest, type ExplanationResponse, type Verdict } from '@kotak/shared'
+import {
+  isEconomicIndexSource,
+  VerdictSchema,
+  type ExplanationRequest,
+  type ExplanationResponse,
+  type Verdict
+} from '@kotak/shared'
 import { z } from 'zod'
 
 // What Claude returns. Two sentence fields make "exactly two sentences" part of the shape.
@@ -145,7 +151,8 @@ function isOneSentence(marked: string): boolean {
 
 // Keeps Claude's two sentences only if each field is one sentence, they name the corner's own verdict and no
 // other, never negate or hedge it, cite the corner's sources as exact name and date pairs, and hold no other digit.
-// Numbers are shown by the app, not written by Claude.
+// Numbers are shown by the app, not written by Claude. A corner with an Economic Index source must cite one, since
+// its AI-use trend sets the verdict (#151).
 function verifyCorner(request: ExplanationRequest, corner: Corner, draft: DraftCorner | undefined): Explanation | null {
   if (!draft) return null
   const sentences: [string, string] = [draft.sentence_1.trim(), draft.sentence_2.trim()]
@@ -155,6 +162,7 @@ function verifyCorner(request: ExplanationRequest, corner: Corner, draft: DraftC
   const { tokens, prose, marked } = scan(sentences.join(' '), corner.sources, request.corners)
   const citations = pairedCitations(tokens, corner.sources)
   if (!citations || citations.length === 0) return null
+  if (corner.sources.some(isEconomicIndexSource) && !citations.some(isEconomicIndexSource)) return null
   const labels = new Set(tokens.flatMap((token) => (token.kind === 'verdict' ? [token.value] : [])))
   if (labels.size !== 1 || !labels.has(corner.verdict)) return null
   if (negatesAVerdict(marked) || /\d/.test(prose)) return null
@@ -168,7 +176,7 @@ function changedCorners(request: ExplanationRequest): Corner[] {
 // The summary passes the same citation, negation and digit checks. Each verdict label belongs to the corner
 // named before it: a changed corner must carry exactly its previous and current labels, in that order, and an
 // unchanged corner at most its own verdict. A label before any corner name, or any label when nothing
-// changed, fails.
+// changed, fails. When a changed corner has an Economic Index source, the summary must cite one (#151).
 function verifySummary(request: ExplanationRequest, summary: string): string | null {
   const text = summary.trim()
   if (text.length === 0 || text.length > MAX_SUMMARY_LENGTH) return null
@@ -179,6 +187,8 @@ function verifySummary(request: ExplanationRequest, summary: string): string | n
   if (negatesAVerdict(marked) || /\d/.test(prose)) return null
 
   const changed = changedCorners(request)
+  if (changed.some((corner) => corner.sources.some(isEconomicIndexSource)) && !citations.some(isEconomicIndexSource))
+    return null
   const byName = new Map(request.corners.map((corner) => [cornerName(corner), corner]))
   const labelsOf = new Map<Corner, Verdict[]>()
   let current: Corner | undefined

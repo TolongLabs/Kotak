@@ -22,7 +22,7 @@ import { getConfig } from '../config'
 // row of a block from the change. Fixing that needs authenticated posts or noise, not more rounding.
 const PRIVACY_THRESHOLD = 10
 const DATABASE_TIMEOUT_MS = 5_000
-const CORNERS = [0, 1, 2, 3, 4, 5]
+const CORNERS = [0, 1, 2, 3, 4, 5] // a role has 1 to 6 corners (#74)
 
 // O*NET job families are the SOC 2018 major groups, named by a role code's first two digits.
 const OCCUPATION_GROUP_TITLES: Record<string, string> = {
@@ -59,19 +59,21 @@ type RoleAggregate = {
 }
 
 // Real rows count only in whole blocks of PRIVACY_THRESHOLD by id, so fewer than 10 never leave the database.
+// Rows with a different number of corners form their own blocks, so every average covers whole blocks too.
 const SUMMARY_SQL = `
   WITH ranked AS (
-    SELECT onet_role_code, is_sample, corner_levels,
-      row_number() OVER (PARTITION BY onet_role_code, is_sample ORDER BY id) AS position,
-      count(*) OVER (PARTITION BY onet_role_code, is_sample) AS total
+    SELECT onet_role_code, is_sample, corner_levels, jsonb_array_length(corner_levels) AS corner_count,
+      row_number() OVER (PARTITION BY onet_role_code, is_sample, jsonb_array_length(corner_levels) ORDER BY id)
+        AS position,
+      count(*) OVER (PARTITION BY onet_role_code, is_sample, jsonb_array_length(corner_levels)) AS total
     FROM national_checkups
   )
-  SELECT onet_role_code, is_sample, COUNT(*)::int AS checkup_count,
+  SELECT onet_role_code, is_sample, corner_count, COUNT(*)::int AS checkup_count,
     ARRAY[${CORNERS.map((corner) => `ROUND(AVG((corner_levels->>${corner})::numeric), 1)::float8`).join(', ')}]
       AS average_corner_levels
   FROM ranked
   WHERE is_sample OR position <= total - total % ${PRIVACY_THRESHOLD}
-  GROUP BY onet_role_code, is_sample`
+  GROUP BY onet_role_code, is_sample, corner_count`
 
 const database = (context: Context) => {
   const url = getConfig(context, 'DATABASE_URL')
@@ -82,7 +84,12 @@ const databaseAggregates = async (context: Context) => {
   const sql = database(context)
   if (!sql) return undefined
   try {
-    return (await sql.query(SUMMARY_SQL)) as RoleAggregate[]
+    const rows = (await sql.query(SUMMARY_SQL)) as (RoleAggregate & { corner_count: number })[]
+    // Positions past a role's corner count average to NULL; keep only its own corners.
+    return rows.map(({ corner_count, ...row }) => ({
+      ...row,
+      average_corner_levels: row.average_corner_levels.slice(0, corner_count)
+    }))
   } catch (error) {
     console.error('National view summary failed:', error instanceof Error ? error.message : error)
     return undefined
@@ -98,20 +105,27 @@ const sampleAggregates = (): RoleAggregate[] => {
       onet_role_code,
       is_sample: true,
       checkup_count: levels.length,
-      average_corner_levels: CORNERS.map(
-        (corner) => Math.round((levels.reduce((sum, row) => sum + row[corner], 0) / levels.length) * 10) / 10
+      average_corner_levels: levels[0]!.map(
+        (_, corner) => Math.round((levels.reduce((sum, row) => sum + row[corner]!, 0) / levels.length) * 10) / 10
       )
     }
   })
 }
+
+// A role's rows can differ in corner count, for example after its corners are regenerated; show the largest set.
+const largest = (rows: RoleAggregate[]) =>
+  rows.reduce<RoleAggregate | undefined>(
+    (best, row) => (!best || row.checkup_count > best.checkup_count ? row : best),
+    undefined
+  )
 
 const toGroups = (aggregates: RoleAggregate[], filter: NationalViewSummaryRequest): NationalViewGroup[] =>
   [...new Set(aggregates.map((row) => row.onet_role_code))].sort().flatMap((onet_role_code) => {
     const occupation_group = `${onet_role_code.slice(0, 2)}-0000`
     if (filter.onet_role_code && filter.onet_role_code !== onet_role_code) return []
     if (filter.occupation_group && filter.occupation_group !== occupation_group) return []
-    const real = aggregates.find((row) => row.onet_role_code === onet_role_code && !row.is_sample)
-    const sample = aggregates.find((row) => row.onet_role_code === onet_role_code && row.is_sample)
+    const real = largest(aggregates.filter((row) => row.onet_role_code === onet_role_code && !row.is_sample))
+    const sample = largest(aggregates.filter((row) => row.onet_role_code === onet_role_code && row.is_sample))
     const shown = real && real.checkup_count >= PRIVACY_THRESHOLD ? real : sample
     if (!shown) return []
     return [
@@ -131,7 +145,7 @@ export const nationalView = new Hono()
 nationalView.post('/checkups', async (context) => {
   const checkup = NationalCheckupRequestSchema.safeParse(await context.req.json().catch(() => undefined))
   if (!checkup.success) {
-    return fail(context, 400, 'invalid_request', 'Send only onet_role_code and 6 corner_levels from 0 to 3.')
+    return fail(context, 400, 'invalid_request', 'Send only onet_role_code and 1 to 6 corner_levels from 0 to 3.')
   }
   const sql = database(context)
   if (!sql) return fail(context, 503, 'national_view_unavailable', 'The national view database is not set up.')

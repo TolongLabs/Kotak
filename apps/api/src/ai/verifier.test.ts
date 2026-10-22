@@ -133,6 +133,28 @@ describe('explanation verifier', () => {
     expect(result.fallback_reason).toBe('verifier_rejected')
   })
 
+  test('replaces a corner that credits its verdict only to demand when it has an Economic Index source', () => {
+    const result = buildExplanations(
+      request,
+      draft({
+        'problem-solving': [
+          'Problem Solving is Rising as job ads keep asking for it (DOSM Job Market Insights, 2026-03-15).',
+          'Your level is below the target, so this is a gap to close.'
+        ]
+      })
+    )
+    expect(result.explanations[0]).toEqual(templateExplanation(cornerOf('problem-solving'), request.snapshot_id))
+    expect(sourceOf(result, 'communication')).toBe('claude')
+  })
+
+  test('replaces a summary that cites no Economic Index source when a changed corner has one', () => {
+    const demandOnly =
+      'Problem Solving moved from Steady to Rising and Communication moved from Rising to Declining (DOSM Job Market Insights, 2026-03-15).'
+    const result = buildExplanations(request, draft({}, demandOnly))
+    expect(result.what_changed_source).toBe('template')
+    expect(result.fallback_reason).toBe('verifier_rejected')
+  })
+
   test('replaces a corner that negates its verdict label', () => {
     const result = buildExplanations(
       request,

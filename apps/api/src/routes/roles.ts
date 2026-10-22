@@ -15,6 +15,10 @@ Reply with the O*NET-SOC code of the single closest occupation, copied exactly f
 
 O*NET 30.1 occupations, one per line as code and title:`
 
+const PICK_INSTRUCTIONS = `You match job titles typed by workers in Malaysia to O*NET 30.1 occupations. The title the user sends is an exact title of every occupation listed with it, so pick the one a worker in Malaysia most likely means by it.
+
+Reply with the O*NET-SOC code of that occupation, copied exactly from the list. Reply with null when none of them fits.`
+
 const systemPrompts = new WeakMap<OccupationIndex, string>()
 
 function matchSystemPrompt(index: OccupationIndex): string {
@@ -44,15 +48,49 @@ export function createRolesRoute(deps: AiDeps) {
     if (!request.success) return invalidRequest(context, request.error)
     const found = deps.occupations.search(request.data.job_title)
 
-    // Title search first. A single exact title or alternate title needs no AI and no confirmation. A title that
-    // several occupations share ("Teacher") stays with title search too: the top hit, for the user to confirm.
-    if (found.match === 'exact') {
+    // Title search first. A single exact title or alternate title needs no AI and no confirmation. An official
+    // O*NET title that is also another occupation's alternate title stays with its own occupation, for the user to
+    // confirm.
+    if (found.match === 'exact' && (found.hits.length === 1 || found.official)) {
       return context.json(
         respond({
           occupation: found.hits[0],
           needs_confirmation: found.hits.length > 1,
           match_source: 'title_search',
           cached: false
+        })
+      )
+    }
+
+    // A title that several occupations share as an alternate title ("Teacher" has 23): Claude picks among them all,
+    // and the user confirms the pick (#145). Without a usable pick, the top hit stays, as title search ranks it.
+    if (found.match === 'exact') {
+      const candidates = deps.occupations.search(request.data.job_title, deps.occupations.occupations.length).hits
+      const lines = candidates.map((occupation) => `${occupation.onet_code} ${occupation.title}`)
+      const pick = await generateCached(
+        deps,
+        context,
+        {
+          system: PICK_INSTRUCTIONS,
+          user: `Job title: ${JSON.stringify(promptTitle(request.data.job_title))}\n\nOccupations with this exact title, one per line as code and title:\n${lines.join('\n')}`,
+          effort: 'low',
+          max_tokens: 4096
+        },
+        MatchDraftSchema
+      )
+      const cached = pick?.cached ?? false
+      const chosen = candidates.find((occupation) => occupation.onet_code === pick?.value.onet_code?.trim())
+      if (chosen) {
+        return context.json(respond({ occupation: chosen, needs_confirmation: true, match_source: 'claude', cached }))
+      }
+      const fallback_reason = pick ? 'no_valid_suggestion' : 'ai_unavailable'
+      return context.json(
+        respond({
+          occupation: found.hits[0],
+          needs_confirmation: true,
+          match_source: 'title_search',
+          cached,
+          fallback_reason
         })
       )
     }

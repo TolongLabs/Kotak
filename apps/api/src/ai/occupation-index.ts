@@ -7,13 +7,16 @@ export interface TitleSearch {
   match: 'exact' | 'partial' | 'none'
   // One per distinct occupation, best first.
   hits: Occupation[]
+  // exact only: the query is the official O*NET title of the first hit and of no other hit.
+  official: boolean
 }
 
 // The narrow view of the O*NET data that the job match route needs.
 export interface OccupationIndex {
   // Every occupation Claude may suggest. A suggested code outside this list is rejected.
   readonly occupations: readonly Occupation[]
-  search(title: string): TitleSearch
+  // At most `limit` hits, 10 by default.
+  search(title: string, limit?: number): TitleSearch
   getOccupation(onetCode: string): Occupation | null
 }
 
@@ -27,10 +30,12 @@ export function createOnetOccupationIndex(index: OnetTitleIndex): OccupationInde
   const byCode = new Map(occupations.map((occupation) => [occupation.onet_code, occupation]))
   return {
     occupations,
-    search(title) {
-      const { match, hits } = lookupTitle(index, title)
+    search(title, limit) {
+      const { match, hits } = lookupTitle(index, title, limit)
+      const titles = hits.filter((hit) => hit.kind === 'title')
       return {
         match,
+        official: match === 'exact' && titles.length === 1 && hits[0]?.kind === 'title',
         hits: hits.map(
           (hit) =>
             byCode.get(hit.onet_code) ?? {
