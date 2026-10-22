@@ -8,8 +8,11 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.1.0",
+    "@kotak/agent": "workspace:*",
     "@kotak/browser": "workspace:*",
+    "@kotak/sdk": "workspace:*",
     "@kotak/shared": "workspace:*",
+    "@modelcontextprotocol/server": "^2.3.1",
     "@neondatabase/serverless": "^1.2.0",
     "hono": "^4.13.13",
     "zod": "^4.6.7"

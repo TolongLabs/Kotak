@@ -1,0 +1,9 @@
+{
+  "name": "kotak",
+  "displayName": "Kotak",
+  "version": "1.0.0",
+  "description": "Check how AI is changing the skills of your job in Malaysia: Kotak's read-only MCP server and the kotak-checkup skill.",
+  "author": { "name": "T010NG" },
+  "homepage": "https://kotak.tp073654.workers.dev",
+  "keywords": ["career", "skills", "ai", "malaysia", "mcp"]
+}

@@ -4,7 +4,8 @@ import {
   NationalViewSummaryRequestSchema,
   NationalViewSummaryResponseSchema,
   type NationalViewGroup,
-  type NationalViewSummaryRequest
+  type NationalViewSummaryRequest,
+  type NationalViewSummaryResponse
 } from '@kotak/shared'
 import { neon } from '@neondatabase/serverless'
 import { Hono, type Context } from 'hono'
@@ -140,6 +141,19 @@ const toGroups = (aggregates: RoleAggregate[], filter: NationalViewSummaryReques
     ]
   })
 
+// When the database is unset or unreachable, the summary is the built-in sample rows, never an error. The route and
+// the national_skill_gaps MCP tool both serve it (#190).
+export async function nationalViewSummary(
+  context: Context,
+  filter: NationalViewSummaryRequest
+): Promise<NationalViewSummaryResponse> {
+  const aggregates = await databaseAggregates(context)
+  return NationalViewSummaryResponseSchema.parse({
+    groups: toGroups(aggregates ?? sampleAggregates(), filter),
+    database_available: aggregates !== undefined
+  })
+}
+
 export const nationalView = new Hono()
 
 nationalView.post('/checkups', async (context) => {
@@ -161,16 +175,10 @@ nationalView.post('/checkups', async (context) => {
   return context.json(NationalCheckupResponseSchema.parse({ recorded: true }), 201)
 })
 
-// When the database is unset or unreachable, the view shows the built-in sample rows, never an error.
 nationalView.get('/summary', async (context) => {
   const filter = NationalViewSummaryRequestSchema.safeParse(context.req.query())
   if (!filter.success) {
     return fail(context, 400, 'invalid_request', 'Filter by occupation_group (15-0000) or onet_role_code (15-1254.00).')
   }
-  const aggregates = await databaseAggregates(context)
-  const response = NationalViewSummaryResponseSchema.parse({
-    groups: toGroups(aggregates ?? sampleAggregates(), filter.data),
-    database_available: aggregates !== undefined
-  })
-  return context.json(response)
+  return context.json(await nationalViewSummary(context, filter.data))
 })

@@ -1,0 +1,12 @@
+{
+  "name": "kotak",
+  "owner": { "name": "T010NG" },
+  "description": "Kotak: check how AI is changing the skills of your job in Malaysia, from dated, sourced data.",
+  "plugins": [
+    {
+      "name": "kotak",
+      "source": "./plugins/kotak",
+      "description": "Kotak's read-only MCP server and the kotak-checkup skill, which runs a Kotak check-up through it."
+    }
+  ]
+}

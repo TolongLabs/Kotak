@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "kotak": { "type": "http", "url": "https://kotak.tp073654.workers.dev/api/mcp" }
+  }
+}

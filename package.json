@@ -6,9 +6,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun run build:data && bun run --parallel --filter './apps/*' dev",
-    "build": "bun run build:data && bun run --filter @kotak/web build",
+    "dev": "bun run build:data && bun run build:skill && bun run --parallel --filter './apps/*' dev",
+    "build": "bun run build:data && bun run build:skill && bun run --filter @kotak/web build",
     "build:data": "bun scripts/build-data.ts",
+    "build:skill": "bun scripts/build-skill.ts",
     "start": "bun apps/api/src/bun.ts",
     "db:seed": "bun apps/api/db/seed.ts",
     "db:migrate": "bun apps/api/db/migrate.ts",

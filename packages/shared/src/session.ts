@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { SnapshotIdSchema } from './engine'
+import { MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from './rules/constants'
 
 export const GuestSessionSchema = z
   .object({
@@ -21,3 +22,10 @@ export const GuestSessionSchema = z
   .strict()
 
 export type GuestSession = z.infer<typeof GuestSessionSchema>
+
+/** The check-up's goals: stay strong in the current job, move to a target role, or explore related roles. */
+export const GoalSchema = z.enum(['stay', 'target', 'explore'])
+
+/** Hours a week for learning, in the range the Roadmap page lets a user pick, 4 by default. null: the AI dividend
+ * sets them. */
+export const WeeklyHoursSchema = z.number().min(MIN_WEEKLY_HOURS).max(MAX_WEEKLY_HOURS).nullable().default(4)
