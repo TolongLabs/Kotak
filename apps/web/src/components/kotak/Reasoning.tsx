@@ -1,13 +1,26 @@
+import { createContext, useContext, type ReactNode } from 'react'
 import { Quote } from 'lucide-react'
 import { renderCited } from './renderCited'
+
+export type ExplanationSource = 'claude' | 'template'
+
+const ExplanationSourceContext = createContext<ExplanationSource | undefined>(undefined)
+
+export function ExplanationSourceProvider({ source, children }: { source: ExplanationSource; children: ReactNode }) {
+  return <ExplanationSourceContext.Provider value={source}>{children}</ExplanationSourceContext.Provider>
+}
 
 export interface ReasoningProps {
   text: string
   // The explanation route is down: the verdict still stands on its sources.
   paused?: boolean
+  source?: ExplanationSource
 }
 
-export function Reasoning({ text, paused = false }: ReasoningProps) {
+export function Reasoning({ text, paused = false, source }: ReasoningProps) {
+  const contextualSource = useContext(ExplanationSourceContext)
+  const textSource = source ?? contextualSource ?? 'template'
+
   return (
     <section className="space-y-2 rounded-md border border-border-subtle bg-bg-panel p-4">
       <h3 className="flex items-center gap-2 text-label-m text-text-primary">
@@ -20,7 +33,9 @@ export function Reasoning({ text, paused = false }: ReasoningProps) {
       <p className="font-mono text-mono-s text-text-muted">
         {paused
           ? 'Fixed rules set this verdict from the sources below.'
-          : 'Fixed rules set the verdict. This summary is built from the cited inputs.'}
+          : textSource === 'claude'
+            ? 'Kopi wrote this with Claude from the cited rows only. Fixed rules set the verdict.'
+            : 'Fixed rules set the verdict. This summary is built from the cited inputs.'}
       </p>
     </section>
   )
