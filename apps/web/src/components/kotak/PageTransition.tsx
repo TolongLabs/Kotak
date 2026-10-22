@@ -7,7 +7,7 @@ export interface PageTransitionProps {
   durationMs?: number
 }
 
-// The flaps swing open and Kopi's ears rise. Reduced motion skips straight to the open box.
+// The flaps swing open and Kopi's ears rise. Reduced motion skips to the open box and a 200 ms fade (DESIGN.md).
 function OpeningBox({ open, className }: { open: boolean; className?: string }) {
   const swing = 'transition-transform duration-700 ease-out'
 
@@ -62,7 +62,7 @@ export function PageTransition({ onDone, durationMs = 2400 }: PageTransitionProp
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const total = reduced ? 600 : durationMs
+    const total = reduced ? 200 : durationMs
     const start = performance.now()
     let frame = requestAnimationFrame(function tick(now) {
       const share = Math.min(1, (now - start) / total)
