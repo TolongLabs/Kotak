@@ -3,18 +3,17 @@ import { DEFAULT_SCENARIO } from '@kotak/shared'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
-import { SourceReference } from '../components/kotak/SourceReference'
+import { SourceList } from '../components/kotak/SourceList'
 import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { Modal } from '../components/ui/Modal'
 import { SdgChip } from '../components/ui/SdgChip'
 import { Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
-import { roleSdgGoals } from '../engine/sdg'
+import { occupationSdgs } from '../engine/occupationSdg'
 import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { deriveRoleEvidence, kopiRoleSpeech, pickDisplayRoles, sessionHeading } from './roles/derived'
@@ -27,7 +26,6 @@ export function RolesView() {
   const bundle = useRoleBundle(assessedRoleCode(session))
   const loaded = useCheckup({ scenario: DEFAULT_SCENARIO })
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [askOpen, setAskOpen] = useState(false)
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
   const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
 
@@ -103,19 +101,7 @@ export function RolesView() {
         detailCheckupRole.fit.numerator
       )} / ${formatLevel(detailCheckupRole.fit.denominator)} gives ${formatFitPercent(detailCheckupRole.fit.score)}.`
     : ''
-  const sdgByRole = new Map(bundleRoles.map((bundleRole) => [bundleRole.onet_code, roleSdgGoals(bundleRole.corners)]))
-
   function pick() {
-    if (!selected) return
-    if (selected.id === assessedRoleCode(session)) {
-      updateGuestSession({ plan_role_code: null })
-      navigate(routes.roadmap)
-      return
-    }
-    setAskOpen(true)
-  }
-
-  function continueToRoadmap() {
     updateGuestSession({
       plan_role_code: selected && selected.id !== assessedRoleCode(session) ? selected.id : null
     })
@@ -146,7 +132,8 @@ export function RolesView() {
 
       <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 items-start gap-4 md:grid-cols-3">
         {displayRoles.map((displayRole) => {
-          const goals = sdgByRole.get(displayRole.id) ?? []
+          const occupation = occupationSdgs(displayRole.id)
+          const goals = occupation?.goals.slice(0, 3) ?? []
           return (
             <div key={displayRole.id} className="flex flex-col gap-2">
               <RoleCard
@@ -157,9 +144,9 @@ export function RolesView() {
               />
               {goals.length > 0 && (
                 <span className="flex flex-wrap items-center gap-1.5">
-                  <span className="font-mono text-mono-s text-text-muted">Contributes To</span>
+                  <span className="font-mono text-mono-s text-text-muted">This Work Supports</span>
                   {goals.map((goal) => (
-                    <SdgChip key={goal} goal={goal} compact />
+                    <SdgChip key={goal} goal={goal} compact title={occupation?.reason} />
                   ))}
                 </span>
               )}
@@ -238,13 +225,7 @@ export function RolesView() {
           {/* Why This Role */}
           <section aria-label="Why This Role" className="flex flex-col gap-3">
             <Reasoning text={reasoningText} source="template" paused={aiOff} rows={roleEvidence?.rows ?? []} />
-            {displaySources.length > 0 && (
-              <div className="divide-y divide-border-subtle rounded-md border border-border-subtle bg-bg-default [&>div]:rounded-none [&>div]:border-0">
-                {displaySources.map((source) => (
-                  <SourceReference key={source.n} source={source} />
-                ))}
-              </div>
-            )}
+            <SourceList sources={displaySources} />
           </section>
         </div>
       )}
@@ -255,24 +236,6 @@ export function RolesView() {
           Build My Roadmap
         </Button>
       </div>
-
-      <Modal
-        open={askOpen}
-        onClose={() => setAskOpen(false)}
-        title="A Few More Questions"
-        actions={
-          <>
-            <Button variant="secondary" autoFocus onClick={() => setAskOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={continueToRoadmap}>
-              Continue to Roadmap
-            </Button>
-          </>
-        }
-      >
-        Your answers give a rough fit for this role. Continue to the roadmap with your current check-up.
-      </Modal>
     </div>
   )
 }

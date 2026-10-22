@@ -9,9 +9,20 @@ export interface RoadmapStepCardProps {
   index: number
   last: boolean
   highlighted?: boolean
+  selected?: boolean
+  onSelect?: () => void
+  stepRef?: (element: HTMLElement | null) => void
 }
 
-export function RoadmapStepCard({ step, index, last, highlighted = false }: RoadmapStepCardProps) {
+export function RoadmapStepCard({
+  step,
+  index,
+  last,
+  highlighted = false,
+  selected = false,
+  onSelect,
+  stepRef
+}: RoadmapStepCardProps) {
   const cardBorder = step.conditional
     ? 'border-[1.5px] border-dashed border-border-control bg-bg-panel'
     : step.state === 'next'
@@ -37,10 +48,13 @@ export function RoadmapStepCard({ step, index, last, highlighted = false }: Road
       </div>
 
       <article
+        ref={stepRef}
         aria-labelledby={`roadmap-step-${step.id}`}
-        className={`min-w-0 flex-1 space-y-2 rounded-md p-4 ${cardBorder} ${
+        aria-current={selected ? 'true' : undefined}
+        onClick={onSelect}
+        className={`min-w-0 flex-1 cursor-pointer space-y-2 rounded-md p-4 ${cardBorder} ${
           highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
-        }`}
+        } ${selected ? 'outline outline-2 outline-offset-2 outline-text-primary' : ''}`}
       >
         <p className="font-mono text-mono-s text-text-muted">{step.when}</p>
         <h3 id={`roadmap-step-${step.id}`} className="text-title-s text-text-primary">

@@ -6,6 +6,8 @@ import { getConfig } from '../config'
 
 // eleven_v4 serves both fixed and live lines over HTTP; eleven_v4_turbo exists only on the dialogue WebSocket.
 export const TTS_MODEL_ID = 'eleven_v4'
+// Kopi's voice: Johari (warm, clear, young Malaysian male). ELEVENLABS_VOICE_ID overrides it.
+export const KOPI_VOICE_ID = 'lvNyQwaZPcGFiNUWWiVa'
 // Pre-generated fixed lines live in the static build at /tts/<key>.mp3 (scripts/tts-pregenerate.ts).
 export const TTS_STATIC_DIRECTORY = 'tts'
 const OUTPUT_FORMAT = 'mp3_44100_128'
@@ -54,8 +56,7 @@ tts.post('/', async (context) => {
   if (!request.success) return fail(context, 400, 'invalid_request', 'Send { "text" } with 1 to 600 characters.')
 
   const notConfigured = () => fail(context, 503, 'tts_unavailable', 'Text to speech is not set up on this server.')
-  const voiceId = getConfig(context, 'ELEVENLABS_VOICE_ID')
-  if (!voiceId) return notConfigured()
+  const voiceId = getConfig(context, 'ELEVENLABS_VOICE_ID') ?? KOPI_VOICE_ID
 
   const text = request.data.text
   const key = await ttsCacheKey(text, voiceId)

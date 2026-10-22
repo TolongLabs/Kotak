@@ -17,7 +17,7 @@ const cleanSession: GuestSession = {
   custom_weekly_hours: 4,
   pasted_job_ad_quotes: [],
   // Kopi starts muted, as every view did before this store (#133); one tap on the speech box unmutes.
-  tts_muted: true,
+  tts_muted: false,
   active_snapshot_id: '2026-05'
 }
 
