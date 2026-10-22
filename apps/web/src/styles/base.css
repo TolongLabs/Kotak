@@ -124,6 +124,29 @@
   }
 }
 
+/* The theme switch (themeTransition.ts) clips the new view itself, from nothing, and draws its ASCII canvas live on
+   top. Colour transitions pause so the new view and the colour reads get final colours. */
+:root[data-theme-switch] *,
+:root[data-theme-switch] ::before,
+:root[data-theme-switch] ::after {
+  transition: none !important;
+}
+
+:root[data-theme-switch]::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+:root[data-theme-switch]::view-transition-old(root),
+:root[data-theme-switch]::view-transition-new(root),
+:root[data-theme-switch]::view-transition-new(theme-ascii) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+:root[data-theme-switch]::view-transition-new(root) {
+  clip-path: circle(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
