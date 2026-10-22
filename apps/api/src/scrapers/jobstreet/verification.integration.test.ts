@@ -29,20 +29,23 @@ async function fixture(route: Route) {
     return route.fulfill({ status: 200, contentType: 'text/html', body: card })
   }
   requests++
-  if (scenario === 'denied')
-    return route.fulfill({ status: 403, contentType: 'text/html', body: '<title>Access denied</title>' })
+  if (scenario === 'denied' || scenario === 'rate-limited')
+    return route.fulfill({
+      status: scenario === 'denied' ? 403 : 429,
+      contentType: 'text/html',
+      body: '<title>Access denied</title>'
+    })
   if (url.searchParams.has('verified'))
     return route.fulfill({
       status: 200,
       contentType: 'text/html',
       body: url.pathname.includes('/job/') ? description : card
     })
-  const script =
-    scenario === 'clears'
-      ? '<script>setTimeout(() => { const url = new URL(location.href); url.searchParams.set("verified", "1"); url.searchParams.set("__cf_chl_tk", "fixture-temporary"); location.href = url.href }, 800)</script>'
-      : '<iframe src="/frame"></iframe>'
+  const script = scenario.startsWith('clears')
+    ? '<script>setTimeout(() => { const url = new URL(location.href); url.searchParams.set("verified", "1"); url.searchParams.set("__cf_chl_tk", "fixture-temporary"); location.href = url.href }, 800)</script>'
+    : '<iframe src="/frame"></iframe>'
   return route.fulfill({
-    status: 403,
+    status: scenario === 'clears-429' ? 429 : 403,
     headers: { 'cf-mitigated': 'challenge', 'cf-ray': 'fixture-ray' },
     contentType: 'text/html',
     body: `<html><head><title>Just a moment...</title></head><body>Performing security verification${script}</body></html>`
@@ -92,34 +95,35 @@ const options = (name: string) => ({
   verificationTimeoutMs: 5000
 })
 
-browserTest(
-  'breadth waits for automatic verification clearance and records the final HTTP response',
-  async () => {
-    scenario = 'clears'
-    requests = 0
-    const config = options('cleared')
-    const report = await breadth(config)
-    expect([report.status, report.jobs_saved, requests]).toEqual(['success', 1, 2])
-    const page = report.pages[0]
-    expect([page.http_status, page.attempts, page.verification?.status]).toEqual([200, 1, 'cleared'])
-    expect([
-      page.verification?.initial_http_status,
-      page.verification?.final_http_status,
-      page.verification?.ray_id
-    ]).toEqual([403, 200, 'fixture-ray'])
-    expect(await readFile(join(config.output, 'page-1-verification.html'), 'utf8')).toContain(
-      'Performing security verification'
-    )
-    const job = JSON.parse((await readFile(join(config.output, 'jobs.jsonl'), 'utf8')).trim())
-    expect(job.search_url).not.toContain('__cf_chl_')
-  },
-  30_000
-)
+for (const initialStatus of [403, 429])
+  browserTest(
+    `breadth waits for HTTP ${initialStatus} verification and records the final HTTP response`,
+    async () => {
+      scenario = initialStatus === 403 ? 'clears' : 'clears-429'
+      requests = 0
+      const config = options(`cleared-${initialStatus}`)
+      const report = await breadth(config)
+      expect([report.status, report.jobs_saved, requests]).toEqual(['success', 1, 2])
+      const page = report.pages[0]
+      expect([page.http_status, page.attempts, page.verification?.status]).toEqual([200, 1, 'cleared'])
+      expect([
+        page.verification?.initial_http_status,
+        page.verification?.final_http_status,
+        page.verification?.ray_id
+      ]).toEqual([initialStatus, 200, 'fixture-ray'])
+      expect(await readFile(join(config.output, 'page-1-verification.html'), 'utf8')).toContain(
+        'Performing security verification'
+      )
+      const job = JSON.parse((await readFile(join(config.output, 'jobs.jsonl'), 'utf8')).trim())
+      expect(job.search_url).not.toContain('__cf_chl_')
+    },
+    30_000
+  )
 
 browserTest(
   'depth resumes description extraction after automatic verification clearance',
   async () => {
-    scenario = 'clears'
+    scenario = 'clears-429'
     requests = 0
     const input = join(workspace, 'breadth.jsonl')
     await writeFile(
@@ -144,18 +148,19 @@ browserTest(
   30_000
 )
 
-browserTest(
-  'an ordinary HTTP 403 fails without entering verification waiting',
-  async () => {
-    scenario = 'denied'
-    requests = 0
-    const config = options('denied')
-    await expect(breadth(config)).rejects.toThrow('HTTP 403')
-    const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
-    expect([report.stop_reason, requests, report.pages[0].verification]).toEqual(['error', 1, undefined])
-  },
-  30_000
-)
+for (const status of [403, 429])
+  browserTest(
+    `an ordinary HTTP ${status} fails without entering verification waiting`,
+    async () => {
+      scenario = status === 403 ? 'denied' : 'rate-limited'
+      requests = 0
+      const config = options(`denied-${status}`)
+      await expect(breadth(config)).rejects.toThrow(`HTTP ${status}`)
+      const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
+      expect([report.stop_reason, requests, report.pages[0].verification]).toEqual(['error', 1, undefined])
+    },
+    30_000
+  )
 
 browserTest(
   'verification times out without counting a successful iframe response as clearance',

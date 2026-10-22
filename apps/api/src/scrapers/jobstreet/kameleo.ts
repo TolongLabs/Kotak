@@ -36,7 +36,9 @@ export async function withKameleo<T>(
   let failed = false
   try {
     await onProfile?.(profile.id)
-    // Connecting starts the profile. Use the default context as required by Kameleo.
+    // Explicitly launch a visible Chroma window. Kameleo enables headless mode with a --headless argument.
+    await client.profile.startProfile(profile.id, { arguments: [] })
+    // Use the default context as required by Kameleo.
     const browser = await chromium.connectOverCDP(ws.href, { noDefaults: true, timeout: 90_000 })
     const context = browser.contexts()[0]
     if (!context) throw new Error('Kameleo did not provide a default browser context')

@@ -3,7 +3,14 @@ import { appendFile, readFile, readdir, stat, writeFile } from 'node:fs/promises
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Page } from 'playwright-core'
-import { navigate, saveEvidence, verificationTimeout, VerificationTimeoutError } from './browser'
+import {
+  navigate,
+  saveEvidence,
+  verificationTimeout,
+  VerificationTimeoutError,
+  pacingJitter,
+  pauseBetweenRequests
+} from './browser'
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { readListingRows, resolveInputs } from './inputs'
@@ -17,6 +24,7 @@ export interface DepthOptions {
   output: string
   maxJobs: number
   delayMs: number
+  delayJitterMs?: number
   maxRetries?: number
   verificationTimeoutMs?: number
   previousDetails?: string[]
@@ -244,6 +252,7 @@ async function extractDescription(page: Page, id: string) {
 export async function scrapeJobstreetDepth(options: DepthOptions) {
   const retries = options.maxRetries ?? 2
   const verificationTimeoutMs = verificationTimeout(options.verificationTimeoutMs)
+  const delayJitterMs = pacingJitter(options.delayJitterMs)
   const refreshAfterHours = options.refreshAfterHours ?? null
   if (refreshAfterHours !== null && (!Number.isFinite(refreshAfterHours) || refreshAfterHours < 0))
     throw new Error('--refresh-after-hours must be a nonnegative number')
@@ -273,6 +282,8 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     max_retries: retries,
     verification_timeout_ms: verificationTimeoutMs,
     delay_ms: options.delayMs,
+    delay_jitter_ms: delayJitterMs,
+    browser_mode: 'headed',
     rows_read: 0,
     input_duplicates: 0,
     records_rejected: 0,
@@ -464,7 +475,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
               report.stop_reason ??= 'blocked'
               throw new Error(observation.error!)
             }
-            if (index < pending.length - 1) await Bun.sleep(options.delayMs)
+            if (index < pending.length - 1) await pauseBetweenRequests(options.delayMs, delayJitterMs)
           }
         },
         async (profileId) => {
