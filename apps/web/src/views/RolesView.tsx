@@ -231,7 +231,7 @@ export function RolesView() {
       )}
 
       {/* Action CTA */}
-      <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
         <Button variant="primary" size="lg" fullWidth onClick={pick}>
           Build My Roadmap
         </Button>

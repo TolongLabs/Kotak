@@ -589,7 +589,7 @@ export function RoadmapView() {
 
         {/* One print action per screen: the header button on desktop, this sticky bar on phones. The plan already stays on
             this device, so nothing here claims to save it. */}
-        <div className="roadmap-print-actions surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:hidden">
+        <div className="roadmap-print-actions surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:hidden">
           <Button variant="primary" size="lg" fullWidth onClick={printPlan}>
             Export as PDF
           </Button>

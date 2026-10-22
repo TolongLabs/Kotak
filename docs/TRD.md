@@ -841,7 +841,7 @@ Kotak meets WCAG 2.2 AA in light and dark themes ([#75]):
 - Screen readers announce corner names, user levels, target levels and verdicts on the radar. The radar and the readiness graph have ARIA labels and visually hidden summary tables.
 - Every control and chip has a visible focus ring and ARIA attributes ([#36]).
 - The landing page scores 95 or more for accessibility in Lighthouse ([#54]).
-- The Ask Kopi panel opens as a modal dialog that keeps focus inside and returns it on close, labels its controls, announces replies in a live region, works by keyboard and fits a phone ([#191]).
+- The Ask Kopi window opens from a bottom-right button as a non-modal dialog that keeps the page usable. It moves focus to the question box, closes on Escape and returns focus to the button. It also labels its controls, announces replies in a live region, works by keyboard and fits a phone ([#191]).
 
 Reduced motion: `prefers-reduced-motion`, or the in-app toggle, replaces the Live2D animation with static pose art and instant text, and replaces the box-opening transition with a simple fade ([#49], [#51], [#75]).
 
