@@ -37,9 +37,6 @@ export function LandingNav() {
           <a href="#data-sources" className={anchorClass}>
             Data Sources
           </a>
-          <a href="#national-view" className={anchorClass}>
-            For Government
-          </a>
           <Link to={routes.signIn} className={anchorClass}>
             Sign In
           </Link>
@@ -49,7 +46,7 @@ export function LandingNav() {
             showArrow={false}
             className="min-h-11 px-4 text-label-m"
           >
-            Start Your Check-Up
+            Start
           </LandingActionLink>
         </div>
 
@@ -79,14 +76,11 @@ export function LandingNav() {
           <a href="#data-sources" className={anchorClass} onClick={closeMenu}>
             Data Sources
           </a>
-          <a href="#national-view" className={anchorClass} onClick={closeMenu}>
-            For Government
-          </a>
           <Link to={routes.signIn} className={anchorClass} onClick={closeMenu}>
             Sign In
           </Link>
           <LandingActionLink to={routes.checkUp} variant="primary" className="w-full" onClick={closeMenu}>
-            Start Your Check-Up
+            Start
           </LandingActionLink>
         </div>
       ) : null}

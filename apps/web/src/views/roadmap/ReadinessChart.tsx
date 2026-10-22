@@ -8,21 +8,22 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
-import type { Readiness } from '../../demo/types'
-import type { ScenarioValue } from '../../components/ui/ScenarioSwitch'
+
+interface ReadinessPoint {
+  week: number
+  plan: number
+}
 
 interface ReadinessChartProps {
-  scenario: ScenarioValue
-  points: Readiness['points']
+  points: ReadinessPoint[]
   roleTitle: string
 }
 
-export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartProps) {
+export function ReadinessChart({ points, roleTitle }: ReadinessChartProps) {
   const selectedPoint = points[points.length - 1]
-  const fitKey = scenario === 'fast' ? 'fast' : 'plan'
-  const readyPoint = points.find((point) => point[fitKey] >= 80)
+  const readyPoint = points.find((point) => point.plan >= 80)
   const annotationPoint = readyPoint ?? selectedPoint
-  const annotationFit = annotationPoint?.[fitKey]
+  const annotationFit = annotationPoint?.plan
   const annotation =
     readyPoint && annotationFit !== undefined
       ? `Ready by Week ${readyPoint.week} · ${Math.round(annotationFit)}%`
@@ -30,9 +31,7 @@ export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartPr
         ? `Not Ready Yet · ${Math.round(annotationFit)}% by Week ${annotationPoint.week}`
         : 'No Readiness Estimate Yet'
   const minimumFit =
-    points.length > 0
-      ? Math.min(60, Math.floor(Math.min(...points.flatMap((point) => [point.plan, point.fast])) / 10) * 10)
-      : 60
+    points.length > 0 ? Math.min(60, Math.floor(Math.min(...points.map((point) => point.plan)) / 10) * 10) : 60
   const yTicks = [...new Set([minimumFit, 60, 70, 80, 90, 100].filter((tick) => tick >= minimumFit))]
   const xTicks = [...new Set(points.map((point) => point.week))]
 
@@ -45,7 +44,10 @@ export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartPr
         <h2 id="readiness-title" className="text-title-s text-text-primary">
           Readiness for {roleTitle}
         </h2>
-        <p className="hidden font-mono text-mono-s text-text-muted lg:block">Solid: your plan · Dashed: fast uptake</p>
+        <p className="inline-flex items-center gap-2 font-mono text-mono-s text-text-muted">
+          <span className="w-5 border-t-2 border-text-primary" aria-hidden="true" />
+          Your Plan
+        </p>
       </div>
       {points.length > 1 ? (
         <div
@@ -92,17 +94,6 @@ export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartPr
               />
               <Line
                 type="monotone"
-                dataKey="fast"
-                name="Fast Uptake"
-                stroke="var(--color-border-control)"
-                strokeWidth={2}
-                strokeDasharray="6 4"
-                dot={false}
-                activeDot={false}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
                 dataKey="plan"
                 name="Your Plan"
                 stroke="var(--color-text-primary)"
@@ -140,7 +131,6 @@ export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartPr
           No Roadmap Steps To Plot Yet.
         </p>
       )}
-      <p className="font-mono text-mono-s text-text-muted lg:hidden">Solid: your plan · Dashed: fast uptake</p>
       <div className="sr-only">
         <table>
           <caption>Estimated fit by plan week</caption>
@@ -148,7 +138,6 @@ export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartPr
             <tr>
               <th scope="col">Week</th>
               <th scope="col">Your Plan Fit</th>
-              <th scope="col">Fast Uptake Fit</th>
             </tr>
           </thead>
           <tbody>
@@ -156,7 +145,6 @@ export function ReadinessChart({ scenario, points, roleTitle }: ReadinessChartPr
               <tr key={point.week}>
                 <th scope="row">{point.week}</th>
                 <td>{point.plan}%</td>
-                <td>{point.fast}%</td>
               </tr>
             ))}
           </tbody>

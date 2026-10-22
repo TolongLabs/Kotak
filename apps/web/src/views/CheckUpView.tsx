@@ -3,17 +3,15 @@ import { useRef, useState } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { Button } from '../components/ui/Button'
-import { Checkbox } from '../components/ui/Checkbox'
 import { ChoiceCard } from '../components/ui/ChoiceCard'
 import { DatePicker } from '../components/ui/DatePicker'
 import { SearchField } from '../components/ui/SearchField'
-import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
 import { TextField } from '../components/ui/TextField'
 import { Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
 import type { BundleRoleIndexEntry } from '@kotak/shared'
-import { goals, impactAreas } from '../demo/data'
+import { goals } from '../demo/data'
 import type { Goal } from '../demo/types'
 import { useRoleIndex } from '../engine/bundle'
 import { updateGuestSession, useGuestSession } from '../session/store'
@@ -21,9 +19,32 @@ import { KopiAside } from './checkup/KopiDialogue'
 
 const stepLabels: [string, string, string, string, string] = ['Start', 'Questions', 'Radar', 'Roles', 'Plan']
 const goalIcons = { stay: Briefcase, target: Route, explore: PackageOpen }
-// The three roles the team hand-checks (#104) lead the list before anything is typed.
-const suggestedCodes = ['15-1254.00', '15-1255.00', '43-3031.00']
+// The three roles the team hand-checks (#104) plus Software Developers lead the list before anything is typed.
+const suggestedCodes = ['15-1254.00', '15-1255.00', '43-3031.00', '15-1252.00']
+const suggestedTitles: Record<string, string> = {
+  '15-1252.00': 'Software Engineer'
+}
 const maxSuggestions = 8
+
+function getRoleDisplayTitle(role: BundleRoleIndexEntry) {
+  return suggestedTitles[role.onet_code] ?? role.title
+}
+
+function getRoleCodeLine(role: BundleRoleIndexEntry) {
+  const customTitle = suggestedTitles[role.onet_code]
+  return customTitle ? `O*NET ${role.onet_code} · ${role.title}` : `O*NET ${role.onet_code}`
+}
+
+function getSuggestedRoles(roles: BundleRoleIndexEntry[]) {
+  return suggestedCodes.flatMap((code) => {
+    const role = roles.find((item) => item.onet_code === code)
+    return role ? [role] : []
+  })
+}
+
+function matchesQuery(role: BundleRoleIndexEntry, query: string) {
+  return role.title.toLocaleLowerCase().includes(query) || getRoleDisplayTitle(role).toLocaleLowerCase().includes(query)
+}
 
 function getInitialJobQuery() {
   return new URLSearchParams(window.location.search).get('job') ?? ''
@@ -35,7 +56,7 @@ function closestRoles(roles: BundleRoleIndexEntry[], query: string) {
 
   return roles
     .map((role) => {
-      const titleWords = role.title.toLocaleLowerCase().split(/[^a-z0-9]+/)
+      const titleWords = `${role.title} ${getRoleDisplayTitle(role)}`.toLocaleLowerCase().split(/[^a-z0-9]+/)
       const score = words.reduce(
         (total, word) => total + (titleWords.some((titleWord) => titleWord.startsWith(word)) ? 1 : 0),
         0
@@ -57,23 +78,17 @@ export function CheckUpView() {
   const [acceptedJob, setAcceptedJob] = useState<BundleRoleIndexEntry | null>(null)
   const [suggestionsOpen, setSuggestionsOpen] = useState(true)
   const [goalId, setGoalId] = useState<Goal['id']>('explore')
-  const [selectedImpact, setSelectedImpact] = useState<number | null>(null)
   const [hoursPerWeek, setHoursPerWeek] = useState(session.custom_weekly_hours ?? 4)
   const [startDate, setStartDate] = useState(() => new Date())
-  const [anonymousResult, setAnonymousResult] = useState(false)
 
   const normalizedQuery = jobQuery.trim().toLocaleLowerCase()
   const matchingSuggestions = normalizedQuery
-    ? roles.filter((role) => role.title.toLocaleLowerCase().includes(normalizedQuery)).slice(0, maxSuggestions)
-    : roles.filter((role) => suggestedCodes.includes(role.onet_code))
+    ? roles.filter((role) => matchesQuery(role, normalizedQuery)).slice(0, maxSuggestions)
+    : getSuggestedRoles(roles)
   const noJobMatch =
     roleIndex.status === 'ready' && normalizedQuery.length > 0 && matchingSuggestions.length === 0 && !acceptedJob
   const closeMatches = noJobMatch ? closestRoles(roles, normalizedQuery) : []
-  const noMatchSuggestions = closeMatches.length
-    ? closeMatches
-    : noJobMatch
-      ? roles.filter((role) => suggestedCodes.includes(role.onet_code))
-      : []
+  const noMatchSuggestions = closeMatches.length ? closeMatches : noJobMatch ? getSuggestedRoles(roles) : []
 
   const updateJobQuery = (value: string) => {
     setJobQuery(value)
@@ -82,7 +97,7 @@ export function CheckUpView() {
   }
 
   const acceptJob = (role: BundleRoleIndexEntry) => {
-    setJobQuery(role.title)
+    setJobQuery(getRoleDisplayTitle(role))
     setAcceptedJob(role)
     setSuggestionsOpen(false)
   }
@@ -93,7 +108,6 @@ export function CheckUpView() {
     updateGuestSession({
       role_code: acceptedJob.onet_code,
       goal: goalId,
-      impact_area: selectedImpact === null ? null : String(selectedImpact),
       custom_weekly_hours: hoursPerWeek,
       answers: Array<boolean | null>(12).fill(null),
       ticked_milestones: []
@@ -130,7 +144,7 @@ export function CheckUpView() {
                 className="max-w-full"
                 onClick={() => acceptJob(role)}
               >
-                <span className="truncate">{role.title}</span>
+                <span className="truncate">{getRoleDisplayTitle(role)}</span>
               </Button>
             ))}
           </div>
@@ -192,8 +206,8 @@ export function CheckUpView() {
                     index === 0 && 'bg-bg-panel'
                   )}
                 >
-                  <span className="w-full break-words text-label-l">{role.title}</span>
-                  <span className="font-mono text-mono-s text-text-muted">O*NET {role.onet_code}</span>
+                  <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
+                  <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
                 </button>
               </li>
             ))}
@@ -228,36 +242,6 @@ export function CheckUpView() {
         </div>
       </section>
 
-      <section className="space-y-3" aria-labelledby="impact-heading">
-        <div className="space-y-3">
-          <h2 id="impact-heading" className="text-label-l text-text-primary">
-            Where Do You Want to Make a Difference?
-          </h2>
-          <p className="text-body-s text-text-muted">Your practice projects will serve this goal.</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {impactAreas.map((area) => {
-            const selected = selectedImpact === area.sdg
-
-            return (
-              <button
-                key={area.sdg}
-                type="button"
-                aria-label={`SDG ${area.sdg}: ${area.label}`}
-                aria-pressed={selected}
-                onClick={() => setSelectedImpact(area.sdg)}
-                className={cn(
-                  'inline-flex items-center rounded-full bg-bg-default p-0.5 focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2',
-                  selected ? 'border-[1.5px] border-text-primary' : 'border border-transparent'
-                )}
-              >
-                <SdgChip goal={area.sdg} />
-              </button>
-            )
-          })}
-        </div>
-      </section>
-
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Slider
           label="Hours per Week"
@@ -270,12 +254,6 @@ export function CheckUpView() {
         />
         <DatePicker label="Plan Start Date" value={startDate} onChange={setStartDate} />
       </div>
-
-      <Checkbox
-        label="Add my anonymous result to the national view"
-        checked={anonymousResult}
-        onChange={setAnonymousResult}
-      />
 
       <div className="surface-glass sticky bottom-3 z-10 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
         <Button variant="primary" size="lg" fullWidth disabled={!acceptedJob} onClick={startQuestions}>

@@ -6,7 +6,6 @@ import type {
   ImpactArea,
   JobSuggestion,
   LandingExample,
-  NationalView,
   Readiness,
   RoadmapStep,
   Role,
@@ -396,40 +395,5 @@ export const impactAreas: ImpactArea[] = [
   { sdg: 10, label: 'Reduced Inequalities' },
   { sdg: 13, label: 'Climate Action' }
 ]
-
-export const nationalView: NationalView = {
-  title: 'Where Malaysian Workers Lag on Rising Skills',
-  intro: 'Each finished check-up stores only a job code, six skill levels and a date. No names, no answers.',
-  sample: {
-    title: 'Sample Data',
-    body: 'Real totals replace these once 10 people in a group finish a check-up.'
-  },
-  filters: {
-    occupationGroup: { label: 'Occupation Group', value: 'All Occupations' },
-    quarter: { label: 'Quarter', value: 'May 2026' }
-  },
-  gapsTitle: 'Share of Check-Ups Below the 2027 Level',
-  rows: [
-    { skill: 'Reviewing AI-Written Output', share: 64, verdict: 'rising' },
-    { skill: 'Accessibility', share: 58, verdict: 'rising' },
-    { skill: 'Data Literacy for AI Tools', share: 52, verdict: 'rising' },
-    { skill: 'Prompting and Checking AI Image Tools', share: 47, verdict: 'rising' },
-    { skill: 'Testing AI Output', share: 41, verdict: 'split' },
-    { skill: 'Contract Review With AI Drafts', share: 33, verdict: 'rising' },
-    { skill: 'Cloud Cost Control', share: 29, verdict: 'steady' },
-    { skill: 'Cybersecurity Basics', share: 26, verdict: 'rising' }
-  ],
-  howCounted: {
-    title: 'How This Is Counted',
-    steps: [
-      '1. Each check-up compares six self-reported levels with what the role needs by Oct 2027.',
-      '2. A skill counts here when someone sits below its 2027 level and its verdict is Rising or Split.',
-      '3. Totals appear only for groups of 10 or more people.'
-    ],
-    privacy: 'Stored: job code, six levels, date. Never names, emails or answers.',
-    downloadLabel: 'Download as Open Data (CSV)',
-    sampleLabel: 'Sample: 1,240 check-ups · May 2026'
-  }
-}
 
 export const noMatchSuggestions: string[] = ['Web Developer', 'Software Developer', 'UI Designer']

@@ -93,9 +93,12 @@ export function toCorners(checkup: Checkup, numbers: Map<string, number[]>): Cor
   }))
 }
 
-/** A role's outlook from its own corners for the snapshot: more Rising than Declining reads as rising. */
+/** A role's outlook from its own corners; Unknown wins when it covers at least half of them. */
 export function roleOutlook(role: BundleRole, snapshotId: SnapshotId): VerdictId {
   const statuses = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => corner.status)
+  const unknown = statuses.filter((status) => status === 'Unknown').length
+  if (unknown >= statuses.length / 2) return 'unknown'
+
   const rising = statuses.filter((status) => status === 'Rising').length
   const declining = statuses.filter((status) => status === 'Declining').length
   return rising > declining ? 'rising' : declining > rising ? 'declining' : 'steady'

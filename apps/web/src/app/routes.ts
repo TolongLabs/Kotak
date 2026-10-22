@@ -8,5 +8,5 @@ export const routes = {
   roles: '/app/roles',
   roadmap: '/app/roadmap',
   changes: '/app/changes',
-  national: '/app/national'
+  settings: '/app/settings'
 } as const

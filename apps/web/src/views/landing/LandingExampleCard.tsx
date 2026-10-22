@@ -1,3 +1,4 @@
+import { DEFAULT_SCENARIO } from '@kotak/shared'
 import type { Corner, Scenario, SourceRef } from '../../demo/types'
 import { LevelMeter } from '../../components/kotak/LevelMeter'
 import { Reasoning } from '../../components/kotak/Reasoning'
@@ -19,7 +20,7 @@ export function LandingExampleCard({
   corner,
   sources,
   paused = false,
-  scenario = 'slow',
+  scenario = DEFAULT_SCENARIO,
   neededLabel = 'Needed by 2027',
   className
 }: LandingExampleCardProps) {

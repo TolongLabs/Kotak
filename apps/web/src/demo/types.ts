@@ -115,12 +115,6 @@ export type StatTile = {
   progress?: { label: string; value: string }
 }
 
-export type NationalRow = {
-  skill: string
-  share: number
-  verdict: VerdictId
-}
-
 export type DividendNote = {
   title: string
   body: string
@@ -146,23 +140,4 @@ export type Readiness = {
   xLabels: string[]
   // Fit % by plan week: plan is your plan, fast is the fast-uptake scenario.
   points: { week: number; plan: number; fast: number }[]
-}
-
-export type NationalView = {
-  title: string
-  intro: string
-  sample: { title: string; body: string }
-  filters: {
-    occupationGroup: { label: string; value: string }
-    quarter: { label: string; value: string }
-  }
-  gapsTitle: string
-  rows: NationalRow[]
-  howCounted: {
-    title: string
-    steps: string[]
-    privacy: string
-    downloadLabel: string
-    sampleLabel: string
-  }
 }

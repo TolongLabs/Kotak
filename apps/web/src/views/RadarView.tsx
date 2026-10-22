@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { DEFAULT_SCENARIO } from '@kotak/shared'
+import { Info } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
@@ -8,10 +10,10 @@ import { SourceReference } from '../components/kotak/SourceReference'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { ScenarioSwitch } from '../components/ui/ScenarioSwitch'
 import { Stepper } from '../components/ui/Stepper'
+import { Tooltip } from '../components/ui/Tooltip'
 import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
-import { useCheckup, type Checkup } from '../engine/checkup'
+import { computeCheckup, type Checkup } from '../engine/checkup'
 import { useRoleBundle } from '../engine/bundle'
 import { useGuestSession } from '../session/store'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
@@ -48,10 +50,26 @@ function RadarCatDialogue({ pose, speech }: { pose: 'explaining' | 'worried'; sp
 }
 
 export function RadarView() {
-  const [scenario, setScenario] = useState<Scenario>('slow')
   const session = useGuestSession()
-  const loaded = useCheckup({ scenario })
   const bundle = useRoleBundle(session.role_code)
+  const roleData = bundle.status === 'ready' ? bundle.data : null
+  const [today] = useState(() => new Date().toISOString().slice(0, 10))
+  const checkup = useMemo(
+    () =>
+      roleData
+        ? computeCheckup({
+            role: roleData.role,
+            related: roleData.related,
+            answers: session.answers,
+            snapshotId: '2026-05',
+            scenario: DEFAULT_SCENARIO,
+            weeklyHours: session.custom_weekly_hours,
+            startDate: today
+          })
+        : null,
+    [roleData, session.answers, session.custom_weekly_hours, today]
+  )
+  const scenario = DEFAULT_SCENARIO
   // Explanations come from the AI route (#43). Until it exists, ?ai=off shows the paused state for demos.
   const [explanationsPaused, setExplanationsPaused] = useState(
     () => new URLSearchParams(window.location.search).get('ai') === 'off'
@@ -77,12 +95,12 @@ export function RadarView() {
     )
   }
 
-  if (loaded.status !== 'ready' || bundle.status !== 'ready') {
+  if (bundle.status !== 'ready' || !checkup) {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
         <h1 className="sr-only">Future Skills Radar</h1>
         <Stepper step={3} labels={stepLabels} />
-        {loaded.status === 'error' || bundle.status === 'error' ? (
+        {bundle.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         ) : (
           <CatDialogue pose="thinking" speech="Opening the box on your job…" />
@@ -91,7 +109,6 @@ export function RadarView() {
     )
   }
 
-  const { checkup } = loaded.data
   const { role, related } = bundle.data
   const { sources, numbers } = sourceRefs(checkup)
   const corners = toCorners(checkup, numbers)
@@ -197,7 +214,19 @@ export function RadarView() {
 
       <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">
-          {role.title}, {neededLabel.replace(/^Needed by /, '')}
+          {role.title}, {neededLabel}
+          <Tooltip
+            content="The needed level is an estimate from AI-use and job-ad trends 12 months ahead."
+            className="[&_[role=tooltip]]:left-auto [&_[role=tooltip]]:right-0 [&_[role=tooltip]]:translate-x-0 [&_[role=tooltip]]:max-w-[calc(100vw-3rem)] [&_[role=tooltip]]:whitespace-normal [&_[role=tooltip]]:text-left"
+          >
+            <button
+              type="button"
+              aria-label="About Needed By"
+              className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-bg-panel hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+            >
+              <Info className="h-4 w-4 stroke-current" aria-hidden="true" />
+            </button>
+          </Tooltip>
         </h1>
         <p className="text-body-s text-text-muted">
           Where the job is heading, and where you stand. Targets and dates are estimates; every verdict comes from fixed
@@ -207,9 +236,6 @@ export function RadarView() {
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-8">
         <section className="space-y-4 lg:sticky lg:top-24 lg:self-start" aria-label="Future Skills Radar">
-          <div className="flex justify-center">
-            <ScenarioSwitch value={scenario} onChange={setScenario} aria-label="AI Uptake Scenario" />
-          </div>
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
           <Banner
             type="info"

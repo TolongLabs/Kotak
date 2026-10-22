@@ -8,9 +8,10 @@ export interface RoadmapStepCardProps {
   step: RoadmapStep
   index: number
   last: boolean
+  highlighted?: boolean
 }
 
-export function RoadmapStepCard({ step, index, last }: RoadmapStepCardProps) {
+export function RoadmapStepCard({ step, index, last, highlighted = false }: RoadmapStepCardProps) {
   const cardBorder = step.conditional
     ? 'border-[1.5px] border-dashed border-border-control bg-bg-panel'
     : step.state === 'next'
@@ -37,7 +38,9 @@ export function RoadmapStepCard({ step, index, last }: RoadmapStepCardProps) {
 
       <article
         aria-labelledby={`roadmap-step-${step.id}`}
-        className={`min-w-0 flex-1 space-y-2 rounded-md p-4 ${cardBorder}`}
+        className={`min-w-0 flex-1 space-y-2 rounded-md p-4 ${cardBorder} ${
+          highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
+        }`}
       >
         <p className="font-mono text-mono-s text-text-muted">{step.when}</p>
         <h3 id={`roadmap-step-${step.id}`} className="text-title-s text-text-primary">

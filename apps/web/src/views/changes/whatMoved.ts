@@ -25,59 +25,68 @@ function formatStorySource(sources: CornerDiffItem['sources']['after']): string 
   let dateText = primary.vintage_date
   const date = new Date(primary.vintage_date)
   if (!isNaN(date.getTime())) {
-    const month = date.getUTCMonth()
-    const year = date.getUTCFullYear()
-    if (title === 'DOSM') {
-      const q = Math.floor(month / 3) + 1
-      dateText = `Q${q} ${year}`
-    } else {
-      dateText = date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })
-    }
+    dateText = date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
   }
-  return `New data · ${title}${title === 'DOSM' ? ` ${dateText}` : `, ${dateText}`}`
+  return `May data · ${title}, ${dateText}`
 }
 
-function storyWhyFor(item: CornerDiffItem, afterCheckup: Checkup | undefined, citations: number[]): string {
-  const corner = afterCheckup?.corners.find((c) => c.corner_id === item.corner_id)
-  const citationStr = citations.map((n) => `[${n}]`).join(' ')
+function citationSuffix(citations: number[]) {
+  return citations.map((number) => `[${number}]`).join(' ')
+}
 
-  if (!corner) {
-    const details: string[] = []
-    if (item.changes.includes('verdict')) {
-      details.push(`the verdict changed from ${item.before.label} to ${item.after.label}`)
+function splitReasoning(corner: Checkup['corners'][number]) {
+  const [first, second] = corner.verdict.futures
+  if (!first || !second) return ''
+
+  if (corner.verdict.reason === 'scenarios_disagree') {
+    const observed = corner.verdict.futures.find((future) => future.scenario === 'slow')
+    const faster = corner.verdict.futures.find((future) => future.scenario === 'fast')
+    if (observed && faster) {
+      return `At the observed AI-use pace, this points to ${observed.status}; with faster uptake, it points to ${faster.status}.`
     }
-    if (item.changes.includes('target')) {
-      details.push(`the estimated target moved from about ${item.before.target} to about ${item.after.target}`)
-    }
-    if (item.changes.includes('ai_use')) details.push('the latest AI-use reading or projection changed')
-    if (item.changes.includes('roadmap')) {
-      details.push(
-        `the suggested roadmap position moved from ${item.before.roadmap_rank ?? 'not planned'} to ${item.after.roadmap_rank ?? 'not planned'}`
-      )
-    }
-    return `Between snapshots, ${details.join(' and ')}.${citationStr ? ` ${citationStr}` : ''}`
   }
 
-  const scenario = afterCheckup?.scenario ?? 'slow'
-  const outcome = corner.verdict.scenarios[scenario]
-  const c1 = citations[0] ? ` [${citations[0]}]` : ''
-  const c2 = citations[1] ? ` [${citations[1]}]` : c1
+  const firstSource = first.demand_source?.source_name ?? 'One source'
+  const secondSource = second.demand_source?.source_name ?? 'Another source'
+  return `The sources disagree: ${firstSource} points to ${first.status}, while ${secondSource} points to ${second.status}.`
+}
 
-  const name = item.name.toLowerCase()
-  if (outcome.collaboration_mode === 'augmentation') {
-    const demandPart = outcome.demand === 'flat' ? `demand held up${c1}` : `demand rose${c1}`
-    return `More ${name} work now runs through AI tools${c2}, and ${demandPart}.`
+function storyWhyFor(
+  item: CornerDiffItem,
+  beforeCheckup: Checkup | undefined,
+  afterCheckup: Checkup | undefined,
+  beforeCitations: number[],
+  afterCitations: number[]
+): string {
+  const details: string[] = []
+  const beforeRefs = citationSuffix(beforeCitations)
+  const afterRefs = citationSuffix(afterCitations)
+
+  if (item.changes.includes('verdict')) {
+    details.push(
+      `April's verdict was ${item.before.label}${beforeRefs}, and May's verdict is ${item.after.label}${afterRefs}.`
+    )
+  }
+  if (item.changes.includes('target')) {
+    details.push(
+      `The estimated target moved from about ${item.before.target} in April${beforeRefs} to about ${item.after.target} in May${afterRefs}.`
+    )
+  }
+  if (item.changes.includes('ai_use')) {
+    details.push(`The AI-use reading or its projection changed between April${beforeRefs} and May${afterRefs}.`)
+  }
+  if (item.changes.includes('roadmap')) {
+    details.push(
+      `The roadmap position moved from ${item.before.roadmap_rank ?? 'not planned'} in April${beforeRefs} to ${item.after.roadmap_rank ?? 'not planned'} in May${afterRefs}.`
+    )
   }
 
-  if (outcome.demand === 'up') {
-    return `Job ads asking for ${name} rose in Q3${c1}, and AI use in ${name} kept climbing${c2}.`
-  }
+  const splitCheckup =
+    item.after.label === 'Split' ? afterCheckup : item.before.label === 'Split' ? beforeCheckup : undefined
+  const splitCorner = splitCheckup?.corners.find((corner) => corner.corner_id === item.corner_id)
+  if (splitCorner) details.push(splitReasoning(splitCorner))
 
-  if (outcome.demand === 'flat') {
-    return `Demand for ${name} held up${c1}, while AI use kept climbing${c2}.`
-  }
-
-  return `Job ads and AI use signals moved for ${name}.${citationStr ? ` ${citationStr}` : ''}`
+  return details.join(' ') || 'The skill data changed between April and May.'
 }
 
 function storyEffectFor(
@@ -125,18 +134,25 @@ export function whatChangedItems(
   afterCheckup?: Checkup
 ): ChangeItem[] {
   return diff.corners.map((item) => {
-    const rawCitations = [
-      ...item.sources.before.map((source) => sourceNumber(source, beforeSources)),
-      ...item.sources.after.map((source) => sourceNumber(source, afterSources, afterOffset))
-    ].filter((n): n is number => n !== null)
-    const citations = [...new Set(rawCitations)]
+    const beforeCitations = [
+      ...new Set(
+        item.sources.before.map((source) => sourceNumber(source, beforeSources)).filter((n): n is number => n !== null)
+      )
+    ]
+    const afterCitations = [
+      ...new Set(
+        item.sources.after
+          .map((source) => sourceNumber(source, afterSources, afterOffset))
+          .filter((n): n is number => n !== null)
+      )
+    ]
 
     return {
       source: formatStorySource(item.sources.after),
       skill: item.name,
       from: verdictId(item.before.status),
       to: verdictId(item.after.status),
-      why: storyWhyFor(item, afterCheckup, citations),
+      why: storyWhyFor(item, beforeCheckup, afterCheckup, beforeCitations, afterCitations),
       effect: storyEffectFor(item, role, beforeCheckup, afterCheckup)
     }
   })

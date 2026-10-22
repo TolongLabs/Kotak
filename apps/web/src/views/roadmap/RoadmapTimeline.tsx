@@ -6,6 +6,7 @@ interface RoadmapTimelineProps {
   steps: RoadmapStep[]
   startDate: Date
   today: Date
+  impactArea: number | null
 }
 
 function formatMonth(date: Date) {
@@ -86,7 +87,15 @@ function WeekLines({ totalWeeks, className = 'absolute inset-0' }: { totalWeeks:
   )
 }
 
-function TimelineBar({ step, totalWeeks }: { step: RoadmapStep; totalWeeks: number }) {
+function TimelineBar({
+  step,
+  totalWeeks,
+  highlighted
+}: {
+  step: RoadmapStep
+  totalWeeks: number
+  highlighted: boolean
+}) {
   const start = getStepStart(step, totalWeeks)
   const width = getStepWidth(step, totalWeeks)
   const label = `${step.hoursPerWeek} h/wk · ${step.title}`
@@ -100,7 +109,7 @@ function TimelineBar({ step, totalWeeks }: { step: RoadmapStep; totalWeeks: numb
           : step.state === 'next'
             ? 'on-accent border-text-primary bg-accent-box'
             : 'border-text-primary bg-radar-you-fill'
-      }`}
+      } ${highlighted ? 'ring-2 ring-offset-1 ring-offset-bg-default ring-text-primary' : ''}`}
       style={{ left: `${start}%`, width: `${width}%` }}
     >
       <span className="truncate">{label}</span>
@@ -152,7 +161,7 @@ function TodayMarker({
   )
 }
 
-export function RoadmapTimeline({ steps, startDate, today }: RoadmapTimelineProps) {
+export function RoadmapTimeline({ steps, startDate, today, impactArea }: RoadmapTimelineProps) {
   const totalWeeks = Math.max(1, ...steps.map((step) => step.weeks[1]))
   const weeksPerMonth = Math.ceil(totalWeeks / 3)
   const monthCount = Math.ceil(totalWeeks / weeksPerMonth)
@@ -186,7 +195,11 @@ export function RoadmapTimeline({ steps, startDate, today }: RoadmapTimelineProp
                     label={index === steps.length - 1}
                     lineClassName={index === 0 ? '-top-4 bottom-0' : 'inset-y-0'}
                   />
-                  <TimelineBar step={step} totalWeeks={totalWeeks} />
+                  <TimelineBar
+                    step={step}
+                    totalWeeks={totalWeeks}
+                    highlighted={impactArea !== null && step.sdgs.includes(impactArea)}
+                  />
                 </div>
               </Fragment>
             ))}
@@ -204,7 +217,11 @@ export function RoadmapTimeline({ steps, startDate, today }: RoadmapTimelineProp
                   <div key={step.id} className="space-y-1">
                     <StepLabel step={step} />
                     <div className="relative h-7">
-                      <TimelineBar step={step} totalWeeks={totalWeeks} />
+                      <TimelineBar
+                        step={step}
+                        totalWeeks={totalWeeks}
+                        highlighted={impactArea !== null && step.sdgs.includes(impactArea)}
+                      />
                     </div>
                   </div>
                 ))}

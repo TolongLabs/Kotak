@@ -20,7 +20,7 @@ export function Reasoning({ text, paused = false }: ReasoningProps) {
       <p className="font-mono text-mono-s text-text-muted">
         {paused
           ? 'Fixed rules set this verdict from the sources below.'
-          : 'Fixed rules set the verdict. Claude wrote these two sentences from the cited rows only.'}
+          : 'Fixed rules set the verdict. This summary is built from the cited inputs.'}
       </p>
     </section>
   )

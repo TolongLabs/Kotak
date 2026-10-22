@@ -64,13 +64,6 @@ const sourcesData = [
   }
 ]
 
-const nationalSampleBars = [
-  { name: 'Reviewing AI-Written Output', percentage: 64 },
-  { name: 'Accessibility', percentage: 58 },
-  { name: 'Data Literacy for AI Tools', percentage: 52 },
-  { name: 'Testing AI Output', percentage: 41 }
-]
-
 const faqItems: AccordionItem[] = [
   {
     id: 'verdicts',
@@ -87,8 +80,7 @@ const faqItems: AccordionItem[] = [
   {
     id: 'privacy',
     question: 'What Do You Store About Me?',
-    answer:
-      'Each opt-in check-up adds an anonymous job code, six skill levels and a date. The National View shows grouped patterns.'
+    answer: 'Your check-up stays on your device. No account or personal details are needed for the pilot.'
   },
   {
     id: 'cat',
@@ -143,62 +135,9 @@ function SourcesSection() {
             </article>
           ))}
         </div>
-      </div>
-    </section>
-  )
-}
-
-function NationalViewSection() {
-  return (
-    <section id="national-view" className="bg-bg-panel px-6 py-16 lg:px-[120px] lg:py-24">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-16">
-        <div className="flex min-w-0 flex-col items-start gap-5">
-          <p className="font-mono text-mono-s text-text-muted">For TalentCorp, HRD Corp and MOHE</p>
-          <h2 className="text-balance font-extrabold text-display text-text-primary lg:text-display-l">
-            A Live, Anonymous View of the Skills Gap.
-          </h2>
-          <p className="text-body-m text-text-muted lg:text-body-l">
-            Each check-up that opts in adds an anonymous job code, six skill levels and a date. Totals show only for
-            groups of 10 or more.
-          </p>
-          <LandingActionLink to={routes.national} variant="secondary" showArrow className="w-full sm:w-auto">
-            See the National View
-          </LandingActionLink>
-        </div>
-
-        {/* Mini view card matching Figma */}
-        <section
-          aria-labelledby="mini-view-title"
-          className="flex min-w-0 flex-col gap-3 rounded-md border border-border-subtle bg-bg-default p-4 lg:w-[460px] lg:gap-3 lg:p-6"
-        >
-          <h3 id="mini-view-title" className="text-label-m text-text-primary">
-            Rising Skills Malaysians Lack Most · Sample
-          </h3>
-
-          <div className="flex flex-col gap-3">
-            {nationalSampleBars.map((bar) => (
-              <div key={bar.name} className="flex flex-col gap-1">
-                <span className="text-label-s text-text-primary">{bar.name}</span>
-                <div
-                  className="h-2.5 w-full overflow-hidden rounded-full border border-border-subtle bg-bg-panel"
-                  role="progressbar"
-                  aria-valuenow={bar.percentage}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={`${bar.name}: ${bar.percentage}% of check-ups below target`}
-                >
-                  <div
-                    className="h-full rounded-full bg-text-primary transition-[width] duration-200 ease-out"
-                    style={{ width: `${bar.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Preserved cited evidence figures for screen readers and research citations [1], [2], [3] */}
-        <div className="sr-only" aria-label="Cited national evidence figures">
+        <div className="sr-only" aria-label="Cited evidence figures">
           {evidenceStats.map((stat) => (
             <article key={stat.citation}>
               <h4>
@@ -251,7 +190,6 @@ export function LandingEvidence() {
   return (
     <>
       <SourcesSection />
-      <NationalViewSection />
       <StartAndFaqSection />
     </>
   )
@@ -279,11 +217,6 @@ export function LandingFooter() {
                 <li>
                   <a className="text-body-s text-text-muted hover:text-text-primary" href="#how-it-works">
                     How It Works
-                  </a>
-                </li>
-                <li>
-                  <a className="text-body-s text-text-muted hover:text-text-primary" href="#national-view">
-                    National View
                   </a>
                 </li>
                 <li>

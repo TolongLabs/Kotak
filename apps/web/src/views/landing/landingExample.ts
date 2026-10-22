@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import type { BundleRole } from '@kotak/shared'
+import { DEFAULT_SCENARIO, type BundleRole } from '@kotak/shared'
 import { computeCheckup, type Checkup } from '../../engine/checkup'
 import { useRoleBundle, type Loaded } from '../../engine/bundle'
 import { sourceRefs, toCorners } from '../../engine/viewModel'
@@ -53,7 +53,7 @@ export function useLandingExample(): Loaded<LandingExample> {
       related,
       answers,
       snapshotId: '2026-05',
-      scenario: 'slow',
+      scenario: DEFAULT_SCENARIO,
       weeklyHours: 3,
       startDate: today
     })
