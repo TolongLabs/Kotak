@@ -21,7 +21,10 @@ export interface KopiStage {
   destroy: () => void
 }
 
-type ModelSettings = { url: string; FileReferences: { Moc: string; Motions?: Record<string, unknown> } }
+type ModelSettings = {
+  url: string
+  FileReferences: { Moc: string; Textures?: string[]; Motions?: Record<string, unknown> }
+}
 
 // Checking the settings file first means a missing model costs one small request, not the whole Live2D stack.
 let settingsRequest: Promise<ModelSettings | null> | undefined
@@ -49,6 +52,26 @@ function loadCubismCore() {
     document.head.append(script)
   })
   return coreRequest
+}
+
+// Network only: warms Cubism Core and the model's files while Kopi's ASCII entrance plays, so the mount after it (whose
+// parsing and WebGL setup would stutter the animation) has less to wait for.
+let prefetched = false
+export function prefetchKopiStage() {
+  if (prefetched) return
+  prefetched = true
+  const preload = Object.assign(document.createElement('link'), { rel: 'preload', as: 'script', href: CUBISM_CORE_URL })
+  document.head.append(preload)
+  void loadSettings().then((settings) => {
+    if (!settings) return
+    const base = new URL(settings.url, window.location.href)
+    for (const file of [settings.FileReferences.Moc, ...(settings.FileReferences.Textures ?? [])]) {
+      // Reading the body lets the download finish into the HTTP cache.
+      void fetch(new URL(file, base))
+        .then((response) => response.arrayBuffer())
+        .catch(() => undefined)
+    }
+  })
 }
 
 function motionGroup(pose: KopiPose) {
