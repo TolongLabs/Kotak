@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { DEFAULT_SCENARIO } from '@kotak/shared'
-import { AiDraftedBanner } from '../components/kotak/AiDraftedBanner'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
@@ -112,8 +111,6 @@ export function RolesView() {
       <Stepper step={4} labels={checkUpSteps} />
 
       <CatDialogue pose="explaining" speech={speech} />
-
-      {role.quality === 'auto-generated' && <AiDraftedBanner roleCode={role.onet_code} />}
 
       <header className="flex flex-col gap-1.5">
         <h1 className="text-title-m font-bold text-text-primary lg:text-title-l">{heading}</h1>

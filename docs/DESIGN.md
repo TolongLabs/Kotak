@@ -118,16 +118,16 @@ The smallest text is 12 px.
 
 - Spacing sits on a 4 px grid: 4, 8, 12, 16, 24, 32, 48 and 64 (`space/1` to `space/16`).
 - Radius: `radius/sm` (6) for controls, `radius/md` (12) for cards and the speech box, `radius/full` for chips, pills and the phone top bar. The landing's large showcase cards use a 24 px radius.
-- Use borders, not shadows. Cards get a 1 px `color/border/subtle` line. Only popovers get `Elevation/Popover`: 0 8 24, ink at 12%. Popovers are menus, the date picker and tooltips.
+- Use borders, not shadows. Cards get a 1 px `color/border/subtle` line. Only popovers get `Elevation/Popover`: 0 8 24, ink at 12%. Popovers are menus, the date picker, tooltips and the data chip's About This Data.
 - Kopi's speech box has a 2 px ink frame, like a game dialogue.
 
 ## Layout
 
 - Phone frames are 390 px wide with 24 px side padding. Desktop frames are 1440 px wide.
 - The desktop app shell has a 256 px sidebar (72 px collapsed) and a main column with 48 px padding, so content is 1088 px wide.
-- The top bar is a glass island that stays at the top of the main column. It has no sound button; the mute button lives in Kopi's speech box.
+- The top bar is a glass island that stays at the top of the main column. It has no sound button; the mute button lives in Kopi's speech box. Its data chip opens About This Data, which names the snapshot and says whether each role's skills are AI-drafted or hand-checked; a dot on the chip marks AI-drafted skills. Pages carry no inline AI-drafted notice.
 - Columns are symmetrical. Two columns are 532 + 24 + 532 px, three are equal thirds and the four stat cards are equal quarters. Cards in one row share one height.
-- Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the AI-Drafted Skills banner, the page header, then the content. The Dashboard opens with its greeting and the banner, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
+- Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the page header, then the content. The Dashboard opens with its greeting, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
 - Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar and What Changed pages and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
 - Questions and the loading, error and AI Unavailable states centre a single column. Every other app page, Check-Up Start and No Job Match included, uses the full content width.
 

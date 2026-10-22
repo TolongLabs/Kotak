@@ -3,7 +3,6 @@ import { Info } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
-import { AiDraftedBanner } from '../components/kotak/AiDraftedBanner'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
@@ -225,7 +224,6 @@ export function RadarView() {
           title="Explanations Are Paused"
           body="We couldn't reach the AI. Your verdicts, roles and plan still work."
         />
-        {role.quality === 'auto-generated' && <AiDraftedBanner roleCode={role.onet_code} />}
         <CatDialogue
           pose="worried"
           speech="The AI is resting. Your verdicts still stand. I’ll explain them when it’s back."
@@ -253,8 +251,6 @@ export function RadarView() {
       <Stepper step={3} labels={checkUpSteps} />
 
       <CatDialogue pose="explaining" speech={speech} />
-
-      {role.quality === 'auto-generated' && <AiDraftedBanner roleCode={role.onet_code} />}
 
       <header className="space-y-1.5">
         <div className="flex items-start gap-1">
