@@ -1,4 +1,5 @@
 import { EngineSnapshotSchema, sampleSnapshot } from '@kotak/shared'
+import { Logo } from './components/brand/Logo'
 import { Gallery } from './dev/Gallery'
 
 const snapshot = EngineSnapshotSchema.parse(sampleSnapshot)
@@ -8,7 +9,9 @@ export function App() {
 
   return (
     <main data-snapshot-id={snapshot.snapshot_id}>
-      <h1>Kotak</h1>
+      <h1>
+        <Logo />
+      </h1>
     </main>
   )
 }
