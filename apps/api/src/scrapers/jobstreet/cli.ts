@@ -19,6 +19,7 @@ try {
       'max-jobs': { type: 'string' },
       'delay-ms': { type: 'string', default: '2000' },
       retries: { type: 'string', default: '2' },
+      'verification-timeout-ms': { type: 'string', default: '120000' },
       sort: { type: 'string' },
       help: { type: 'boolean', short: 'h' }
     },
@@ -36,6 +37,7 @@ try {
   --max-jobs N     Maximum unique jobs (1–1000; default 20 breadth, 100 depth)
   --delay-ms N     Delay between pages/jobs (minimum/default 2000)
   --retries N      Transient navigation retries (0–3, default 2)
+  --verification-timeout-ms N  Wait for verification (0–600000, default 120000); complete any checkbox in the Kameleo window
   --sort MODE      Breadth view: newest, title, company, location, job-id, scraped-at
   --output PATH    New directory (default data/jobstreet/[depth/]<timestamp>-<suffix>)
   KAMELEO_ENDPOINT defaults to http://localhost:5050`)
@@ -61,7 +63,8 @@ try {
         ),
       maxJobs: Number(values['max-jobs'] ?? (mode === 'depth' ? '100' : '20')),
       delayMs: Number(values['delay-ms']),
-      maxRetries: Number(values.retries)
+      maxRetries: Number(values.retries),
+      verificationTimeoutMs: Number(values['verification-timeout-ms'])
     }
     if (mode === 'depth') {
       const report = await scrapeJobstreetDepth({

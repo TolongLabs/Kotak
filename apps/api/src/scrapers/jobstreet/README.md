@@ -11,6 +11,7 @@ Contents:
 1.  [Observation dates and trend tracking](#observation-dates-and-trend-tracking)
 1.  [Sorting rules](#sorting-rules)
 1.  [Output](#output)
+1.  [Waiting for verification](#waiting-for-verification)
 1.  [Reliability and failure handling](#reliability-and-failure-handling)
 1.  [Verification](#verification)
 1.  [Implementation](#implementation)
@@ -99,7 +100,7 @@ Every prepared collection now includes full `observations.jsonl` history and a `
 
 To study a career field, compare new job IDs and recurring sightings over time using the same query, filters, page/job limits and collection schedule. Repeated sightings indicate continued visibility, while new IDs help distinguish fresh advertisements from long-running ones. Neither metric alone proves that employers are hiring more people. Job IDs do not map automatically to standardized career fields, and reposts can receive new IDs.
 
-**Missing from a scrape does not mean closed.** An ad can move beyond the collected pages or job limit. Retain run reports: `stop_reason` records `job_limit`, `page_limit`, `no_next_page` or `error`. Failed or empty unverified runs must not be counted as zero demand. No automatic closed/expired status or disappearance date is inferred by this pipeline.
+**Missing from a scrape does not mean closed.** An ad can move beyond the collected pages or job limit. Retain run reports: breadth `stop_reason` records `job_limit`, `page_limit`, `no_next_page`, `verification_timeout` or `error`. Failed or empty unverified runs must not be counted as zero demand. No automatic closed/expired status or disappearance date is inferred by this pipeline.
 
 **Closing dates are optional depth metadata.** Search cards do not supply a closing date. Depth reads `validThrough` only from matching job metadata; the two live detail pages inspected did not expose it, so their value is `null`. Unrelated banner dates are ignored. Source dates preserve their timezone and date-only precision; observation timestamps use UTC. A published deadline does not prove an ad remained open until that date: SEEK supports early closure ([SEEK closure documentation](https://developer.seek.com/use-cases/job-posting/managing-job-ads/closing-a-job-ad)).
 
@@ -139,18 +140,31 @@ The default breadth destination is `data/jobstreet/<timestamp>-<suffix>/`; depth
 - `details.jsonl`: depth's newly requested detail observations, including unavailable and failed attempts. Cached descriptions are not appended again.
 - `jobs.enriched.jsonl`: depth's unified view of latest breadth rows, latest successful descriptions and later failure/unavailability evidence, with `fetched`, `reused`, `unavailable`, `failed` or `not_fetched` status. A status describes this run's fetch/reuse result, not current vacancy availability.
 - `job-ID.html` and `job-ID.png`: depth browser evidence for each requested listing.
+- `page-N-verification.html` / `.png` and `job-ID-verification.html` / `.png`: evidence saved when verification is first detected, before waiting.
 
 Breadth and prepare reports carry `schema_version: 2`; depth reports start at version 1 with `mode: depth`, selected/requested/reused counts, input/cache paths and refresh settings. Legacy breadth captures remain readable. Merging preserves observation history but does not provide automatic synchronization between machines.
+
+## Waiting for verification
+
+Both modes recognize Cloudflare's `cf-mitigated: challenge` header and known verification-page markers. The scraper keeps the same Kameleo browser open and waits up to **120 seconds** for verification to clear. If a checkbox appears, complete it in that Kameleo browser window; the scraper activates the tab and prints the target URL, with the run's profile ID in `run.json`. Checkbox completion is a manual step. Collection resumes automatically after a new top-level page response replaces the challenge.
+
+```sh
+bun run scrape:jobstreet --max-pages 3 --max-jobs 90 --verification-timeout-ms 300000
+```
+
+`--verification-timeout-ms` accepts 0–600000; zero disables waiting. Waiting does not reload the challenge, rotate profiles or consume transient-navigation retries. An ordinary HTTP 403 without verification markers, HTTP 401 and HTTP 429 still stop immediately. An unresolved challenge stops with `stop_reason: verification_timeout`, preserves partial data and exits with code 1. The owned profile is cleaned up after the wait ends.
+
+Each affected navigation entry in `run.json` includes `verification`: its `waiting`, `cleared`, `denied`, `timed_out` or `interrupted` status, start/finish times, configured timeout, initial/final HTTP status and Cloudflare Ray ID when supplied. `denied` means verification led to another access-denied response; `interrupted` records an error such as the browser closing during the wait. Successful iframe requests and intermediate redirects do not count as clearance. After clearance, the final page must still pass normal URL and content validation.
 
 ## Reliability and failure handling
 
 Runs are bounded to 50 search pages and 1,000 unique jobs, with at least two seconds between pages or detail requests. Small defaults remain one page/20 jobs for breadth and 100 jobs for depth. `--retries` permits zero to three additional navigation attempts, default two. Only navigation timeouts, selected connection failures and HTTP 500/502/503/504 responses are retried, with exponential waits starting at `--delay-ms`. Profile creation and other SDK mutations are not automatically retried.
 
-HTTP 401/403/429 responses stop the run. Missing card selectors, an entirely invalid page, repeated pagination URLs, repeated sets of page IDs and off-domain pagination also fail. Challenge pages are never counted as successful scrapes. Search URLs drop fragments, `tracking` and `utm_*` parameters and sort the remaining parameters; search filters are preserved.
+HTTP 401/429 and ordinary HTTP 403 responses stop the run; recognized verification pages get the bounded wait described above. Missing card selectors, an entirely invalid page, repeated pagination URLs, repeated sets of page IDs and off-domain pagination also fail. Challenge pages are never counted as successful scrapes. Search URLs drop fragments, `tracking`, `utm_*` and temporary `__cf_chl_*` parameters and sort the remaining parameters; search filters are preserved.
 
 A malformed card is quarantined while valid cards continue. Success requires at least one saved job and successful profile cleanup; it can still have rejected records, so inspect report counts. An entirely invalid offline input fails with exit code 1. Reports and sorted views use temporary files followed by rename. Raw observations are appended as accepted, preserving earlier results when a later page fails.
 
-Depth continues after individual detail failures, retaining successful records and a `partial` report. Partial and failed depth runs exit with code 1. Blocks stop the run immediately. Cache-only runs need no Kameleo connection. Both modes run independently of Hono and Cloudflare Workers and do not feed the app's scoring engine.
+Depth continues after individual detail failures, retaining successful records and a `partial` report. Partial and failed depth runs exit with code 1. Access denials and verification timeouts stop the run. Cache-only runs need no Kameleo connection. Both modes run independently of Hono and Cloudflare Workers and do not feed the app's scoring engine.
 
 ## Verification
 
@@ -166,6 +180,7 @@ Browser-backed depth integration checks are opt-in and require the Engine. They 
 ```powershell
 $env:KAMELEO_INTEGRATION = '1'
 bun test apps/api/src/scrapers/jobstreet/depth.integration.test.ts
+bun test apps/api/src/scrapers/jobstreet/verification.integration.test.ts
 ```
 
 Live tests saved 35 unique breadth jobs across two pages and fetched three full job descriptions. A subsequent depth run reused two descriptions automatically while fetching one new ID. Merging two existing captures produces a latest view of 35 unique jobs while preserving all 40 distinct observations. Browser artifacts stay local and Git-ignored. Reproduce a bounded live check with `bun run scrape:jobstreet --max-jobs 5`, followed by depth against that capture.
@@ -176,13 +191,13 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 - `kameleo.ts`: SDK readiness, fingerprint selection, owned profile lifecycle and Playwright connection.
 - `pipeline.ts`: bounded navigation, retries, card validation, pagination checks and persisted artifacts.
 - `depth.ts`: description extraction, cache reuse, dated detail attempts and the unified enriched view.
-- `browser.ts`: shared navigation retries and browser evidence.
+- `browser.ts`: shared navigation retries, bounded verification waiting and browser evidence.
 - `inputs.ts`: shared validated breadth-file reading.
 - `records.ts`: record validation, URL normalization, recency estimates, duplicate winner selection and sorting.
 - `prepare.ts`, `prepare-cli.ts`: offline contributor-file merge, retained observation history and date summaries.
 - `files.ts`: exclusive output directories and report/view replacement.
 
-No public API route launches browsers. The existing backend currently serves only `/api/health` and `/api/sample`; database ingestion is outside this scraper.
+No public API route launches browsers. Scraper database ingestion and integration with the app's scoring engine remain outside this pipeline.
 
 ## References
 
@@ -192,5 +207,6 @@ No public API route launches browsers. The existing backend currently serves onl
 - [Kameleo usage limits](https://developer.kameleo.io/reference/usage-limits/)
 - [Playwright CDP connection](https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp)
 - [Playwright navigation](https://playwright.dev/docs/api/class-page#page-goto)
+- [Cloudflare challenge response detection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/detect-response/)
 - [Node file operations](https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath)
 - [JobStreet robots directives](https://my.jobstreet.com/robots.txt)

@@ -1,7 +1,7 @@
 import { appendFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import type { Page } from 'playwright-core'
-import { navigate, saveEvidence } from './browser'
+import { navigate, saveEvidence, verificationTimeout, VerificationTimeoutError } from './browser'
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { withKameleo } from './kameleo'
@@ -19,6 +19,7 @@ export interface ScrapeOptions {
   maxJobs: number
   delayMs: number
   maxRetries?: number
+  verificationTimeoutMs?: number
   sort?: SortMode
 }
 
@@ -63,6 +64,7 @@ async function extractListings(page: Page, runId: string): Promise<unknown[]> {
 export async function scrapeJobstreet(options: ScrapeOptions) {
   let next: string | null = searchUrl(options.url)
   const maxRetries = options.maxRetries ?? 2
+  const verificationTimeoutMs = verificationTimeout(options.verificationTimeoutMs)
   const sort = parseSort(options.sort ?? 'newest')
   if (!Number.isInteger(options.maxPages) || options.maxPages < 1 || options.maxPages > 50) {
     throw new Error('--max-pages must be an integer from 1 to 50')
@@ -93,12 +95,13 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     max_jobs: options.maxJobs,
     sort_by: sort,
     max_retries: maxRetries,
+    verification_timeout_ms: verificationTimeoutMs,
     profile_id: null as string | null,
     pages: [] as PageResult[],
     jobs_saved: 0,
     duplicates_skipped: 0,
     records_rejected: 0,
-    stop_reason: null as 'job_limit' | 'page_limit' | 'no_next_page' | 'error' | null,
+    stop_reason: null as 'job_limit' | 'page_limit' | 'no_next_page' | 'verification_timeout' | 'error' | null,
     error: null as string | null
   }
   const saveReport = () => writeJson(resolve(output, 'run.json'), report)
@@ -126,7 +129,10 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
           report.pages.push(entry)
           const prefix = resolve(output, `page-${report.pages.length}`)
           try {
-            const response = await navigate(page, entry, maxRetries, options.delayMs, saveReport)
+            const response = await navigate(page, entry, maxRetries, options.delayMs, saveReport, {
+              timeoutMs: verificationTimeoutMs,
+              evidencePrefix: `${prefix}-verification`
+            })
             if (!response || !response.ok()) throw new Error(`JobStreet returned HTTP ${entry.http_status}`)
             searchUrl(page.url())
             await page
@@ -189,7 +195,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     return report
   } catch (error) {
     report.status = 'failed'
-    report.stop_reason = 'error'
+    report.stop_reason = error instanceof VerificationTimeoutError ? 'verification_timeout' : 'error'
     report.error = error instanceof Error ? error.message : String(error)
     throw error
   } finally {

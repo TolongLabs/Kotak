@@ -3,7 +3,7 @@ import { appendFile, readFile, readdir, stat, writeFile } from 'node:fs/promises
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Page } from 'playwright-core'
-import { navigate, saveEvidence } from './browser'
+import { navigate, saveEvidence, verificationTimeout, VerificationTimeoutError } from './browser'
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { readListingRows, resolveInputs } from './inputs'
@@ -18,6 +18,7 @@ export interface DepthOptions {
   maxJobs: number
   delayMs: number
   maxRetries?: number
+  verificationTimeoutMs?: number
   previousDetails?: string[]
   refreshAfterHours?: number
 }
@@ -242,6 +243,7 @@ async function extractDescription(page: Page, id: string) {
 
 export async function scrapeJobstreetDepth(options: DepthOptions) {
   const retries = options.maxRetries ?? 2
+  const verificationTimeoutMs = verificationTimeout(options.verificationTimeoutMs)
   const refreshAfterHours = options.refreshAfterHours ?? null
   if (refreshAfterHours !== null && (!Number.isFinite(refreshAfterHours) || refreshAfterHours < 0))
     throw new Error('--refresh-after-hours must be a nonnegative number')
@@ -269,6 +271,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     refresh_after_hours: refreshAfterHours,
     max_jobs: options.maxJobs,
     max_retries: retries,
+    verification_timeout_ms: verificationTimeoutMs,
     delay_ms: options.delayMs,
     rows_read: 0,
     input_duplicates: 0,
@@ -282,7 +285,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     jobs_failed: 0,
     profile_id: null as string | null,
     jobs: [] as DetailAttempt[],
-    stop_reason: null as 'completed' | 'job_limit' | 'blocked' | 'error' | null,
+    stop_reason: null as 'completed' | 'job_limit' | 'blocked' | 'verification_timeout' | 'error' | null,
     error: null as string | null
   }
   const targets = new Map<string, JobListing>()
@@ -386,7 +389,10 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
             let blocked = false
             console.info(`Enriching ${breadth.url}`)
             try {
-              const response = await navigate(page, entry, retries, options.delayMs, save)
+              const response = await navigate(page, entry, retries, options.delayMs, save, {
+                timeoutMs: verificationTimeoutMs,
+                evidencePrefix: resolve(output, `job-${breadth.job_id}-verification`)
+              })
               observation.http_status = entry.http_status
               observation.final_url = page.url()
               if ([401, 403, 429].includes(entry.http_status ?? 0)) {
@@ -431,6 +437,13 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
                 }
               }
             } catch (error) {
+              if (error instanceof VerificationTimeoutError) {
+                blocked = true
+                report.stop_reason = 'verification_timeout'
+              } else if (entry.verification?.status === 'interrupted') {
+                blocked = true
+                report.stop_reason = 'error'
+              }
               observation.error = error instanceof Error ? error.message : String(error)
             } finally {
               observation.detail_scraped_at = new Date().toISOString()
@@ -448,7 +461,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
               await save()
             }
             if (blocked) {
-              report.stop_reason = 'blocked'
+              report.stop_reason ??= 'blocked'
               throw new Error(observation.error!)
             }
             if (index < pending.length - 1) await Bun.sleep(options.delayMs)
@@ -466,7 +479,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     return report
   } catch (error) {
     report.status = 'failed'
-    if (report.stop_reason !== 'blocked') report.stop_reason = 'error'
+    if (report.stop_reason !== 'blocked' && report.stop_reason !== 'verification_timeout') report.stop_reason = 'error'
     report.error = error instanceof Error ? error.message : String(error)
     throw error
   } finally {
