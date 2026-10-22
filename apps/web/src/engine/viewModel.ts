@@ -7,7 +7,8 @@ import {
   type CornerVerdict,
   type Scenario,
   type SnapshotId,
-  type Source
+  type Source,
+  type TransferredLevel
 } from '@kotak/shared'
 import type { Corner, Level, Role, SourceRef, VerdictId } from '../demo/types'
 import type { Checkup } from './checkup'
@@ -104,6 +105,11 @@ export function roleOutlook(role: BundleRole, snapshotId: SnapshotId): VerdictId
   return rising > declining ? 'rising' : declining > rising ? 'declining' : 'steady'
 }
 
+/** A level carried over from the user's answers rather than answered directly; "not asked yet" is 0, not an estimate. */
+export function isEstimatedLevel(level: TransferredLevel) {
+  return level.label === 'estimated from your answers' || level.label === 'rough estimate'
+}
+
 /** The ranked roles, with the two biggest gaps named from each role's own corners. */
 export function toRoles(checkup: Checkup, bundleRoles: BundleRole[], currentCode: string | null): Role[] {
   const byCode = new Map(bundleRoles.map((role) => [role.onet_code, role]))
@@ -120,6 +126,7 @@ export function toRoles(checkup: Checkup, bundleRoles: BundleRole[], currentCode
       title: role.title,
       isCurrentJob: role.onet_code === currentCode,
       fit: Math.round(role.fit.score),
+      fitEstimated: role.levels.some(isEstimatedLevel),
       outlook: bundleRole ? roleOutlook(bundleRole, checkup.snapshotId) : 'unknown',
       missing: gaps.join(', ')
     }

@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { useSyncExternalStore } from 'react'
 import { Banner } from '../../components/ui/Banner'
 import { Button } from '../../components/ui/Button'
 import { CatDialogue } from '../../components/kotak/CatDialogue'
@@ -11,8 +12,19 @@ import { LandingExampleCard } from './LandingExampleCard'
 import { LandingNav } from './LandingNav'
 import { useLandingExample } from './landingExample'
 
+// Tailwind's xl breakpoint. Only the hero variant that fits is mounted: a CSS-hidden radar measures 0 × 0, which
+// Recharts warns about on every load.
+const WIDE_QUERY = '(min-width: 80rem)'
+
+function subscribeWide(listener: () => void) {
+  const media = window.matchMedia(WIDE_QUERY)
+  media.addEventListener('change', listener)
+  return () => media.removeEventListener('change', listener)
+}
+
 export function LandingHero() {
   const loaded = useLandingExample()
+  const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE_QUERY).matches)
 
   const exampleState =
     loaded.status === 'idle' ? (
@@ -75,55 +87,57 @@ export function LandingHero() {
         {example && featuredCorner ? (
           <>
             {/* Desktop Stage Card (1440px): Radar, GapCard, and Kopi side by side */}
-            <div className="hidden min-h-[520px] w-full max-w-[1134px] items-center justify-center gap-10 rounded-[24px] border border-border-subtle bg-bg-default p-8 xl:flex xl:p-12">
-              <div className="flex w-[393px] shrink-0 items-center justify-center">
+            {wide ? (
+              <div className="flex min-h-[520px] w-full max-w-[1134px] items-center justify-center gap-10 rounded-[24px] border border-border-subtle bg-bg-default p-12">
+                <div className="flex w-[393px] shrink-0 items-center justify-center">
+                  <FutureSkillsRadar
+                    corners={example.corners}
+                    scenario={example.checkup.scenario}
+                    size="md"
+                    neededLabel="Needed by 2027"
+                    className="w-full [&_ul]:hidden"
+                  />
+                </div>
+
+                <div className="w-[360px] shrink-0">
+                  <LandingExampleCard
+                    corner={featuredCorner}
+                    sources={cornerSources}
+                    scenario={example.checkup.scenario}
+                    neededLabel="Needed by 2027"
+                  />
+                </div>
+
+                <div className="flex w-[260px] shrink-0 flex-col items-center gap-2">
+                  <KopiFigure pose="explaining" className="h-[208px] w-[160px]" />
+                  <KopiSpeechBox speech={speech} className="w-[260px]" />
+                </div>
+              </div>
+            ) : (
+              /* Phone composition (390px / below xl): Radar, CatDialogue, and LandingExampleCard stacked */
+              <div className="flex w-full max-w-[342px] flex-col items-center gap-5">
                 <FutureSkillsRadar
                   corners={example.corners}
                   scenario={example.checkup.scenario}
-                  size="md"
-                  neededLabel="Needed by 2027"
-                  className="w-full [&_ul]:hidden"
+                  size="sm"
+                  neededLabel="Needed by Oct 2027"
+                  className="w-full"
                 />
-              </div>
 
-              <div className="w-[360px] shrink-0">
-                <LandingExampleCard
-                  corner={featuredCorner}
-                  sources={cornerSources}
-                  scenario={example.checkup.scenario}
-                  neededLabel="Needed by 2027"
-                />
-              </div>
+                <div className="w-full">
+                  <CatDialogue pose="explaining" speech={speech} size="md" />
+                </div>
 
-              <div className="flex w-[260px] shrink-0 flex-col items-center gap-2">
-                <KopiFigure pose="explaining" className="h-[208px] w-[160px]" />
-                <KopiSpeechBox speech={speech} className="w-[260px]" />
+                <div className="w-full">
+                  <LandingExampleCard
+                    corner={featuredCorner}
+                    sources={cornerSources}
+                    scenario={example.checkup.scenario}
+                    neededLabel="Needed by 2027"
+                  />
+                </div>
               </div>
-            </div>
-
-            {/* Phone composition (390px / below xl): Radar, CatDialogue, and LandingExampleCard stacked */}
-            <div className="flex w-full max-w-[342px] flex-col items-center gap-5 xl:hidden">
-              <FutureSkillsRadar
-                corners={example.corners}
-                scenario={example.checkup.scenario}
-                size="sm"
-                neededLabel="Needed by Oct 2027"
-                className="w-full"
-              />
-
-              <div className="w-full">
-                <CatDialogue pose="explaining" speech={speech} size="md" />
-              </div>
-
-              <div className="w-full">
-                <LandingExampleCard
-                  corner={featuredCorner}
-                  sources={cornerSources}
-                  scenario={example.checkup.scenario}
-                  neededLabel="Needed by 2027"
-                />
-              </div>
-            </div>
+            )}
 
             <ul className="sr-only" aria-label={`Example radar values for the ${example.checkup.scenario} scenario`}>
               {example.corners.map((corner) => {

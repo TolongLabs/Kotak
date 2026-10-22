@@ -18,14 +18,16 @@ import { formatLevel } from './fit'
 export function kopiRoleSpeech(ranked: Role[], focus?: Role): string {
   if (focus) {
     const nextGap = focus.missing.split(', ')[0]
-    return `${focus.title} fits you at ${focus.fit}%. ${nextGap ? `Close ${nextGap} next.` : 'You already meet every needed level.'}`
+    return `${focus.title} fits you at ${focus.fitEstimated ? 'an estimated ' : ''}${focus.fit}%. ${nextGap ? `Close ${nextGap} next.` : 'You already meet every needed level.'}`
   }
   const bestFit = ranked.reduce<Role | undefined>(
     (best, candidate) => (!best || candidate.fit > best.fit ? candidate : best),
     undefined
   )
 
-  return bestFit ? `${bestFit.title} is your best fit at ${bestFit.fit}%.` : 'No role fit is available yet.'
+  return bestFit
+    ? `${bestFit.title} is your best fit at ${bestFit.fitEstimated ? 'an estimated ' : ''}${bestFit.fit}%.`
+    : 'No role fit is available yet.'
 }
 
 const sourceKey = (source: Source) =>

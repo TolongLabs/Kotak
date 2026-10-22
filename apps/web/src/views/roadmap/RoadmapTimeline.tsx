@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { Minus, Plus } from 'lucide-react'
 import { SdgChip } from '../../components/ui/SdgChip'
 import { Button } from '../../components/ui/Button'
@@ -41,9 +41,11 @@ interface HoverState {
   top: number
   bottom: number
   below: boolean
+  // Opened by a touch tap, which has no hover; a second tap on the bar opens its step.
+  tapped: boolean
 }
 
-function StepTooltip({ step }: { step: TimelineStep }) {
+function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }) {
   return (
     <div className="space-y-1.5">
       <p className="text-label-m text-text-primary">{step.skill}</p>
@@ -70,6 +72,7 @@ function StepTooltip({ step }: { step: TimelineStep }) {
           ))}
         </div>
       )}
+      {tapHint && <p className="text-label-s text-text-muted">Tap again to see its step details.</p>}
     </div>
   )
 }
@@ -87,7 +90,11 @@ export function RoadmapTimeline({
   const [viewport, setViewport] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [dragging, setDragging] = useState(false)
+  // Bars ignore the pointer only once a drag has moved; doing it on mousedown sent every plain click to the track.
+  const [panning, setPanning] = useState(false)
   const [hovered, setHovered] = useState<HoverState | null>(null)
+  const pointerTypeRef = useRef('mouse')
+  const tappedStepRef = useRef<string | null>(null)
   const dragRef = useRef({ moved: false, x: 0, sl: 0 })
   const anchorRef = useRef<{ fraction: number; cursorV: number } | null>(null)
 
@@ -217,6 +224,8 @@ export function RoadmapTimeline({
   }
 
   function onPointerDown(event: PointerEvent<HTMLDivElement>) {
+    // A finished mouse drag must not swallow the next tap.
+    dragRef.current.moved = false
     if (event.pointerType !== 'mouse' || event.button !== 0) return
     const el = scrollRef.current
     if (!el) return
@@ -230,16 +239,21 @@ export function RoadmapTimeline({
     const drag = dragRef.current
     if (!el || !dragging) return
     const dx = event.clientX - drag.x
-    if (Math.abs(dx) > DRAG_PX) drag.moved = true
+    if (Math.abs(dx) > DRAG_PX && !drag.moved) {
+      drag.moved = true
+      setPanning(true)
+    }
     if (drag.moved) el.scrollLeft = drag.sl - dx
   }
 
   function onPointerUp() {
     setDragging(false)
+    setPanning(false)
   }
 
   function onPointerLeave() {
     setDragging(false)
+    setPanning(false)
     setHovered(null)
   }
 
@@ -277,9 +291,22 @@ export function RoadmapTimeline({
     return Math.max(0, Math.min(trackW, (daysFromStart / (totalWeeks * 7)) * trackW))
   })()
 
-  const clearTip = () => setHovered(null)
+  const clearTip = () => {
+    setHovered(null)
+    tappedStepRef.current = null
+  }
 
-  function showTip(step: TimelineStep, element: HTMLElement) {
+  // A tapped tooltip stays until the next tap lands somewhere other than a timeline bar.
+  useEffect(() => {
+    if (!hovered?.tapped) return
+    const onPointerDown = (event: globalThis.PointerEvent) => {
+      if (!(event.target instanceof Element) || !event.target.closest('[data-timeline-bar]')) clearTip()
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [hovered?.tapped])
+
+  function showTip(step: TimelineStep, element: HTMLElement, tapped = false) {
     const host = sectionRef.current
     if (!host) return
     const bar = element.getBoundingClientRect()
@@ -291,7 +318,8 @@ export function RoadmapTimeline({
       left,
       top,
       bottom: top + bar.height,
-      below: top < 170
+      below: top < 170,
+      tapped
     })
   }
 
@@ -469,20 +497,43 @@ export function RoadmapTimeline({
                           type="button"
                           aria-pressed={selected}
                           aria-label={`${step.skill}, weeks ${step.weeks[0]} to ${step.weeks[1]}, ${fmt(step.hoursPerWeek)} h a week, about ${fmt(step.totalHours)} h total`}
-                          onClick={() => {
-                            if (!dragRef.current.moved) onSelectStep(step.id)
+                          data-timeline-bar
+                          onPointerDown={(event) => {
+                            pointerTypeRef.current = event.pointerType
                           }}
-                          onMouseEnter={(event) => showTip(step, event.currentTarget)}
+                          onClick={(event) => {
+                            if (dragRef.current.moved) return
+                            // Touch has no hover, so the first tap on a bar shows its details and a second tap opens
+                            // its step. Keyboard clicks (detail 0) open the step straight away.
+                            if (pointerTypeRef.current === 'touch' && event.detail > 0) {
+                              if (tappedStepRef.current !== step.id) {
+                                tappedStepRef.current = step.id
+                                showTip(step, event.currentTarget, true)
+                                return
+                              }
+                              clearTip()
+                            }
+                            onSelectStep(step.id)
+                            // A later click with no pointerdown (assistive tech) opens the step straight away.
+                            pointerTypeRef.current = 'mouse'
+                          }}
+                          // On touch only the click opens the tooltip: iOS Safari drops the click when a hover
+                          // handler changes the page, which would turn two taps into three.
+                          onMouseEnter={(event) => {
+                            if (pointerTypeRef.current !== 'touch') showTip(step, event.currentTarget)
+                          }}
                           onMouseLeave={clearTip}
-                          onFocus={(event) => showTip(step, event.currentTarget)}
+                          onFocus={(event) => {
+                            if (event.currentTarget.matches(':focus-visible')) showTip(step, event.currentTarget)
+                          }}
                           onBlur={clearTip}
-                          className={`absolute top-[6px] flex h-7 min-w-[8px] items-center overflow-hidden rounded-md border-[1.5px] px-2 text-left font-sans text-label-s cursor-pointer lg:h-11 lg:top-[6px] focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ${barColor} ${
+                          className={`absolute top-[6px] flex h-7 min-w-[8px] touch-manipulation items-center overflow-hidden rounded-md border-[1.5px] px-2 text-left font-sans text-label-s cursor-pointer lg:h-11 lg:top-[6px] focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 ${barColor} ${
                             impact ? 'ring-2 ring-offset-1 ring-offset-bg-default ring-text-primary' : ''
                           } ${selected ? 'z-30 outline outline-2 outline-offset-1 outline-text-primary' : 'z-10'}`}
                           style={{
                             left: `${left}px`,
                             width: `${width}px`,
-                            pointerEvents: dragging ? 'none' : undefined
+                            pointerEvents: panning ? 'none' : undefined
                           }}
                         >
                           {barLabel && <span className="truncate">{barLabel}</span>}
@@ -540,7 +591,7 @@ export function RoadmapTimeline({
                 transform: hovered.below ? 'none' : 'translateY(calc(-100% - 6px))'
               }}
             >
-              <StepTooltip step={hoveredStep} />
+              <StepTooltip step={hoveredStep} tapHint={hovered.tapped} />
             </div>
           )}
         </>

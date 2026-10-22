@@ -17,7 +17,7 @@ import { occupationSdgs } from '../engine/occupationSdg'
 import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { deriveRoleEvidence, kopiRoleSpeech, pickDisplayRoles, sessionHeading } from './roles/derived'
-import { carriedOverCorners, formatFitPercent, formatLevel } from './roles/fit'
+import { estimatedCorners, formatFitPercent, formatLevel } from './roles/fit'
 
 export function RolesView() {
   const session = useGuestSession()
@@ -82,9 +82,7 @@ export function RolesView() {
   const reasoningText = roleEvidence?.summary ?? ''
 
   const cornerName = new Map(detailBundleRole?.corners.map((corner) => [corner.corner_id, corner.name]) ?? [])
-  const carryOver = detailCheckupRole
-    ? carriedOverCorners(detailCheckupRole, session.role_code, Boolean(selected?.isCurrentJob))
-    : new Set<string>()
+  const carryOver = detailCheckupRole ? estimatedCorners(detailCheckupRole) : new Set<string>()
   const fitRows = detailCheckupRole
     ? detailCheckupRole.fit.terms.map((term) => ({
         name: cornerName.get(term.corner_id) ?? term.corner_id,
@@ -130,7 +128,7 @@ export function RolesView() {
         </p>
       </header>
 
-      <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         {displayRoles.map((displayRole) => {
           const occupation = occupationSdgs(displayRole.id)
           const goals = occupation?.goals.slice(0, 3) ?? []

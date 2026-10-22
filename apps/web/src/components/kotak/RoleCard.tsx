@@ -26,14 +26,21 @@ export function RoleCard({ role, selected, onSelect, name, footer }: RoleCardPro
     >
       <input type="radio" name={name} value={role.id} checked={selected} onChange={onSelect} className="sr-only" />
       <div className="flex min-h-12 items-start justify-between gap-3">
-        <span className="min-w-0 text-title-s text-text-primary">
+        <span className="min-w-0 hyphens-auto text-title-s text-text-primary [overflow-wrap:anywhere]">
           {role.title}
           {role.isCurrentJob && ' (Your Job)'}
         </span>
         <span className="flex shrink-0 items-start gap-2">
           <span className="flex flex-col items-end">
             <span className="text-title-l tabular-nums text-text-primary">{role.fit}%</span>
-            <span className="font-mono text-mono-s text-text-muted">fit</span>
+            {role.fitEstimated ? (
+              <span className="font-mono text-mono-s text-text-muted">
+                <span aria-hidden="true">est. fit</span>
+                <span className="sr-only">estimated fit</span>
+              </span>
+            ) : (
+              <span className="font-mono text-mono-s text-text-muted">fit</span>
+            )}
           </span>
           {selected && <CircleCheck className="mt-1 h-5 w-5 stroke-current" aria-hidden="true" />}
         </span>
