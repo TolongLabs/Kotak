@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>Phase 1: Preliminary Project Proposal, Kotak (Team T010NG)</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=block"
+    />
+    <link rel="stylesheet" href="submission.css" />
+    <script>
+      // Marks text that overflows its box, or runs into the page-number band; build.py fails on any mark.
+      addEventListener('load', () =>
+        document.fonts.ready.then(() => {
+          for (const el of document.querySelectorAll('.fill, .box, .stack, .note')) {
+            const page = el.closest('.page')
+            const low = el.getBoundingClientRect().bottom - page.getBoundingClientRect().top > (752 * 4) / 3
+            if (el.scrollHeight > el.clientHeight + 1 || low) el.dataset.overflow = page.dataset.base
+          }
+        })
+      )
+    </script>
+  </head>
+  <body>
+    <!-- Cover -->
+    <section class="page red" data-base="1"></section>
+
+    <!-- 1. Team and project overview -->
+    <section class="page red" data-base="2" data-strip="text 279 752 317 788">
+      <div class="field" style="top: 243.6pt">T010NG</div>
+      <div class="field" style="top: 310pt">Domain 1: Aiversecity Future-Ready Workforce</div>
+      <div class="field" style="top: 376.4pt">SDG 4: Quality Education (target 4.4)</div>
+      <div class="field" style="top: 442.9pt">Kotak</div>
+      <div class="field" style="top: 509.3pt">Hee Zi Jie</div>
+      <div class="field" style="top: 575.7pt">heezijie2004@gmail.com, +60125118986</div>
+      <div class="field small" style="top: 642.1pt">
+        Asia Pacific University of Technology &amp; Innovation (APU), University of Reading and University of Sheffield
+      </div>
+      <div class="field" style="top: 708.2pt">5</div>
+    </section>
+
+    <!-- 2.1 -->
+    <section class="page yellow" data-base="3" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 351.3pt; width: 451.2pt; height: 375.3pt">
+        <p>
+          AI is changing Malaysian jobs faster than training and skills lists can keep up. In Malaysia, 56% of
+          professionals use AI tools at work, but only 26% have had formal training (Hays Asia Salary Guide 2025, via
+          the
+          <a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/sources/drive.google.com/domain-1-aiversecity.md#1-background"
+            >Domain 1 brief</a
+          >). In October 2024, the government said about 600,000 workers in 10 sectors needed reskilling within three to
+          five years (<a href="https://www.bernama.com/en/news.php?id=2350085">Bernama</a>). TalentCorp projects about
+          620,000 workers, 18% of the workforce in the sectors it studied, will be significantly affected (<a
+            href="https://www.talentcorp.com.my/impact-study/"
+            >Impact Study</a
+          >). A World Bank and ISIS Malaysia study rates 28% of the workforce highly exposed to AI (<a
+            href="https://documents1.worldbank.org/curated/en/099092325013010451/pdf/P181093-2e5b89c5-f3be-43b3-868c-8890b74bef21.pdf"
+            >World Bank, 2025</a
+          >). Skills are also under-used: in Q2 2026, 35.2% of employed tertiary-educated workers held semi-skilled or
+          low-skilled jobs (<a href="https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age">OpenDOSM</a>;
+          <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/hiring-bar-evidence.md"
+            >hiring-bar evidence</a
+          >).
+        </p>
+        <p>
+          Our user is a working adult in Malaysia, in any industry, who wonders what AI means for their job. They come
+          with a worry and a few minutes, often on a phone. Some want to keep their job safe, some to move to a role
+          they have in mind, and some to learn where they could go (<a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/ideas/0007-kotak.md#users"
+            >users</a
+          >).
+        </p>
+        <p>
+          Today they get static lists. TalentCorp's MyMahir maps roles and skills, but shows no score, time estimate,
+          scenario or SDG tag, and no Malaysian tool we checked joins role data to a scored gap and a timed pathway (<a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/CONTEXT.md#prior-art-and-white-space"
+            >prior art</a
+          >). Without dated evidence, a worker cannot tell which skills to learn first, and may spend scarce hours on
+          tasks AI is taking over.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2.2 -->
+    <section class="page yellow" data-base="4" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 388.5pt; width: 451.2pt; height: 350.3pt">
+        <p>
+          Kotak, Malay for &quot;box&quot;, is a web app. Kopi, a cat counsellor, asks 12 yes/no can-do questions about
+          the user's job or a role they want. It draws a Future Skills Radar of the job's 6 core skills, ranks matched
+          roles and builds a dated roadmap in about 3 minutes.
+        </p>
+        <p>The six must-haves:</p>
+        <ol>
+          <li>
+            <strong>Skills profile intake</strong>: a job title in any language, a goal (stay, move or explore) and the
+            12 questions.
+          </li>
+          <li>
+            <strong>AI-trend signal layer</strong>: dated Anthropic Economic Index snapshots for Malaysia (April and May
+            2026) and DOSM Job Market Insights, refreshed weekly.
+          </li>
+          <li><strong>Future-role matching</strong>: ranked roles, each with a fit score, its maths and named gaps.</li>
+          <li>
+            <strong>Reskilling pathway</strong>: ordered steps, each with hours and one free resource, and a finish date
+            set by the user's weekly hours.
+          </li>
+          <li>
+            <strong>SDG mapping</strong>: skills carry SDG targets, jobs show the goals their work serves, and the
+            roadmap highlights steps by goal.
+          </li>
+          <li>
+            <strong>Handling uncertainty</strong>: targets are labelled estimates, Split shows slow and fast AI-uptake
+            futures, and Unknown marks thin data.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 2.2 continued -->
+    <section class="page yellow" data-base="4" data-strip="text 279 752 317 788;all 55 212 550 745">
+      <div class="cont" style="left: 295.5pt; top: 188.9pt">(continued)</div>
+      <div class="box" style="left: 84.7pt; top: 216.4pt; width: 451.2pt; height: 522.4pt">
+        <p>Fixed rules, not AI, set every verdict, score, ranking and roadmap order. AI does four jobs:</p>
+        <ul>
+          <li>
+            Before the demo, a RunPod GPU batch groups each O*NET job's own tasks into 6 skills and drafts the
+            questions. A validator rejects any task outside that job.
+          </li>
+          <li>
+            Live, Claude Haiku 5.5 explains each verdict with its dated sources and matches Malay and local job titles.
+          </li>
+          <li>
+            Ask Kopi, a chat agent, answers through 6 read-only tools over the same rules, which other assistants reach
+            through an MCP server.
+          </li>
+          <li>ElevenLabs voices Kopi, with mute and a text fallback.</li>
+        </ul>
+        <p>
+          From the Phase 1 workshops, we use GenAI APIs (Claude), Postgres (Neon), cloud hosting (Cloudflare Workers and
+          Replit) and RunPod serverless GPUs (<a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/sources/sdchack.my/team-portal.md#workshops"
+            >workshops</a
+          >;
+          <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/sources/workshop-1-alphared/transcript.md"
+            >Workshop 1</a
+          >).
+        </p>
+      </div>
+    </section>
+
+    <!-- 3.1 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 388.5pt; width: 451.2pt; height: 350.3pt">
+        <p>
+          Kotak is a TypeScript monorepo run with Bun. It has two apps, <code>apps/web</code> (the React app) and
+          <code>apps/api</code> (the Hono API), and four packages: <code>shared</code> (the rules and Zod schemas),
+          <code>sdk</code> (the check-up engine), <code>agent</code> (the AI tools) and <code>browser</code> (the
+          research scraper's browser).
+        </p>
+        <ul>
+          <li>
+            <strong>Frontend</strong>: React and Vite, Tailwind CSS, Recharts for the radar and the roadmap charts,
+            Lucide icons, and pixi-live2d-display for Kopi, built on Live2D's Hijiki sample model. It has phone (390 px)
+            and desktop (1440 px) layouts, follows WCAG 2.2 AA and has a reduced-motion mode (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/DESIGN.md"
+              >design system</a
+            >).
+          </li>
+          <li>
+            <strong>Rule engine in the browser</strong>: the app loads precomputed, dated JSON snapshots and computes
+            levels, targets, verdicts, fit scores and roadmap order in the browser. Switching the snapshot from April to
+            May 2026 recomputes them at once. A guest session in <code>localStorage</code> keeps answers, goals and
+            ticked steps.
+          </li>
+          <li>
+            <strong>API</strong>: Hono, on Cloudflare Workers for the main link and on Bun for Replit. One server serves
+            the React build and the API. Its routes match job titles, write cited explanations, proxy text to speech,
+            run Ask Kopi and serve an MCP endpoint. Zod validates every request and response. On Workers, the MCP and
+            chat routes run in a Durable Object.
+          </li>
+          <li>
+            <strong>GenAI</strong>: the Claude API with Claude Haiku 5.5. The API caches each answer by a SHA-256 hash
+            of the request and pre-warms the cache for the demo roles. A check rejects any explanation that changes a
+            verdict or lacks a dated citation, and falls back to a fixed template.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3.1 continued -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;all 55 192 550 745">
+      <div class="cont" style="left: 273.3pt; top: 168.6pt">(continued)</div>
+      <div class="box" style="left: 84.7pt; top: 196.1pt; width: 451.2pt; height: 542.7pt">
+        <ul>
+          <li>
+            <strong>Agent layer</strong>: <code>@kotak/agent</code> exposes 6 read-only tools over
+            <code>@kotak/sdk</code>: find a role, get the questions, run a check-up, what changed, national skill gaps
+            and list sources. Ask Kopi calls them through Claude, and outside assistants call them through
+            <code>/api/mcp</code>. Every number the agent quotes comes from a tool.
+          </li>
+          <li>
+            <strong>Voice</strong>: ElevenLabs. Fixed lines are pre-generated with <code>eleven_v4</code>, and live
+            lines use <code>eleven_v4_turbo</code>. The API caches audio by a hash of the text, and the key stays on the
+            server (<a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/deploy-and-tts.md">TTS notes</a
+            >).
+          </li>
+          <li>
+            <strong>Data pipeline</strong>: Bun scripts ingest O*NET 30.1, filter the Economic Index to Malaysia,
+            Singapore and global rows, and extract DOSM Job Market Insights (Q3 2019 to Q2 2026). Every record carries
+            its source, date and layer. A GitHub Actions workflow checks for new releases every Saturday and rebuilds
+            the snapshots.
+          </li>
+          <li>
+            <strong>Database</strong>: Neon Postgres 18 (region <code>aws-ap-southeast-1</code>). One table stores
+            anonymous check-ups: only the role code, the 6 skill levels, a sample flag and the date, and totals show
+            only for groups of 10 or more. Other tables hold the research scraper's job listings and its admin accounts.
+          </li>
+          <li>
+            <strong>GPU</strong>: a RunPod serverless endpoint runs <code>Qwen/Qwen3.8-27B-FP8</code> on vLLM for the
+            one-time batch that builds 6 skills and 18 can-do statements for each of 923 jobs.
+          </li>
+          <li>
+            <strong>Hosting and CI</strong>: GitHub Actions type-checks, builds and deploys Kotak to Cloudflare Workers
+            on every merge to <code>main</code>, or when a member clicks &quot;Run workflow&quot; (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/deploy-and-tts.md#deploy-recommendation"
+              >deploy notes</a
+            >). Replit publishes the same <code>main</code> branch from the team's own account. API keys and the
+            database URL live in GitHub, Cloudflare and Replit secrets, never in code.
+          </li>
+        </ul>
+        <p>System block diagram: see Appendix A.</p>
+        <p>Sponsor platforms: yes, Kotak uses both.</p>
+        <ul>
+          <li>
+            <strong>Replit</strong>: the team publishes Kotak from <code>main</code> on its own Replit account at the
+            live demo link. The project link, its history and the published app are the proof of use.
+          </li>
+          <li>
+            <strong>RunPod</strong>: a serverless GPU endpoint, paid with the team's RunPod credit, ran the batch that
+            built every job's skills and questions: a 3-job smoke test, then 920 jobs in 783 seconds, with none failing.
+            Screenshots of the endpoint, GPU type and runtime are the proof of use (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/runpod/README.md"
+              >RunPod notes</a
+            >;
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/BRIEF.md#rules-that-can-cost-us"
+              >sponsor rules</a
+            >).
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3.2 -->
+    <section class="page green" data-base="6" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 304.6pt; width: 451.2pt; height: 350.3pt">
+        <ul>
+          <li>
+            <strong>Empathise</strong>: on 21 October, we named three kinds of worker: stay strong, move to a target
+            role, or ask where to go (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/ideas/0007-kotak.md#users"
+              >users</a
+            >). Research showed Malaysian graduates find work, often below their skill level (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/hiring-bar-evidence.md"
+              >hiring-bar evidence</a
+            >).
+          </li>
+          <li>
+            <strong>Define</strong>: one user and one moment: a worried worker with a few minutes, who leaves with a
+            plan to start this week.
+          </li>
+          <li>
+            <strong>Ideate</strong>: we gave five AI models the brief, as other teams would, and 17 of their 75 ideas
+            served this same worker (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/field-simulation.md"
+              >field simulation</a
+            >). So Kotak's uniqueness comes from its mechanism: yes/no can-do questions, skills built from the job's own
+            tasks, and verdicts set by visible rules.
+          </li>
+          <li>
+            <strong>Prototype and test</strong>: six AI-played experts raised 43 attacks on the first Kotak (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/kotak-roast.md"
+              >roast</a
+            >). We cut the planted-mistake test and moved the demo from a sample card to real data. We set the visual
+            design in Figma before coding.
+          </li>
+          <li>
+            <strong>Deploy</strong>: the live demo swaps the Economic Index from April to May 2026, and the radar,
+            ranking and roadmap move. Cached Claude answers and a fixed-template fallback cover API overload. GitHub
+            Actions deploys to Cloudflare Workers on every merge to <code>main</code>, so any member can ship.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. Impact framework -->
+    <section class="page blue" data-base="7" data-strip="text 279 752 317 788"></section>
+
+    <!-- 4. Target and baseline -->
+    <section class="page blue" data-base="8" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 245pt; top: 232.2pt; width: 296.4pt; height: 218.6pt">
+        <p>
+          Target 4.4, &quot;By 2030, substantially increase the number of youth and adults who have relevant skills,
+          including technical and vocational skills, for employment, decent jobs and entrepreneurship&quot;. It is
+          measured by indicator 4.4.1, &quot;Proportion of youth and adults with information and communications
+          technology (ICT) skills, by type of skill&quot; (<a
+            href="https://unstats.un.org/sdgapi/v1/sdg/Goal/4/Target/List?includechildren=true"
+            >UN SDG API, goal 4</a
+          >).
+        </p>
+        <p>
+          The target, indicator and baseline come from the UN SDG API, accessed on 22 October 2026, following our
+          <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/best-practices.md#impact-claims"
+            >impact notes</a
+          >.
+        </p>
+      </div>
+      <div class="fill" style="left: 245pt; top: 459.1pt; width: 296.4pt; height: 218.6pt">
+        <p>
+          In 2024, 39.8% of Malaysians aged 15 and over had above-basic digital skills in all 5 skill areas, and 19.6%
+          reported writing a computer program in a programming language. Both figures are indicator 4.4.1, series
+          <code>SE_ADT_ACTS</code>, from DOSM (<a
+            href="https://unstats.un.org/sdgapi/v1/sdg/Indicator/Data?indicator=4.4.1&amp;areaCode=458"
+            >UN SDG API, Malaysia</a
+          >). For AI skills, 56% of Malaysian professionals use AI tools at work, but only 26% have had formal training
+          (<a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/sources/drive.google.com/domain-1-aiversecity.md#1-background"
+            >Domain 1 brief</a
+          >).
+        </p>
+      </div>
+    </section>
+
+    <!-- 4. KPI and Phase 2 target -->
+    <section class="page blue" data-base="9" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 245pt; top: 232.2pt; width: 296.4pt; height: 187.8pt">
+        <p>
+          The sourced-roadmap rate. It is the percentage of finished check-ups that reach a roadmap in under 3 minutes,
+          where every verdict, fit score and milestone shows its source and date. A second count tracks uncited
+          recommendations, which must stay at 0 (<a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/best-practices.md#llm-credibility"
+            >LLM credibility notes</a
+          >).
+        </p>
+      </div>
+      <div class="fill" style="left: 245pt; top: 429.4pt; width: 296.4pt; height: 169.3pt">
+        <p>
+          100% of 20 seeded test profiles reach a sourced roadmap in under 3 minutes with 0 uncited recommendations (<a
+            href="https://github.com/TolongLabs/Kotak/issues/28"
+            >issue #28</a
+          >;
+          <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/best-practices.md#llm-credibility"
+            >LLM credibility notes</a
+          >). On 100% of the hand-checked demo roles, the April-to-May 2026 snapshot swap changes at least one verdict
+          (<a href="https://github.com/TolongLabs/Kotak/issues/37">issue #37</a>).
+        </p>
+      </div>
+    </section>
+
+    <!-- 5. Eligibility and readiness checklist -->
+    <section class="page red" data-base="10" data-strip="text 279 752 317 788">
+      <i class="tick" style="left: 70.9pt; top: 225.5pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 288.8pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 352.5pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 416.1pt"></i>
+    </section>
+
+    <!-- 6.1: No -->
+    <section class="page yellow" data-base="11" data-strip="text 279 752 317 788">
+      <i class="tick" style="left: 143.9pt; top: 278.5pt"></i>
+      <div class="fill" style="left: 84.7pt; top: 347.7pt; width: 451.2pt; height: 350.3pt">
+        <p>Not applicable. Kotak's code, design and research are new work by the team during the hackathon.</p>
+      </div>
+    </section>
+
+    <!-- 6.2: Yes, first rows -->
+    <section class="page yellow" data-base="12" data-strip="text 279 752 317 788;all 45 386 552 745">
+      <i class="tick" style="left: 85.8pt; top: 278.5pt"></i>
+      <div class="stack" style="left: 49.7pt; top: 389.2pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div>O*NET 30.1 Database</div>
+          <div>dataset</div>
+          <div>
+            CC BY 4.0, with O*NET's fixed credit line and a modification notice
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/trend-data.md">source</a>
+          </div>
+          <div>Anthropic Economic Index</div>
+          <div>dataset</div>
+          <div>
+            Data CC BY, version not stated; code MIT
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/trend-data.md">source</a>
+          </div>
+          <div>DOSM Job Market Insights</div>
+          <div>dataset</div>
+          <div>
+            DOSM data terms: reuse with &quot;Data source: Department of Statistics Malaysia&quot;
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/demand-official.md">source</a>
+          </div>
+          <div>OpenDOSM skill-related underemployment</div>
+          <div>dataset</div>
+          <div>
+            CC BY 4.0; one figure cited
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/trend-data.md">source</a>
+          </div>
+          <div>TalentCorp MyCOL and Epoch AI</div>
+          <div>dataset</div>
+          <div>
+            Cited as context only, not loaded
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/demand-official.md">source</a>
+          </div>
+          <div>Qwen3.8-27B-FP8, run on RunPod</div>
+          <div>model</div>
+          <div>Apache 2.0</div>
+          <div>Claude Haiku 5.5, through the Claude API</div>
+          <div>model</div>
+          <div>Proprietary API service from Anthropic</div>
+          <div>ElevenLabs text to speech</div>
+          <div>model</div>
+          <div>
+            Proprietary API; users keep the rights to the output
+            <a href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/deploy-and-tts.md">source</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6.2 continued -->
+    <section class="page yellow" data-base="12" data-strip="text 279 752 317 788;all 45 205 552 745">
+      <div class="cont" style="left: 391.5pt; top: 180.7pt">(continued)</div>
+      <div class="stack" style="left: 49.7pt; top: 212pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div class="h" style="min-height: 33.6pt">Name</div>
+          <div class="h" style="min-height: 33.6pt">Type (code/dataset/model)</div>
+          <div class="h" style="min-height: 33.6pt">License</div>
+          <div>Live2D Hijiki sample model and Cubism Core</div>
+          <div>model (2D art)</div>
+          <div>
+            <a href="https://www.live2d.com/eula/live2d-free-material-license-agreement_en.html"
+              >Live2D Free Material License Agreement</a
+            >; Cubism Core under Live2D's own licence
+          </div>
+          <div>Lucide icons</div>
+          <div>code</div>
+          <div>ISC</div>
+        </div>
+        <p class="after">
+          The Live2D licence says &quot;the Customer may not Redistribute all or part of the Material to third
+          party&quot; (clause 4.1.1). The team keeps the model in the repository and credits Live2D, a risk it accepted
+          on 22 October 2026 (<a href="https://github.com/TolongLabs/Kotak/blob/main/docs/ideas/0007-kotak.md#mascot"
+            >mascot decision</a
+          >).
+        </p>
+        <p class="after">
+          The code also uses these open-source frameworks and tools: Bun, TypeScript, React, Vite, Tailwind CSS,
+          Recharts, pixi.js, pixi-live2d-display, Hono, Zod, the Anthropic TypeScript SDK, the MCP server SDK, the Neon
+          serverless driver, Cloudflare's Wrangler, Playwright and Clearcote. Every licence is listed in the
+          <a
+            href="https://github.com/TolongLabs/Kotak/blob/main/docs/TECH-DECLARATION.md#22-languages-frameworks--libraries"
+            >technical declaration</a
+          >
+          and in <a href="https://github.com/TolongLabs/Kotak/blob/main/NOTICE.md">NOTICE.md</a>. Kotak runs on hosted
+          services that add no code to the repository: Cloudflare Workers, Neon Postgres, GitHub Actions and Replit.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6.3: No -->
+    <section class="page yellow" data-base="13" data-strip="text 279 752 317 788">
+      <i class="tick" style="left: 143.9pt; top: 303.5pt"></i>
+      <div class="fill" style="left: 84.7pt; top: 368.7pt; width: 451.2pt; height: 350.3pt">
+        <p>
+          Not applicable. No team member is bound by an employment, internship or consulting agreement that lets an
+          employer claim work made during the hackathon.
+        </p>
+      </div>
+    </section>
+
+    <!-- 7. Declaration, signed by the team leader -->
+    <section
+      class="page green"
+      data-base="14"
+      data-strip="text 279 752 317 788;text 60 250 160 276;text 60 377 120 402"
+    >
+      <img class="sig" src="assets/signature.png" alt="Signature of Hee Zi Jie" style="left: 64pt; top: 250pt" />
+      <div class="date" style="left: 66.9pt; top: 380.5pt">24 October 2026</div>
+    </section>
+
+    <!-- Appendix A, under section 3 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;all 45 160 555 745">
+      <div class="subhead" style="top: 169.4pt"><b>A.</b>Appendix A: System Block Diagram</div>
+      <div class="figure" style="left: 84.7pt; top: 200pt; width: 451.2pt">
+        <img src="assets/system-diagram.png" alt="System block diagram" />
+      </div>
+      <p class="note" style="left: 84.7pt; top: 545pt; width: 451.2pt">
+        Data flows top to bottom: dated public data and the RunPod batch build the snapshots, the browser computes every
+        verdict, and the API adds Claude, ElevenLabs and the agent tools.
+      </p>
+    </section>
+  </body>
+</html>
