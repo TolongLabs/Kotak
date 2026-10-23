@@ -21,6 +21,8 @@
     &middot;
     <a href="#">Demo Video</a>
     &middot;
+    <a href="/docs/demo/deck/kotak-pitch-deck.pptx">Slide Deck</a>
+    &middot;
     <a href="https://github.com/TolongLabs/Kotak/issues/new?labels=bug">Report a Bug</a>
     <br />
   </p>
@@ -86,6 +88,8 @@ AI is changing Malaysian jobs faster than training can keep up: 56% of Malaysian
 Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks where the user is now, what they studied and what they want. Someone with no job yet, or no role in mind, gets roles to check first, from their study and what they enjoy. Kopi then asks 12 can-do questions about their job or the role they want, each rated from 1 (Not yet) to 4 (Yes, on my own). Kotak then draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap, in about 3 minutes. Fixed rules over dated public data set every verdict, score and step, so every number cites its source. AI does the language work around those rules: a RunPod GPU batch built each job's skills and questions from its own O\*NET tasks, Claude explains verdicts and matches Malay job titles, and ElevenLabs gives Kopi a voice.
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
+
+Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/DECISIONS.md) explain how it works.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

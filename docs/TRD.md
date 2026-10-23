@@ -44,7 +44,6 @@ Contents:
     1.  [Rules for every route](#rules-for-every-route)
     1.  [Job match route](#job-match-route)
     1.  [Explanations route](#explanations-route)
-    1.  [Job-ad extractor route](#job-ad-extractor-route)
     1.  [TTS route](#tts-route)
     1.  [National view routes](#national-view-routes)
     1.  [Job-ad market route](#job-ad-market-route)
@@ -56,7 +55,7 @@ Contents:
     1.  [Claude Haiku 5.5 request rules](#claude-haiku-55-request-rules)
     1.  [Caching and pre-warming](#caching-and-pre-warming)
     1.  [Explanation verifier](#explanation-verifier)
-    1.  [Batch generation and the Claude backup](#batch-generation-and-the-claude-backup)
+    1.  [Batch generation](#batch-generation)
 1.  [Deployment and environments](#deployment-and-environments)
     1.  [Environments](#environments)
     1.  [Deploy pipeline](#deploy-pipeline)
@@ -75,6 +74,7 @@ Contents:
 1.  [Known limitations and risks](#known-limitations-and-risks)
     1.  [Risk register](#risk-register)
     1.  [Limitations summary](#limitations-summary)
+    1.  [Dropped and not loaded](#dropped-and-not-loaded)
 1.  [Traceability](#traceability)
 1.  [See also](#see-also)
 
@@ -101,7 +101,6 @@ AI may:
 - Draft the basic, working and advanced can-do statements, SDG tags, milestone time estimates and free-resource search links, in the batch ([#74]).
 - Suggest the closest O\*NET occupation for a Malay or local job title. The user confirms it ([#43]).
 - Write a 2-sentence explanation per corner and a short What Changed summary, citing the source names and dates it is given ([#43]).
-- Pull skills from a pasted public job ad, as word-for-word quotes ([#48]).
 - Voice Kopi's lines through text to speech ([#46]).
 - Answer a user's follow-up and what-if questions in Kopi's chat, and run a check-up in the user's own AI assistant, by calling Kotak's tools and explaining what they return ([#184], [#186], [#189]).
 
@@ -115,7 +114,6 @@ Code enforces the boundary:
 
 - A post-validator rejects batch output that references a task ID outside the occupation's own list ([#74]).
 - A verifier rejects or strips any explanation that alters a verdict label or omits a dated citation, then falls back to a deterministic template ([#43]).
-- The job-ad route keeps only quotes that appear word for word in the ad ([#48]).
 - Every route validates its request and response with shared Zod schemas ([#27]).
 - Kopi's chat and the MCP server give the model only Kotak's read-only tools, which compute every result with the engine rules. One [agent rules](#agent-rules) text tells every agent to quote tool results and cite their sources. Kopi's chat fills in the user's own answers, so the model can't retype or change them ([#184], [#186], [#189]).
 - An outside assistant is not Kotak's code. The MCP server's instructions and the kotak-checkup skill give it the same rules, and the build fails if the skill's rules drift from them ([#188]).
@@ -143,7 +141,7 @@ Copy each declaration section from the part of this document shown. The [declara
 
 This paragraph fits declaration section 2.1 (under 200 words).
 
-Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights and Quarterly Employment Statistics, TalentCorp MyCOL, OpenDOSM and Epoch AI. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. Claude's Message Batches API fills any failed job. A Zod-checked build fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker serving the React app, the JSON snapshots and a Hono API. Fixed rules in a TypeScript SDK set every level, verdict, target, fit score and roadmap position, in the browser and on the server. The API calls Claude Haiku 5.5 to match local job titles, write cited explanations and read pasted job ads, and caches each answer. ElevenLabs voices the cat. An agent layer serves the SDK as read-only tools: through an MCP server to any AI assistant, and to Claude in Kopi's in-app chat. A Neon Postgres database stores anonymous check-ups for the national view. A copy runs on Replit for the proof of use.
+Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights, the NCES CIP to SOC crosswalk and the team's list of Malaysian regulated professions. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. A Zod-checked build fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker serving the React app, the JSON snapshots and a Hono API. Fixed rules in a TypeScript SDK set every level, verdict, target, fit score and roadmap position, in the browser and on the server. The API calls Claude Haiku 5.5 to match local job titles and write cited explanations, and caches each answer. ElevenLabs voices the cat. An agent layer serves the SDK as read-only tools: through an MCP server to any AI assistant, and to Claude in Kopi's in-app chat. A Neon Postgres database stores anonymous check-ups for the national view and the JobStreet ads the team's admins approve. A copy runs on Replit for the proof of use.
 
 ### Components
 
@@ -158,7 +156,7 @@ Kotak is a web app. Before the demo, Bun scripts turn dated public data into sta
 | `plugins/kotak`   | The Claude Code plugin: the kotak-checkup skill and an `.mcp.json` for the live MCP server, listed by `.claude-plugin/marketplace.json`     | [#188]                 |
 | Ingestion scripts | Bun scripts that write dated, validated files to `data/snapshots/`                                                                          | [#30]                  |
 | Engine module     | Pure TypeScript functions for verdicts, projections, targets, scoring, transfers, roadmaps and diffs. Runs at build time and in the browser | [#81], [#83], [#86]    |
-| Batch generator   | The corner and question prompt harness and its validator, run on a RunPod serverless GPU, with a Claude batch backup                        | [#74], [#77], [#79]    |
+| Batch generator   | The corner and question prompt harness and its validator, run on a RunPod serverless GPU                                                    | [#74], [#77]           |
 | Static build      | `bun run build:data` joins everything into Zod-validated static JSON                                                                        | [#88]                  |
 | National view     | A Postgres table on Neon, its seed script and two Hono routes                                                                               | [#34]                  |
 
@@ -186,15 +184,12 @@ flowchart LR
   subgraph Sources["Dated public sources"]
     ONET["O*NET 30.1 bulk files"]
     AEI["Anthropic Economic Index<br/>2026-06-26 release"]
-    DOSM["DOSM JMI and QES PDFs"]
-    MYCOL["TalentCorp MyCOL PDFs"]
-    ODOSM["OpenDOSM API"]
-    EPOCH["Epoch AI data"]
+    DOSM["DOSM Job Market Insights PDFs"]
+    PATH["NCES CIP to SOC crosswalk<br/>Malaysian regulated professions"]
   end
   subgraph Build["Build time: Bun scripts"]
-    ING["Ingestion scripts<br/>data/snapshots/*.json"]
+    ING["Ingestion scripts<br/>data/snapshots/*.json, data/pathways/*.json"]
     RP["RunPod serverless GPU batch<br/>data/generated/role-corners.json"]
-    CB["Claude Message Batches backup"]
     BD["bun run build:data<br/>Zod-validated static JSON<br/>2026-04 and 2026-05"]
     SK["bun run build:skill<br/>skill zip and llms.txt"]
   end
@@ -214,18 +209,16 @@ flowchart LR
   EL["ElevenLabs TTS"]
   NEON["Neon Postgres 18<br/>national view"]
   REPLIT["Replit copy<br/>proof of use"]
-  ONET & AEI & DOSM & MYCOL & ODOSM & EPOCH --> ING
+  ONET & AEI & DOSM & PATH --> ING
   ONET --> RP
-  RP -. failed or missing roles .-> CB
   ING --> BD
   RP --> BD
-  CB --> BD
   PLUGIN --> SK
   BD -- "GitHub Actions deploy" --> ASSETS
   SK --> ASSETS
   BD -. "published by hand" .-> REPLIT
   ASSETS --> WEB
-  WEB -- "match, explain, job ad, TTS, national view" --> API
+  WEB -- "match, explain, job-ad market, TTS, national view" --> API
   WEB -- "Ask Kopi" --> CHAT
   PLUGIN -. "claude plugin install" .-> ASSIST
   ASSIST -- "MCP over HTTP" --> MCP
@@ -243,7 +236,7 @@ flowchart LR
 
 - **Guest session.** A Zod-validated `localStorage` store holds guest status, role code, goal, impact area, target role code, the 12 answers, follow-up answers, ticked milestones, custom weekly hours, pasted job-ad quotes, the TTS mute state and the active snapshot ID (`2026-04` or `2026-05`). A stored value that fails validation resets to clean defaults. A reset action clears the session ([#41]).
 - **Snapshot loader.** It reads the precomputed slow and fast targets for the active snapshot, defaulting to April 2026, and calls the engine functions from [#83], through `@kotak/sdk`, for levels, fit scores, estimate labels and roadmap order. Switching to `2026-05` recomputes them synchronously ([#41], [#185]).
-- **Screens.** Landing ([#54]), guest sign-in and dashboard ([#57]), check-up start and 12 questions ([#59]), Future Skills Radar ([#61]), matched roles ([#64]), roadmap ([#67]), What Changed and the demo switcher ([#69]), national view ([#72]), the paste-a-job-ad panel ([#105]) and Connect your AI ([#192]). The shell, transitions and the Loading, AI Error and No Match states are in [#51]. Kopi is in [#49]. The [Ask Kopi](#ask-kopi) chat panel opens from the shell on every `/app` page ([#191]).
+- **Screens.** Landing ([#54]), guest sign-in and dashboard ([#57]), check-up start and 12 questions ([#59]), Future Skills Radar ([#61]), matched roles ([#64]), roadmap ([#67]), What Changed and the demo switcher ([#69]), national view ([#72]) and Connect your AI ([#192]). The shell, transitions and the Loading, AI Error and No Match states are in [#51]. Kopi is in [#49]. The [Ask Kopi](#ask-kopi) chat panel opens from the shell on every `/app` page ([#191]).
 - **Visual design.** `DESIGN.md` governs tokens, type, surfaces and components ([#31], [#32]).
 
 ## Stack
@@ -252,45 +245,44 @@ flowchart LR
 
 The issues pin no library versions. `bun.lock` records them once [#29] scaffolds the workspace. A dash means no version is set in the issues.
 
-| Name                                                                  | Version | Purpose                                                                             | Issues               |
-| --------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------- | -------------------- |
-| TypeScript                                                            | —       | The language of the app, API, engine and scripts                                    | [#29]                |
-| Bun                                                                   | —       | Package manager, workspaces, script runner and local server                         | [#29]                |
-| React                                                                 | —       | `apps/web` user interface                                                           | [#29]                |
-| Vite                                                                  | —       | `apps/web` build                                                                    | [#29]                |
-| Tailwind CSS                                                          | —       | Theme, tokens and utilities from `DESIGN.md`                                        | [#32]                |
-| Recharts                                                              | —       | Radar chart, readiness graph and national view charts                               | [#61], [#67], [#72]  |
-| Lucide                                                                | —       | The 60-icon registry                                                                | [#32]                |
-| pixi-live2d-display, a PixiJS plugin                                  | —       | Renders the Live2D cat                                                              | [#49]                |
-| Live2D sample model Hijiki                                            | —       | Kopi the cat counsellor                                                             | [#49]                |
-| Hono                                                                  | —       | API routes, on the Workers runtime in production and on Bun elsewhere               | [#27]                |
-| Zod                                                                   | —       | Shared schemas for data files, session state and API payloads                       | [#29], [#40]         |
-| `@anthropic-ai/sdk`                                                   | —       | Claude Messages and Message Batches calls, and the beta tool runner for Kopi's chat | [#43], [#79], [#189] |
-| `@modelcontextprotocol/server`, the MCP TypeScript SDK                | v2      | Serves Kotak's tools over MCP at `/api/mcp`, on the Worker and on Bun               | [#186]               |
-| `@kotak/sdk` and `@kotak/agent`, Kotak's own packages                 | —       | The check-up engine for any runtime; Kotak's tools and agent rules                  | [#185], [#186]       |
-| fflate                                                                | —       | Zips the kotak-checkup skill for claude.ai                                          | [#188]               |
-| Postgres on Neon                                                      | 18      | National view storage                                                               | [#34]                |
-| Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono, Shantell Sans | —       | Interface type, figures and Kopi's speech box                                       | [#32]                |
-| `cloudflare/wrangler-action`                                          | v4      | Deploy step in GitHub Actions ([deploy notes][deploy])                              | [#62]                |
-| RunPod serverless worker                                              | —       | vLLM, or an embedding and structured-output worker, for the batch                   | [#77]                |
+| Name                                                                  | Version | Purpose                                                               | Issues              |
+| --------------------------------------------------------------------- | ------- | --------------------------------------------------------------------- | ------------------- |
+| TypeScript                                                            | —       | The language of the app, API, engine and scripts                      | [#29]               |
+| Bun                                                                   | —       | Package manager, workspaces, script runner and local server           | [#29]               |
+| React                                                                 | —       | `apps/web` user interface                                             | [#29]               |
+| Vite                                                                  | —       | `apps/web` build                                                      | [#29]               |
+| Tailwind CSS                                                          | —       | Theme, tokens and utilities from `DESIGN.md`                          | [#32]               |
+| Recharts                                                              | —       | Radar chart, readiness graph and national view charts                 | [#61], [#67], [#72] |
+| Lucide                                                                | —       | The 60-icon registry                                                  | [#32]               |
+| pixi-live2d-display, a PixiJS plugin                                  | —       | Renders the Live2D cat                                                | [#49]               |
+| Live2D sample model Hijiki                                            | —       | Kopi the cat counsellor                                               | [#49]               |
+| Hono                                                                  | —       | API routes, on the Workers runtime in production and on Bun elsewhere | [#27]               |
+| Zod                                                                   | —       | Shared schemas for data files, session state and API payloads         | [#29], [#40]        |
+| `@anthropic-ai/sdk`                                                   | —       | Claude Messages calls, and the beta tool runner for Kopi's chat       | [#43], [#189]       |
+| `@modelcontextprotocol/server`, the MCP TypeScript SDK                | v2      | Serves Kotak's tools over MCP at `/api/mcp`, on the Worker and on Bun | [#186]              |
+| `@kotak/sdk` and `@kotak/agent`, Kotak's own packages                 | —       | The check-up engine for any runtime; Kotak's tools and agent rules    | [#185], [#186]      |
+| fflate                                                                | —       | Zips the kotak-checkup skill for claude.ai                            | [#188]              |
+| Postgres on Neon                                                      | 18      | National view storage                                                 | [#34]               |
+| Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono, Shantell Sans | —       | Interface type, figures and Kopi's speech box                         | [#32]               |
+| `cloudflare/wrangler-action`                                          | v4      | Deploy step in GitHub Actions ([deploy notes][deploy])                | [#62]               |
+| RunPod serverless worker                                              | —       | vLLM, or an embedding and structured-output worker, for the batch     | [#77]               |
 
 Licences go in `NOTICE.md` ([#47]). The repo docs state two of them: Lucide is ISC, and the Live2D model is under the Live2D Free Material License Agreement.
 
 ### External APIs and cloud services
 
-| Service                       | Purpose                                                                            | Access tier, plan or region                                                                                |
-| ----------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Anthropic Claude API          | Job-title match, explanations, job-ad extraction, Kopi's chat and the batch backup | Team API key; [#73] records the tier                                                                       |
-| ElevenLabs Text to Speech API | Kopi's voice                                                                       | A 34,000-credit budget ([deploy notes][deploy]); [#73] records the plan                                    |
-| UN SDG API                    | Official target text and Malaysia's indicator 4.4.1 values                         | Free, no key                                                                                               |
-| OpenDOSM and data.gov.my API  | Malaysian labour and wage series                                                   | Free, no key, 4 requests a minute                                                                          |
-| Hugging Face Hub              | Economic Index files and new-release polling                                       | Free, no key; anonymous limit of 3,000 resolver requests per 5 minutes                                     |
-| O\*NET bulk downloads         | The occupation and task backbone                                                   | Free, no key                                                                                               |
-| Cloudflare Workers            | Hosts the app, the static JSON and the API                                         | One Worker; the free plan allows 100,000 requests a day and 10 ms CPU per request ([deploy notes][deploy]) |
-| GitHub Actions                | Deploys, data refresh and checks                                                   | Repository workflows                                                                                       |
-| Neon                          | Postgres 18 for the national view                                                  | Project `kotak`, region `aws-ap-southeast-1`                                                               |
-| Replit                        | A hand-published copy for the compulsory proof of use                              | Sponsor Replit Core, or the one free Starter app ([#99])                                                   |
-| RunPod                        | Serverless GPU for the one-time batch                                              | Sponsor credit of US$25 per team ([brief][brief-credits])                                                  |
+| Service                       | Purpose                                                                                         | Access tier, plan or region                                                                                |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Anthropic Claude API          | Job-title match, explanations, Kopi's chat, and sorting scraped listing titles for admin review | Team API key; [#73] records the tier                                                                       |
+| ElevenLabs Text to Speech API | Kopi's voice                                                                                    | A 34,000-credit budget ([deploy notes][deploy]); [#73] records the plan                                    |
+| UN SDG API                    | Official target text and Malaysia's indicator 4.4.1 values                                      | Free, no key                                                                                               |
+| Hugging Face Hub              | Economic Index files and new-release polling                                                    | Free, no key; anonymous limit of 3,000 resolver requests per 5 minutes                                     |
+| O\*NET bulk downloads         | The occupation and task backbone                                                                | Free, no key                                                                                               |
+| Cloudflare Workers            | Hosts the app, the static JSON and the API                                                      | One Worker; the free plan allows 100,000 requests a day and 10 ms CPU per request ([deploy notes][deploy]) |
+| GitHub Actions                | Deploys, data refresh and checks                                                                | Repository workflows                                                                                       |
+| Neon                          | Postgres 18 for the national view                                                               | Project `kotak`, region `aws-ap-southeast-1`                                                               |
+| Replit                        | A hand-published copy for the compulsory proof of use                                           | Sponsor Replit Core, or the one free Starter app ([#99])                                                   |
+| RunPod                        | Serverless GPU for the one-time batch                                                           | Sponsor credit of US$25 per team ([brief][brief-credits])                                                  |
 
 [brief-credits]: /docs/BRIEF.md#support-and-contacts
 
@@ -307,18 +299,16 @@ Every dataset is public, synthetic or collected by the team from public job ads,
 | MASCO 2020 unit-group codes                  | 2020 edition; 4-digit codes attached by hand where title and code align                                                                                                                                                                                                                                                                                                                                                                 | Malaysia; about 300 of 490 unit groups line up with ISCO-08. Others carry `masco_unmatched: true`                                                                                  | [#44]          |
 | Anthropic Economic Index                     | Release 2026-06-26 (`aei_claude_ai_2026-06-26.csv`, 219 MB), months April and May 2026, filtered to `MYS`, `SGP` and `GLOBAL`                                                                                                                                                                                                                                                                                                           | Usage share for 198 Malaysian occupations in April and 243 in May. The automation and augmentation split only for 20 major groups and for work activities (20 in April, 23 in May) | [#50]          |
 | DOSM Big Data Analytics: Job Market Insights | Quarterly, Q3 2019 (74,018 offerings) to Q2 2026 (555,509)                                                                                                                                                                                                                                                                                                                                                                              | Online job offerings from private recruitment platforms, by major occupation group and top named roles                                                                             | [#52]          |
-| DOSM Quarterly Employment Statistics         | Quarterly, Q1 2015 to Q2 2026; the Q2 2026 release is dated 13 August 2026                                                                                                                                                                                                                                                                                                                                                              | Vacancies and jobs created by 5 economic activities and 3 skill categories                                                                                                         | [#55]          |
-| TalentCorp MyCOL                             | Editions 2015/16 to 2024/25; 2024/25 lists 66 occupations across 18 sectors                                                                                                                                                                                                                                                                                                                                                             | Critical occupations by 4-digit MASCO code. List scope changes between editions                                                                                                    | [#60]          |
-| OpenDOSM series                              | `employment_sector` 2001 to 2025; `wages_occupation` 2010 to 2025, updated 21 September 2026; `wages_skill` 2010 to 2025; `lfs_qtr_sru_sex` 2017 Q1 to 2026 Q2; `lfs_qtr_sru_age`; `lfs_month`, latest row 2026-08-01                                                                                                                                                                                                                   | Malaysia, by sector, major occupation group and skill category                                                                                                                     | [#63]          |
-| Epoch AI data                                | October 2026: models (16 October) and benchmarks (19 October)                                                                                                                                                                                                                                                                                                                                                                           | Global only                                                                                                                                                                        | [#66]          |
+| OpenDOSM `lfs_qtr_sru_age`, one figure       | Q2 2026, updated 11 August 2026: skill-related underemployment of tertiary-educated 15 to 24-year-olds, cited on the landing page                                                                                                                                                                                                                                                                                                       | Malaysia                                                                                                                                                                           | [#63]          |
 | UN SDG API                                   | Indicator 4.4.1 for Malaysia, 2015 and 2017 to 2024                                                                                                                                                                                                                                                                                                                                                                                     | Malaysia, for indicator 4.4.1                                                                                                                                                      | [#47], [#58]   |
-| GitHub Innovation Graph, optional            | `MY` languages 2020 Q1 to 2026 Q1; topics 2021 Q1 to 2026 Q1                                                                                                                                                                                                                                                                                                                                                                            | Malaysia, developer activity only                                                                                                                                                  | [#95]          |
 | CIP 2020 to SOC 2018 crosswalk               | NCES, 2020: 5,723 links from fields of study to occupations, without its NO MATCH rows                                                                                                                                                                                                                                                                                                                                                  | None: US programmes and occupations. 54 Malaysian fields of study are mapped to CIP codes by hand                                                                                  | [#284]         |
 | Malaysian regulated professions              | 42 professions over 132 O\*NET codes, accessed 23 October 2026. Each row cites its Act on the Attorney General's Chambers' Laws of Malaysia site, the regulator's site or, where neither opened, a legal database or news report                                                                                                                                                                                                        | Malaysia: who may practise law, medicine, engineering, teaching and the other professions an Act restricts                                                                         | [#284]         |
 | JobStreet Malaysia job ads, self-collected   | From 22 October 2026: breadth batches of JobStreet search results, each reviewed by an admin against one O\*NET occupation                                                                                                                                                                                                                                                                                                              | Malaysia: the ads approved per O\*NET occupation, with advertised pay, location, work type and the text of the card and, when fetched, the description                             | [#235], [#271] |
 | Synthetic profiles and sample rows           | Made by the team, labelled as samples                                                                                                                                                                                                                                                                                                                                                                                                   | Not applicable                                                                                                                                                                     | [#34], [#88]   |
 
 JobStreet job ads come from the team's own scraper ([scraper guide][jobstreet-guide]). An admin reviews each batch, and an ad counts only once it is approved under an O\*NET occupation. The approved ads feed the [job-ad market route](#job-ad-market-route) and the `job_market` tool, as context beside the verdicts. No verdict, fit score or roadmap reads them until [#275] adds a demand rule with enough weekly history, so DOSM's Job Market Insights stays the job-ad demand series behind the verdicts.
+
+TalentCorp MyCOL and Epoch AI are cited as context only, and Kotak loads no data from them. DOSM Quarterly Employment Statistics, the other OpenDOSM series and the GitHub Innovation Graph are not loaded either. [Dropped and not loaded](#dropped-and-not-loaded) lists them with their issues.
 
 ### Licences and attribution
 
@@ -328,13 +318,11 @@ Each licence fact below comes from the research notes or [#47]. Where they diffe
 - **ESCO**: free reuse for any purpose, provided "The use of ESCO shall be acknowledged by publishing the statement" from the ESCO FAQ ([trend data notes][trend]).
 - **MASCO 2020**: "No part of this publication may be reproduced" (Ministry of Human Resources). Kotak stores only hand-checked codes, not a parsed copy ([trend data notes][trend]).
 - **Anthropic Economic Index**: the README says "Data released under CC-BY, code released under MIT License", with no CC BY version; the YAML metadata says MIT ([trend data notes][trend]). [#47] writes "CC BY 4.0 / MIT". Credit Anthropic.
-- **DOSM Quarterly Employment Statistics**: DOSM's terms allow commercial and non-commercial reuse with the exact attribution "Data source: Department of Statistics Malaysia." Every emitted record carries it ([official demand notes][demand-official], [#55]).
 - **DOSM Job Market Insights**: the [published demand notes][demand-published] found no reuse licence on the releases, but DOSM's [Terms of Use][dosm-terms], read on 22 October 2026, cover them. DOSM "authorizes the use of data without any charge worldwide, continuously and not exclusive for the content available on this portal" for copying, publishing, adapting and using it "commercially and non-commercially", under the [Government Open Data Terms of Use 1.0][open-data-terms]. Users must state "Data source: Department of Statistics Malaysia", link to those terms and not present their analysis as DOSM's. Kotak extracts only the figures it needs, cites each with its release title, quarter, URL and that attribution, and links both terms in the snapshot's licence ([#52]).
-- **TalentCorp MyCOL**: no open data licence; the TalentCorp site says all rights reserved ([official demand notes][demand-official]). Kotak stores codes, edition presence and citations only ([#60]).
-- **OpenDOSM**: CC BY 4.0 ([#63]).
-- **Epoch AI**: "Creative Commons Attribution", version not stated ([trend data notes][trend]). The snapshot carries the credit and the retrieval date ([#66]).
+- **TalentCorp MyCOL**: no open data licence; the TalentCorp site says all rights reserved ([official demand notes][demand-official]). Kotak cites it as context and stores none of its data ([#60]).
+- **OpenDOSM**: CC BY 4.0. Kotak cites one figure, with its credit ([#63]).
+- **Epoch AI**: "Creative Commons Attribution", version not stated ([trend data notes][trend]). Kotak cites it as context and stores none of its data ([#66]).
 - **UN SDG API**: the repo notes state no licence. [#47] adds its credit.
-- **GitHub Innovation Graph**: CC0-1.0 ([#95]).
 - **Lucide**: ISC ([#47]).
 - **Live2D sample model Hijiki**: the Live2D Free Material License Agreement. Clause 4.1.1 says "the Customer may not Redistribute all or part of the Material to third party". The team accepted this risk on 22 October and credits Live2D Inc. in `NOTICE.md` ([mascot][mascot], [#47]).
 
@@ -348,24 +336,24 @@ No restricted dataset is committed as raw data ([#47]).
 
 Each layer has its own signal. For a given role, the engine collects only the layers at and above it ([#71]).
 
-| Layer               | Signal                                             | Sources                                                                                                           |
-| ------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| 1. Sector           | Where money goes                                   | DOSM QES vacancies by sector; OpenDOSM `employment_sector`                                                        |
-| 2. Occupation group | Job data with history; Malaysia's automation split | DOSM Job Market Insights by major group; Economic Index rows for 20 SOC major groups; OpenDOSM `wages_occupation` |
-| 3. Role             | AI exposure, shortages, demand                     | Economic Index detailed-occupation usage; MyCOL editions; roles named in Job Market Insights                      |
-| 4. Skill            | What employers ask for                             | O\*NET tasks and work activities; Economic Index work-activity and task rows; pasted job ads (visitor only)       |
+| Layer               | Signal                                             | Sources                                                                                                                    |
+| ------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 1. Sector           | Where money goes                                   | None loaded. DOSM QES ([#55]) and OpenDOSM `employment_sector` ([#63]) were planned; the engine lists the layer as missing |
+| 2. Occupation group | Job data with history; Malaysia's automation split | DOSM Job Market Insights by major group; Economic Index rows for 20 SOC major groups                                       |
+| 3. Role             | AI exposure, demand                                | Economic Index detailed-occupation usage; roles named in Job Market Insights                                               |
+| 4. Skill            | What employers ask for                             | O\*NET tasks and work activities; Economic Index work-activity and task rows                                               |
 
 Fallback rules:
 
 1.  **Borrow and label.** When a layer has no Malaysian data, the engine borrows from the layer above, or uses global data, and labels the borrowed value ([#71]).
 2.  **AI use on a corner.** Use the finest level published: task, then work activity, then detailed occupation, then major occupation group. Use Malaysia (`MYS`) first, then `GLOBAL`. Attach a fallback label whenever a higher layer or a global row is used ([#71]). The locked idea's chain stops at occupation; [#71] adds the major group.
 3.  **How AI is used.** The automation and augmentation split for `MYS` exists only for work activities and major groups, so it resolves at work-activity level first, then major group, then `GLOBAL`, labelled ([trend data notes][trend]).
-4.  **Role demand**, in order: the role's own count where Job Market Insights names it among a quarter's top roles; the role's presence across MyCOL editions, 2015/16 to 2024/25; its occupation group's Job Market Insights series; otherwise `Unknown`, which adds 0 to the target ([#71]).
+4.  **Role demand**, in order: the role's own count where Job Market Insights names it among a quarter's top roles; its occupation group's Job Market Insights series; otherwise `Unknown`, which adds 0 to the target ([#71]). The engine has a MyCOL step between the first two, which reads a role's presence across MyCOL editions. MyCOL is not loaded, so the engine skips that step and the fallback label says so ([#60]).
 5.  **Missing is not zero.** A suppressed Economic Index cell is stored as `null`, not `0` ([#50]).
 
 Until skill-level demand history exists, each corner takes its role's demand direction. Corners differ through their AI data, not their demand. No open Malaysian series tracks demand for single skills ([engine][engine]).
 
-Layer 1 and the OpenDOSM series are shown as context. The verdict uses only the three inputs in [Verdict rules](#verdict-rules). The optional signals in [#95] are labelled as developer or research activity and never override the demand fallback. The locked idea also lists Bursa sector indexes as Layer 1 context; no issue ingests them.
+Layer 1 was planned as context only, and has no loaded source. The verdict uses only the three inputs in [Verdict rules](#verdict-rules). The optional signals in [#95], had they been built, were to be labelled as developer or research activity and never override the demand fallback. The locked idea also lists Bursa sector indexes as Layer 1 context; no issue ingests them.
 
 [engine]: /docs/ideas/0007-kotak.md#layered-hierarchy
 
@@ -378,7 +366,7 @@ The engine is pure TypeScript. It runs at build time and in the browser, so the 
 [#40] defines Zod schemas and types for:
 
 - **Source files**: O\*NET occupations, alternate titles, tasks, intermediate and broad work activities, related roles, and ISCO and MASCO crosswalk rows.
-- **Dated signal snapshots**: Economic Index rows, Job Market Insights quarters (`DosmDemandSchema`, [#52]), QES sector rows, OpenDOSM series, MyCOL editions (`MyColSchema`, [#60]) and Epoch AI context.
+- **Dated signal snapshots**: Economic Index rows and Job Market Insights quarters (`DosmDemandSchema`, [#52]). Schemas for QES sector rows, OpenDOSM series, MyCOL editions (`MyColSchema`, [#60]) and Epoch AI context exist too, unused until those sources are loaded.
 - **Batch output** (`RoleCornersSchema`, [#77]): up to 6 corners, the basic, working and advanced can-do statements, SDG tags, free resources, hour estimates and a quality label.
 - **Engine output**: verdicts, slow and fast targets, fit-score breakdowns, What Changed diffs and provenance citations.
 
@@ -429,7 +417,7 @@ The status chips show five states: Rising, Steady, Declining, Split and Unknown 
 - **Fast**: moves Malaysia halfway to Singapore's level, which raises every corner's projected AI-use growth.
 - **Anchors**: kymil4's notes give May 2026 usage-per-capita indexes of 5.81 for Singapore and 0.87 for Malaysia. [#50] re-checks both against the release file before the engine uses them.
 - **Formula**: the exact projection formula, within these rules, belongs to [#81].
-- **AI advancement**: the Economic Index is the main signal. One dated line from Epoch AI adds what frontier models can now do ([#66]).
+- **AI advancement**: the Economic Index is the only AI signal. The landing page cites Epoch AI as context only; no Epoch data is loaded ([#66]).
 
 ### Target level
 
@@ -639,15 +627,6 @@ The [chat route](#kopis-chat-route) runs Claude with Kotak's tools in process ([
 - **Checks**: the [explanation verifier](#explanation-verifier).
 - **Failure**: the deterministic template. If the Claude API is overloaded, the app serves the cached answer with a cached label ([#78]).
 
-### Job-ad extractor route
-
-- **Route**: `POST /api/job-ad/extract` ([#48], [#105]).
-- **Input**: the text of a pasted public job ad.
-- **Output**: the skills Claude finds, each with its quote. Code drops every quote that does not appear word for word in the ad.
-- **Scope**: results stay in that visitor's view and change no one else's verdicts. Shared evidence would need a person to approve each ad, which the prototype skips ([live extras][extras]).
-- **Caching**: by a hash of the ad ([#48]).
-- **Failure**: the panel is optional; the check-up continues without it ([#105]).
-
 ### TTS route
 
 - **Route**: `POST /api/tts` ([#49], [#46]).
@@ -719,10 +698,9 @@ The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels
 | Task                                                                          | Model                                                                           | Mode                           | Issues       |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------ | ------------ |
 | Corners, can-do statements, SDG tags, hours, resource links, title embeddings | An open-weights model on a RunPod serverless GPU; [#77] names the model and GPU | One batch before the demo      | [#74], [#77] |
-| Backup for occupations that fail validation or are missing                    | Claude, through the Message Batches API; [#79] names the model                  | Batch, on demand               | [#79]        |
 | Local and Malay job titles to the closest O\*NET occupation                   | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, cached                   | [#43]        |
 | Corner explanations and the What Changed summary                              | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, cached, verified         | [#43]        |
-| Skills from a pasted job ad                                                   | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, cached by ad hash        | [#48]        |
+| Sorting a scraped batch's listing titles for admin review                     | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, admin only, stored       | [#235]       |
 | Kopi's answers to follow-up and what-if questions, over Kotak's tools         | Claude Haiku 5.5 (`claude-haiku-5-5`)                                           | Live, tool runner, not cached  | [#189]       |
 | Kopi's voice                                                                  | ElevenLabs `eleven_v4` (fixed lines) and `eleven_v4_turbo` (live lines)         | Pre-generated and live, cached | [#46]        |
 
@@ -737,7 +715,7 @@ All models are pre-trained and used as provided. None is fine-tuned or self-trai
 These rules come from Anthropic's [models overview][models] and [migration guide][migration]:
 
 - **Model ID**: `claude-haiku-5-5`, with no date suffix.
-- **Sampling**: Claude Haiku 5.5 rejects non-default `temperature`, `top_p` and `top_k` values with HTTP 400. The issues ask for `temperature: 0` ([#43], [#79]). Requests leave these fields out. Repeatable answers come from the response cache and the verifier, not from sampling settings.
+- **Sampling**: Claude Haiku 5.5 rejects non-default `temperature`, `top_p` and `top_k` values with HTTP 400. The issues ask for `temperature: 0` ([#43]). Requests leave these fields out. Repeatable answers come from the response cache and the verifier, not from sampling settings.
 - **Thinking**: adaptive by default, and Kotak leaves it on. `output_config.effort` defaults to `medium`, and each route sets it: `low` for title matching and Kopi's chat, where the user waits, and `medium` for explanations, which load in the background.
 - **Structured output**: use `output_config.format` for JSON. Forced tool use (`tool_choice` of `any` or `tool`) skips thinking on this model, so requests do not use it.
 - **Tool use**: Kopi's chat leaves `tool_choice` unset, so Claude picks its tools, and the Anthropic SDK's beta tool runner calls them until Claude answers ([#189]).
@@ -751,7 +729,6 @@ These rules come from Anthropic's [models overview][models] and [migration guide
 
 - **Claude responses**: keyed by a SHA-256 hash of the normalised request payload, in memory and in a persistent store ([#43]). The Workers runtime has no persistent local disk, so [#43] picks a store that runtime supports.
 - **Repeat speed**: an identical request returns the cached payload in under 50 ms without calling the Anthropic API ([#43]).
-- **Job ads**: keyed by a hash of the ad ([#48]).
 - **Audio**: keyed by a hash of text, voice and model ([#46]).
 - **Kopi's chat**: not cached, because each conversation differs ([#189]).
 - **Pre-warming**: the cache is filled for the 2 or 3 demo roles before the demo, and Kopi's fixed lines are pre-generated, so the live demo never waits on an external API ([#43], [#46]). `bun run prewarm:ai scripts/demo-requests.json` sends the requests `scripts/demo-requests.ts` builds with the app's own code, and each deploy pre-generates the lines in `scripts/kopi-lines.ts`, recorded from the demo walk ([#150]).
@@ -767,15 +744,14 @@ After each generation, the verifier checks every explanation ([#43]):
 
 The explanation never changes a numeric score or a verdict ([#43]).
 
-### Batch generation and the Claude backup
+### Batch generation
 
 1.  **Group.** For each occupation, group its core tasks by intermediate work activity (IWA). The 50 occupations with fewer than 6 core IWA groups add supplemental tasks or show fewer corners ([#74]).
 2.  **Merge or split.** The model splits or merges uneven groups into 6 readable corners, using only task IDs that belong to that occupation. For graphic designers, 10 of 17 core tasks fall in one IWA ([#74]).
 3.  **Draft.** For each corner: exactly 3 tiered can-do statements (`basic`, `working`, `advanced`), at least one SDG target tag (such as 4.4, 8.2 or 8.5), a milestone time estimate and free-resource search links ([#74]).
 4.  **Validate.** A post-validator rejects any output that references a task ID outside the occupation's own list. Every corner must map to the occupation's own task IDs and IWA codes ([#74]).
-5.  **Run.** A RunPod serverless GPU worker runs the batch across the O\*NET catalogue and writes `data/generated/role-corners.json` ([#77]).
-6.  **Back up.** A Bun script on the Message Batches API runs the same prompt and validator for any missing or failed occupation, for any subset of O\*NET codes ([#79]).
-7.  **Check.** People hand-check the 3 demo occupations, set `quality: "human-checked"` and curate verified free resources ([#104]). A law reviewer checks the legal roles ([#91]). All other roles stay `"auto-generated"` and the app labels them so.
+5.  **Run.** A RunPod serverless GPU worker runs the batch across the O\*NET catalogue and writes `data/generated/role-corners.json` ([#77]). The final run filled all 923 jobs: `data/generated/role-corners-run.json` lists no missing codes, so the planned Claude backup was never needed ([#79]).
+6.  **Check.** People hand-check the 3 demo occupations, set `quality: "human-checked"` and curate verified free resources ([#104]). A law reviewer checks the legal roles ([#91]). All other roles stay `"auto-generated"` and the app labels them so.
 
 ## Deployment and environments
 
@@ -819,7 +795,7 @@ Who can ship: any member with write access, by merging to `main` or by clicking 
 `.github/workflows/refresh-data.yml` runs on a weekly `schedule` and on `workflow_dispatch` ([#90]):
 
 1.  Poll the Hugging Face tree API for new `release_*` folders in `Anthropic/EconomicIndex`.
-2.  Run the DOSM Job Market Insights ([#52]), OpenDOSM and Epoch AI ingestion scripts. OpenDOSM calls stay at 4 requests a minute or fewer, with exponential backoff on HTTP 429 ([#63]).
+2.  Run the DOSM Job Market Insights ingestion script ([#52]). `refresh:check` also looks for OpenDOSM and Epoch AI scripts and reports them as missing, since neither exists ([#63], [#66]).
 3.  Run `bun run build:data` and validate every snapshot.
 4.  When upstream data changed, open a commit or pull request with the snapshot diff summary.
 
@@ -856,7 +832,7 @@ Names only. Real values never enter the repository, `.env.example` or any submis
 
 | Name                    | Used by                                                                             | Stored in                                                             | Status                                       |
 | ----------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------- |
-| `ANTHROPIC_API_KEY`     | Claude routes and the batch backup script                                           | GitHub repository secret; Worker secret; Replit Secrets; local `.env` | Set as a repository secret                   |
+| `ANTHROPIC_API_KEY`     | Claude routes                                                                       | GitHub repository secret; Worker secret; Replit Secrets; local `.env` | Set as a repository secret                   |
 | `ELEVENLABS_API_KEY`    | The TTS route and the line pre-generation                                           | Same as above                                                         | Set as a repository secret                   |
 | `ELEVENLABS_VOICE_ID`   | The TTS route, only to override Kopi's voice, Johari (`KOPI_VOICE_ID` in the route) | Optional; Worker secret or Replit Secrets                             | Not set; the deploy doesn't pass it ([#143]) |
 | `DATABASE_URL`          | The national view routes                                                            | Same as above; Neon's pooled connection URL                           | Set as a repository secret                   |
@@ -917,7 +893,7 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 - **Local state.** The check-up lives in the browser's `localStorage` ([#41]).
 - **No personal data.** No CV upload, no real CVs and no free-text profile. The demo uses synthetic profiles only ([non-goals][anti-goals]).
 - **Anonymous aggregates.** The national view stores only role code, corner levels and date, and shows totals only for groups of 10 or more real check-ups ([#34]).
-- **Third parties.** A typed job title and a pasted public job ad go to the Anthropic API. Kopi's lines go to ElevenLabs as text.
+- **Third parties.** A typed job title goes to the Anthropic API, and so do a scraped batch's listing titles when an admin sorts them. Kopi's lines go to ElevenLabs as text.
 - **Kopi's chat.** A question to Kopi sends the conversation and the guest's check-up (role codes, goal, the 12 answers, snapshot, weekly hours and start date) to Kotak's API, which sends them, with the tool results, to the Anthropic API. The API doesn't store, cache or log them, and the panel keeps the conversation only in the page's memory ([#189], [#191]).
 - **MCP.** The MCP server is stateless: it uses an assistant's tool inputs, such as a job title or answers, for that call only, and stores and logs none of them. What the assistant keeps is up to its provider ([#186]).
 
@@ -932,7 +908,6 @@ Kotak has no accounts. Users sign in as a guest, and their check-up stays in the
 - No API keys, passwords or credentials in the code, the prototype or any document ([#53], [#103]).
 - Keys stay on the server; the browser calls only Kotak's own API ([#46]).
 - Every route rejects payloads that fail its Zod schema ([#27]).
-- Rendered job-ad quotes are text found in the visitor's own ad, checked word for word ([#48]).
 - The MCP server and Kopi's chat offer only read-only tools over public data, so the MCP server needs no auth and keeps no sessions. No tool writes anything ([#184], [#186]).
 
 ## Known limitations and risks
@@ -943,14 +918,13 @@ Kotak has no accounts. Users sign in as a guest, and their check-up stays in the
 | ------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
 | The Claude API is overloaded (`529`) or down                                   | Explanations and title matches stall      | Cached, labelled answers; the deterministic explanation template; pre-warmed demo roles                                                                                                                                                                                   | [#43], [#78]                 |
 | A model invents a claim or changes a verdict                                   | A wrong or uncited explanation            | The verifier strips it and falls back to the template; engine functions make no AI calls                                                                                                                                                                                  | [#43], [#37]                 |
-| A model invents a job-ad quote                                                 | A fake skill on the visitor's view        | Code drops any quote not found word for word in the ad                                                                                                                                                                                                                    | [#48]                        |
 | Kopi or a connected assistant states a number no tool returned                 | A made-up result in a chat                | One agent rules text for every agent; read-only tools compute every number; Kopi's tools carry the user's own answers; replies are labelled AI-drafted; the build fails if the skill's rules drift                                                                        | [#184], [#188], [#189]       |
 | The Economic Index measures Claude usage, not jobs, and suppresses small cells | Biased or missing signals                 | Label it an AI usage signal; store suppressed cells as `null`; borrow from the layer above with a label                                                                                                                                                                   | [#50], [#71]                 |
 | Two monthly points drive a 12-month projection                                 | Rough projections                         | Every projection is labelled an estimate; fewer than two points gives Unknown; Split shows both futures                                                                                                                                                                   | [#81]                        |
-| No open Malaysian series tracks demand for single skills                       | Corners share their role's demand         | Corners differ through their AI data; the data card states the gap                                                                                                                                                                                                        | [#71], [#93]                 |
+| No open Malaysian series tracks demand for single skills                       | Corners share their role's demand         | Corners differ through their AI data; the [data card](/docs/data-card.md) states the gap                                                                                                                                                                                  | [#71], [#93]                 |
 | O\*NET is a US taxonomy, and the MASCO match is lossy                          | Wrong local labels                        | The user confirms AI title matches; unmatched roles carry `masco_unmatched: true`                                                                                                                                                                                         | [#43], [#44]                 |
 | The batch makes uneven or vague corners                                        | Weak questions for some jobs              | The task-ID validator; the "auto-generated" label; hand-checked demo and legal roles                                                                                                                                                                                      | [#74], [#104], [#91]         |
-| The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | The Claude Message Batches backup for any subset of codes                                                                                                                                                                                                                 | [#79]                        |
+| The RunPod batch is slow, throttled or fails validation                        | Missing roles                             | Re-run the missing codes on RunPod with the same validator; the final run left none missing                                                                                                                                                                               | [#77], [#79]                 |
 | ElevenLabs fails or the credits run out                                        | No voice                                  | Pre-generated static MP3s; text-only fallback; a persistent mute                                                                                                                                                                                                          | [#46]                        |
 | The Worker hits its free-plan limits                                           | Failed API or MCP calls                   | Scoring runs in the browser; static assets are free and unlimited; MCP calls and Kopi's chat run in a Durable Object with a 30 s CPU budget                                                                                                                               | [#62], [#186], [#202]        |
 | An open AI or TTS route is called by others                                    | Spent credits                             | Response caches; at most 30 uncached Claude calls a minute per route, per Cloudflare location and approximate ([#155]); Kopi's chat checks the limit before every Claude request and caps its requests and tokens ([#189]); a TTS-only ElevenLabs key with a credit quota | [#46], [#53], [#155], [#189] |
@@ -965,25 +939,39 @@ Kotak has no accounts. Users sign in as a guest, and their check-up stays in the
 
 This paragraph fits declaration section 6.2 (under 150 words).
 
-The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak labels it an AI usage signal and, when Malaysian rows are missing, borrows from the layer above with a label. Two monthly points make the 12-month projections rough, so every projection is labelled an estimate, and fewer than two points gives Unknown. No open Malaysian series tracks demand for single skills, so corners share their role's demand. O\*NET is a US taxonomy, so the user confirms local title matches. Language models can invent text. A verifier rejects any explanation that changes a verdict or drops a dated citation and falls back to a template. Code drops job-ad quotes that are not word for word. If the Claude API is overloaded, the app serves cached, labelled answers. If text to speech fails, Kopi speaks in text only.
+The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak labels it an AI usage signal and, when Malaysian rows are missing, borrows from the layer above with a label. Two monthly points make the 12-month projections rough, so every projection is labelled an estimate, and fewer than two points gives Unknown. No open Malaysian series tracks demand for single skills, so corners share their role's demand. O\*NET is a US taxonomy, so the user confirms local title matches. Language models can invent text. A verifier rejects any explanation that changes a verdict or drops a dated citation and falls back to a template. If the Claude API is overloaded, the app serves cached, labelled answers. If text to speech fails, Kopi speaks in text only.
+
+### Dropped and not loaded
+
+These plans from the issues are not in the submitted build. The schemas and the engine's hooks for the data sources stay in the code, so a source can be loaded later without changing a rule.
+
+| Plan                                                                      | Status                                                                                          | Issue         |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------- |
+| Pasted job ads: skills quoted word for word from an ad the visitor pastes | Dropped. The guest session's `pasted_job_ad_quotes` field and the extraction schemas are unused | [#48], [#105] |
+| A Claude Message Batches backup for the corner batch                      | Not needed: the RunPod run filled all 923 jobs                                                  | [#79]         |
+| DOSM Quarterly Employment Statistics, for Layer 1 sector vacancies        | Not loaded                                                                                      | [#55]         |
+| TalentCorp MyCOL editions, the second step of the role demand fallback    | Not loaded; cited as context only. The engine skips the step and labels it                      | [#60]         |
+| OpenDOSM labour and wage series                                           | Not loaded; one underemployment figure is cited on the landing page                             | [#63]         |
+| Epoch AI frontier-model context                                           | Not loaded; cited as context only                                                               | [#66]         |
+| GitHub Innovation Graph signals and a Singapore-to-Malaysia backtest      | Not built                                                                                       | [#95]         |
 
 ## Traceability
 
-| Section                                                     | Issues that implement it                                                                                      |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [Overview](#overview)                                       | [#27], [#37], [#56], [#93]                                                                                    |
-| [System architecture](#system-architecture)                 | [#26], [#28], [#29], [#41], [#51], [#56], [#88]                                                               |
-| [Stack](#stack)                                             | [#29], [#32], [#49], [#61], [#73]                                                                             |
-| [Data sources](#data-sources)                               | [#30], [#44], [#47], [#50], [#52], [#55], [#60], [#63], [#66], [#71], [#93], [#95]                            |
-| [Engine](#engine)                                           | [#37], [#40], [#59], [#64], [#67], [#69], [#81], [#83], [#86], [#88]                                          |
-| [SDK layer](#sdk-layer)                                     | [#184], [#185], [#187]                                                                                        |
-| [Agent layer](#agent-layer)                                 | [#184], [#186], [#188], [#189], [#190], [#191], [#192]                                                        |
-| [API routes](#api-routes)                                   | [#27], [#34], [#43], [#46], [#48], [#72], [#105], [#186], [#189], [#190]                                      |
-| [AI models](#ai-models)                                     | [#35], [#43], [#46], [#48], [#74], [#77], [#79], [#91], [#104], [#189]                                        |
-| [Deployment and environments](#deployment-and-environments) | [#33], [#53], [#62], [#65], [#68], [#70], [#89], [#90], [#99], [#100], [#101], [#102], [#103], [#186], [#188] |
-| [Non-functional requirements](#non-functional-requirements) | [#28], [#34], [#36], [#41], [#49], [#51], [#54], [#57], [#75], [#78], [#94], [#186], [#189], [#191]           |
-| [Known limitations and risks](#known-limitations-and-risks) | [#43], [#46], [#47], [#48], [#79], [#89], [#99], [#186], [#188], [#189]                                       |
-| Declaration and README that copy from this document         | [#39], [#56], [#73], [#76]                                                                                    |
+| Section                                                     | Issues that implement it                                                                                                  |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| [Overview](#overview)                                       | [#27], [#37], [#56], [#93]                                                                                                |
+| [System architecture](#system-architecture)                 | [#26], [#28], [#29], [#41], [#51], [#56], [#88]                                                                           |
+| [Stack](#stack)                                             | [#29], [#32], [#49], [#61], [#73]                                                                                         |
+| [Data sources](#data-sources)                               | [#30], [#44], [#47], [#50], [#52], [#55], [#60], [#63], [#66], [#71], [#93], [#95]                                        |
+| [Engine](#engine)                                           | [#37], [#40], [#59], [#64], [#67], [#69], [#81], [#83], [#86], [#88]                                                      |
+| [SDK layer](#sdk-layer)                                     | [#184], [#185], [#187]                                                                                                    |
+| [Agent layer](#agent-layer)                                 | [#184], [#186], [#188], [#189], [#190], [#191], [#192]                                                                    |
+| [API routes](#api-routes)                                   | [#27], [#34], [#43], [#46], [#72], [#186], [#189], [#190]                                                                 |
+| [AI models](#ai-models)                                     | [#35], [#43], [#46], [#74], [#77], [#79], [#91], [#104], [#189], [#235]                                                   |
+| [Deployment and environments](#deployment-and-environments) | [#33], [#53], [#62], [#65], [#68], [#70], [#89], [#90], [#99], [#100], [#101], [#102], [#103], [#186], [#188]             |
+| [Non-functional requirements](#non-functional-requirements) | [#28], [#34], [#36], [#41], [#49], [#51], [#54], [#57], [#75], [#78], [#94], [#186], [#189], [#191]                       |
+| [Known limitations and risks](#known-limitations-and-risks) | [#43], [#46], [#47], [#48], [#55], [#60], [#63], [#66], [#77], [#79], [#89], [#95], [#99], [#105], [#186], [#188], [#189] |
+| Declaration and README that copy from this document         | [#39], [#56], [#73], [#76]                                                                                                |
 
 ## See also
 
@@ -998,7 +986,6 @@ The Economic Index measures Claude usage, not jobs, and hides small cells. Kotak
 [td]: /docs/sources/drive.google.com/technical-tools-declaration-template.md
 [kotak]: /docs/ideas/0007-kotak.md
 [deploy]: /docs/research/deploy-and-tts.md
-[extras]: /docs/ideas/0007-kotak.md#live-extras
 [anti-goals]: /docs/ideas/0007-kotak.md#non-goals-and-anti-goals
 [brief-rules]: /docs/BRIEF.md#rules-that-can-cost-us
 [trend]: /docs/research/trend-data.md

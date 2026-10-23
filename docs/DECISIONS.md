@@ -1,0 +1,76 @@
+# Decision log
+
+The product and guardrail choices behind Kotak, newest last, each with its reason and where it was made. The first decisions are in the [locked idea](ideas/0007-kotak.md#decisions-so-far); this log repeats the ones that shaped the build and adds the later ones. Dates are when the change was decided or merged, in October 2026 ([#56]).
+
+[#56]: https://github.com/TolongLabs/Kotak/issues/56
+
+## Product
+
+| Date   | Decision                                                                                                                                  | Why                                                                                                                          | Source                               |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| 21 Oct | Individual workers are the user                                                                                                           | Company needs vary too much by sector                                                                                        | [Locked idea][idea]                  |
+| 22 Oct | Can-do questions, not a planted-mistake test                                                                                              | Simpler to demo and needs no moderation                                                                                      | [Locked idea][idea]                  |
+| 22 Oct | Every O\*NET job, with a few hand-checked demo roles                                                                                      | Kotak must work in any industry                                                                                              | [Locked idea][idea]                  |
+| 22 Oct | Guest sign-in only, with the check-up kept in the browser                                                                                 | Kotak holds no personal data, and a judge needs no account                                                                   | [#57], [TRD privacy](TRD.md#privacy) |
+| 22 Oct | A live, anonymous national view, totals only for groups of 10 or more, with labelled sample rows until then                               | Agencies get a real view without exposing anyone                                                                             | [Locked idea][idea], [#34], [#147]   |
+| 23 Oct | Rate each question from 1 to 4, with no middle option, and reverse five of the twelve statements                                          | A review of the build: Yes or Not Yet hid how much a user can do, and picking the top answer everywhere read as a strong fit | [#238]                               |
+| 23 Oct | Pitch one persona, one payer and one moment: a digital worker at an employer that pays the HRD Corp levy                                  | Mentor feedback on 23 October                                                                                                | [#279], [#281]                       |
+| 23 Oct | Show a 12-week roadmap window, with the hours left listed after it                                                                        | The page showed the whole path, up to 495 weeks, against the 12-week plan on the landing page and in the deck                | [#282]                               |
+| 23 Oct | Ask where the user is, what they studied and what they want before the questions; suggest roles to someone with no job or no role in mind | One job title couldn't serve students, graduates, career changers or the unsure                                              | [#284], [#285]                       |
+| 23 Oct | A qualification a role needs informs and never blocks: the requirement shows beside the user's fit                                        | The fit helps users decide whether a degree is worth pursuing                                                                | [#285]                               |
+| 24 Oct | The highlighted role card says why it is highlighted; Kopi's default pick is the best fit of the Rising roles                             | A 75% card highlighted beside an 84% one read as a mistake                                                                   | [#285]                               |
+
+## Data
+
+| Date   | Decision                                                                                         | Why                                                                                                     | Source                                                           |
+| ------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 22 Oct | The layered hierarchy, with the Anthropic Economic Index as the AI signal                        | The only dated, task-level AI usage data with Malaysian rows                                            | [Locked idea][idea]                                              |
+| 22 Oct | Borrow from the layer above when Malaysian data is missing, and label every borrowed value       | Many Malaysian cells are suppressed; a silent global number would mislead                               | [TRD fallbacks](TRD.md#four-layer-hierarchy-and-fallbacks)       |
+| 22 Oct | JobStreet ads count only after an admin approves them, as context beside the verdicts            | Keyword searches pad results with unrelated ads                                                         | [Locked idea][idea], [#235], [#278]                              |
+| 22 Oct | The scraper drives a Chromium build (Clearcote), never Firefox                                   | JobStreet's Cloudflare answered a patched Firefox with a 403 challenge, and Chromium builds with a page | [Browser package](/packages/browser/README.md#why-chromium)      |
+| 23 Oct | MyCOL and Epoch AI are cited as context only; DOSM QES and the OpenDOSM series are not loaded    | Not built before the submission; the submission documents drop what isn't built                         | [Technical declaration](TECH-DECLARATION.md#42-datasets), [#214] |
+| 23 Oct | Link fields of study to jobs through the NCES CIP to SOC crosswalk, and say a field "leads here" | NCES says the crosswalk is not a record of graduates' outcomes                                          | [#284]                                                           |
+
+## AI and guardrails
+
+| Date   | Decision                                                                                                                             | Why                                                                                     | Source                                                     |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| 22 Oct | Rules decide and AI explains: no model sets a level, verdict, target, fit score, rank or roadmap position                            | Judges and users can check every number against its source                              | [TRD core rule](TRD.md#core-rule-data-decides-ai-explains) |
+| 22 Oct | One RunPod batch with Qwen3.8-27B-FP8 builds every job's corners and questions, with a validator that rejects tasks from another job | Uses the sponsor GPU once, and keeps each job's skills tied to its own O\*NET tasks     | [#74], [#77]                                               |
+| 22 Oct | Live Claude calls for title matching and explanations, moved from Opus 5.5 to Sonnet 5.5 and then Haiku 5.5                          | Speed and cost                                                                          | [TRD models](TRD.md#models-by-task)                        |
+| 22 Oct | No `temperature` setting; repeatable answers come from the response cache and the verifier                                           | Claude Haiku 5.5 rejects non-default sampling values                                    | [TRD request rules](TRD.md#claude-haiku-55-request-rules)  |
+| 22 Oct | A verifier rejects any explanation that changes a verdict or drops a dated citation, and a fixed template answers instead            | A fluent but wrong explanation would undo the core rule                                 | [#43], [#151]                                              |
+| 22 Oct | Cache every Claude answer by a hash of the request, pre-warm the demo roles and pre-generate Kopi's fixed lines                      | The live demo must never wait on an outside API                                         | [TRD caching](TRD.md#caching-and-pre-warming)              |
+| 22 Oct | Ask Kopi and outside assistants get only Kotak's read-only tools, over the same SDK as the app                                       | A chat can explain results but can't invent or change them                              | [TRD agent layer](TRD.md#agent-layer)                      |
+| 23 Oct | No Claude batch backup for the corner batch                                                                                          | The RunPod run filled all 923 jobs                                                      | [#79], [#214], `data/generated/role-corners-run.json`      |
+| 23 Oct | No pasted job ads in the submitted build                                                                                             | Not built before the submission; approved JobStreet ads give the job-ad context instead | [#48], [#105], [#214]                                      |
+
+## Platform
+
+| Date   | Decision                                                                                                        | Why                                                                         | Source                                                                             |
+| ------ | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 22 Oct | Deploy the app and API as one Cloudflare Worker from `main` with GitHub Actions; Replit publishes the same code | Free hosting with a global edge; Replit gives the compulsory proof of use   | [#62], [Technical declaration](TECH-DECLARATION.md#32-cloud-platforms--deployment) |
+| 22 Oct | Run the engine in the browser                                                                                   | The snapshot switch and scenario toggle update at once, with no server cost | [TRD client runtime](TRD.md#client-runtime)                                        |
+| 22 Oct | Accept the Live2D sample model's redistribution limit, with credit in `NOTICE.md`                               | Kopi is part of the product's personality                                   | [TRD licences](TRD.md#licences-and-attribution)                                    |
+
+[idea]: ideas/0007-kotak.md#decisions-so-far
+[#34]: https://github.com/TolongLabs/Kotak/issues/34
+[#43]: https://github.com/TolongLabs/Kotak/issues/43
+[#48]: https://github.com/TolongLabs/Kotak/issues/48
+[#57]: https://github.com/TolongLabs/Kotak/issues/57
+[#62]: https://github.com/TolongLabs/Kotak/issues/62
+[#74]: https://github.com/TolongLabs/Kotak/issues/74
+[#77]: https://github.com/TolongLabs/Kotak/issues/77
+[#79]: https://github.com/TolongLabs/Kotak/issues/79
+[#105]: https://github.com/TolongLabs/Kotak/issues/105
+[#147]: https://github.com/TolongLabs/Kotak/issues/147
+[#151]: https://github.com/TolongLabs/Kotak/issues/151
+[#214]: https://github.com/TolongLabs/Kotak/pull/214
+[#235]: https://github.com/TolongLabs/Kotak/pull/235
+[#238]: https://github.com/TolongLabs/Kotak/pull/238
+[#278]: https://github.com/TolongLabs/Kotak/pull/278
+[#279]: https://github.com/TolongLabs/Kotak/issues/279
+[#281]: https://github.com/TolongLabs/Kotak/pull/281
+[#282]: https://github.com/TolongLabs/Kotak/pull/282
+[#284]: https://github.com/TolongLabs/Kotak/issues/284
+[#285]: https://github.com/TolongLabs/Kotak/pull/285
