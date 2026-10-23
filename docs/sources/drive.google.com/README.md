@@ -21,6 +21,7 @@ The Drive folder's layout, with where each item lives in this repo:
   - **1. Documentation for Submission**:
     - **1. Github Sample Folder**: [GitHub submission template](github-submission-template.md), the sample repository.
     - **2. Template for docs inside GitHub Rep**: the [submission template](submission-template.md) and the [Technical Tools Declaration template](technical-tools-declaration-template.md).
+      - On 23 October 2026, the organisers added a `.docx` copy of each template beside its PDF. The copies have a simpler design to cut the file size, and the content is the same, so a team can fill either one. The announcement says: "All teams must convert to PDF and submit in PDF format. Please do not submit in Docs/Word format."
   - **2. Video Tutorials Needed**: [video tutorials](video-tutorials.md) on submission, the Apache 2.0 licence, mentor booking and the website.
 - **5. Online Orientation Briefing**: the organisers' slides and recording of the [opening briefing](/docs/sources/opening-briefing/transcript.md). The recording was at the top of the folder on 19 October.
 - **6. Workshop Recordings**:
