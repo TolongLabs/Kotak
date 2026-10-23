@@ -34,7 +34,8 @@
     "refresh:validate": "bun scripts/refresh/validate.ts",
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:proofs": "bun scripts/proof-of-use/build.ts"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown"
