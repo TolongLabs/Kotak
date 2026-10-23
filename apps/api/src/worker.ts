@@ -24,12 +24,29 @@ export class KotakAgent {
   }
 
   async fetch(request: Request) {
-    const response = await app.fetch(request, this.#env)
-    // A route that answers without reading the body (a cross-origin chat, an oversized call) would leave the Worker
-    // streaming it here after its response is sent, which throws there. Draining it lets that stream finish first.
-    if (request.body && !request.bodyUsed) for await (const _chunk of request.body);
-    return response
+    return app.fetch(await readBody(request), this.#env)
   }
+}
+
+// The largest body a forwarded route accepts: Kopi's chat takes 64 KiB, /api/mcp 16 KiB.
+const AGENT_BODY_LIMIT = 64 * 1024
+
+// The Worker streams the request body to the object, and throws if that stream is still open after its response is
+// sent. A route that answers 403 or 413 before reading the whole body would leave it open, including a chunked body
+// that bodyLimit stops reading part way (#212). So the object reads the whole body first. It keeps at most one byte
+// past the largest limit, which still trips each route's own 413.
+async function readBody(request: Request): Promise<Request> {
+  if (!request.body) return request
+  const kept: Uint8Array<ArrayBuffer>[] = []
+  let size = 0
+  for await (const chunk of request.body) {
+    if (size <= AGENT_BODY_LIMIT) kept.push(chunk.slice(0, AGENT_BODY_LIMIT + 1 - size))
+    size += chunk.byteLength
+  }
+  // The body's length now comes from the buffer, so a Content-Length for a longer body must not travel with it.
+  const headers = new Headers(request.headers)
+  headers.delete('content-length')
+  return new Request(request, { body: new Blob(kept), headers })
 }
 type AssetsBinding = { fetch(request: Request): Promise<Response> }
 type WorkerBindings = AiBindings &
