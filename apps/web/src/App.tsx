@@ -55,7 +55,7 @@ export function App() {
   const path = usePath().replace(/(.)\/+$/, '$1')
   const [activeSnapshot] = useActiveSnapshot()
 
-  if (window.location.hash === '#gallery') return <Gallery />
+  if (import.meta.env.DEV && window.location.hash === '#gallery') return <Gallery />
 
   // The data date the shell shows, e.g. "May 2026" for the 2026-05 snapshot.
   const dataLabel = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
