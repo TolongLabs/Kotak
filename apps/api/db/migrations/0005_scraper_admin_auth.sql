@@ -20,7 +20,17 @@ CREATE TABLE IF NOT EXISTS scraper_admin_sessions (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS scraper_admin_sessions_user_id_idx
-  ON scraper_admin_sessions (user_id);
-CREATE INDEX IF NOT EXISTS scraper_admin_sessions_expires_at_idx
-  ON scraper_admin_sessions (expires_at);
+-- Each index is created inside a DO block that checks the catalog first, so later deploys take no lock on
+-- scraper_admin_sessions (#291; see 0002). The semicolons inside the DO block start their lines for migrate.ts.
+DO $$
+BEGIN
+  IF to_regclass('public.scraper_admin_sessions_user_id_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS scraper_admin_sessions_user_id_idx
+      ON scraper_admin_sessions (user_id)
+    ; END IF
+  ; IF to_regclass('public.scraper_admin_sessions_expires_at_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS scraper_admin_sessions_expires_at_idx
+      ON scraper_admin_sessions (expires_at)
+    ; END IF
+  ; END
+$$;
