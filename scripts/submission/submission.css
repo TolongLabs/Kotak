@@ -188,14 +188,14 @@ li::marker {
   transform: rotate(40deg);
 }
 
-/* Tables drawn like the templates': separate cells with a 3 pt border in the section colour. A .stack places a table
-   and the paragraphs that follow it. */
+/* Tables drawn like the templates' own section 4 tables: separate cells with a 1.5 pt border in the section colour,
+   4.5 pt apart. A .stack places a table and the paragraphs that follow it. */
 .stack {
   position: absolute;
 }
 
 .stack .after {
-  margin: 9pt 0 0 34.7pt;
+  margin: 9pt 0 0 var(--indent);
   max-width: 451.2pt;
   font-size: 9.5pt;
 }
@@ -206,14 +206,14 @@ li::marker {
 
 .tbl {
   display: grid;
-  gap: 1.6pt 0;
+  row-gap: 4.5pt;
   font-size: 8.4pt;
   line-height: 1.32;
 }
 
 .tbl > div {
-  border: 3pt solid var(--accent);
-  padding: 4pt 5.5pt;
+  border: 1.5pt solid var(--accent);
+  padding: 4.5pt 6pt;
   overflow-wrap: anywhere;
 }
 
@@ -228,10 +228,9 @@ li::marker {
   min-height: 34pt;
   background: var(--accent);
   color: #fff;
-  margin-bottom: 3pt;
+  margin-bottom: 3.25pt;
   padding: 2pt 4pt;
-  border-color: transparent;
-  background-clip: padding-box;
+  border: none;
   font:
     700 11pt/1.15 'Montserrat',
     sans-serif;
