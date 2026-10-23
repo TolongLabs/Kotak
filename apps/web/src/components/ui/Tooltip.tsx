@@ -12,7 +12,7 @@ import { cn } from './cn'
 
 export interface TooltipProps {
   content: string
-  placement?: 'top' | 'bottom'
+  placement?: 'top' | 'bottom' | 'right'
   children: ReactNode
   className?: string
 }
@@ -60,8 +60,10 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
           role="tooltip"
           id={id}
           className={cn(
-            'pointer-events-none absolute left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-sm bg-text-primary px-2.5 py-1 text-label-s text-bg-default shadow-[var(--shadow-popover)]',
-            placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
+            'pointer-events-none absolute z-50 whitespace-nowrap rounded-sm bg-text-primary px-2.5 py-1 text-label-s text-bg-default shadow-[var(--shadow-popover)]',
+            placement === 'right'
+              ? 'left-full top-1/2 ml-2 -translate-y-1/2'
+              : cn('left-1/2 -translate-x-1/2', placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2')
           )}
         >
           {content}

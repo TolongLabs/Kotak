@@ -90,7 +90,17 @@ export function NavList({ path, collapsed = false, onNavigate }: NavListProps) {
           </Link>
         )
 
-        return <li key={to}>{collapsed ? <Tooltip content={label}>{link}</Tooltip> : link}</li>
+        return (
+          <li key={to}>
+            {collapsed ? (
+              <Tooltip content={label} placement="right">
+                {link}
+              </Tooltip>
+            ) : (
+              link
+            )}
+          </li>
+        )
       })}
     </ul>
   )
@@ -109,13 +119,13 @@ export function GuestCard({ collapsed = false }: { collapsed?: boolean }) {
   if (collapsed) {
     return (
       <div className="flex flex-col items-center gap-2">
-        <Tooltip content={`Guest: ${GUEST_NOTE}`}>
+        <Tooltip content={`Guest: ${GUEST_NOTE}`} placement="right">
           <span tabIndex={0} className="surface-card inline-flex h-11 w-11 items-center justify-center">
             <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
             <span className="sr-only">Guest</span>
           </span>
         </Tooltip>
-        <Tooltip content="Sign Out">
+        <Tooltip content="Sign Out" placement="right">
           <button
             type="button"
             aria-label="Sign Out"
