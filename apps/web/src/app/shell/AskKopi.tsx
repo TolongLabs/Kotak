@@ -21,6 +21,7 @@ import { toIsoDate } from '../../engine/dates'
 import { useGuestSession } from '../../session/store'
 import { navigate } from '../router'
 import { routes } from '../routes'
+import { parseChatText, plainChatText, type ChatSpan } from './chatText'
 
 // Ask Kopi (#191): a chat window on every /app page, opened from a button in the bottom-right corner. Kopi answers with
 // Kotak's tools on the guest session's check-up through POST /api/agent/chat. The conversation lives in memory until
@@ -193,7 +194,7 @@ export function AskKopiPanel({
       : pending?.status === 'error'
         ? 'Kopi couldn’t answer. Try again.'
         : latestReply
-          ? `Kopi says: ${latestReply}`
+          ? `Kopi says: ${plainChatText(latestReply)}`
           : ''
 
   return (
@@ -402,17 +403,66 @@ function Question({ text }: { text: string }) {
   )
 }
 
+function Spans({ spans }: { spans: ChatSpan[] }) {
+  return spans.map((span, index) =>
+    span.kind === 'strong' ? (
+      <strong key={index} className="font-bold">
+        {span.text}
+      </strong>
+    ) : span.kind === 'em' ? (
+      <em key={index}>{span.text}</em>
+    ) : span.kind === 'code' ? (
+      <code key={index} className="rounded-sm bg-bg-panel px-1 font-mono text-mono-s">
+        {span.text}
+      </code>
+    ) : (
+      span.text
+    )
+  )
+}
+
+function ChatList({ ordered, items }: { ordered: boolean; items: ChatSpan[][] }) {
+  const List = ordered ? 'ol' : 'ul'
+  return (
+    <List className={cn('space-y-1 pl-5', ordered ? 'list-decimal' : 'list-disc')}>
+      {items.map((item, index) => (
+        <li key={index}>
+          <Spans spans={item} />
+        </li>
+      ))}
+    </List>
+  )
+}
+
+// Claude's light Markdown as text elements: paragraphs, headings and lists, with bold, italic and code.
+function ChatText({ text }: { text: string }) {
+  return parseChatText(text).map((block, index) =>
+    block.kind === 'heading' ? (
+      <p key={index} className="font-bold">
+        <Spans spans={block.spans} />
+      </p>
+    ) : block.kind === 'list' ? (
+      <ChatList key={index} ordered={block.ordered} items={block.items} />
+    ) : (
+      <p key={index}>
+        {block.lines.map((line, lineIndex) => (
+          <span key={lineIndex}>
+            {lineIndex > 0 && <br />}
+            <Spans spans={line} />
+          </span>
+        ))}
+      </p>
+    )
+  )
+}
+
 // A reply with the Kotak tools behind it, their sources and dates, and the AI-drafted label the app puts on Claude's
 // text (Reasoning's footer).
 function Reply({ answer }: { answer: AgentChatResponse }) {
   return (
     <KopiBubble>
       <div className="space-y-2 break-words text-body-m text-text-primary">
-        {answer.reply.split(/\n{2,}/).map((paragraph, index) => (
-          <p key={index} className="whitespace-pre-line">
-            {paragraph}
-          </p>
-        ))}
+        <ChatText text={answer.reply} />
       </div>
       {answer.tools.length > 0 ? (
         <div className="space-y-1.5">
