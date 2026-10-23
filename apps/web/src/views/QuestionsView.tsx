@@ -6,7 +6,7 @@ import { PageTransition } from '../components/kotak/PageTransition'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
-import { useRoleBundle } from '../engine/bundle'
+import { loadRoleBundle, useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside, KopiStage } from './checkup/KopiDialogue'
@@ -83,7 +83,9 @@ export function QuestionsView() {
   }
 
   // After the last answer the box opens, then the results load.
-  if (asked.length >= totalQuestions) return <PageTransition onDone={() => navigate(routes.radar)} />
+  if (asked.length >= totalQuestions) {
+    return <PageTransition load={() => loadRoleBundle(assessedCode)} onDone={() => navigate(routes.radar)} />
+  }
 
   const questionIndex = asked.length
   const cornerId = order[Math.floor(questionIndex / 2)]!
