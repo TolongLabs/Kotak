@@ -17,6 +17,7 @@ export type ScraperAdminBindings = {
   DATABASE_URL?: string
   SCRAPER_ADMIN_TOKEN?: string
   SCRAPER_LOGIN_LIMITER?: RateLimiter
+  SCRAPER_LOGIN_CLIENT_IP?: string
 }
 
 export type ScraperAdminEnv = {
@@ -113,6 +114,31 @@ export const validateSessionRequest = async (
   return validateSessionToken(databaseUrl, token)
 }
 
+export const serveAdminDocument = async (
+  request: Request,
+  databaseUrl: string | undefined,
+  assets: { fetch(request: Request): Promise<Response> } | undefined
+): Promise<Response> => {
+  const url = new URL(request.url)
+  if (url.pathname !== '/admin/sign-in') {
+    const user = await validateSessionRequest(request, databaseUrl)
+    if (!user || url.pathname === '/admin')
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: new URL(user ? '/admin/scraping' : '/admin/sign-in', url).href,
+          'Cache-Control': 'no-store'
+        }
+      })
+  }
+  if (!assets)
+    return new Response('Admin interface is unavailable.', { status: 503, headers: { 'Cache-Control': 'no-store' } })
+  const response = await assets.fetch(request)
+  const headers = new Headers(response.headers)
+  headers.set('Cache-Control', 'no-store')
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+}
+
 const bearerToken = (request: Request) => {
   const authorization = request.headers.get('Authorization')
   const match = authorization?.match(/^Bearer ([^\s]+)$/i)
@@ -150,7 +176,7 @@ export const login = async (context: Context<ScraperAdminEnv>) => {
   if (!isJsonRequest(context.req.raw)) return context.json({ error: 'content type must be application/json' }, 415)
   if (!isSameOriginBrowserRequest(context.req.raw)) return context.json({ error: 'forbidden' }, 403)
 
-  const ip = context.req.header('CF-Connecting-IP') ?? 'unknown'
+  const ip = context.env?.SCRAPER_LOGIN_CLIENT_IP ?? context.req.header('CF-Connecting-IP') ?? 'unknown'
   const limiter = context.env?.SCRAPER_LOGIN_LIMITER
   if (limiter && !(await limiter.limit({ key: ip })).success) {
     context.header('Retry-After', '60')
@@ -175,16 +201,16 @@ export const login = async (context: Context<ScraperAdminEnv>) => {
   try {
     const rows = (await database(databaseUrl).query(
       `WITH candidate AS MATERIALIZED (
-         SELECT id, username, enabled,
-           COALESCE(locked_until > now(), false) AS locked,
-           CASE
-             WHEN enabled AND (locked_until IS NULL OR locked_until <= now())
-               THEN password_hash = crypt($2, password_hash)
-             ELSE false
-           END AS password_ok
+         SELECT id, username, enabled, password_hash,
+           COALESCE(locked_until > now(), false) AS locked
          FROM scraper_admin_users
          WHERE username = $1
          FOR UPDATE
+       ), password_check AS MATERIALIZED (
+         SELECT crypt($2::text, COALESCE((SELECT password_hash FROM candidate), gen_salt('bf', 12))) AS checked_hash
+       ), verified AS MATERIALIZED (
+         SELECT candidate.*, enabled AND NOT locked AND password_hash = checked_hash AS password_ok
+         FROM candidate CROSS JOIN password_check
        ), updated AS (
          UPDATE scraper_admin_users users
          SET failed_login_attempts = CASE
@@ -202,7 +228,7 @@ export const login = async (context: Context<ScraperAdminEnv>) => {
                WHEN candidate.enabled AND NOT candidate.locked THEN NULL
                ELSE users.locked_until
              END
-         FROM candidate
+         FROM verified candidate
          WHERE users.id = candidate.id
          RETURNING users.id, users.username, candidate.enabled, candidate.locked, candidate.password_ok
        ), created_session AS (
@@ -213,7 +239,9 @@ export const login = async (context: Context<ScraperAdminEnv>) => {
          RETURNING user_id
        )
        SELECT updated.id, updated.username, (created_session.user_id IS NOT NULL) AS authenticated
-       FROM updated LEFT JOIN created_session ON created_session.user_id = updated.id`,
+       FROM password_check
+       LEFT JOIN updated ON true
+       LEFT JOIN created_session ON created_session.user_id = updated.id`,
       [username, password, tokenHash]
     )) as LoginRow[]
     const authenticated = rows[0]
