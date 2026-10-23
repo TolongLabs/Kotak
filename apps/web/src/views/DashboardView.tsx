@@ -11,12 +11,13 @@ import { Button } from '../components/ui/Button'
 import { SdgChip } from '../components/ui/SdgChip'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { deriveSwot } from '../demo/swot'
-import { useRoleBundle } from '../engine/bundle'
+import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
 import { ROADMAP_WEEKS, toReadinessPoints, toReadinessWindow, toRoadmapSteps } from '../engine/roadmapModel'
 import { useGuestSession } from '../session/store'
+import { startAgain } from './checkup/startAgain'
 
 const beforeSnapshot: SnapshotId = '2026-04'
 const afterSnapshot: SnapshotId = '2026-05'
@@ -124,7 +125,7 @@ function withoutEndingPunctuation(value: string) {
 
 export function DashboardView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(assessedRoleCode(session))
+  const bundle = useCheckupBundle(session)
   const checkup = useCheckup({ scenario: DEFAULT_SCENARIO })
   const otherScenario = useCheckup({ scenario: DEFAULT_SCENARIO === 'slow' ? 'fast' : 'slow' })
 
@@ -138,12 +139,12 @@ export function DashboardView() {
 
   if (!session.is_guest) return null
 
-  if (!session.role_code) {
+  if (!assessedRoleCode(session)) {
     return (
       <DashboardState>
-        <CatDialogue pose="worried" speech="Tell me your job first, then I can show how it is changing." />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Your Job
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can show how it is changing.`} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
+          {startAgain(session).label}
         </Button>
       </DashboardState>
     )
@@ -211,7 +212,10 @@ export function DashboardView() {
   }
 
   const corners = toCorners(currentCheckup, sourceRefs(currentCheckup).numbers)
-  const roles = toRoles(currentCheckup, [role, ...bundle.data.related], session.role_code)
+  const roles = toRoles(currentCheckup, [role, ...bundle.data.related], session.role_code, {
+    bundle: bundle.data,
+    session
+  })
   const swot = deriveSwot(corners, roles, currentCheckup.scenario)
   const planBundleRole =
     [role, ...bundle.data.related].find((entry) => entry.onet_code === currentCheckup.planRoleCode) ?? role

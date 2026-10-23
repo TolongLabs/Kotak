@@ -6,13 +6,13 @@ web
 
 ## Users
 
-Working adults in Malaysia, in any industry, who wonder what AI means for their job. Three kinds come to Kotak: people who want to stay strong in their current role, people who want to move to a role they already have in mind, and people who want to know where they could go. They come with a worry and a few minutes, often on a phone, and should leave with a plan they can start this week.
+Working adults in Malaysia, in any industry, who wonder what AI means for their job, and students, graduates and people between jobs or returning to work who want to know where to start. Four kinds come to Kotak: people who want to stay strong in their current role, people who want to move to a role they already have in mind, people who want to know where they could go, and people who aren't sure yet. They come with a worry and a few minutes, often on a phone, and should leave with a plan they can start this week.
 
 A second audience reads the anonymous national view: officers at TalentCorp or HRD Corp who want to see which rising skills Malaysian workers lack most.
 
 ## Product Purpose
 
-Kotak tracks how AI use is changing across Malaysian jobs and predicts which skills will rise or decline over the next 12 months. A cat counsellor asks 12 yes/no questions about what the user has actually done, draws their skills against what their role will need, ranks the roles they fit and builds a roadmap of real, free steps with a finish date. Success is a user who reaches a sourced roadmap in about 3 minutes, trusts it enough to start the first milestone, and comes back when new data changes it.
+Kotak tracks how AI use is changing across Malaysian jobs and predicts which skills will rise or decline over the next 12 months. A cat counsellor asks where the user is now, what they studied and what they want, suggests roles to check when they have no job or role in mind, then asks 12 can-do questions about what they have actually done. Kotak draws their skills against what their role will need, ranks the roles they fit and builds a roadmap of real, free steps with a finish date. Success is a user who reaches a sourced roadmap in about 3 minutes, trusts it enough to start the first milestone, and comes back when new data changes it.
 
 ## Positioning
 

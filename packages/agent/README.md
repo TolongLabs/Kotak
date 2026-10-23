@@ -41,6 +41,7 @@ Both adapters set `today()` to the date in Malaysia (UTC+8), so a check-up with 
 | ----------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `find_role`             | Find a Role                    | The O\*NET title and alternate-title search, the job match route's first step, with no Claude       |
 | `get_checkup_questions` | Get the Check-Up Questions     | `kotak.questions`                                                                                   |
+| `suggest_roles`         | Suggest Roles                  | `kotak.suggestRoles` and `kotak.pathwayOptions`                                                     |
 | `run_checkup`           | Run the Check-Up               | `kotak.checkup`                                                                                     |
 | `what_changed`          | What Changed Between Snapshots | `kotak.whatChanged`                                                                                 |
 | `national_skill_gaps`   | National Skill Gaps            | `nationalViewSummary`, the national view route's function, joined to each corner's name and verdict |

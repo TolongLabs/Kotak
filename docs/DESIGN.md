@@ -170,7 +170,7 @@ Every component lives on the Components page. Build each one as a custom compone
 
 - Kopi is a black cat who opens the box with the user, one question and one verdict at a time. The name comes from kopi-O, Malaysia's black coffee.
 - Kopi uses the Live2D sample model Hijiki (© Live2D Inc.). Credit the model in the app footer and in the technical and tools declaration with the notice [Live2D designates](https://www.live2d.com/en/learn/sample/model-terms/) for apps, word for word: "This content uses sample data owned and copyrighted by Live2D Inc. The sample data are utilized in accordance with terms and conditions set by Live2D Inc. This content itself is created at the author’s sole discretion."
-- Kopi has six poses, one per moment: Idle (start, waiting), Asking (a yes/no question), Thinking (verdicts loading), Happy (plan ready, milestone done), Worried (error or missing data) and Explaining (reading a verdict out).
+- Kopi has six poses, one per moment: Idle (start, waiting), Asking (a can-do question), Thinking (verdicts loading), Happy (plan ready, milestone done), Worried (error or missing data) and Explaining (reading a verdict out).
 - Kopi speaks out loud through ElevenLabs text to speech. The mute button sits in the speech box.
 - The logo is a black cat peeking out of an open yellow box, with "kotak" in lowercase Atkinson Hyperlegible Next ExtraBold. Never recolour the cat, and keep clear space of half the mark's height on every side.
 
@@ -188,7 +188,7 @@ Every component lives on the Components page. Build each one as a custom compone
 - Every text pair meets WCAG 2.2 AA: 4.5:1 for text and 3:1 for control borders. Ink on white is 17.7:1.
 - Focus rings use `color/focus/ring`: ink in light mode, yellow in dark mode.
 - Disabled fields show a lock icon and the not-allowed cursor, as on the pilot's guest-only Auth page.
-- The Questions page takes the Y and N keys on desktop.
+- The Questions page takes the number keys 1 to 4 on desktop.
 - Respect reduced motion, and keep Kopi's mute button one tap away.
 
 ## Screens
@@ -208,6 +208,13 @@ The Mockups page has 13 views, each as a phone and desktop pair. Every pair show
 11. Page Transition
 12. State: AI Unavailable
 13. State: No Job Match
+
+The app has grown past the mockups in two places ([#284](https://github.com/TolongLabs/Kotak/issues/284)):
+
+- **Check-Up: Start** now asks where the user is, their study and years of work, their job and a goal, before the questions.
+- **Check-Up: Roles to Check** follows it for a user with no job or no role in mind: a "What Do You Enjoy?" step, then the suggested roles. It uses the Matched Roles card layout.
+
+On Matched Roles and Roles to Check, the highlighted card carries one bold line saying why it is highlighted, such as "Picked for you: your best fit of the 4 Rising roles."
 
 ## See also
 

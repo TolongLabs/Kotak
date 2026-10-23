@@ -3,6 +3,7 @@ export const routes = {
   signIn: '/sign-in',
   home: '/app',
   checkUp: '/app/check-up',
+  choose: '/app/check-up/choose',
   questions: '/app/check-up/questions',
   radar: '/app/radar',
   roles: '/app/roles',

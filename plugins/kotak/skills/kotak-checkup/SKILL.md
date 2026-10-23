@@ -42,7 +42,7 @@ Kotak checks how AI is changing the skills of a job in Malaysia. Data decides, t
 
 ## Connect the tools
 
-Kotak's tools are `find_role`, `get_checkup_questions`, `run_checkup`, `what_changed`, `list_sources`, `national_skill_gaps` and `job_market`; your client may prefix their names, as in `mcp__kotak__find_role`. The verdicts exist only in their results, so when the tools are missing, stop and tell the user how to connect Kotak's MCP server, `https://kotak.tp073654.workers.dev/api/mcp` (no sign-in):
+Kotak's tools are `find_role`, `get_checkup_questions`, `suggest_roles`, `run_checkup`, `what_changed`, `list_sources`, `national_skill_gaps` and `job_market`; your client may prefix their names, as in `mcp__kotak__find_role`. The verdicts exist only in their results, so when the tools are missing, stop and tell the user how to connect Kotak's MCP server, `https://kotak.tp073654.workers.dev/api/mcp` (no sign-in):
 
 - Claude or Claude Desktop: add it as a custom connector.
 - Claude Code: `claude mcp add --transport http kotak https://kotak.tp073654.workers.dev/api/mcp`.
@@ -50,20 +50,22 @@ Kotak's tools are `find_role`, `get_checkup_questions`, `run_checkup`, `what_cha
 
 ## Run the check-up
 
+1. **Ask who they are**, one question at a time, and skip what they already said: where they are now (working, studying, graduated and looking, between jobs, or returning to work), their highest qualification, their field of study, and their years of work. Keep the answers as `profile` for `suggest_roles` and `run_checkup`; `suggest_roles` lists the field and area ids. Without a job now, skip finding the role and ask their goal.
 1. **Find the role.** Ask for their job title if they haven't given it. Call `find_role` with the title in English (translate a Malay title first). Show the best matches by title with a one-line description and ask which one is their job. A role with `questions_ready` false can't be checked up yet: say so and offer the next match. With `match` none, ask for another way to say the job. Done when the user has confirmed one role.
-2. **Ask their goal**, as one question: stay strong in this job (`stay`), move to a role they have in mind (`target`), or see which roles fit them (`explore`, the default). When their question already answers it ("how far am I from Data Analyst?" is `target`), use that. For `target`, find and confirm the target role with `find_role` the same way.
-3. **Get the questions.** Call `get_checkup_questions` with the confirmed role (with `target`, the target role). Tell the user the check-up is two questions per corner, each rated 1 (Not yet) to 4 (Yes, on my own) and how many corners there are.
-4. **Ask, one question per message**, in the order given. For each corner, ask its `basic` statement, then its `advanced` one, each answered 1 (Not yet) to 4 (Yes, on my own). Keep each corner's answers as `{ corner_id, basic, advanced }` integers. An unsure user picks 1 or 2, or skips the corner, which then reads as not asked. A question looks like this:
+1. **Ask their goal**, as one question: stay strong in this job (`stay`, only with a job now), move to up to 3 roles they have in mind (`target`), see where they could go (`explore`, the default), or they're not sure. When their question already answers it ("how far am I from Data Analyst?" is `target`), use that. For `target`, find and confirm each role with `find_role` the same way. For `explore`, ask which areas interest them, up to 3.
+1. **Suggest roles first** when they have no job to test or aren't sure: for "not sure", ask which of these they enjoy, as one question with a list, and count how many they pick in each group of three (hands-on: fix or build things, work with machines, set up computers or equipment; investigative: solve puzzles, analyse data, research in depth; creative: design how things look, write or film or make music, come up with ideas; helping: teach or explain, help people with problems, look after health or wellbeing; leading: lead a team, persuade or sell, run a business; organising: organise records, check details, work with numbers) as `profile.interests` in that order. Call `suggest_roles` with the profile, show each role with its `reasons`, outlook and `access`, and let them pick one. It becomes their target, with `role_code` null when they have no job.
+1. **Get the questions.** Call `get_checkup_questions` with the confirmed role (with `target`, the target role). Tell the user the check-up is two questions per corner, each rated 1 (Not yet) to 4 (Yes, on my own) and how many corners there are.
+1. **Ask, one question per message**, in the order given. For each corner, ask its `basic` statement, then its `advanced` one, each answered 1 (Not yet) to 4 (Yes, on my own). Keep each corner's answers as `{ corner_id, basic, advanced }` integers. An unsure user picks 1 or 2, or skips the corner, which then reads as not asked. A question looks like this:
 
    > **Technical documentation**, question 1 of 12. Rate this about yourself from 1 (Not yet) to 4 (Yes, on my own): "I can write detailed test plans and procedures independently."
 
    When the user gives their answers up front ("4 to every first question, 2 to every second"), use them and list which statement each answer went to. Done when every corner has both answers or the user skipped it.
 
-5. **Run it.** Call `run_checkup` with `role_code` (their current job), `answers`, `goal` and `target_role_code`. Keep the defaults for `weekly_hours`, `scenario`, `snapshot_id` and `start_date` unless the user asked for something else.
+1. **Run it.** Call `run_checkup` with `role_code` (their current job, or null without one), `answers`, `goal`, `target_role_code` and `profile`. Keep the defaults for `weekly_hours`, `scenario`, `snapshot_id` and `start_date` unless the user asked for something else.
 
 ## Present the results
 
-Lead with what matters to their question, then the evidence. Quote every value as `run_checkup` returned it, rounding long decimals to one place (a `target_level` of 2.854 reads 2.9). Keep it short enough to read on a phone.
+Lead with what matters to their question, then the evidence. When `roadmap.access.status` is `qualify`, `register` or `check_licence`, say the role is a regulated profession in Malaysia: practising it needs the qualification and admission in `access.profession.route`, from `access.profession.body`. Put that beside their fit, not in place of it: a high fit says the work suits them and the degree may be worth pursuing, and the roadmap builds the skills, not the qualification. Quote every value as `run_checkup` returned it, rounding long decimals to one place (a `target_level` of 2.854 reads 2.9). Keep it short enough to read on a phone.
 
 - **Corners**, Rising first: the name, the `verdict_label` and the `reason`, then the level (0 to 3) with its `level_label` and the `target_level`, an estimate.
 - **Uncertainty**: a level is "self-reported" or "estimated from your other answers", as `level_label` says. For a Split verdict, give each of `futures`: slow is Malaysia's current AI pace, fast is if AI uptake speeds up. For Unknown, say which data is missing, from the `reason`.

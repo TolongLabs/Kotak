@@ -4,7 +4,8 @@
 // bodies on 22 October 2026, after voice.ts cleans them, through Check-Up, Radar, Roles, Roadmap, Home and What
 // Changed (April, then May). A pre-generated file is used only when the app sends exactly the same text, so record
 // the walk again when a screen's copy changes (#150). After them come the literal lines the screens pass to Kopi for
-// empty, error and landing states, which the walk doesn't reach. Other templated lines are spoken live.
+// empty, error and landing states, which the walk doesn't reach, and the intake's fixed lines (#284). Other
+// templated lines are spoken live.
 export const KOPI_FIXED_LINES = [
   'Hi, I’m Kopi. Let’s open the box on your job.',
   'Opening the box on your job…',
@@ -39,5 +40,18 @@ export const KOPI_FIXED_LINES = [
   'Choose a job to open your check-up.',
   'Kopi is opening the Web Developers example…',
   'Have you reviewed AI-written code before merging it?',
-  'Choose a job before opening a check-up.'
+  'Choose a job before opening a check-up.',
+  // The intake and the roles it suggests (#284).
+  'Hi, I’m Kopi. Tell me where you are, and I’ll find the roles worth checking.',
+  'No job to test yet? No problem. I’ll suggest roles first, then test you on the one you pick.',
+  'Let’s open the box on your work.',
+  'Not sure yet? Tell me what you enjoy, and I’ll suggest roles to try.',
+  'Looking for roles that suit you…',
+  'I need a little more to go on.',
+  'Pick a role to check first, then I can show how it is changing.',
+  'Pick a role to check first, then I can ask about it.',
+  'Pick a role to check first, then I can map its skills.',
+  'Pick a role to check first, then I can make a roadmap for it.',
+  'Pick a role to check first, then I can find roles that fit.',
+  'Pick a role to check first, then I can compare its snapshots.'
 ]

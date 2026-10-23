@@ -2,7 +2,6 @@ import type {
   ChangeItem,
   Corner,
   DividendNote,
-  Goal,
   ImpactArea,
   JobSuggestion,
   LandingExample,
@@ -367,24 +366,6 @@ export const jobSuggestions: JobSuggestion[] = [
     title: 'Frontline Supervisor',
     onet: '43-1011.00',
     onetTitle: 'First-Line Supervisors of Office Workers'
-  }
-]
-
-export const goals: Goal[] = [
-  {
-    id: 'stay',
-    title: 'Stay Strong in My Job',
-    description: 'Keep your current role safe as AI changes it.'
-  },
-  {
-    id: 'target',
-    title: 'Move to a Role I Have in Mind',
-    description: 'Tell Kopi the role; the questions test you against it.'
-  },
-  {
-    id: 'explore',
-    title: 'Show Me Where I Could Go',
-    description: 'Kopi suggests rising roles that fit you.'
   }
 ]
 

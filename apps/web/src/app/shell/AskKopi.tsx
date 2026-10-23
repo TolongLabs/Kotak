@@ -36,7 +36,7 @@ type Pending = { question: string; status: 'sending' | 'error' | 'unavailable' }
 // The session as the chat's check-up context; null before the user picks a job. start_date is the Roadmap page's
 // today, so Kopi's dates match it.
 function checkupOf(session: GuestSession): AgentChatCheckup | null {
-  if (!session.role_code) return null
+  if (!assessedRoleCode(session)) return null
   return {
     role_code: session.role_code,
     // The check-up always stores one of the three goals; the route checks it again.
@@ -46,7 +46,8 @@ function checkupOf(session: GuestSession): AgentChatCheckup | null {
     answers: session.answers,
     snapshot_id: session.active_snapshot_id,
     weekly_hours: session.custom_weekly_hours,
-    start_date: toIsoDate(new Date())
+    start_date: toIsoDate(new Date()),
+    profile: session.profile
   }
 }
 
@@ -113,7 +114,7 @@ export function AskKopiPanel({
   const inputId = useId()
   const hintId = useId()
 
-  const hasCheckup = Boolean(session.role_code)
+  const hasCheckup = Boolean(assessedRoleCode(session))
   const sending = pending?.status === 'sending'
   const roleCode = assessedRoleCode(session)
   const roleTitle =

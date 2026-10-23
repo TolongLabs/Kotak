@@ -1,8 +1,10 @@
-import { DEFAULT_SCENARIO } from '@kotak/shared'
+import { accessFor } from '@kotak/sdk'
+import { DEFAULT_SCENARIO, needsQualification } from '@kotak/shared'
 import { Info } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
+import { AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
@@ -10,15 +12,16 @@ import { JobMarketCard } from '../components/kotak/JobMarketCard'
 import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { SourceList } from '../components/kotak/SourceList'
+import { ToolsCard } from '../components/kotak/ToolsCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
-import { toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
+import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
 import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
-import { useRoleBundle } from '../engine/bundle'
+import { useCheckupBundle } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { useGuestSession } from '../session/store'
@@ -26,6 +29,7 @@ import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
 import type { ExplanationResponse } from '@kotak/shared'
 import { buildExplanationRequest } from './roles/derived'
+import { startAgain } from './checkup/startAgain'
 
 function sdgGoals(targets: string[] | undefined, limit: number) {
   const goals = (targets ?? []).flatMap((target) => {
@@ -57,7 +61,7 @@ function latestSourceVintageDate(checkup: Checkup): string | null {
 
 export function RadarView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(assessedRoleCode(session))
+  const bundle = useCheckupBundle(session)
   const roleData = bundle.status === 'ready' ? bundle.data : null
   const [today] = useState(() => new Date().toISOString().slice(0, 10))
   const checkup = useMemo(
@@ -118,14 +122,14 @@ export function RadarView() {
     setExplanationsPaused(false)
   }
 
-  if (!session.role_code) {
+  if (!assessedRoleCode(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Future Skills Radar</h1>
         <Stepper step={3} labels={checkUpSteps} />
-        <CatDialogue pose="worried" speech="Tell me your job first, then I can map its skills." />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Your Job
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can map its skills.`} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
+          {startAgain(session).label}
         </Button>
       </div>
     )
@@ -158,7 +162,22 @@ export function RadarView() {
           href: jobMarket.source.source_url
         }
       : null
-  const sources = jobMarketSource ? [...verdictSources, jobMarketSource] : verdictSources
+  const pathways = bundle.data.pathways
+  // The O*NET tools source comes last, after the verdicts' and the job ads'.
+  const toolsSource: SourceRef | null = role.tools.length
+    ? {
+        n: verdictSources.length + (jobMarketSource ? 2 : 1),
+        name: pathways.sources.onet_tools.source_name,
+        detail: `${pathways.sources.onet_tools.geo_or_layer} · ${pathways.sources.onet_tools.vintage_date}`,
+        href: pathways.sources.onet_tools.source_url
+      }
+    : null
+  const sources = [
+    ...verdictSources,
+    ...(jobMarketSource ? [jobMarketSource] : []),
+    ...(toolsSource ? [toolsSource] : [])
+  ]
+  const access = accessFor(role.onet_code, session.profile, pathways, session.role_code)
   const explanationByCorner = new Map(
     explanationState?.roleCode === role.onet_code && explanationState.snapshotId === checkup.snapshotId
       ? explanationState.explanations.map((explanation) => [explanation.corner_id, explanation] as const)
@@ -168,7 +187,7 @@ export function RadarView() {
     const explanation = explanationByCorner.get(corner.id)
     return explanation ? { ...corner, reasoning: explanation.sentences.join(' ') } : corner
   })
-  const roles = toRoles(checkup, [role, ...related], session.role_code)
+  const roles = toRoles(checkup, [role, ...related], session.role_code, { bundle: bundle.data, session })
   const swot = deriveSwot(corners, roles, scenario)
   const neededLabel = neededByLabel(checkup)
   const activeMonth = snapshotMonth(checkup.snapshotId)
@@ -185,11 +204,16 @@ export function RadarView() {
     firstRoadmapItem && firstRoadmapCorner?.statements
       ? firstRoadmapCorner.statements[firstRoadmapItem.statement]
       : null
-  const speech = biggestRisingGap
-    ? firstRoadmapStatement
-      ? `Your biggest rising gap is ${biggestRisingGap.name}. Try this: ${firstRoadmapStatement}`
-      : 'I don’t have a ready skill statement for your first step yet.'
-    : 'No rising skill gap stands out for this job yet.'
+  const speech =
+    access.profession && needsQualification(access)
+      ? access.status === 'qualify'
+        ? `${role.title} also needs a set qualification in Malaysia. Your fit shows whether the work suits you, so weigh it before you enrol.`
+        : `${role.title} is regulated in Malaysia: see the steps below. Your fit shows whether the work suits you.`
+      : biggestRisingGap
+        ? firstRoadmapStatement
+          ? `Your biggest rising gap is ${biggestRisingGap.name}. Try this: ${firstRoadmapStatement}`
+          : 'I don’t have a ready skill statement for your first step yet.'
+        : 'No rising skill gap stands out for this job yet.'
 
   const weaknessNames = new Set(swot.weaknesses.map((item) => item.label))
   const weaknessCorners = corners
@@ -300,6 +324,19 @@ export function RadarView() {
         </p>
       </header>
 
+      <AccessNotice
+        access={access}
+        roleTitle={role.title}
+        fit={
+          activeRoleCheckup
+            ? {
+                percent: Math.round(activeRoleCheckup.fit.score),
+                estimated: activeRoleCheckup.levels.some(isEstimatedLevel)
+              }
+            : undefined
+        }
+      />
+
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-6">
         <section className="space-y-4 lg:sticky lg:top-24 lg:self-start" aria-label="Future Skills Radar">
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
@@ -329,6 +366,8 @@ export function RadarView() {
           {jobMarket && jobMarketSource && (
             <JobMarketCard market={jobMarket} roleTitle={role.title} sourceNumber={jobMarketSource.n} />
           )}
+
+          {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} />}
 
           <SourceList sources={sources} label="All Sources" />
 

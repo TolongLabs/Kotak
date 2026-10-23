@@ -31,6 +31,7 @@ import {
   type Source
 } from '../packages/shared/src/index'
 import { cornerLinkErrors, loadCorners } from './build-data/corners'
+import { buildPathways, loadPathwaysInputs, roleTools } from './build-data/pathways'
 
 const started = performance.now()
 const ROOT = `${import.meta.dir}/..`
@@ -60,6 +61,7 @@ const [occupations, tasks, activities, april, may, jmi, demoRoles] = await Promi
   load('data/demo-roles.json', DemoRolesFileSchema)
 ])
 const corners = await loadCorners(ROOT, tasks.tasks)
+const pathwaysInputs = await loadPathwaysInputs(ROOT)
 const links = onetLinks(tasks.tasks, activities)
 
 const failures: string[] = []
@@ -121,6 +123,7 @@ for (const occupation of occupations.occupations) {
     related: occupation.related.flatMap((r) =>
       titles.has(r.onet_code) ? [{ ...r, title: titles.get(r.onet_code)! }] : []
     ),
+    tools: roleTools(pathwaysInputs, occupation.onet_code),
     signals: Object.fromEntries(
       months.map((m, i) => [m.snapshot_id, resolveRoleSignals({ ...input, aei: snapshotMonths(i) })])
     )
@@ -138,6 +141,9 @@ const index = check(BUNDLE_PATHS.roles, BundleRoleIndexSchema, {
     questions_ready: r.questions_ready
   }))
 })
+
+// 2b. Pathways (#284): fields of study, interest areas, regulated professions and each role's preparation.
+const pathways = buildPathways(pathwaysInputs, roles, failures)
 
 // 3. Demo roles: April to May for the sample answers must flip a corner verdict and reorder the roadmap.
 const demo = demoRoles.roles.flatMap((d) => {
@@ -245,7 +251,7 @@ const manifest = check(BUNDLE_PATHS.manifest, BundleManifestSchema, {
   demo: { scenario: DEFAULT_SCENARIO, roles: demo, scenario_splits: scenarioSplits }
 })
 
-if (failures.length > 0 || !index || !manifest) {
+if (failures.length > 0 || !index || !manifest || !pathways) {
   console.error(`build:data failed with ${failures.length} problem(s); nothing was written:`)
   for (const failure of failures) console.error(`  ${failure}`)
   process.exit(1)
@@ -255,6 +261,7 @@ if (failures.length > 0 || !index || !manifest) {
 const files: [string, unknown][] = [
   [BUNDLE_PATHS.manifest, manifest],
   [BUNDLE_PATHS.roles, index],
+  [BUNDLE_PATHS.pathways, pathways],
   ...[...roles.values()].map((r): [string, unknown] => [BUNDLE_PATHS.role(r.onet_code), r])
 ]
 await rm(`${PUBLIC}${dirname(BUNDLE_PATHS.manifest)}`, { recursive: true, force: true })
@@ -262,7 +269,7 @@ const sizes = await Promise.all(files.map(([path, value]) => Bun.write(`${PUBLIC
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`
 const total = sizes.reduce((a, b) => a + b, 0)
-const roleSizes = sizes.slice(2).sort((a, b) => a - b)
+const roleSizes = sizes.slice(3).sort((a, b) => a - b)
 console.info(
   `Corners: ${JSON.stringify(manifest.corners)}; questions ready for ${index.roles.filter((r) => r.questions_ready).length} roles`
 )
@@ -275,7 +282,7 @@ for (const d of manifest.demo.roles) {
 }
 console.info(
   `Wrote ${files.length} files (${(total / 1024 / 1024).toFixed(1)} MB) to apps/web/public${dirname(BUNDLE_PATHS.manifest)}: ` +
-    `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, ${roleSizes.length} role files ` +
+    `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, pathways ${kb(sizes[2]!)}, ${roleSizes.length} role files ` +
     `(median ${kb(roleSizes[roleSizes.length >> 1]!)}, largest ${kb(roleSizes.at(-1)!)})`
 )
 console.info(`build:data finished in ${((performance.now() - started) / 1000).toFixed(1)} s`)

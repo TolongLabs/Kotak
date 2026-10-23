@@ -11,7 +11,8 @@ import type { BundleRole } from './schemas'
 export const BUNDLE_PATHS = {
   manifest: '/data/manifest.json',
   roles: '/data/roles.json',
-  role: (onetCode: string) => `/data/roles/${onetCode}.json`
+  role: (onetCode: string) => `/data/roles/${onetCode}.json`,
+  pathways: '/data/pathways.json'
 } as const
 
 /**

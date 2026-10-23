@@ -6,6 +6,7 @@ import { AppShell } from './app/shell/AppShell'
 import { Gallery } from './dev/Gallery'
 import { useActiveSnapshot } from './session/snapshot'
 import { CheckUpView } from './views/CheckUpView'
+import { ChooseRoleView } from './views/ChooseRoleView'
 import { ConnectView } from './views/ConnectView'
 import { DashboardView } from './views/DashboardView'
 import { LandingView } from './views/LandingView'
@@ -26,6 +27,7 @@ EngineSnapshotSchema.parse(sampleSnapshot)
 const appViews: Record<string, ComponentType> = {
   [routes.home]: DashboardView,
   [routes.checkUp]: CheckUpView,
+  [routes.choose]: ChooseRoleView,
   [routes.questions]: QuestionsView,
   [routes.radar]: RadarView,
   [routes.roles]: RolesView,

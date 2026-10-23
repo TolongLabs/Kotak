@@ -102,6 +102,14 @@ export const BundleRoleSchema = z
     /** The transfer links of this role's tasks; merge them with the matched roles' links (see `engineInputs`). */
     links: TransferLinksSchema,
     related: z.array(BundleRelatedRoleSchema),
+    /**
+     * Software and tools employers name for the role (#284), from O*NET's Hot Technologies: the In Demand ones, or
+     * without any, the first 12, in O*NET's alphabetical order.
+     */
+    tools: z
+      .array(z.object({ name: z.string().min(1), in_demand: z.boolean() }).strict())
+      .max(40)
+      .default([]),
     /** The engine inputs per snapshot: 2026-04 holds April's data, 2026-05 April's and May's. */
     signals: z.record(SnapshotIdSchema, RoleSignalsSchema)
   })
