@@ -89,6 +89,7 @@ The intake asks where the user is, their highest qualification, field of study, 
 | In an interest area the user picked                             | 3, plus up to 1.5 for an area's core roles                |
 | The user's field of study leads here (NCES crosswalk)           | 3, plus 1 when also in a picked area                      |
 | The "not sure" activity picks match the role's O\*NET interests | up to 4: the correlation, floored at 0, × 4               |
+| In an area the "not sure" picks name, without area or field     | 2.5                                                       |
 | On O\*NET's related list for the user's job                     | 1                                                         |
 | A manager or supervisor role for a user without the years       | −2                                                        |
 | A role well below the user's qualification                      | a penalty                                                 |

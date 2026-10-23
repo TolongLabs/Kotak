@@ -34,7 +34,9 @@ export const ProfileSchema = z
     years_experience: z.number().int().min(0).max(60).nullable().default(null), // years of work, any job
     interest_areas: z.array(IdSchema).max(MAX_AREAS).default([]), // ids from /data/pathways.json's areas
     target_role_codes: z.array(OnetSocCodeSchema).max(MAX_TARGETS).default([]), // the first is the assessed target
-    interests: InterestPicksSchema.nullable().default(null) // the "I'm not sure" screen's picks
+    interests: InterestPicksSchema.nullable().default(null), // the "I'm not sure" screen's picks
+    // The same picks by activity id (interests.ts), which say what they're about: computers, data, health...
+    interest_activities: z.array(IdSchema).max(18).default([])
   })
   .strict()
 
@@ -238,11 +240,13 @@ export const RoleAccessSchema = z
   .strict()
 
 // related: in O*NET's related list of the role the check-up assesses; job_related: of the user's job, when the two differ.
+// activity_area: in an area the user's picked activities are about, when they picked no area or field.
 export const CandidateReasonSchema = z.enum([
   'target',
   'area',
   'field',
   'interests',
+  'activity_area',
   'job_related',
   'related',
   'current'

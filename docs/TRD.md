@@ -482,6 +482,7 @@ The check-up starts from who the user is, not only a job title ([#284]).
   - a picked area: 3, plus up to 1.5 for the area's core roles, which a digital area lists first;
   - the field of study: 3, plus 1 when the role is in a picked area too;
   - interests: up to 4, from the correlation of the picks with O\*NET's interest scores; without a picked area, the 40 closest matches join the pool. Picks spread evenly over the six areas point nowhere, so the screen asks the user to leave some out;
+  - an area the picked activities are about, without a picked area or a field of study: 2.5. The scores carry only a shape, so "set up computers" and "analyse data" alone suggested zoologists and astronomers, and no computing role. 12 of the 18 activities name a subject and its areas (`ACTIVITY_AREAS`), such as computers and networks for Cloud and Infrastructure and Cybersecurity, or health for Health and Care. The profile keeps the picks by activity id beside the counts, and the card says "Your picks point to" the area, not that the user picked it;
   - O\*NET's related list of the user's job: 1.
 
   A manager or supervisor role for a user without the years, and a job well below the user's qualification, take some away; a qualification the user doesn't hold takes nothing. Suggestions add the outlook, from +2 for Rising to −1 for Declining. The check-up ranks up to 18 of these roles beside the assessed role's related list, and Roles That Fit then shows 6, the user's own choices first. An empty profile ranks the related list only, as before.
