@@ -180,7 +180,7 @@ The point of this round is human judgement, so score before discussing:
 1.  Each member reads this page and the top of [Dividen](0001-dividen.md), about 10 minutes.
 2.  Each scores both ideas alone, 1 to 5, on the four rubric criteria (innovation 30%, problem-solution fit 25%, feasibility 25%, clarity 20%), plus "would I use it or buy it?".
 3.  Share the scores, discuss the biggest gaps between people, then rescore once.
-4.  Lock the higher total, or a merge, before midnight, and record it on [issue #24](https://github.com/TolongLabs/sdc-hack/issues/24), which blocks the build.
+4.  Lock the higher total, or a merge, before midnight, and record it on [issue #24](https://github.com/TolongLabs/Kotak/issues/24), which blocks the build.
 
 This follows the method the team used for sdp-hack: people think and score alone first, because one chatbot makes everyone's ideas alike.
 

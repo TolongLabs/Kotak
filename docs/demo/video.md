@@ -27,8 +27,8 @@ Contents:
     1.  [Recorder prompt](#recorder-prompt)
 1.  [Sources](#sources)
 
-[i82]: https://github.com/TolongLabs/sdc-hack/issues/82
-[i84]: https://github.com/TolongLabs/sdc-hack/issues/84
+[i82]: https://github.com/TolongLabs/Kotak/issues/82
+[i84]: https://github.com/TolongLabs/Kotak/issues/84
 
 ## Rules for the video
 
@@ -56,7 +56,7 @@ The Director may move time between parts. The live demo stays at 3:00 or more, a
 | 5:20–5:50 | SDG 4.4 impact                                                 | Deck                                                 |
 | 5:50–6:00 | Close                                                          | Deck                                                 |
 
-**Render the whole video in Remotion.** Export each slide of the PPTX deck ([#80](https://github.com/TolongLabs/sdc-hack/issues/80)) as a 1920 × 1080 PNG. Then one timeline holds the slides, the narration and the demo, with one mix and one caption file. Export the slides again whenever the deck changes.
+**Render the whole video in Remotion.** Export each slide of the PPTX deck ([#80](https://github.com/TolongLabs/Kotak/issues/80)) as a 1920 × 1080 PNG. Then one timeline holds the slides, the narration and the demo, with one mix and one caption file. Export the slides again whenever the deck changes.
 
 ## Roles
 
@@ -70,7 +70,7 @@ The Director may move time between parts. The live demo stays at 3:00 or more, a
 
 Name the sessions `kotak-director` and `kotak-recorder`. They message each other with SendMessage; files are the contract between them. The Recorder never drives the edit, and the Director never drives the app.
 
-[i28]: https://github.com/TolongLabs/sdc-hack/issues/28
+[i28]: https://github.com/TolongLabs/Kotak/issues/28
 
 ## Pipeline
 
@@ -87,7 +87,7 @@ Name the sessions `kotak-director` and `kotak-recorder`. They message each other
 
 ## Live-demo shot list
 
-The Director owns this list; the Recorder confirms each shot on the frozen build. The screens are the views in the [design system][design-screens], and the demo case is a hand-checked sample profile ([#104](https://github.com/TolongLabs/sdc-hack/issues/104)). Steps between shots run off camera.
+The Director owns this list; the Recorder confirms each shot on the frozen build. The screens are the views in the [design system][design-screens], and the demo case is a hand-checked sample profile ([#104](https://github.com/TolongLabs/Kotak/issues/104)). Steps between shots run off camera.
 
 | Shot | Length | Screen                           | On camera                                                                                                                | Built in |
 | ---- | -----: | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
@@ -139,10 +139,10 @@ await page.screencast.stop()
 
 ### Determinism
 
-- **A fresh browser context for every take.** The guest session lives in `localStorage` ([#41](https://github.com/TolongLabs/sdc-hack/issues/41)), so nothing carries over.
+- **A fresh browser context for every take.** The guest session lives in `localStorage` ([#41](https://github.com/TolongLabs/Kotak/issues/41)), so nothing carries over.
 - **The same sample profile** starts every take.
-- **Fixed snapshot order:** every take starts on the April 2026 snapshot. The demo switcher toggles back after D6 for repeat takes ([#69](https://github.com/TolongLabs/sdc-hack/issues/69)).
-- **Fixed words:** the demo roles run from the pre-warmed answer and audio caches ([#43](https://github.com/TolongLabs/sdc-hack/issues/43); [#46](https://github.com/TolongLabs/sdc-hack/issues/46)), so Kopi says the same lines in every take.
+- **Fixed snapshot order:** every take starts on the April 2026 snapshot. The demo switcher toggles back after D6 for repeat takes ([#69](https://github.com/TolongLabs/Kotak/issues/69)).
+- **Fixed words:** the demo roles run from the pre-warmed answer and audio caches ([#43](https://github.com/TolongLabs/Kotak/issues/43); [#46](https://github.com/TolongLabs/Kotak/issues/46)), so Kopi says the same lines in every take.
 - **Fix the clock:** `page.clock.setFixedTime('2026-10-24T09:00:00+08:00')`, so the roadmap's finish dates stay the same across takes.
 - **Same build for every final take.** Re-record every shot after any frontend change.
 
@@ -249,7 +249,7 @@ AlaskanTuna approves each gate. Every gate finishes before the upload in [#84][i
 Start each session in one shared worktree, so the main checkout stays free:
 
 ```shell
-git worktree add -b video/edit ../sdc-hack-video origin/main
+git worktree add -b video/edit ../kotak-video origin/main
 ```
 
 The Director owns everything in `video/` except `video/record/` and `video/src/motion/`, which the Recorder owns. Only the Director runs Git. When you start a session, add the local path of the earlier project's video folder and its brief to the prompt.

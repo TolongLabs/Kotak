@@ -224,7 +224,7 @@ MASCO, the crosswalks, SkillsFuture's terms and Adzuna's coverage were settled i
 - The Epoch licence version.
 - HF `/api/daily_papers` documentation.
 
-[issue-20]: https://github.com/TolongLabs/sdc-hack/issues/20
+[issue-20]: https://github.com/TolongLabs/Kotak/issues/20
 
 ## See also
 

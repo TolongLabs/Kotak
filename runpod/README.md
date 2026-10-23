@@ -16,7 +16,7 @@ Contents:
 1.  [Test without a key](#test-without-a-key)
 1.  [See also](#see-also)
 
-[#77]: https://github.com/TolongLabs/sdc-hack/issues/77
+[#77]: https://github.com/TolongLabs/Kotak/issues/77
 
 ## Workload
 
@@ -31,7 +31,7 @@ One chat request per occupation, 923 in all ([#74]):
 
 The batch makes no title embeddings: the job match route in #43 searches titles and asks Claude, and never reads embeddings.
 
-[#74]: https://github.com/TolongLabs/sdc-hack/issues/74
+[#74]: https://github.com/TolongLabs/Kotak/issues/74
 
 ## Handler
 
@@ -105,7 +105,7 @@ Options: `--codes` (comma-separated subset), `--concurrency` (default 32; keep i
 
 The first request waits for a worker to load the model; the runner polls `/openai/v1/models` for up to 30 minutes before sending the batch. Sampling is greedy (`temperature: 0`), but batched GPU runs are not bit-for-bit repeatable, so the committed file, not a rerun, is the record.
 
-[#79]: https://github.com/TolongLabs/sdc-hack/issues/79
+[#79]: https://github.com/TolongLabs/Kotak/issues/79
 
 ## Example requests
 
@@ -157,7 +157,7 @@ The run summary records the real runtime and token counts; the RunPod billing pa
 - The billing page with the spend for the run.
 - `data/generated/role-corners-run.json`: endpoint ID, GPU types, model, runtime, tokens and failures for every run.
 
-[#70]: https://github.com/TolongLabs/sdc-hack/issues/70
+[#70]: https://github.com/TolongLabs/Kotak/issues/70
 
 ## Test without a key
 

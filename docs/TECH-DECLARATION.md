@@ -33,7 +33,7 @@ Contents:
 - **Live prototype URL**: <https://kotak-alaskxntxna.replit.app>, published on Replit. A mirror runs at <https://kotak.tp073654.workers.dev>.
 - **Code repository URL**: the team's public submission repository ([#45]).
 
-[#45]: https://github.com/TolongLabs/sdc-hack/issues/45
+[#45]: https://github.com/TolongLabs/Kotak/issues/45
 
 ## 2. Architecture & technology stack
 
@@ -152,7 +152,7 @@ Was the sponsor resource essential to the core functionality, or could it be rep
 
 RunPod was essential to build Kotak's data: it turned O\*NET's tasks into 6 skills and 18 questions for each of 923 jobs, which no person could write by the deadline. The batch runs once, so the live app does not depend on RunPod, and the Claude Message Batches API could replace it. Replit hosts the submitted live demo; the same build also runs on Cloudflare Workers, so the hosting is replaceable.
 
-[#98]: https://github.com/TolongLabs/sdc-hack/issues/98
+[#98]: https://github.com/TolongLabs/Kotak/issues/98
 
 ## 6. Security, privacy & responsible use
 
