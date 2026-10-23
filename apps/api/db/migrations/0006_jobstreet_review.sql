@@ -1,8 +1,8 @@
 -- Admin-managed search titles, per-listing review and the check-up's market titles.
 -- Every deploy runs every migration (migrate.ts), so each statement must be safe to repeat and must not undo an
 -- admin's changes. Columns are added inside a DO block that checks the catalog first, so later deploys take no lock
--- on jobstreet_careers. migrate.ts splits statements at semicolons that end a line, so the semicolons inside the DO
--- block start their lines.
+-- on jobstreet_careers, and indexes the same way, so they take none on the tables indexed (#291; see 0002). migrate.ts
+-- splits statements at semicolons that end a line, so the semicolons inside the DO blocks start their lines.
 --
 -- A search title appears in the check-up when it is not hidden and has at least one listing approved under its
 -- current O*NET occupation; that rule lives in the queries, so no stored flag can drift from the approvals.
@@ -32,7 +32,13 @@ BEGIN
 $$;
 
 -- Review and sorting read a batch's observations by run.
-CREATE INDEX IF NOT EXISTS jobstreet_observations_run_idx ON jobstreet_observations (scrape_run_id);
+DO $$
+BEGIN
+  IF to_regclass('public.jobstreet_observations_run_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_observations_run_idx ON jobstreet_observations (scrape_run_id)
+    ; END IF
+  ; END
+$$;
 
 -- Whether a listing title, exactly as JobStreet shows it, is the search title's occupation. Stored per search title
 -- so its later batches reuse the answer, and cleared when the title's occupation changes. source: the search-title
@@ -59,12 +65,20 @@ CREATE TABLE IF NOT EXISTS jobstreet_listing_reviews (
   FOREIGN KEY (job_id, career_slug) REFERENCES jobstreet_listings(job_id, career_slug)
 );
 
-CREATE INDEX IF NOT EXISTS jobstreet_listing_reviews_approved_idx
-  ON jobstreet_listing_reviews (career_slug, onet_code)
-  WHERE approved;
-
--- A batch's own decisions, counted when it is approved and withdrawn when it is rejected.
-CREATE INDEX IF NOT EXISTS jobstreet_listing_reviews_run_idx ON jobstreet_listing_reviews (scrape_run_id);
+-- The approved listings per search title and occupation, and a batch's own decisions, counted when it is approved and
+-- withdrawn when it is rejected.
+DO $$
+BEGIN
+  IF to_regclass('public.jobstreet_listing_reviews_approved_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_listing_reviews_approved_idx
+      ON jobstreet_listing_reviews (career_slug, onet_code)
+      WHERE approved
+    ; END IF
+  ; IF to_regclass('public.jobstreet_listing_reviews_run_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_listing_reviews_run_idx ON jobstreet_listing_reviews (scrape_run_id)
+    ; END IF
+  ; END
+$$;
 
 -- One review per breadth batch.
 CREATE TABLE IF NOT EXISTS jobstreet_run_reviews (
