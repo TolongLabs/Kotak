@@ -58,7 +58,7 @@ The production API and web app run on Cloudflare Workers. A Worker cannot launch
 
 1. Create or select the Neon project used by the production app. Create a database and copy its pooled Postgres connection string from the Neon connection details.
 2. Add `DATABASE_URL` as a GitHub Actions repository secret. The deploy workflow applies the idempotent SQL migrations before deploying and passes this secret to the Worker.
-3. Generate a long random `SCRAPER_ADMIN_TOKEN`. Add it as a GitHub Actions secret and as a Cloudflare Worker secret. The token protects the admin API; enter it on the admin page when connecting.
+3. Generate a long random `SCRAPER_ADMIN_TOKEN`. Add it as a GitHub Actions secret and as a Cloudflare Worker secret for trusted automation. Browser admins use the provisioned accounts described below; the service token is not entered into or stored by the browser UI.
 4. For a local database migration or data import, set `DATABASE_URL` in the shell without committing it. Preview local captures first with `bun run jobs:import --dry-run`, then run `bun run jobs:import` to import every completed capture under `data/jobstreet/`.
 
 The import is repeatable and commits each run in one transaction. Job listings are keyed by JobStreet job ID and search career. Each distinct run observation remains in `jobstreet_observations` with its original `scraped_at` and run ID; legacy captures without an ID receive a stable content-derived ID. Detail attempts come from the raw `details.jsonl` ledger, while cached descriptions in an enriched view do not become fresh attempts. Depth captures without an enriched file can recover listing snapshots from their raw details. The latest successful detail is also attached to the listing, and older imports cannot replace a newer description. Re-running an import does not duplicate an identical observation. Failed runs with valid partial captures are imported with their failed status so their data remains traceable.
@@ -73,7 +73,17 @@ The scraper remains headed by default to match local operation. Set `BROWSER_HEA
 
 ### Admin panel and schedule
 
-Open `/admin/scraping`, enter the admin token, choose one of the seeded career queries and select breadth or depth. The page shows listing and description counts plus the latest 50 run records. The seeded searches are Software Engineer, Front-End Developer, Design Systems Developer and Accessibility Engineer. These JobStreet search titles are separate from the public check-up's O*NET suggestions.
+Open `/admin/sign-in`, or use **Admin Sign In** on the public sign-in page. `/admin` and `/admin/scraping` redirect unauthenticated visitors there. Sign in with a provisioned admin username and password, choose one of the seeded career queries, and select breadth or depth. The page shows listing and description counts plus the latest 50 run records. The seeded searches are Software Engineer, Front-End Developer, Design Systems Developer and Accessibility Engineer. These JobStreet search titles are separate from the public check-up's O*NET suggestions.
+
+There is no public admin registration. After applying database migrations, provision an account from a trusted checkout with `DATABASE_URL` configured:
+
+```sh
+bun run admin:create --username admin
+```
+
+The command generates a strong password and writes it to the Git-ignored `.local/admin-credentials.txt`; it never prints the password. Each contributor can receive a separate username by running the command with a different `--username` and a fresh `--output .local/<name>-credentials.txt`. An existing credential file is never overwritten. To choose a password, put it in a local environment variable and pass its name with `--password-env`; the password must contain 16–72 UTF-8 bytes. To rotate an existing account's password and revoke all of its sessions, add `--reset-password` and choose a fresh output filename. Setting that user's `enabled` column to `false` also denies its current sessions immediately.
+
+Passwords are stored as salted bcrypt hashes in Neon. Sessions use opaque random tokens, stored only as SHA-256 hashes in the database, with an eight-hour expiry. The browser receives a `Secure`, `HttpOnly`, `SameSite=Strict` cookie; passwords and service tokens are not retained in browser storage. Sign Out revokes the database session. The Worker gates the dashboard document as well as every scraper data/action endpoint. Login has an IP rate limit and a 15-minute account lock after five failed attempts; unsafe cookie-authenticated requests require same-origin JSON requests. Guest sessions confer no admin access. Trusted scripts can continue using `Authorization: Bearer <SCRAPER_ADMIN_TOKEN>`.
 
 Cloudflare queues one breadth refresh for each career daily at **12:00 a.m. Asia/Singapore** (`16:00 UTC`). Keep in mind that result totals are estimates for broad JobStreet queries, not exact counts of jobs whose title matches the career. Breadth stores each repeated sighting with its date while updating the latest listing view. Depth is manual and selects listings without a saved description; it does not refresh existing descriptions by default.
 
