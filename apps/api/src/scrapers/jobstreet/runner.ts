@@ -159,6 +159,8 @@ async function claimNext() {
        OR (heartbeat_at IS NULL AND started_at < now() - interval '12 hours')
      )`
   )
+  // The Neon driver parses a date column into a JavaScript Date, which the queue check rejects as an invalid schedule
+  // date, so the nightly runs failed before scraping. The date goes out as YYYY-MM-DD text instead.
   const rows = await sql.query(
     `UPDATE jobstreet_scrape_runs
      SET status = 'running', started_at = now(), heartbeat_at = now(), error = NULL
@@ -169,7 +171,7 @@ async function claimNext() {
        LIMIT 1
        FOR UPDATE SKIP LOCKED
      )
-     RETURNING id, career_slug, mode, source, scheduled_for`
+     RETURNING id, career_slug, mode, source, scheduled_for::text AS scheduled_for`
   )
   return rows[0] as
     | {
