@@ -26,9 +26,25 @@ const bindings: AiBindings & KotakBindings & ScraperAdminBindings = {
   SCRAPER_LOGIN_LIMITER: createMemoryRateLimiter(5)
 }
 
+// Replit's proxy ends HTTPS and forwards plain HTTP, so there a request URL reads http:// while the browser's Origin
+// reads https://, and the admin same-origin check refused every sign-in. On Replit (REPLIT_DEPLOYMENT in a published
+// app; REPLIT_DEV_DOMAIN or REPL_ID in the workspace), the URL takes the https scheme the proxy reports in
+// X-Forwarded-Proto. Elsewhere the URL is used as it arrives.
+const behindReplitProxy = Boolean(Bun.env.REPLIT_DEPLOYMENT || Bun.env.REPLIT_DEV_DOMAIN || Bun.env.REPL_ID)
+
+function withExternalScheme(request: Request): Request {
+  if (!behindReplitProxy) return request
+  const forwarded = request.headers.get('X-Forwarded-Proto')?.split(',')[0]?.trim().toLowerCase()
+  const url = new URL(request.url)
+  if (forwarded !== 'https' || url.protocol !== 'http:') return request
+  url.protocol = 'https:'
+  return new Request(url, request)
+}
+
 Bun.serve({
-  fetch: (request, server) => {
-    const requestBindings = { ...bindings, SCRAPER_LOGIN_CLIENT_IP: server.requestIP(request)?.address ?? 'unknown' }
+  fetch: (incoming, server) => {
+    const request = withExternalScheme(incoming)
+    const requestBindings = { ...bindings, SCRAPER_LOGIN_CLIENT_IP: server.requestIP(incoming)?.address ?? 'unknown' }
     const path = new URL(request.url).pathname
     if (path === '/admin' || path.startsWith('/admin/')) {
       return serveAdminDocument(request, Bun.env.DATABASE_URL, {
