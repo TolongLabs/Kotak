@@ -35,14 +35,15 @@ export const defaultAiDeps: AiDeps = {
 }
 
 // Counts one uncached Claude call against the route's rate limit (#155); false when the route is over it. The key is
-// the route's path, as Cloudflare's docs advise over IP addresses. A limiter failure counts as over the limit, so the
-// route falls back instead of failing.
-export async function withinRateLimit(deps: AiDeps, context: AiContext): Promise<boolean> {
+// the request's path, as Cloudflare's docs advise over IP addresses, unless the route passes its own: a route whose
+// path holds an ID, such as sorting a batch, passes a fixed key so every path shares one limit (#266). A limiter
+// failure counts as over the limit, so the route falls back instead of failing.
+export async function withinRateLimit(deps: AiDeps, context: AiContext, key = context.req.path): Promise<boolean> {
   const { success } = await deps
     .limiter(context)
-    .limit({ key: context.req.path })
+    .limit({ key })
     .catch(() => ({ success: false }))
-  if (!success) console.warn(`[ai] Rate limited: ${context.req.path}`)
+  if (!success) console.warn(`[ai] Rate limited: ${key}`)
   return success
 }
 

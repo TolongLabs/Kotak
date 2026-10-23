@@ -79,6 +79,12 @@ function decisionNote(listing: Listing) {
 // An occupation in the O*NET list: a code the list does not know cannot be sorted against or approved.
 const hasOccupation = (data: ReviewData) => !!data.career.onet_code && !!data.career.occupation_title
 
+function isClearReply(value: unknown): value is { cleared: number } {
+  if (!value || typeof value !== 'object') return false
+  const { cleared } = value as Record<string, unknown>
+  return typeof cleared === 'number' && Number.isSafeInteger(cleared) && cleared >= 0
+}
+
 function isSortReply(value: unknown): value is { sorted: number; remaining: number } {
   if (!value || typeof value !== 'object') return false
   const { sorted, remaining } = value as Record<string, unknown>
@@ -160,7 +166,16 @@ export const BatchReview = memo(function BatchReview({
   const [submitting, setSubmitting] = useState<'approve' | 'reject' | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [confirmingResort, setConfirmingResort] = useState(false)
+  const [resortNotice, setResortNotice] = useState<string | null>(null)
+  const [resortError, setResortError] = useState<string | null>(null)
   const mounted = useRef(true)
+  // The confirmation takes Re-Sort Titles' place, as on the Settings page. Focus moves into it when it opens, back to
+  // Re-Sort Titles on Cancel, and to the result once the admin confirms, so it is not lost with the disabled buttons.
+  const resortButtonRef = useRef<HTMLButtonElement>(null)
+  const cancelResortRef = useRef<HTMLButtonElement>(null)
+  const resortResultRef = useRef<HTMLDivElement>(null)
+  const resortQuestionId = useId()
   const isMounted = useCallback(() => mounted.current, [])
   // Gets focus after a review is saved, so the result is read out and focus is not lost with the disabled buttons.
   const resultRef = useRef<HTMLDivElement>(null)
@@ -196,12 +211,13 @@ export const BatchReview = memo(function BatchReview({
   )
 
   // Ask the API to sort the batch's unsorted titles, 40 at a time, until none remain or no progress is made. The
-  // caller clears the sorting state once the batch has reloaded.
+  // caller clears the sorting state once the batch has reloaded. True when every title was sorted.
   const sort = useCallback(
     async (isActive: () => boolean) => {
       setSortError(null)
       let total: number | null = null
       let done = 0
+      let finished = false
       try {
         for (let requests = 0; isActive(); requests++) {
           if (requests >= MAX_SORT_REQUESTS) {
@@ -220,7 +236,10 @@ export const BatchReview = memo(function BatchReview({
           total ??= result.sorted + result.remaining
           done = Math.min(total, done + result.sorted)
           setSorting({ done, total })
-          if (result.remaining === 0) break
+          if (result.remaining === 0) {
+            finished = true
+            break
+          }
           if (result.sorted === 0) {
             setSortError('Kopi could not sort the remaining titles. Check them yourself, or try again later.')
             break
@@ -229,6 +248,7 @@ export const BatchReview = memo(function BatchReview({
       } catch (cause) {
         if (!isHandledError(cause) && isActive()) setSortError(errorMessage(cause))
       }
+      return finished
     },
     [request, runId]
   )
@@ -238,8 +258,9 @@ export const BatchReview = memo(function BatchReview({
     async (isActive: () => boolean) => {
       setSorting({ done: 0, total: null })
       try {
-        await sort(isActive)
+        const finished = await sort(isActive)
         await load(isActive)
+        return finished
       } finally {
         if (isActive()) setSorting(null)
       }
@@ -303,6 +324,49 @@ export const BatchReview = memo(function BatchReview({
     })
   }
 
+  const focusLater = (target: { current: HTMLElement | null }) =>
+    window.requestAnimationFrame(() => target.current?.focus())
+
+  // Clear the stored answers for every listing title under the search title, then sort this batch again (#265).
+  // Saved decisions stay, and so do the ticks the admin changed on this page.
+  async function resort() {
+    if (!data || sorting !== null || submitting !== null) return
+    const { slug, title } = data.career
+    setConfirmingResort(false)
+    setResortError(null)
+    setResortNotice(null)
+    setSortError(null)
+    setNotice(null)
+    setSorting({ done: 0, total: null })
+    focusLater(resortResultRef)
+    let cleared: number
+    try {
+      const result: unknown = await request(`/careers/${encodeURIComponent(slug)}/verdicts/clear`, {
+        method: 'POST',
+        body: '{}'
+      })
+      if (!isClearReply(result)) throw new Error('Kopi sent an unexpected reply. Reload the batch and try again.')
+      cleared = result.cleared
+    } catch (cause) {
+      if (!isHandledError(cause) && mounted.current) setResortError(errorMessage(cause))
+      if (mounted.current) setSorting(null)
+      return
+    }
+    const answers = plural(cleared, 'stored answer', 'stored answers')
+    try {
+      const finished = await sortAndReload(isMounted)
+      if (!mounted.current) return
+      setResortNotice(
+        finished
+          ? `Cleared ${answers} for “${title}” and sorted this batch again. Other batches of this title are sorted again when you open them.`
+          : `Cleared ${answers} for “${title}”, but sorting this batch again stopped before the end.`
+      )
+    } catch (cause) {
+      if (!isHandledError(cause) && mounted.current)
+        setResortError(`Cleared ${answers}, but the batch could not be reloaded: ${errorMessage(cause)}`)
+    }
+  }
+
   async function decide(decision: 'approve' | 'reject') {
     if (!data || submitting) return
     setSubmitting(decision)
@@ -363,6 +427,8 @@ export const BatchReview = memo(function BatchReview({
 
   const busy = sorting !== null || submitting !== null
   const occupationSet = data !== null && hasOccupation(data)
+  // Sorting needs the occupation, and a batch without listings has nothing to sort.
+  const canResort = data !== null && occupationSet && data.listings.length > 0
   const occupationName = data?.career.occupation_title ?? 'the Occupation'
   const groupDetails: Array<{ id: GroupId; title: string; hint: string }> = [
     { id: 'match', title: `Matches ${occupationName}`, hint: 'Ticked unless you excluded them before.' },
@@ -390,9 +456,75 @@ export const BatchReview = memo(function BatchReview({
             </p>
           )}
         </div>
-        <Button variant="ghost" onClick={onClose}>
-          Close Review
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          {canResort && !confirmingResort && (
+            <Button
+              ref={resortButtonRef}
+              variant="secondary"
+              disabled={busy}
+              onClick={() => {
+                setConfirmingResort(true)
+                focusLater(cancelResortRef)
+              }}
+            >
+              Re-Sort Titles
+            </Button>
+          )}
+          <Button variant="ghost" onClick={onClose}>
+            Close Review
+          </Button>
+        </div>
+      </div>
+
+      {canResort && confirmingResort && (
+        <div
+          className="space-y-4 rounded-md border border-border-subtle bg-bg-panel p-4"
+          role="group"
+          aria-label="Confirm Re-Sort Titles"
+          aria-describedby={resortQuestionId}
+          aria-live="polite"
+        >
+          <p id={resortQuestionId} className="text-body-s text-text-primary">
+            Clear Kopi’s stored answers for every listing title under “{data.career.title}”, then sort this batch again?
+            Do this after the sorting prompt changes, or when Kopi sorted titles wrongly. Saved decisions and the ticks
+            you changed here stay. Other batches of this title are sorted again when you open them.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              ref={cancelResortRef}
+              variant="secondary"
+              fullWidth
+              className={`sm:w-auto ${CLEAR_OF_FOOTER}`}
+              onClick={() => {
+                setConfirmingResort(false)
+                focusLater(resortButtonRef)
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              fullWidth
+              className={`sm:w-auto ${CLEAR_OF_FOOTER}`}
+              disabled={busy}
+              onClick={() => void resort()}
+            >
+              Re-Sort Titles
+            </Button>
+          </div>
+        </div>
+      )}
+      <div
+        ref={resortResultRef}
+        tabIndex={-1}
+        className={resortNotice || resortError ? 'space-y-3 focus:outline-none' : 'sr-only focus:outline-none'}
+      >
+        {/* Mounted before any result, so screen readers announce the notice when it appears. Out of the layout while
+            empty, so it adds no gap under the heading. */}
+        <p role="status" className={resortNotice ? 'text-body-s text-text-muted' : 'sr-only'}>
+          {resortNotice}
+        </p>
+        {resortError && <Banner type="error" title="Could Not Re-Sort the Titles" body={resortError} role="alert" />}
       </div>
 
       {loadError && <Banner type="error" title="Could Not Load This Batch" body={loadError} role="alert" />}

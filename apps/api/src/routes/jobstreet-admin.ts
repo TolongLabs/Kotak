@@ -35,6 +35,9 @@ const MAX_BODY_BYTES = 256 * 1024
 // O*NET names and neighbouring occupations shown to Claude with each batch of titles.
 const PROMPT_ALTERNATE_TITLES = 15
 const PROMPT_NEIGHBOURS = 12
+// Sorting's rate-limit key. Each batch has its own classify path, so the path would give each batch its own 30 Claude
+// calls a minute; one key makes every batch share them (#266).
+export const CLASSIFY_RATE_LIMIT_KEY = 'jobstreet-classify'
 
 const CareerCreateSchema = z.object({ title: z.string().max(200), onet_code: z.string().regex(ONET_CODE) }).strict()
 const CareerUpdateSchema = z
@@ -46,6 +49,16 @@ const CareerUpdateSchema = z
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0)
+// One listing title, exactly as JobStreet shows it, or none for every title of the search title.
+const ClearVerdictsSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1)
+      .refine((title) => [...title].length <= MAX_VERDICT_TITLE_LENGTH)
+      .optional()
+  })
+  .strict()
 const ReviewSchema = z.discriminatedUnion('decision', [
   z
     .object({
@@ -152,12 +165,13 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
 
   const occupationTitle = (code: string | null) => (code ? (deps.occupations.getOccupation(code)?.title ?? null) : null)
 
-  // Claude's verdicts for one request, or null when there is no key, the route is over its rate limit or the call
-  // fails. Not cached: a wrong or partial answer is not kept, and each title's verdict is stored once it is checked.
+  // Claude's verdicts for one request, or null when there is no key, sorting is over its rate limit (shared by every
+  // batch) or the call fails. Not cached: a wrong or partial answer is not kept, and each title's verdict is stored
+  // once it is checked.
   async function askClaude(context: AdminContext, request: ReturnType<typeof verdictRequest>) {
     const aiContext = context as unknown as AiContext
     const model = deps.model(aiContext)
-    if (!model || !(await withinRateLimit(deps, aiContext))) return null
+    if (!model || !(await withinRateLimit(deps, aiContext, CLASSIFY_RATE_LIMIT_KEY))) return null
     try {
       return await model.generate(request, VerdictDraftSchema)
     } catch (error) {
@@ -279,6 +293,37 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
         409
       )
     return context.json({ career: { ...career, occupation_title: occupationTitle(career.onet_code) } })
+  })
+
+  // Clear a search title's stored sorting answers, or the answer for one listing title, so sorting asks again (#265):
+  // after a prompt change, or when Claude got a title wrong. A scraped title can try to steer Claude's answers for the
+  // other titles in its request, and those answers decide which listings start ticked. Decisions already saved stay.
+  // The review page sorts the open batch again straight after.
+  route.post('/careers/:slug/verdicts/clear', async (context) => {
+    const slug = context.req.param('slug')
+    if (!isCareerSlug(slug)) return context.json({ error: 'Search title not found.' }, 404)
+    const body = ClearVerdictsSchema.safeParse(await context.req.json().catch(() => null))
+    if (!body.success)
+      return context.json(
+        {
+          error: `Send one listing title of 1 to ${MAX_VERDICT_TITLE_LENGTH} characters, or none to clear every title.`
+        },
+        400
+      )
+    const sql = database(context)
+    if (!sql) return noDatabase(context)
+    const [result] = (await sql.query(
+      `WITH career AS (SELECT slug FROM jobstreet_careers WHERE slug = $1),
+       cleared AS (
+         DELETE FROM jobstreet_title_verdicts verdict USING career
+         WHERE verdict.career_slug = career.slug AND ($2::text IS NULL OR verdict.title = $2::text)
+         RETURNING 1
+       )
+       SELECT EXISTS (SELECT 1 FROM career) AS found, (SELECT count(*)::int FROM cleared) AS cleared`,
+      [slug, body.data.title ?? null]
+    )) as Array<{ found: boolean; cleared: number }>
+    if (!result?.found) return context.json({ error: 'Search title not found.' }, 404)
+    return context.json({ cleared: result.cleared })
   })
 
   // O*NET occupations for a title, by title and alternate-title search (no AI).
