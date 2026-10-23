@@ -12,6 +12,7 @@ import {
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { withBrowserProfile } from './browser-profile'
+import type { JobstreetBrowserScope } from './browser-profile'
 import { PaginationHand } from './hand'
 import { nextSearchUrl, parseListing, parseSort, searchUrl, sortListings } from './records'
 import type { JobListing, SortMode } from './records'
@@ -31,6 +32,8 @@ export interface ScrapeOptions {
   verificationTimeoutMs?: number
   sort?: SortMode
   headless?: boolean
+  browserScope?: JobstreetBrowserScope
+  onProgress?: (report: Record<string, unknown>) => void | Promise<void>
 }
 
 interface PageResult extends NavigationState {
@@ -166,7 +169,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
   await saveReport()
   try {
     await withBrowserProfile(
-      { profileId: options.profileId, headless: options.headless ?? false },
+      { profileId: options.profileId, headless: options.headless ?? false, browserScope: options.browserScope },
       async (page) => {
         const hand = new PaginationHand(page)
         let targetJobs = options.maxJobs
@@ -191,6 +194,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
           }
           report.pages.push(entry)
           const prefix = resolve(output, `page-${report.pages.length}`)
+          let pageProcessed = false
           try {
             const response = await navigate(page, entry, maxRetries, options.delayMs, saveReport, {
               timeoutMs: verificationTimeoutMs,
@@ -244,6 +248,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
               if (!report.jobs_saved) throw new Error('No job listings were extracted')
               report.stop_reason = 'no_next_page'
               next = null
+              pageProcessed = true
               break
             }
             const candidates = await extractListings(page, report.run_id)
@@ -282,6 +287,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
               report.jobs_saved++
               entry.saved++
             }
+            pageProcessed = true
             if (report.jobs_saved >= targetJobs || report.pages.length >= options.maxPages) {
               report.stop_reason =
                 report.jobs_saved >= targetJobs
@@ -336,6 +342,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
           } finally {
             await saveEvidence(page, prefix)
             await saveReport()
+            if (pageProcessed) await options.onProgress?.(report)
           }
           if (next && report.pages.length < options.maxPages && report.jobs_saved < targetJobs) {
             await pauseBetweenRequests(options.delayMs, delayJitterMs)

@@ -15,6 +15,7 @@ import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { readListingRows, resolveInputs } from './inputs'
 import { withBrowserProfile } from './browser-profile'
+import type { JobstreetBrowserScope } from './browser-profile'
 import { jobUrl, parseListing, preferObservation, utcTimestamp } from './records'
 import type { JobListing } from './records'
 
@@ -30,6 +31,9 @@ export interface DepthOptions {
   previousDetails?: string[]
   refreshAfterHours?: number
   headless?: boolean
+  discoverLocalCache?: boolean
+  browserScope?: JobstreetBrowserScope
+  onProgress?: (report: Record<string, unknown>) => void | Promise<void>
 }
 
 type Outcome = 'fetched' | 'unavailable' | 'failed'
@@ -264,7 +268,10 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
   if (!Number.isInteger(retries) || retries < 0 || retries > 3)
     throw new Error('--retries must be an integer from 0 to 3')
   const paths = await resolveInputs(options.inputs)
-  const previousFiles = [...(await previousLocalDepthFiles()), ...(options.previousDetails ?? [])]
+  const previousFiles = [
+    ...(options.discoverLocalCache === false ? [] : await previousLocalDepthFiles()),
+    ...(options.previousDetails ?? [])
+  ]
   const cachePaths = previousFiles.length ? await resolveInputs(previousFiles) : []
   const output = await createOutputDirectory(options.output)
   await writeFile(resolve(output, 'details.jsonl'), '')
@@ -363,7 +370,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     await save()
     if (pending.length)
       await withBrowserProfile(
-        { profileId: options.profileId, headless: options.headless ?? false },
+        { profileId: options.profileId, headless: options.headless ?? false, browserScope: options.browserScope },
         async (page) => {
           for (const [index, breadth] of pending.entries()) {
             const entry: DetailAttempt = {
@@ -452,7 +459,8 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
               if (error instanceof VerificationTimeoutError) {
                 blocked = true
                 report.stop_reason = 'verification_timeout'
-              } else if (entry.verification?.status === 'interrupted') {
+              } else if (entry.verification?.status === 'interrupted' || page.isClosed()) {
+                // A closed page (the browser scope closes one that leaves JobStreet) cannot fetch the rest.
                 blocked = true
                 report.stop_reason = 'error'
               }
@@ -471,6 +479,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
               remember(observation)
               await saveEvidence(page, resolve(output, `job-${breadth.job_id}`))
               await save()
+              await options.onProgress?.(report)
             }
             if (blocked) {
               report.stop_reason ??= 'blocked'

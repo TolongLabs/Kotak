@@ -9,7 +9,7 @@ import { createRolesRoute } from './routes/roles'
 import { nationalView } from './routes/national-view'
 import { tts } from './routes/tts'
 import { adminAuth } from './routes/admin-auth'
-import { jobstreetAdmin } from './routes/jobstreet-admin'
+import { createJobstreetAdminRoute } from './routes/jobstreet-admin'
 import { mcp } from './routes/mcp'
 
 export const app = new Hono()
@@ -51,7 +51,7 @@ app.route('/api/tts', tts)
 app.route('/api/roles', createRolesRoute(defaultAiDeps))
 app.route('/api/explanations', createExplanationsRoute(defaultAiDeps))
 app.route('/api/admin/auth', adminAuth)
-app.route('/api/admin/scraper', jobstreetAdmin)
+app.route('/api/admin/scraper', createJobstreetAdminRoute(defaultAiDeps))
 app.route('/api/mcp', mcp)
 app.route('/api/agent', createAgentChatRoute(defaultAiDeps))
 
