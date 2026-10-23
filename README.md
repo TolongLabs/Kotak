@@ -163,10 +163,11 @@ A check-up for a web developer who wants to see where they could go, as the scre
 - **Skills profile intake** — a job title in any language, a goal (stay strong, move to a chosen role, or explore) and 12 can-do questions.
 - **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights, refreshed weekly. A Before/After switch shows what changed when May's data arrived.
 - **Future-role matching** — ranked roles with a fit score, the maths behind it and the named gaps.
+- **Malaysian job ads** — for each role, the JobStreet ads Kotak's admins reviewed: active ads, advertised pay in ringgit, where the jobs are, and the tools, languages and AI skills employers ask for. Shown beside the verdicts, which it never sets.
 - **Reskilling pathway** — an interactive roadmap with ordered steps, hours, one free resource per step and a finish date that moves with the user's weekly hours.
 - **SDG mapping** — every skill carries SDG targets, every job shows the goals its work serves, and the roadmap highlights steps by goal.
 - **Handling uncertainty** — every target is labelled an estimate, Split shows slow and fast AI-uptake futures, and Unknown marks thin data.
-- **Ask Kopi and MCP** — a chat agent answers through 6 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
+- **Ask Kopi and MCP** — a chat agent answers through 7 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -178,7 +179,7 @@ A check-up for a web developer who wants to see where they could go, as the scre
   <img src="/docs/readme/architecture-light.svg" alt="Kotak architecture">
 </picture>
 
-The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API does the language work: Claude matches titles and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources, ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view and the JobStreet scraper's runs. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
+The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API does the language work: Claude matches titles and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources, ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
 
 Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json).
 

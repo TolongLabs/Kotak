@@ -174,6 +174,72 @@ export const NationalViewSummaryResponseSchema = z
   })
   .strict()
 
+// What Malaysian job ads say about a role (#271): JobStreet ads that an admin approved under the role's O*NET
+// occupation, summed in Postgres. Context beside the verdicts; it sets none (#275). Counts are whole ads. "Active"
+// ads were seen in the 14 days before the role's latest scrape. Pay is advertised monthly ringgit, the midpoint of
+// each ad's range, rounded to RM 100; null under 5 ads that state pay. Skills are null under 10 checked ads.
+export const JOB_MARKET_MAX_CODES = 10
+export const JOB_MARKET_MIN_PAY_ADS = 5
+export const JOB_MARKET_MIN_SKILL_ADS = 10
+
+const AdCountSchema = z.number().int().min(0)
+const NamedCountSchema = z.object({ name: z.string().min(1), ads: AdCountSchema }).strict()
+const SkillCountSchema = z.object({ key: z.string().min(1), label: z.string().min(1), ads: AdCountSchema }).strict()
+
+export const JobMarketSchema = z
+  .object({
+    onet_code: OnetRoleCodeSchema,
+    // The admin's JobStreet search titles whose approved ads count here.
+    search_titles: z.array(z.string().min(1)),
+    ads: z
+      .object({
+        reviewed: AdCountSchema, // every ad approved under the occupation
+        active: AdCountSchema,
+        employers: AdCountSchema // distinct employers among active ads
+      })
+      .strict(),
+    pay: z
+      .object({
+        ads_with_pay: AdCountSchema,
+        median: z.number().int().min(0),
+        p25: z.number().int().min(0),
+        p75: z.number().int().min(0)
+      })
+      .strict()
+      .nullable(),
+    // The 5 states or federal territories with the most active ads, most first.
+    regions: z.array(NamedCountSchema),
+    without_state: AdCountSchema, // active ads whose location names no state, such as "Malaysia"
+    remote: AdCountSchema,
+    hybrid: AdCountSchema,
+    work_types: z.array(NamedCountSchema),
+    skills: z
+      .object({
+        ads_checked: AdCountSchema, // active ads whose text was matched against the vocabulary
+        ai_ads: AdCountSchema, // checked ads that mention AI
+        tools: z.array(SkillCountSchema),
+        languages: z.array(SkillCountSchema),
+        ai: z.array(SkillCountSchema)
+      })
+      .strict()
+      .nullable(),
+    // Distinct approved ads seen each week (weeks start on Monday, Malaysia time), oldest first: this week and the 11
+    // before it.
+    weekly: z.array(z.object({ week: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), ads: AdCountSchema }).strict()),
+    first_seen: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    source: SourceSchema
+  })
+  .strict()
+
+export const JobMarketResponseSchema = z
+  .object({
+    // Roles with no approved ads are left out.
+    markets: z.array(JobMarketSchema),
+    // false when the database is unset or unreachable.
+    database_available: z.boolean()
+  })
+  .strict()
+
 // Kopi's chat (#189): the conversation so far, oldest first, from a user turn to the user's new question; send at
 // most the last CHAT_MAX_TURNS turns. With no API key, over the rate limit or on a Claude failure, the route answers
 // 503 with ApiError code agent_unavailable.
@@ -246,6 +312,8 @@ export type NationalCheckupResponse = z.infer<typeof NationalCheckupResponseSche
 export type NationalViewSummaryRequest = z.infer<typeof NationalViewSummaryRequestSchema>
 export type NationalViewGroup = z.infer<typeof NationalViewGroupSchema>
 export type NationalViewSummaryResponse = z.infer<typeof NationalViewSummaryResponseSchema>
+export type JobMarket = z.infer<typeof JobMarketSchema>
+export type JobMarketResponse = z.infer<typeof JobMarketResponseSchema>
 export type AgentChatCheckup = z.infer<typeof AgentChatCheckupSchema>
 export type AgentChatRequest = z.infer<typeof AgentChatRequestSchema>
 export type AgentChatResponse = z.infer<typeof AgentChatResponseSchema>

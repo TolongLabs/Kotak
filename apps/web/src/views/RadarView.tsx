@@ -6,6 +6,7 @@ import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
+import { JobMarketCard } from '../components/kotak/JobMarketCard'
 import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { SourceList } from '../components/kotak/SourceList'
@@ -19,6 +20,7 @@ import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checku
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useRoleBundle } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
+import { useJobMarkets } from '../engine/useJobMarkets'
 import { useGuestSession } from '../session/store'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
@@ -84,6 +86,9 @@ export function RadarView() {
     explanations: ExplanationResponse['explanations']
   } | null>(null)
   const activeRoleCheckup = checkup?.roles.find((candidate) => candidate.onet_code === roleData?.role.onet_code)
+  // What Malaysian job ads say about the role (#272), shown beside the verdicts when admins have reviewed any.
+  const roleCode = roleData?.role.onet_code ?? null
+  const jobMarket = useJobMarkets(roleCode ? [roleCode] : []).get(roleCode ?? '') ?? null
 
   useEffect(() => {
     if (explanationsPaused || !roleData || !checkup || !activeRoleCheckup) return
@@ -142,7 +147,18 @@ export function RadarView() {
 
   const { role, related } = bundle.data
   const workSdgs = occupationSdgs(assessedRoleCode(session))
-  const { sources, numbers } = sourceRefs(checkup)
+  const { sources: verdictSources, numbers } = sourceRefs(checkup)
+  // The job-ad source is numbered after the verdicts' sources, so their citation numbers stay as they are.
+  const jobMarketSource: SourceRef | null =
+    jobMarket?.onet_code === role.onet_code
+      ? {
+          n: verdictSources.length + 1,
+          name: jobMarket.source.source_name,
+          detail: `${jobMarket.source.geo_or_layer} · ${jobMarket.source.vintage_date}`,
+          href: jobMarket.source.source_url
+        }
+      : null
+  const sources = jobMarketSource ? [...verdictSources, jobMarketSource] : verdictSources
   const explanationByCorner = new Map(
     explanationState?.roleCode === role.onet_code && explanationState.snapshotId === checkup.snapshotId
       ? explanationState.explanations.map((explanation) => [explanation.corner_id, explanation] as const)
@@ -309,6 +325,10 @@ export function RadarView() {
 
             {weaknessCorners.map(renderGapCard)}
           </section>
+
+          {jobMarket && jobMarketSource && (
+            <JobMarketCard market={jobMarket} roleTitle={role.title} sourceNumber={jobMarketSource.n} />
+          )}
 
           <SourceList sources={sources} label="All Sources" />
 

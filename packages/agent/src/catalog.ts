@@ -40,6 +40,11 @@ export const TOOL_CATALOG = {
     description:
       "Get Kotak's national view: the average level, from 0 to 3, that people in Malaysia reached on each corner of a role in their Kotak check-ups, with the corner's name and its verdict in the latest data snapshot. Call it when the user asks which skills workers in Malaysia, in an occupation group or in a role lack, for example which Rising corners have the lowest averages. Filter by occupation_group (15-0000) or onet_role_code, or leave both out for every role. A role shows real averages only from 10 or more real check-ups, counted in blocks of 10, so quote checkup_count_label (20+), never an exact count. Every other row is built-in sample data (is_sample true, and every row when database_available is false): call it sample data every time and never present it as what Malaysian workers reported."
   },
+  job_market: {
+    title: 'Job Ads in Malaysia',
+    description:
+      "Get what Malaysian job ads say about up to 5 roles: active ads and employers, advertised monthly pay in ringgit (median and middle half), the states the jobs are in, remote and hybrid counts, work types, the tools, languages and AI skills the ads mention, and weekly ad counts. Call it when the user asks about pay, demand, locations or the skills employers ask for in a role, or to compare roles they are weighing. The figures come from JobStreet ads that Kotak's admins approved for the role's O*NET occupation: quote them as given, with the source and its vintage date, and say how many ads a figure rests on (pay.ads_with_pay, skills.ads_checked). They set no verdict. When database_available is true, a role missing from markets has no approved ads yet, so say Kotak has no job-ad data for it. When it is false, the figures in markets may be up to an hour old, and a role missing from them is unknown rather than without ads."
+  },
   list_sources: {
     title: 'List the Data Sources',
     description:

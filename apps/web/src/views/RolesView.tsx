@@ -7,6 +7,7 @@ import { SourceList } from '../components/kotak/SourceList'
 import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
+import { Citation } from '../components/ui/Citation'
 import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
@@ -14,10 +15,12 @@ import { routes } from '../app/routes'
 import { useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
+import { useJobMarkets } from '../engine/useJobMarkets'
 import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { deriveRoleEvidence, kopiRoleSpeech, pickDisplayRoles, sessionHeading } from './roles/derived'
 import { estimatedCorners, formatFitPercent, formatLevel } from './roles/fit'
+import type { SourceRef } from '../demo/types'
 
 export function RolesView() {
   const session = useGuestSession()
@@ -26,6 +29,8 @@ export function RolesView() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
   const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
+  // Active ads and median pay per ranked role (#272), from JobStreet ads Kotak's admins approved.
+  const markets = useJobMarkets(checkup?.roles.map((candidate) => candidate.onet_code) ?? [])
 
   if (!session.role_code) {
     return (
@@ -76,8 +81,25 @@ export function RolesView() {
   // Only the sources the visible rows cite; the first two when no row cites one.
   const citedNumbers = new Set(roleEvidence?.rows.map((row) => row.citation).filter((n) => n !== null))
   const allSources = roleEvidence?.sources ?? []
-  const displaySources =
+  const evidenceSources =
     citedNumbers.size > 0 ? allSources.filter((source) => citedNumbers.has(source.n)) : allSources.slice(0, 2)
+  // The job-ad source, numbered after the role evidence's sources, when any card shows ad figures.
+  const shownMarkets = displayRoles.flatMap((displayRole) => {
+    const market = markets.get(displayRole.id)
+    return market ? [market] : []
+  })
+  const marketSource: SourceRef | null = shownMarkets.length
+    ? {
+        n: allSources.length + 1,
+        name: shownMarkets[0].source.source_name,
+        detail: `${shownMarkets[0].source.geo_or_layer} · ${shownMarkets
+          .map((market) => market.source.vintage_date)
+          .sort()
+          .at(-1)}`,
+        href: shownMarkets[0].source.source_url
+      }
+    : null
+  const displaySources = marketSource ? [...evidenceSources, marketSource] : evidenceSources
 
   const reasoningText = roleEvidence?.summary ?? ''
 
@@ -117,6 +139,12 @@ export function RolesView() {
         <p className="text-body-s text-text-muted">
           Fit is the share of each role’s needed levels you already meet. Outlook comes from DOSM job ads and AI use for
           that role.
+          {marketSource && (
+            <>
+              {' '}
+              Active ads and median pay come from JobStreet ads Kotak’s admins approved <Citation n={marketSource.n} />.
+            </>
+          )}
         </p>
       </header>
 
@@ -124,6 +152,7 @@ export function RolesView() {
         {displayRoles.map((displayRole) => {
           const occupation = occupationSdgs(displayRole.id)
           const goals = occupation?.goals.slice(0, 3) ?? []
+          const market = markets.get(displayRole.id)
           return (
             <RoleCard
               key={displayRole.id}
@@ -132,12 +161,23 @@ export function RolesView() {
               selected={displayRole.id === selected?.id}
               onSelect={() => setSelectedId(displayRole.id)}
               footer={
-                goals.length > 0 && (
-                  <span className="flex flex-wrap items-center gap-1.5">
-                    <span className="font-mono text-mono-s text-text-muted">This Work Supports</span>
-                    {goals.map((goal) => (
-                      <SdgChip key={goal} goal={goal} compact title={occupation?.reason} />
-                    ))}
+                (market || goals.length > 0) && (
+                  <span className="flex flex-col gap-2">
+                    {market && (
+                      <span className="text-body-s text-text-primary">
+                        {market.ads.active.toLocaleString('en-MY')} active {market.ads.active === 1 ? 'ad' : 'ads'}
+                        {market.pay &&
+                          ` · median advertised pay RM ${market.pay.median.toLocaleString('en-MY')} a month`}
+                      </span>
+                    )}
+                    {goals.length > 0 && (
+                      <span className="flex flex-wrap items-center gap-1.5">
+                        <span className="font-mono text-mono-s text-text-muted">This Work Supports</span>
+                        {goals.map((goal) => (
+                          <SdgChip key={goal} goal={goal} compact title={occupation?.reason} />
+                        ))}
+                      </span>
+                    )}
                   </span>
                 )
               }
