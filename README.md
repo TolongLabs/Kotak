@@ -6,13 +6,13 @@
 
 ## Team Information
 
-| Field                 | Details                                      |
-| --------------------- | -------------------------------------------- |
-| **Team Name**         | T010NG                                       |
-| **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce |
-| **SDG Track (1–17)**  | SDG 4 — Quality Education (target 4.4)       |
-| **Team Leader**       | AlaskanTuna                                   |
-| **Number of Members** | 5                                            |
+| Field                 | Details                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Team Name**         | T010NG                                                                                                      |
+| **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce                                                                |
+| **SDG Track (1–17)**  | SDG 4 — Quality Education (target 4.4)                                                                      |
+| **Team Leader**       | AlaskanTuna                                                                                                  |
+| **Number of Members** | 5                                                                                                           |
 
 ## Links
 
@@ -203,13 +203,13 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 ## Team
 
-| Name       | Role                | GitHub                                         |
-| ---------- | ------------------- | ---------------------------------------------- |
-| AlaskanTuna | Team Lead / Product | [@AlaskanTuna](https://github.com/AlaskanTuna) |
-| kymil4    | Backend / Engine    | [@kymil4](https://github.com/kymil4)           |
-| chaosiris      | Data                | [@chaosiris](https://github.com/chaosiris)     |
-| DrxgClanPC  | Frontend / QA       | [@DrxgClanPC](https://github.com/DrxgClanPC)   |
-| Doraemon-00   | Member              | [@Doraemon-00](https://github.com/Doraemon-00) |
+| Name           | Role                | GitHub                                         |
+| -------------- | ------------------- | ---------------------------------------------- |
+| AlaskanTuna     | Team Lead / Product | [@AlaskanTuna](https://github.com/AlaskanTuna) |
+| kymil4   | Backend / Engine    | [@kymil4](https://github.com/kymil4)           |
+| chaosiris     | Data                | [@chaosiris](https://github.com/chaosiris)     |
+| DrxgClanPC | Frontend / QA       | [@DrxgClanPC](https://github.com/DrxgClanPC)   |
+| Doraemon-00  | Member              | [@Doraemon-00](https://github.com/Doraemon-00) |
 
 ---
 
