@@ -93,7 +93,7 @@ A valid submission is complete: "Every file there, every link opens, every decla
 
 ### Repository requirements
 
-- **A fresh repository**: create it after 19 October, 8 PM, and don't recycle an older one without the organiser's prior written approval ([Terms and Conditions 5.5][tc55]). This repository was created on 9 October, so the entry needs a new one.
+- **A fresh repository**: create it after 19 October, 8 PM, and don't recycle an older one without the organiser's prior written approval ([Terms and Conditions 5.5][tc55]). This repository was created on 9 October. We keep it and ask the organiser for that written approval ([issue #260](https://github.com/TolongLabs/sdc-hack/issues/260)); [issue #45](https://github.com/TolongLabs/sdc-hack/issues/45) holds the fallback move.
 - **Visibility**: private while building, public before submitting ([slide 46]), and public until judging ends ([participant handbook 10][ph10]).
 - **Licence**: a `LICENSE` file with the Apache License 2.0 ([participant handbook 10][ph10]; [licence tutorials][vt-licence]).
 - **README**: team name, domain, the demo and pitch video links, how to run the project, its structure, and how we used Replit and RunPod ([slide 35]). The README template adds the SDG track and the deck ([slide 42]; [sample repository][gh]). Preliminary judges set the project up themselves, so the run steps matter ([transcript], 01:14:47).
