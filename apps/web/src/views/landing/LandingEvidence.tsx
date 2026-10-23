@@ -229,7 +229,7 @@ export function LandingFooter() {
 
           <div className="flex flex-col gap-3 py-6 sm:border-l sm:border-border-subtle sm:pl-8 lg:col-span-3">
             <h2 className="text-label-m text-text-muted">Project</h2>
-            <a className={footerLink} href="https://github.com/TolongLabs/sdc-hack" target="_blank" rel="noreferrer">
+            <a className={footerLink} href="https://github.com/TolongLabs/Kotak" target="_blank" rel="noreferrer">
               GitHub
               <ArrowUpRight className="h-6 w-6 shrink-0 stroke-current" aria-hidden="true" />
               <span className="sr-only">(opens in a new tab)</span>

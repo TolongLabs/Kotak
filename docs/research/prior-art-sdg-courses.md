@@ -122,7 +122,7 @@ Contents:
 
 ## Open questions
 
-The SkillsFuture terms were settled in [issue 20](https://github.com/TolongLabs/sdc-hack/issues/20): downloads are allowed for offline analysis, but republishing needs SWDA's written permission.
+The SkillsFuture terms were settled in [issue 20](https://github.com/TolongLabs/Kotak/issues/20): downloads are allowed for offline analysis, but republishing needs SWDA's written permission.
 
 - **Blocked pages:** the MySkillsFuture course portal and the SDFE 2025 page both returned 403. [MySkillsFuture](https://courses.myskillsfuture.gov.sg/), [SDFE 2025](https://jobsandskills.skillsfuture.gov.sg/sdfe-2025)
 - **Malaysian tools:** whether MyMahir has a numeric match score, a data API or a data licence, and how MYFutureJobs' "AI-driven" matching works. [MyMahir][mymahir], [MYFutureJobs][myfuturejobs]

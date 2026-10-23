@@ -26,7 +26,7 @@ Contents:
 - The [Figma file][figma] has seven pages: Cover, Foundations, Brand, Iconography, Components, Mockups and Archive · v0.1.
 - Build screens from the Mockups page. Each view has a phone frame (390 px) and a desktop frame (1440 px) with the same content.
 - When the code and this file disagree, this file wins. When this file and Figma disagree, ask AlaskanTuna, who owns the design.
-- Open design work is tracked in [#31](https://github.com/TolongLabs/sdc-hack/issues/31).
+- Open design work is tracked in [#31](https://github.com/TolongLabs/Kotak/issues/31).
 - Use the semantic tokens below, never raw hex values. The primitive scales (ink, box, green, amber, red and sdg) sit underneath them.
 
 ## Colour

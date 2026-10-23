@@ -156,8 +156,8 @@ The target, indicator and baseline come from the UN SDG API, accessed on 22 Octo
 [sdg-goal4]: https://unstats.un.org/sdgapi/v1/sdg/Goal/4/Target/List?includechildren=true
 [sdg-441]: https://unstats.un.org/sdgapi/v1/sdg/Indicator/Data?indicator=4.4.1&areaCode=458
 [bp-llm]: /docs/research/best-practices.md#llm-credibility
-[i28]: https://github.com/TolongLabs/sdc-hack/issues/28
-[i37]: https://github.com/TolongLabs/sdc-hack/issues/37
+[i28]: https://github.com/TolongLabs/Kotak/issues/28
+[i37]: https://github.com/TolongLabs/Kotak/issues/37
 
 ## 5. Eligibility & readiness checklist
 

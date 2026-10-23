@@ -222,7 +222,7 @@ The trend layer must be updatable and dated, so feeds and versioned datasets com
 
 ## Unverified claims
 
-[Issue #20](https://github.com/TolongLabs/sdc-hack/issues/20) checked every open claim against primary sources, and the findings above reflect it; the [research notes](/docs/research/) hold the evidence. These still have no primary source, so cite them only as described, or not at all:
+[Issue #20](https://github.com/TolongLabs/Kotak/issues/20) checked every open claim against primary sources, and the findings above reflect it; the [research notes](/docs/research/) hold the evidence. These still have no primary source, so cite them only as described, or not at all:
 
 - The 697,000 jobs and about 120 emerging roles of June 2026: press-reported only. If used, attribute them to the minister as reported by Bernama or Malay Mail, never to TalentCorp data.
 - Aiversecity's legal entity, products and customers: no Aiversecity page or profile names them, and SSM's paid registry wasn't searched.

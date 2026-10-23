@@ -12,8 +12,8 @@ Contents:
 
 [`video.md`](video.md) is the plan for the pitching video ([issue #82][i82]): the rules, the timing, the live-demo shot list, the Playwright recording harness and the Remotion edit. The captions and the public upload are [issue #84][i84].
 
-[i82]: https://github.com/TolongLabs/sdc-hack/issues/82
-[i84]: https://github.com/TolongLabs/sdc-hack/issues/84
+[i82]: https://github.com/TolongLabs/Kotak/issues/82
+[i84]: https://github.com/TolongLabs/Kotak/issues/84
 
 ## Example deck
 
@@ -29,7 +29,7 @@ Copy these from it:
 
 Its images are embedded in the HTML as base64, so the file needs nothing else. Make our own renders in the same style.
 
-[i80]: https://github.com/TolongLabs/sdc-hack/issues/80
+[i80]: https://github.com/TolongLabs/Kotak/issues/80
 
 ## See also
 

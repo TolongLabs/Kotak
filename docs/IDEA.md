@@ -39,7 +39,7 @@ Contents:
 | 4. Build issues    | #26 to #105, in milestones M1 to M5                    | [GitHub issues][issues]             |
 
 [figma]: https://www.figma.com/design/XumA0GuVqzPE3TyhWo0y6B/Kotak-%C2%B7-Design-System---Mockups?node-id=2-67
-[issues]: https://github.com/TolongLabs/sdc-hack/issues
+[issues]: https://github.com/TolongLabs/Kotak/issues
 
 ## Where the detail lives
 
@@ -68,5 +68,5 @@ The [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) sup
 ## See also
 
 - [Open issues][issues], where pending work and open questions live
-- [Issue #24](https://github.com/TolongLabs/sdc-hack/issues/24), choosing a product from the ranking
+- [Issue #24](https://github.com/TolongLabs/Kotak/issues/24), choosing a product from the ranking
 - [Domain 1 problem statement](/docs/sources/drive.google.com/domain-1-aiversecity.md)

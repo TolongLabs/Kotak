@@ -95,7 +95,7 @@ Contents:
 
 ## Open questions
 
-Items marked "checked in issue 20" were searched again in [issue 20](https://github.com/TolongLabs/sdc-hack/issues/20) without finding a primary source.
+Items marked "checked in issue 20" were searched again in [issue 20](https://github.com/TolongLabs/Kotak/issues/20) without finding a primary source.
 
 - Whether any XMUM AI Club event before SDC existed. Instagram posts need a login, and no news page or Devpost page was found.
 - Aiversecity's legal entity, products and customers. Checked in issue 20; no primary source names them.
