@@ -4,7 +4,7 @@
 
 <br />
 <div align="center">
-  <a href="https://github.com/TolongLabs/sdc-hack">
+  <a href="https://github.com/TolongLabs/Kotak">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="/docs/readme/banner-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="/docs/readme/banner-light.png">
@@ -21,7 +21,7 @@
     &middot;
     <a href="#">Demo Video</a>
     &middot;
-    <a href="https://github.com/TolongLabs/sdc-hack/issues/new?labels=bug">Report a Bug</a>
+    <a href="https://github.com/TolongLabs/Kotak/issues/new?labels=bug">Report a Bug</a>
     <br />
   </p>
 
@@ -259,8 +259,8 @@ The app runs without keys too: explanations fall back to fixed templates, and Ko
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/TolongLabs/sdc-hack.git
-cd sdc-hack
+git clone https://github.com/TolongLabs/Kotak.git
+cd Kotak
 
 # 2. Install dependencies
 bun install
@@ -330,7 +330,7 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 ## Roadmap
 
-See [open issues](https://github.com/TolongLabs/sdc-hack/issues) for a full list of proposed features (and known issues).
+See [open issues](https://github.com/TolongLabs/Kotak/issues) for a full list of proposed features (and known issues).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -338,8 +338,8 @@ See [open issues](https://github.com/TolongLabs/sdc-hack/issues) for a full list
 
 ## Team
 
-<a href="https://github.com/TolongLabs/sdc-hack/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=TolongLabs/sdc-hack" alt="Kotak team" />
+<a href="https://github.com/TolongLabs/Kotak/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=TolongLabs/Kotak" alt="Kotak team" />
 </a>
 
 Made with [contrib.rocks](https://contrib.rocks).

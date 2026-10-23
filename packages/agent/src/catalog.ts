@@ -69,7 +69,7 @@ export const SKILL_ZIP_PATH = '/kotak-checkup.zip'
  * The GitHub repository whose .claude-plugin/marketplace.json lists the kotak plugin. The plugin moves to a public
  * repository before submission, so every install instruction takes the slug from here.
  */
-export const MARKETPLACE_REPO = 'TolongLabs/sdc-hack'
+export const MARKETPLACE_REPO = 'TolongLabs/Kotak'
 /** Claude Code commands that install the kotak plugin: the kotak-checkup skill plus the MCP server. */
 export const PLUGIN_INSTALL_COMMANDS = [
   `claude plugin marketplace add ${MARKETPLACE_REPO}`,
