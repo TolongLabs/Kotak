@@ -10,13 +10,16 @@
     "directory": "./apps/web/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/.well-known/*"]
+    "run_worker_first": ["/api/*", "/.well-known/*", "/admin", "/admin/*"]
   },
   // The persistent Claude response cache. Wrangler creates the namespace on the first deploy (no id needed).
   "kv_namespaces": [{ "binding": "AI_CACHE" }],
   // Caps uncached Claude calls per route, per Cloudflare location (#155). Keep the limit equal to
   // CLAUDE_CALLS_PER_MINUTE in apps/api/src/ai/rate-limit.ts. namespace_id is any positive integer unique to the account.
-  "ratelimits": [{ "name": "CLAUDE_LIMITER", "namespace_id": "1001", "simple": { "limit": 30, "period": 60 } }],
+  "ratelimits": [
+    { "name": "CLAUDE_LIMITER", "namespace_id": "1001", "simple": { "limit": 30, "period": 60 } },
+    { "name": "SCRAPER_LOGIN_LIMITER", "namespace_id": "1002", "simple": { "limit": 5, "period": 60 } }
+  ],
   // Runs /api/mcp and Kopi's chat with a Durable Object's 30 s CPU budget instead of the free Worker's 10 ms (#202).
   // The free plan offers only SQLite-backed Durable Objects.
   "durable_objects": { "bindings": [{ "name": "KOTAK_AGENT", "class_name": "KotakAgent" }] },

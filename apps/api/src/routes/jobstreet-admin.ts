@@ -1,17 +1,12 @@
 import { Hono } from 'hono'
+import { noStore, requireScraperAdmin, type ScraperAdminEnv } from '../admin-auth'
 import { getConfig } from '../config'
 import { JOBSTREET_CAREERS } from '../scrapers/jobstreet/careers'
 import { jobstreetDatabase } from '../scrapers/jobstreet/database'
 
-const route = new Hono()
+const route = new Hono<ScraperAdminEnv>()
 
-route.use('*', async (context, next) => {
-  const expected = getConfig(context, 'SCRAPER_ADMIN_TOKEN')
-  const actual = context.req.header('Authorization')?.replace(/^Bearer\s+/i, '')
-  if (!expected) return context.json({ error: 'scraper admin is not configured' }, 503)
-  if (!actual || actual !== expected) return context.json({ error: 'unauthorized' }, 401)
-  await next()
-})
+route.use('*', noStore, requireScraperAdmin)
 
 route.get('/careers', async (context) => {
   const databaseUrl = getConfig(context, 'DATABASE_URL')

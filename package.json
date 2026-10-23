@@ -13,6 +13,7 @@
     "start": "bun apps/api/src/bun.ts",
     "db:seed": "bun apps/api/db/seed.ts",
     "db:migrate": "bun apps/api/db/migrate.ts",
+    "admin:create": "bun scripts/admin-create.ts",
     "jobs:import": "bun apps/api/src/scrapers/jobstreet/import-cli.ts",
     "scraper:worker": "bun apps/api/src/scrapers/jobstreet/runner.ts",
     "tts:pregenerate": "bun scripts/tts-pregenerate.ts",
