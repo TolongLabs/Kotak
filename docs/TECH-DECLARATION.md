@@ -41,7 +41,7 @@ Contents:
 
 A user opens Kotak in the browser. The React app loads dated JSON snapshots built from O\*NET, the Anthropic Economic Index and DOSM Job Market Insights, and computes every verdict, fit score and roadmap in the browser with fixed rules. Answers stay in the browser's `localStorage`.
 
-The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations with Claude Haiku 5.5, then checks each explanation against the rules and falls back to a template if it fails. It sends Kopi's lines to ElevenLabs for speech, and caches both by a hash of the request. Ask Kopi and the MCP endpoint call 6 read-only tools over the same rules; one tool reads anonymous check-up totals from Neon Postgres.
+The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations with Claude Haiku 5.5, then checks each explanation against the rules and falls back to a template if it fails. It sends Kopi's lines to ElevenLabs for speech, and caches both by a hash of the request. Ask Kopi and the MCP endpoint call 7 read-only tools over the same rules; one tool reads anonymous check-up totals and one reads the reviewed JobStreet ads' totals from Neon Postgres.
 
 Before the demo, a RunPod serverless GPU ran Qwen3.8-27B to build each job's 6 skills and 18 questions, which ship inside the snapshots.
 
@@ -89,13 +89,13 @@ The data sources in section 4.2 are downloaded files, not live APIs: the app nev
 
 ### 3.2. Cloud platforms & deployment
 
-| Service & Provider                | Purpose in Project                                                               | Plan / Region                                |
-| --------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------- |
-| Replit Deployments, Replit        | Publishes the live demo from `main` on the team's own account                    | Replit Core (sponsor-provided)               |
-| Cloudflare Workers, Cloudflare    | The mirror deployment: app, API, KV cache and a Durable Object for MCP and chat  | Workers Free; global, Durable Object in APAC |
-| Neon Postgres, Neon               | Anonymous check-up totals, research job listings and admin accounts              | Free; `aws-ap-southeast-1`, Postgres 18      |
-| RunPod Serverless, RunPod         | The vLLM GPU endpoint for the one-time batch; 0 workers when idle                | Sponsor credit; one H100 80 GB GPU           |
-| GitHub and GitHub Actions, GitHub | Code hosting, CI, deploys on every merge to `main` and the Saturday data refresh | Free                                         |
+| Service & Provider                | Purpose in Project                                                                                        | Plan / Region                                |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Replit Deployments, Replit        | Publishes the live demo from `main` on the team's own account                                             | Replit Core (sponsor-provided)               |
+| Cloudflare Workers, Cloudflare    | The mirror deployment: app, API, KV cache and a Durable Object for MCP and chat                           | Workers Free; global, Durable Object in APAC |
+| Neon Postgres, Neon               | Anonymous check-up totals, JobStreet listings, the admins' reviews and matched skills, and admin accounts | Free; `aws-ap-southeast-1`, Postgres 18      |
+| RunPod Serverless, RunPod         | The vLLM GPU endpoint for the one-time batch; 0 workers when idle                                         | Sponsor credit; one H100 80 GB GPU           |
+| GitHub and GitHub Actions, GitHub | Code hosting, CI, deploys on every merge to `main` and the Saturday data refresh                          | Free                                         |
 
 ## 4. AI tools, models & datasets
 
@@ -111,18 +111,18 @@ No model is fine-tuned or self-trained.
 
 ### 4.2. Datasets
 
-| Dataset Name                                  | Source / URL                                                             | Type                        | License                             | Personal Data?  |
-| --------------------------------------------- | ------------------------------------------------------------------------ | --------------------------- | ----------------------------------- | --------------- |
-| O\*NET 30.1 Database                          | <https://www.onetcenter.org/database.html>                               | Public                      | CC BY 4.0                           | N               |
-| Anthropic Economic Index, April and May 2026  | <https://huggingface.co/datasets/Anthropic/EconomicIndex>                | Public                      | Data CC BY; code MIT                | N               |
-| DOSM Job Market Insights, Q3 2019 to Q2 2026  | <https://www.dosm.gov.my>                                                | Public                      | DOSM terms, with source credit      | N               |
-| OpenDOSM skill-related underemployment by age | <https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age>                | Public                      | CC BY 4.0; one figure cited         | N               |
-| UN SDG indicator 4.4.1, Malaysia              | <https://unstats.un.org/sdgapi/>                                         | Public                      | UN terms of use; one baseline cited | N               |
-| Kotak skills and questions for 923 jobs       | Built from O\*NET by the RunPod batch                                    | Synthetic, from public data | The team's own work                 | N               |
-| JobStreet job listings                        | Collected by the team's research scraper from <https://my.jobstreet.com> | Self-collected              | JobStreet's terms apply             | N; job ads only |
-| Demo check-up profiles                        | Written by the team                                                      | Synthetic                   | The team's own work                 | N               |
+| Dataset Name                                  | Source / URL                                                                        | Type                        | License                                              | Personal Data?  |
+| --------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------- | --------------- |
+| O\*NET 30.1 Database                          | <https://www.onetcenter.org/database.html>                                          | Public                      | CC BY 4.0                                            | N               |
+| Anthropic Economic Index, April and May 2026  | <https://huggingface.co/datasets/Anthropic/EconomicIndex>                           | Public                      | Data CC BY; code MIT                                 | N               |
+| DOSM Job Market Insights, Q3 2019 to Q2 2026  | <https://www.dosm.gov.my>                                                           | Public                      | DOSM terms, with source credit                       | N               |
+| OpenDOSM skill-related underemployment by age | <https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age>                           | Public                      | CC BY 4.0; one figure cited                          | N               |
+| UN SDG indicator 4.4.1, Malaysia              | <https://unstats.un.org/sdgapi/>                                                    | Public                      | UN terms of use; one baseline cited                  | N               |
+| Kotak skills and questions for 923 jobs       | Built from O\*NET by the RunPod batch                                               | Synthetic, from public data | The team's own work                                  | N               |
+| JobStreet job listings                        | Collected by the team's scraper from <https://my.jobstreet.com>, reviewed by admins | Self-collected              | JobStreet's terms apply; Kotak publishes totals only | N; job ads only |
+| Demo check-up profiles                        | Written by the team                                                                 | Synthetic                   | The team's own work                                  | N               |
 
-MyCOL and Epoch AI are cited as context only; Kotak loads no data from them. The research listings feed no verdict, score or roadmap.
+MyCOL and Epoch AI are cited as context only; Kotak loads no data from them. Approved JobStreet listings feed the check-up's job-title suggestions, the Job Ads in Malaysia card, the role cards' ad counts and pay, and Kopi's `job_market` tool. They feed no verdict, fit score or roadmap.
 
 ### 4.3. AI-assisted development tools
 

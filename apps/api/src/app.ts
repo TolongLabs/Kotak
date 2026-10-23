@@ -10,6 +10,7 @@ import { nationalView } from './routes/national-view'
 import { tts } from './routes/tts'
 import { adminAuth } from './routes/admin-auth'
 import { createJobstreetAdminRoute } from './routes/jobstreet-admin'
+import { market } from './routes/market'
 import { mcp } from './routes/mcp'
 
 export const app = new Hono()
@@ -47,6 +48,7 @@ app.get('/api/sample', (context) => {
 })
 
 app.route('/api/national-view', nationalView)
+app.route('/api/market', market)
 app.route('/api/tts', tts)
 app.route('/api/roles', createRolesRoute(defaultAiDeps))
 app.route('/api/explanations', createExplanationsRoute(defaultAiDeps))

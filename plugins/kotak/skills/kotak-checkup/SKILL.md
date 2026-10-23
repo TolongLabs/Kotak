@@ -1,12 +1,12 @@
 ---
 name: kotak-checkup
-description: Run a Kotak check-up of how AI is changing a job in Malaysia. Use when asked what AI means for a job, which skills rise or decline, which roles fit, what to learn next, or which skills workers lack.
+description: Run a Kotak check-up of how AI is changing a job in Malaysia. Use when asked what AI means for a job, which skills rise or decline, which roles fit, what to learn next, which skills workers lack, or what Malaysian job ads say about a role (pay, number of ads, locations, and the tools, languages and AI skills employers ask for).
 compatibility: Needs Kotak's MCP server, https://kotak.tp073654.workers.dev/api/mcp (read-only, no sign-in), connected to the assistant.
 ---
 
 # Kotak check-up
 
-Kotak tells a worker in Malaysia how AI is changing the skills of their job, from dated public data: which skill areas of the job (Kotak calls them corners) are Rising, Steady or Declining, which related roles fit them, and a plan of free learning steps. Its national view shows which skills workers in Malaysia lack. You run the check-up through Kotak's tools and explain what they return.
+Kotak tells a worker in Malaysia how AI is changing the skills of their job, from dated public data: which skill areas of the job (Kotak calls them corners) are Rising, Steady or Declining, which related roles fit them, and a plan of free learning steps. Its national view shows which skills workers in Malaysia lack, and JobStreet ads its admins approved show a role's advertised pay, where the jobs are and the skills employers ask for. You run the check-up through Kotak's tools and explain what they return.
 
 Contents:
 
@@ -17,6 +17,7 @@ Contents:
 1. [Present the results](#present-the-results)
 1. [Offer the next step](#offer-the-next-step)
 1. [Answer a national question](#answer-a-national-question)
+1. [Answer a job-ad question](#answer-a-job-ad-question)
 
 ## When to use Kotak
 
@@ -26,7 +27,8 @@ Use it when someone asks:
 - which of their skills are rising or declining, or what to learn next;
 - which roles they could move to, or how far they are from one;
 - why their Kotak result or plan changed, or where Kotak's data comes from;
-- which skills workers in Malaysia, a job family or a role lack most, a question officers at TalentCorp, HRD Corp or a career centre ask.
+- which skills workers in Malaysia, a job family or a role lack most, a question officers at TalentCorp, HRD Corp or a career centre ask;
+- what a role pays in Malaysia, how many ads there are, where the jobs are, or which tools, languages and AI skills employers ask for.
 
 ## Rules
 
@@ -40,7 +42,7 @@ Kotak checks how AI is changing the skills of a job in Malaysia. Data decides, t
 
 ## Connect the tools
 
-Kotak's tools are `find_role`, `get_checkup_questions`, `run_checkup`, `what_changed`, `list_sources` and `national_skill_gaps`; your client may prefix their names, as in `mcp__kotak__find_role`. The verdicts exist only in their results, so when the tools are missing, stop and tell the user how to connect Kotak's MCP server, `https://kotak.tp073654.workers.dev/api/mcp` (no sign-in):
+Kotak's tools are `find_role`, `get_checkup_questions`, `run_checkup`, `what_changed`, `list_sources`, `national_skill_gaps` and `job_market`; your client may prefix their names, as in `mcp__kotak__find_role`. The verdicts exist only in their results, so when the tools are missing, stop and tell the user how to connect Kotak's MCP server, `https://kotak.tp073654.workers.dev/api/mcp` (no sign-in):
 
 - Claude or Claude Desktop: add it as a custom connector.
 - Claude Code: `claude mcp add --transport http kotak https://kotak.tp073654.workers.dev/api/mcp`.
@@ -88,3 +90,14 @@ For a question about workers in general rather than the user, such as "which ris
 - **Counts**: quote `checkup_count_label` (such as 20+). Kotak counts real check-ups only in blocks of 10, so an exact count is never available.
 - **Sample data**: a role shows real averages only once 10 or more real check-ups exist; until then its rows are built-in sample data, with `is_sample` true. When `database_available` is false, every row is sample data. Call sample rows sample data every time, and present only the rows with `is_sample` false as what workers in Malaysia reported.
 - **Sources**: the verdicts come from the snapshot's data, so cite it from `list_sources`.
+
+## Answer a job-ad question
+
+For a question about a role's job ads in Malaysia, such as "what does a web developer earn in KL?" or "do employers want AI skills for this job?", call `job_market` with up to 5 role codes from `find_role` or from a check-up's ranked roles. It needs no check-up answers.
+
+- **What it is**: JobStreet ads that Kotak's admins approved for the role's O*NET occupation. It is context beside the verdicts and sets none, so never credit a verdict to it.
+- **Counts**: active ads were seen in the 14 days before the latest scrape. Say how many ads a figure rests on: `pay.ads_with_pay` for pay, `skills.ads_checked` for skills, languages and AI.
+- **Pay**: advertised monthly ringgit, the midpoint of each ad's range. Quote the median and the middle half (p25 to p75) as given; `pay` is null under 5 ads that state pay.
+- **Skills**: give each tool, language or AI skill as a share of `skills.ads_checked`. A missing skill only means the ads Kotak read don't mention it.
+- **Missing roles**: when `database_available` is true, a role absent from `markets` has no approved ads yet. When it is false, the figures in `markets` may be up to an hour old, and a role missing from them is unknown rather than without ads.
+- **Sources**: cite each market's `source` and its vintage date.

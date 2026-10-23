@@ -44,6 +44,7 @@ Both adapters set `today()` to the date in Malaysia (UTC+8), so a check-up with 
 | `run_checkup`           | Run the Check-Up               | `kotak.checkup`                                                                                     |
 | `what_changed`          | What Changed Between Snapshots | `kotak.whatChanged`                                                                                 |
 | `national_skill_gaps`   | National Skill Gaps            | `nationalViewSummary`, the national view route's function, joined to each corner's name and verdict |
+| `job_market`            | Job Ads in Malaysia            | `jobMarketsFor`, the job-ad market route's function                                                 |
 | `list_sources`          | List the Data Sources          | `kotak.manifest`                                                                                    |
 
 The catalogue's descriptions say what each tool returns and when to call it.

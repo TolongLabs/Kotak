@@ -105,10 +105,8 @@ Each corner gets three inputs from dated snapshots:
 
 ### Live extras
 
-- **JobStreet: dropped on 22 October.** Its [terms][js-terms] say "You may not use data mining, robots, screen scraping, or similar automated data gathering, extraction or publication tools on our websites and apps", and robots.txt doesn't override them. DOSM's Job Market Insights already counts ads from the major private recruitment platforms.
+- **JobStreet: collected from 22 October.** The team scrapes JobStreet Malaysia's search results itself. An admin approves each batch's ads against an O\*NET occupation, and the approved ads show what employers advertise for a role, beside the verdicts (#271). DOSM's Job Market Insights stays the demand series behind the verdicts.
 - **Pasted job ads.** A user pastes a public ad. Claude pulls out its skills, and code keeps only quotes that appear word for word in the ad, highlighted. The user sees their gap against that ad. The skills stay in that visitor's view and change no one else's verdicts; shared evidence would need a person to approve each ad, which the prototype skips.
-
-[js-terms]: https://www.jobstreet.com.my/terms
 
 ## Universal roles pipeline
 
@@ -202,7 +200,7 @@ Hee Zi Jie, on 22 October:
 - Action milestones with any free resource, because the gap is the point.
 - The name Kotak, for a product personality rather than a generic exam platform.
 - The layered hierarchy, and the Economic Index with Epoch AI as context.
-- No JobStreet data, because its terms ban automated collection.
+- JobStreet ads only after an admin approves them, as context beside the verdicts rather than inside them.
 - Matched roles get the widest coverage the answers allow, then questions for the chosen role's unanswered corners.
 - Live AI calls through the Claude API, with Claude Opus 5.5.
 - A live, anonymous national view backed by Postgres, instead of sample data.

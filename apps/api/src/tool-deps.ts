@@ -2,6 +2,7 @@ import type { ToolDeps } from '@kotak/agent'
 import { createKotak, fetchSource, type BundleSource, type Kotak } from '@kotak/sdk'
 import type { Context } from 'hono'
 import { onetOccupationIndex } from './ai/occupation-index'
+import { jobMarketsFor } from './routes/market'
 import { nationalViewSummary } from './routes/national-view'
 
 // What Kotak's tools run on, for the MCP route (./routes/mcp.ts) and Kopi's chat (./routes/agent.ts).
@@ -29,5 +30,12 @@ export const searchTitles = (title: string, limit: number) => onetOccupationInde
 /** The tools' deps for this request; undefined when the server has no data bundle. */
 export function toolDepsFor(context: Context<{ Bindings: KotakBindings }>): Omit<ToolDeps, 'today'> | undefined {
   const kotak = kotakFor(context.env)
-  return kotak && { kotak, searchTitles, nationalView: (filter) => nationalViewSummary(context, filter) }
+  return (
+    kotak && {
+      kotak,
+      searchTitles,
+      nationalView: (filter) => nationalViewSummary(context, filter),
+      jobMarket: (codes) => jobMarketsFor(context, codes)
+    }
+  )
 }

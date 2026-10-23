@@ -10,11 +10,13 @@ import {
   type Kotak
 } from '@kotak/sdk'
 import {
+  JobMarketResponseSchema,
   NationalViewSummaryRequestSchema,
   OnetSocCodeSchema,
   PREVIOUS_SNAPSHOT,
   SnapshotIdSchema,
   VerdictSchema,
+  type JobMarketResponse,
   type NationalViewSummaryRequest,
   type NationalViewSummaryResponse
 } from '@kotak/shared'
@@ -37,6 +39,8 @@ export interface ToolDeps {
   today: () => string
   /** The national view summary, exactly as GET /api/national-view/summary answers it for the same filter. */
   nationalView: (filter: NationalViewSummaryRequest) => Promise<NationalViewSummaryResponse>
+  /** The job-ad market for these roles, exactly as GET /api/market answers it. */
+  jobMarket: (codes: string[]) => Promise<JobMarketResponse>
 }
 
 /** Today in Malaysia, for the adapters' ToolDeps. Malaysia has kept UTC+8, with no daylight saving, since 1982. */
@@ -245,6 +249,22 @@ const registry = {
       })
       return { snapshot_id: DEFAULT_SNAPSHOT, database_available, groups: await Promise.all(joined) }
     }
+  }),
+
+  job_market: tool('job_market', {
+    inputSchema: z
+      .object({
+        onet_role_codes: z
+          .array(OnetSocCodeSchema)
+          .min(1)
+          .max(5)
+          .describe(
+            "O*NET-SOC codes of the roles to look up, from find_role or a check-up's ranked roles, e.g. 15-1254.00."
+          )
+      })
+      .strict(),
+    outputSchema: JobMarketResponseSchema,
+    run: ({ onet_role_codes }, { jobMarket }) => jobMarket([...new Set(onet_role_codes)])
   }),
 
   list_sources: tool('list_sources', {
