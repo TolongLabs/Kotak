@@ -12,7 +12,6 @@ import {
 import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { withBrowserProfile } from './browser-profile'
-import type { JobstreetBrowserScope } from './browser-profile'
 import { PaginationHand } from './hand'
 import { nextSearchUrl, parseListing, parseSort, searchUrl, sortListings } from './records'
 import type { JobListing, SortMode } from './records'
@@ -32,7 +31,6 @@ export interface ScrapeOptions {
   verificationTimeoutMs?: number
   sort?: SortMode
   headless?: boolean
-  browserScope?: JobstreetBrowserScope
   onProgress?: (report: Record<string, unknown>) => void | Promise<void>
 }
 
@@ -169,7 +167,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
   await saveReport()
   try {
     await withBrowserProfile(
-      { profileId: options.profileId, headless: options.headless ?? false, browserScope: options.browserScope },
+      { profileId: options.profileId, headless: options.headless ?? false },
       async (page) => {
         const hand = new PaginationHand(page)
         let targetJobs = options.maxJobs
