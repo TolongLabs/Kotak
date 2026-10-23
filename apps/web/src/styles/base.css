@@ -137,8 +137,7 @@
 }
 
 :root[data-theme-switch]::view-transition-old(root),
-:root[data-theme-switch]::view-transition-new(root),
-:root[data-theme-switch]::view-transition-new(theme-ascii) {
+:root[data-theme-switch]::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
