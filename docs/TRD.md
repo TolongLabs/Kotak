@@ -479,7 +479,7 @@ weeks     = total_hours / weekly_hours
 - **Order**: rising gaps first, largest first; then Steady, Split and Unknown; Declining last, tagged "less important by 2027" ([#83]).
 - **Milestone**: the next can-do statement, done for real, with an AI-drafted time estimate and one free resource: a guide, a video, a community or an HRD Corp-claimable programme ([#67]). The [context notes](/docs/CONTEXT.md#what-this-means-for-us) advise never calling a course "HRD Corp-claimable", because no working public list of claimable programmes exists. [#104] curates verified resources for the demo roles.
 - **Weekly hours**: the default comes from part of the time AI could save the user on declining tasks, the AI dividend. The user can edit it, and the finish date updates at once ([#67], [#83]).
-- **Length**: the finish date comes from total hours divided by weekly hours. [#28] and [#67] also call the roadmap "12-week", which this formula does not fix.
+- **Length**: the web roadmap shows the next 12 weeks at the chosen weekly hours; unfinished milestones and remaining hours are listed after Week 12. A partial milestone earns no projected level gain. The SDK keeps the full path: its finish date comes from total hours divided by weekly hours. The 80% fit threshold is separate from completing every skill target.
 - **Practice project**: follows the user's impact area. Every corner and role has at least one SDG tag ([#67]).
 - **Ticking**: the user ticks a milestone when they can honestly say yes to it. That raises the corner's level and updates the fit score and the readiness graph ([#67]).
 
