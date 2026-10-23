@@ -68,8 +68,8 @@
         <li><a href="#run-tests">Run Tests</a></li>
       </ul>
     </li>
-    <li><a href="#how-we-use-replit-required">How We Use Replit (Required)</a></li>
-    <li><a href="#how-we-use-runpod-required">How We Use RunPod (Required)</a></li>
+    <li><a href="#how-we-use-replit">How We Use Replit</a></li>
+    <li><a href="#how-we-use-runpod">How We Use RunPod</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#team">Team</a></li>
     <li><a href="#license">License</a></li>
@@ -288,7 +288,7 @@ bun test
 
 <!-- REQUIRED BY THE ORGANISER -->
 
-## How We Use Replit _(Required)_
+## How We Use Replit
 
 - **Hosting:** Replit publishes Kotak from the `main` branch on the team's own account, at the Live Demo link above.
 - **Run configuration:** `.replit` installs with Bun, builds the data and the app, and starts the Hono server on port 5000.
@@ -298,7 +298,7 @@ bun test
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
-## How We Use RunPod _(Required)_
+## How We Use RunPod
 
 - **Workload:** a RunPod serverless GPU ran `Qwen/Qwen3.8-27B-FP8` on vLLM once, before the demo, to group each O\*NET job's own tasks into 6 skills and draft 18 can-do statements for each of 923 jobs. A JSON schema constrains every answer, and a validator rejects any task from another job.
 - **Setup:** the stock RunPod vLLM worker, `runpod/worker-v1-vllm:v2.28.0`, on one H100 80 GB GPU, as endpoint `5yjk19uqmrpbp7`, now idle at 0 workers. [`runpod/README.md`](/runpod/README.md) has the endpoint settings.
@@ -351,6 +351,8 @@ Made with [contrib.rocks](https://contrib.rocks).
 ## License
 
 See [LICENSE](/LICENSE) for more information.
+
+Third-party data, models, assets and libraries keep their own licences, listed in [NOTICE.md](/NOTICE.md).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
