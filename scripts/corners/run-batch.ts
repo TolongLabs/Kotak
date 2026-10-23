@@ -7,7 +7,8 @@
 //
 // Each answer is parsed and checked by the shared post-validator; a rejected answer goes back to the model with
 // its errors, up to --attempts times. Occupations already in the output file are kept unless --force, so a stopped
-// run can resume. Codes still missing afterwards are listed in the summary for the Claude backup (#79).
+// run can resume. Codes still missing afterwards are listed in the summary, to run again; the final run left none,
+// so the planned Claude backup (#79) was never needed.
 
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -297,7 +298,7 @@ async function writeOutputs(started: Date, model: string, endpoint: Record<strin
       fewer_corners: sorted.filter((r) => r.corners.length < 6).length
     },
     task_coverage: { candidate, assigned, share: candidate ? Number((assigned / candidate).toFixed(4)) : null },
-    /** Catalogue codes with no valid corners in the output: the Claude backup's (#79) work list. */
+    /** Catalogue codes with no valid corners in the output, to run again. */
     missing_codes: [...inputs.keys()].filter((c) => !roles.has(c)).sort(),
     runs
   }

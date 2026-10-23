@@ -93,15 +93,15 @@ export function PageTransition({ onDone, durationMs = 2400, load }: PageTransiti
         <OpeningBox open={open} className="h-[114px] w-[142px] lg:h-[170px] lg:w-[204px]" />
       </div>
       <p className="text-title-l lg:text-display-l">Opening the Box…</p>
-      <p className="max-w-[300px] text-body-l lg:max-w-[520px]">Kopi is reading four sources for you.</p>
+      <p className="max-w-[300px] text-body-l lg:max-w-[520px]">Kopi is reading three sources for you.</p>
       <div className="w-[280px] space-y-2 lg:w-[360px]">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-label-m">Reading Four Sources</span>
+          <span className="text-label-m">Reading Three Sources</span>
           <span className="font-mono text-mono-s">{progress}%</span>
         </div>
         <div
           role="progressbar"
-          aria-label="Reading Four Sources"
+          aria-label="Reading Three Sources"
           aria-valuenow={progress}
           aria-valuemin={0}
           aria-valuemax={100}
@@ -114,7 +114,7 @@ export function PageTransition({ onDone, durationMs = 2400, load }: PageTransiti
           />
         </div>
       </div>
-      <p className="font-mono text-mono-s">O*NET · Economic Index · DOSM · MyCOL</p>
+      <p className="font-mono text-mono-s">O*NET · Economic Index · DOSM</p>
     </div>
   )
 }

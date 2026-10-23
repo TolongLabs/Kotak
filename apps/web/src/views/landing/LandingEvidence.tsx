@@ -47,7 +47,7 @@ const sourcesData = [
   {
     title: 'Anthropic Economic Index',
     description: 'How people use AI, by task and country',
-    note: 'May and Aug 2026'
+    note: 'Apr and May 2026'
   },
   {
     title: 'DOSM Job Market Insights',
