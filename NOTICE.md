@@ -1,6 +1,6 @@
 # Notices
 
-Kotak, copyright 2026 T010NG.
+Kotak, copyright 2026 TolongLabs.
 
 Kotak is licensed under the [Apache License 2.0](LICENSE). It uses the third-party data, models, assets and code below, each under its own licence. The [technical declaration](docs/TECH-DECLARATION.md) lists every tool and service in full.
 
