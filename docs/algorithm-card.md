@@ -25,11 +25,13 @@ The data decides; the AI explains. Fixed rules over dated, sourced data set ever
 
 ## Inputs and fallbacks
 
+The engine reads four layers, each with its own signal: sector, occupation group, role and skill. Layer 1, sector, has no loaded source, and the engine lists it as missing. When a layer has no Malaysian data, the engine borrows from the layer above or from global rows and labels the borrowed value.
+
 Each corner of a role gets three inputs:
 
 1.  **AI use on the corner**, from the Anthropic Economic Index. The finest level published wins: task, then work activity, then detailed occupation, then major group, Malaysia first, then global. Any borrowed value carries a label saying where it came from.
 2.  **How AI is used**: mostly augmentation or mostly automation, from the Economic Index collaboration split, at work-activity level, then major group, then global.
-3.  **Demand for the role**: the role's own count where DOSM Job Market Insights names it among a quarter's top roles; else its major group's Job Market Insights series; else Unknown. The direction comes from the quarter-on-quarter and year-on-year changes.
+3.  **Demand for the role**: the role's own count where DOSM Job Market Insights names it among a quarter's top roles; else its major group's Job Market Insights series (found through the role's MASCO or ISCO-08 code); else Unknown. The engine has a MyCOL step between the first two; MyCOL is not loaded, so it skips the step and the label says so. The direction comes from the quarter-on-quarter and year-on-year changes.
 
 ## Levels from answers
 
@@ -92,7 +94,7 @@ The intake asks where the user is, their highest qualification, field of study, 
 | A role well below the user's qualification                      | a penalty                                                 |
 | The role's outlook, added once its data loads                   | +2 Rising, +1 Steady, +0.5 Split, 0 Unknown, −1 Declining |
 
-A qualification the user doesn't hold takes nothing away. The check-up ranks up to 18 of these roles beside the job's related list, and Roles That Fit shows 6, the user's own choices first. Each card says why it's there.
+A qualification the user doesn't hold takes nothing away. The check-up ranks up to 18 of these roles beside the job's related list, and Roles That Fit shows 6 of them, the user's own choices first; without the intake's profile it shows the 3 best of the related list. Each card says why it's there.
 
 The highlighted card is the one the details and the roadmap follow. Until the user picks, it is their target role, else their best fit of the Rising roles that aren't their job, else their best fit, and the card says why in bold.
 

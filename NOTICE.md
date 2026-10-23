@@ -21,7 +21,8 @@ Contents:
 - **CIP 2020 to SOC 2018 Crosswalk**: from the U.S. Department of Education, Institute of Education Sciences, National Center for Education Statistics, with the U.S. Bureau of Labor Statistics. A US government work in the public domain. Kotak uses it to link fields of study to occupations.
 - **Malaysian regulated professions**: the team's table of professions Malaysian law restricts. Each row cites the pages it rests on: the Act on the Attorney General's Laws of Malaysia site where it could be opened, the regulator's own site, and otherwise a legal database or news report. It is a pointer, not legal advice.
 - **JobStreet job ads**: Kotak shows totals from JobStreet Malaysia ads it collected and an admin reviewed: ad counts, advertised pay quartiles, states, work types and skill-mention shares, each cited with its date. It republishes no ad text, job titles or employer names.
-- **Cited figures**: TalentCorp, MOHE, the World Bank and MyCOL figures appear as dated citations only. Kotak does not redistribute their files.
+- **ESCO to O\*NET-SOC Crosswalk**: from the O\*NET Resource Center, under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). This service uses the ESCO classification of the European Commission. Kotak uses it to reach ISCO-08 groups.
+- **Cited figures**: TalentCorp, MOHE, Hays, the World Bank and ISIS Malaysia figures appear as dated citations only, and TalentCorp MyCOL and Epoch AI are named as context. Kotak does not redistribute their files.
 
 ## Models and services
 

@@ -33,6 +33,7 @@ Contents:
 | Anthropic Economic Index              | `data/snapshots/aei/2026-04.json`, `2026-05.json`                                      | Release 2026-06-26, months April and May 2026, retrieved 22 October 2026 (SHA-256 recorded) | AI usage shares by task, work activity, occupation and major group, for Malaysia, Singapore and the world; the automation and augmentation split | Data CC BY; code MIT |
 | DOSM Job Market Insights              | `data/snapshots/dosm-jmi.json`                                                         | Q3 2019 to Q2 2026, 20 releases, retrieved 22 October 2026                                  | Online job offerings by quarter, by 10 major occupation groups, and the top named roles                                                          | DOSM Terms of Use    |
 | NCES CIP 2020 to SOC 2018 crosswalk   | `data/pathways/cip-soc.json`                                                           | 30 April 2020, retrieved 23 October 2026                                                    | 5,723 links from US programmes of study to occupations                                                                                           | Public domain        |
+| ESCO to O\*NET-SOC 2019 crosswalk     | In `data/onet/occupations.json` (`isco08`)                                             | Retrieved 22 October 2026                                                                   | ISCO-08 groups for 922 of the 923 occupations, which pick the DOSM major-group series for a role                                                 | CC BY 4.0            |
 
 Where Malaysian Economic Index rows are missing or suppressed, the engine borrows from the layer above or from the global rows and labels the borrowed value. A suppressed cell is stored as `null`, never `0`.
 
@@ -44,7 +45,7 @@ Where Malaysian Economic Index rows are missing or suppressed, the engine borrow
 | Fields of study                 | `data/pathways/fields-of-study.json`       | 54 Malaysian fields of study, plus Other, each mapped by hand to CIP 2020 code prefixes                                                                                                                                                                                                                                                                                    |
 | Interest areas                  | `data/pathways/career-areas.json`          | 22 areas: 5 hand-picked digital areas and 17 by SOC major group                                                                                                                                                                                                                                                                                                            |
 | Malaysian regulated professions | `data/pathways/regulated-professions.json` | 42 professions over 132 O\*NET codes, accessed 23 October 2026. Each row cites its Act on the Laws of Malaysia site, the regulator's site or, where neither opened, a legal database or news report. A pointer, not legal advice                                                                                                                                           |
-| MASCO 2020 codes                | In `data/onet/occupations.json`            | 4-digit codes attached by hand where the title and code align; the rest carry `masco_unmatched: true`                                                                                                                                                                                                                                                                      |
+| MASCO 2020 codes                | In `data/onet/occupations.json`            | 4-digit codes for 25 of the 923 occupations, attached by hand where the title and code align; the other 898 carry `masco_unmatched: true` and reach DOSM through ISCO-08                                                                                                                                                                                                   |
 | Demo roles                      | `data/demo-roles.json`                     | 3 roles whose May 2026 data flips at least one verdict. The build fails if one stops flipping                                                                                                                                                                                                                                                                              |
 
 [#104]: https://github.com/TolongLabs/Kotak/issues/104
@@ -60,7 +61,7 @@ Where Malaysian Economic Index rows are missing or suppressed, the engine borrow
 
 These appear as dated citations only. Kotak stores none of their data.
 
-- **OpenDOSM** `lfs_qtr_sru_age`: one figure on the landing page, Q2 2026 skill-related underemployment of tertiary-educated 15 to 24-year-olds (CC BY 4.0).
+- **OpenDOSM** `lfs_qtr_sru_age`: two Q2 2026 figures on skill-related underemployment of tertiary-educated workers, 35.2% overall (in the PRD and the proposal) and 74.3% of 15 to 24-year-olds (on the landing page) (CC BY 4.0).
 - **UN SDG API**: Malaysia's indicator 4.4.1 baseline.
 - **MOHE Graduate Tracer Study 2025** and the **JobStreet Hiring Report 2025**: one figure each on the landing page.
 - **TalentCorp MyCOL** and **Epoch AI**: listed as context only.
@@ -87,4 +88,14 @@ DOSM Quarterly Employment Statistics, the other OpenDOSM series and the GitHub I
 
 ## Attribution
 
-[`NOTICE.md`](/NOTICE.md) carries the exact credit lines, including O\*NET's CC BY 4.0 credit and modification notice, DOSM's "Data source: Department of Statistics Malaysia" and the Live2D notice. Each file's `meta` block carries its source name, URL, vintage date, licence and credit, and the app cites every figure with them.
+The credit lines, as the data files and [`NOTICE.md`](/NOTICE.md) carry them:
+
+- **O\*NET**: "This page includes information from the O\*NET 30.1 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license. O\*NET® is a trademark of USDOL/ETA." With the modification notice: "TolongLabs has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications."
+- **ESCO to O\*NET-SOC crosswalk**: from the O\*NET Resource Center, under CC BY 4.0. "This service uses the ESCO classification of the European Commission."
+- **Anthropic Economic Index**: data released under CC BY, code under the MIT License, by Anthropic.
+- **DOSM Job Market Insights**: "Data source: Department of Statistics Malaysia", used under DOSM's Terms of Use and the Government Open Data Terms of Use 1.0.
+- **CIP 2020 to SOC 2018 Crosswalk**: U.S. Department of Education, Institute of Education Sciences, National Center for Education Statistics, with the U.S. Bureau of Labor Statistics. Public domain.
+- **OpenDOSM**: CC BY 4.0, with the dataset linked where each figure is cited.
+- **Live2D Hijiki sample model**: © Live2D Inc., under the Live2D Free Material License Agreement, including its limits on redistribution.
+
+[`NOTICE.md`](/NOTICE.md) has the full list. Each file's `meta` block carries its source name, URL, vintage date, licence and credit, and the app cites every figure with them.

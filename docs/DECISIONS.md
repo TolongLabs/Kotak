@@ -18,7 +18,7 @@ The product and guardrail choices behind Kotak, newest last, each with its reaso
 | 23 Oct | Show a 12-week roadmap window, with the hours left listed after it                                                                        | The page showed the whole path, up to 495 weeks, against the 12-week plan on the landing page and in the deck                | [#282]                               |
 | 23 Oct | Ask where the user is, what they studied and what they want before the questions; suggest roles to someone with no job or no role in mind | One job title couldn't serve students, graduates, career changers or the unsure                                              | [#284], [#285]                       |
 | 23 Oct | A qualification a role needs informs and never blocks: the requirement shows beside the user's fit                                        | The fit helps users decide whether a degree is worth pursuing                                                                | [#285]                               |
-| 24 Oct | The highlighted role card says why it is highlighted; Kopi's default pick is the best fit of the Rising roles                             | A 75% card highlighted beside an 84% one read as a mistake                                                                   | [#285]                               |
+| 23 Oct | The highlighted role card says why it is highlighted; Kopi's default pick is the best fit of the Rising roles                             | A 75% card highlighted beside an 84% one read as a mistake                                                                   | [#285]                               |
 
 ## Data
 
