@@ -15,8 +15,8 @@ Contents:
 ## The idea in brief
 
 - **User**: a working adult in Malaysia, in any industry, who wants to stay strong in their role, move to a role they have in mind, or find where they could go ([users][k-users]).
-- **Flow**: the user picks a job, a goal and an impact area. A cat counsellor asks 12 yes/no can-do questions. Kotak draws the user's 6 skill corners against what the role will need in 12 months, ranks the roles they fit and builds a roadmap of free steps with a finish date ([product flow][k-flow]).
-- **Engine**: dated snapshots from the Anthropic Economic Index, DOSM, MyCOL and O\*NET feed a four-layer hierarchy. Fixed rules set every verdict, target, fit score and ranking ([engine][k-engine]).
+- **Flow**: the user says where they are now, what they studied, their job and their goal; with no job or no role in mind, Kotak suggests roles to check first. A cat counsellor asks 12 can-do questions, each rated from 1 to 4. Kotak draws the user's 6 skill corners against what the role will need in 12 months, ranks the roles they fit and builds a roadmap of free steps with a finish date ([product flow][k-flow]).
+- **Engine**: dated snapshots from the Anthropic Economic Index, DOSM Job Market Insights and O\*NET feed a four-layer hierarchy. Fixed rules set every verdict, target, fit score and ranking ([engine][k-engine]).
 - **Core rule**: data decides, the AI explains. AI writes corner names, questions and explanations, but never sets a score or a verdict ([where AI works][k-ai]).
 - **AI assistants**: an SDK and an agent layer give any AI assistant Kotak's check-up as read-only tools over MCP, and Kopi answers follow-up questions in the app with the same tools ([agent layer][trd-agent]).
 - **Government side**: an anonymous national view of the rising skills Malaysian workers lack most, with totals only for groups of 10 or more ([users][k-users]).

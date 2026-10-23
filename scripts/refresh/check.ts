@@ -17,13 +17,9 @@ const RELEASE_FOLDER = /^release_\d{4}_\d{2}_\d{2}$/
 const REQUEST_TIMEOUT_MS = 30_000
 const REQUEST_ATTEMPTS = 3
 const INGEST_TIMEOUT_MS = 20 * 60_000
-// The scripts for #63 and #66 should be registered in package.json under these names. The DOSM Job Market Insights
-// script needs pdftotext (poppler-utils) and unzip on PATH.
-const INGESTS = [
-  { source: 'DOSM Job Market Insights', issue: 52, script: 'ingest:dosm-jmi' },
-  { source: 'OpenDOSM', issue: 63, script: 'ingest:opendosm' },
-  { source: 'Epoch AI', issue: 66, script: 'ingest:epoch' }
-]
+// The DOSM Job Market Insights script needs pdftotext (poppler-utils) and unzip on PATH. OpenDOSM (#63) and Epoch AI
+// (#66) were never loaded, so they have no script here (TRD.md, "Dropped and not loaded").
+const INGESTS = [{ source: 'DOSM Job Market Insights', issue: 52, script: 'ingest:dosm-jmi' }]
 
 type Pin = { release: string; revision: string; path: string }
 type EconomicIndex = {

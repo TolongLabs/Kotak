@@ -97,7 +97,7 @@ RUNPOD_ENDPOINT_ID=...
     bun run batch:corners
     ```
 
-3.  Codes that still fail are in `missing_codes` in `data/generated/role-corners-run.json`; the Claude backup ([#79]) fills them.
+3.  Codes that still fail are in `missing_codes` in `data/generated/role-corners-run.json`. Run the batch again for them. The final run left none, so the planned Claude backup ([#79]) was never needed.
 4.  Set **Max workers** to 0 when done, so nothing more can bill.
 5.  Commit `data/generated/role-corners.json` and `data/generated/role-corners-run.json`.
 

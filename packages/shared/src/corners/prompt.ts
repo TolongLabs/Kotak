@@ -5,8 +5,8 @@ import { MAX_CORNERS, type CornerGroup } from './groups'
 import { SDG_TARGETS } from './sdg-targets'
 import { searchResource, validateOccupationCorners, type CornerValidation } from './validate'
 
-// Model-agnostic prompt and parser for the corner batch (#74), shared by the RunPod runner (#77) and the Claude
-// Message Batches backup (#79). A caller maps `CornerRequest` onto its API:
+// Model-agnostic prompt and parser for the corner batch (#74), used by the RunPod runner (#77). The planned Claude
+// Message Batches backup (#79) was never needed. A caller maps `CornerRequest` onto its API:
 // - OpenAI-compatible (vLLM on RunPod): `system` becomes the first message; `schema` goes in
 //   `response_format: { type: 'json_schema', json_schema: { name: schema_name, schema } }`; `temperature: 0` is fine.
 // - Claude Messages API: `system` and `messages` map directly; `schema` goes in
