@@ -83,7 +83,7 @@
 
 AI is changing Malaysian jobs faster than training can keep up: 56% of Malaysian professionals use AI tools at work, but only 26% have had formal training (Hays Asia Salary Guide 2025). Workers who wonder what AI means for their job get static skills lists with no dates, no scores and no plan. Without dated evidence, they cannot tell which skills to learn first, and may spend scarce hours on tasks AI is taking over.
 
-Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, asks 12 yes/no can-do questions about the user's job or a role they want. Kotak then draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap, in about 3 minutes. Fixed rules over dated public data set every verdict, score and step, so every number cites its source. AI does the language work around those rules: a RunPod GPU batch built each job's skills and questions from its own O\*NET tasks, Claude explains verdicts and matches Malay job titles, and ElevenLabs gives Kopi a voice.
+Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks where the user is now, what they studied and what they want. Someone with no job yet, or no role in mind, gets roles to check first, from their study and what they enjoy. Kopi then asks 12 can-do questions about their job or the role they want, each rated from 1 (Not yet) to 4 (Yes, on my own). Kotak then draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap, in about 3 minutes. Fixed rules over dated public data set every verdict, score and step, so every number cites its source. AI does the language work around those rules: a RunPod GPU batch built each job's skills and questions from its own O\*NET tasks, Claude explains verdicts and matches Malay job titles, and ElevenLabs gives Kopi a voice.
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
@@ -102,6 +102,30 @@ Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Futur
       <img src="/docs/readme/screenshots/home.png" alt="Home" width="100%">
       <br />
       <strong>Home</strong> · The next step, the fit for the job, this week's hours, what changed in May and the skills SWOT.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" align="left">
+      <img src="/docs/readme/screenshots/interests.png" alt="What Do You Enjoy?" width="100%">
+      <br />
+      <strong>What Do You Enjoy?</strong> · Not sure yet? Pick at least 3 activities, and Kopi matches them to the interests O*NET records for each job.
+    </td>
+    <td width="50%" valign="top" align="left">
+      <img src="/docs/readme/screenshots/choose.png" alt="Roles to Check" width="100%">
+      <br />
+      <strong>Roles to Check</strong> · Roles from your study, your areas and what you enjoy, each saying why it's there. The 12 questions test the one you pick.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" align="left">
+      <img src="/docs/readme/screenshots/qualification.png" alt="Qualification Needed" width="100%">
+      <br />
+      <strong>Qualification Needed</strong> · A role Malaysian law restricts shows the route in and its regulator beside your fit, so you can weigh whether the degree is worth it.
+    </td>
+    <td width="50%" valign="top" align="left">
+      <img src="/docs/readme/screenshots/tools.png" alt="Tools Employers Name" width="100%">
+      <br />
+      <strong>Tools Employers Name</strong> · The software in demand in job postings for the role, from O*NET, beside the radar and again on the roadmap.
     </td>
   </tr>
   <tr>
@@ -134,25 +158,29 @@ Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Futur
 
 ### How It Works
 
-A check-up for a web developer who wants to see where they could go, as the screenshots show it.
+A check-up for a web developer with a computer science degree who wants to see where they could go in AI, data and cloud, as the screenshots show it.
 
-1.  **Tell Kopi about your work.** Type a job title in any language, and Kopi matches it to one of 900 O\*NET job profiles. Then pick a goal: stay strong in your job, move to a role you have in mind, or see where you could go.
+1.  **Tell Kopi about you.** Say where you are now (working, studying, graduated and looking, between jobs or returning to work), your highest qualification, your field of study and your years of work.
 
-    <img src="/docs/readme/steps/1-start.png" alt="Start" width="100%">
+    <img src="/docs/readme/steps/1-start.png" alt="Start: your situation, study and experience" width="100%">
 
-2.  **Answer 12 can-do questions.** Answer Yes or Not Yet, with a click or the Y and N keys. Each question tests one of the job's 6 core skills, drafted from the job's own O\*NET tasks.
+    Then type your job title in any language, and Kopi matches it to one of 900 O\*NET job profiles. Pick a goal: stay strong in your job, move to up to 3 roles you have in mind, see where you could go in up to 3 areas, or say you're not sure. With no job or no role in mind, Kopi suggests roles to check first, and the questions test the one you pick.
+
+    <img src="/docs/readme/steps/1-goal.png" alt="Start: your work, your goal and the areas to explore" width="100%">
+
+2.  **Answer 12 can-do questions.** Rate each from 1 (Not yet) to 4 (Yes, on my own), with a click or the number keys. Each question tests one of the job's 6 core skills, drafted from the job's own O\*NET tasks.
 
     <img src="/docs/readme/steps/2-questions.png" alt="Questions" width="100%">
 
-3.  **Read your Future Skills Radar.** Each skill shows your level against the level needed by May 2027, its verdict and its dated sources. The SWOT sorts the skills into strengths, weaknesses, roles within reach and tasks AI can draft.
+3.  **Read your Future Skills Radar.** Each skill shows your level against the level needed by May 2027, its verdict and its dated sources. The SWOT sorts the skills into strengths, weaknesses, roles within reach and tasks AI can draft. A role Malaysian law restricts, such as law or medicine, also shows the qualification it needs and the route in, beside your fit.
 
     <img src="/docs/readme/steps/3-radar.png" alt="Radar" width="100%">
 
-4.  **Compare roles.** Matched roles are ranked by fit, with the maths behind each score, the outlook from DOSM job ads and AI use, and the skills still missing.
+4.  **Compare roles.** Up to 6 roles from your targets, your areas, your field of study and O\*NET's related roles, each saying why it's there, with its fit, the maths behind the score, the outlook from DOSM job ads and AI use, and the skills still missing. Kopi highlights your best fit of the Rising roles and says why on the card; pick any card to switch.
 
     <img src="/docs/readme/steps/4-roles.png" alt="Roles" width="100%">
 
-5.  **Follow your roadmap.** Ordered steps, each with its hours, one free resource and its SDG targets. The finish date moves with your weekly hours, and the plan exports as a PDF.
+5.  **Follow your roadmap.** The next 12 weeks of ordered steps for the role you picked, here Data Scientists, each with its hours, one free resource and its SDG targets, plus the software employers name for the role. The week you pass 80% fit moves with your weekly hours, and the plan exports as a PDF.
 
     <img src="/docs/readme/steps/5-roadmap.png" alt="Roadmap" width="100%">
 
@@ -160,14 +188,14 @@ A check-up for a web developer who wants to see where they could go, as the scre
 
 ### Features
 
-- **Skills profile intake** — a job title in any language, a goal (stay strong, move to a chosen role, or explore) and 12 can-do questions.
+- **Skills profile intake** — where you are now, your study and experience, a job title in any language, a goal (stay strong, move to up to 3 roles, explore by area, or not sure) and 12 can-do questions. Without a job or a role in mind, Kotak suggests roles first, and a profession Malaysian law restricts, such as law or medicine, shows the qualification it needs beside the user's fit, to help them decide whether to pursue it.
 - **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights, refreshed weekly. A Before/After switch shows what changed when May's data arrived.
-- **Future-role matching** — ranked roles with a fit score, the maths behind it and the named gaps.
+- **Future-role matching** — up to 6 roles from the user's targets, areas, field of study and O\*NET's related list, each with a fit score, the maths behind it, the named gaps and why it's there.
 - **Malaysian job ads** — for each role, the JobStreet ads Kotak's admins reviewed: active ads, advertised pay in ringgit, where the jobs are, and the tools, languages and AI skills employers ask for. Shown beside the verdicts, which it never sets.
 - **Reskilling pathway** — an interactive roadmap with ordered steps, hours, one free resource per step and a finish date that moves with the user's weekly hours.
 - **SDG mapping** — every skill carries SDG targets, every job shows the goals its work serves, and the roadmap highlights steps by goal.
 - **Handling uncertainty** — every target is labelled an estimate, Split shows slow and fast AI-uptake futures, and Unknown marks thin data.
-- **Ask Kopi and MCP** — a chat agent answers through 7 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
+- **Ask Kopi and MCP** — a chat agent answers through 8 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

@@ -1,5 +1,6 @@
 import {
   ExplanationRequestSchema,
+  needsQualification,
   roleVerdicts,
   uniqueSources,
   type BundleRole,
@@ -15,15 +16,23 @@ import { roleOutlook, verdictId } from '../../engine/viewModel'
 import { formatLevel } from './fit'
 
 /** Generates Kopi's dialogue speech matching the screen state and engine data. */
-export function kopiRoleSpeech(ranked: Role[], focus?: Role): string {
+export function kopiRoleSpeech(ranked: Role[], focus?: Role, pick?: { role: Role; reason: SelectionReason }): string {
+  if (focus?.access?.profession && needsQualification(focus.access))
+    return `${focus.title} fits you at ${focus.fitEstimated ? 'an estimated ' : ''}${focus.fit}%. ${
+      focus.access.status === 'qualify'
+        ? 'It also needs a set qualification in Malaysia, so weigh the fit before you commit to the degree.'
+        : 'It is regulated in Malaysia, so check the steps below as well.'
+    }`
   if (focus) {
     const nextGap = focus.missing.split(', ')[0]
     return `${focus.title} fits you at ${focus.fitEstimated ? 'an estimated ' : ''}${focus.fit}%. ${nextGap ? `Close ${nextGap} next.` : 'You already meet every needed level.'}`
   }
-  const bestFit = ranked.reduce<Role | undefined>(
-    (best, candidate) => (!best || candidate.fit > best.fit ? candidate : best),
-    undefined
-  )
+  const bestFit = bestOf(ranked)
+  // When Kopi highlights a Rising role over a better fit, say why, so the speech and the highlight agree.
+  if (pick?.reason.kind === 'rising' && bestFit && bestFit.fit > pick.role.fit)
+    return `${pick.role.title} fits you best of the Rising roles, at ${pick.role.fitEstimated ? 'an estimated ' : ''}${
+      pick.role.fit
+    }%. ${bestFit.title} fits best overall, at ${bestFit.fit}%, with a ${outlookText[bestFit.outlook]} outlook.`
 
   return bestFit
     ? `${bestFit.title} is your best fit at ${bestFit.fitEstimated ? 'an estimated ' : ''}${bestFit.fit}%.`
@@ -134,39 +143,104 @@ export function sessionHeading(goal: GuestSession['goal']): string {
   return (goal && goalHeadings[goal]) || 'Roles That Fit You'
 }
 
-/** The card to select until the visitor picks one: the first rising role that is not their job, else the last. */
-const defaultSelection = (roles: Role[]): string | null =>
-  (
-    roles.find((candidate) => !candidate.isCurrentJob && candidate.outlook === 'rising') ??
-    (roles.length > 2 ? roles[2] : roles[0])
-  )?.id ?? null
+/** The best fit of a list; the first one wins a tie, so the order of the cards breaks it. */
+const bestOf = (roles: Role[]) =>
+  roles.reduce<Role | undefined>((best, candidate) => (!best || candidate.fit > best.fit ? candidate : best), undefined)
 
-/** The role cards the session goal shows, and the card to select until the visitor picks one. */
+/** Why a card is highlighted. The highlighted card is the one the details and the roadmap are for. */
+export type SelectionReason =
+  | { kind: 'picked' }
+  | { kind: 'plan' }
+  | { kind: 'target' }
+  | { kind: 'rising'; count: number; besideJob: boolean }
+  | { kind: 'fit' }
+
+/** The bold line on the highlighted card, so a 75% card picked over an 84% one says why. */
+export function selectionNote(reason: SelectionReason): string {
+  switch (reason.kind) {
+    case 'picked':
+      return 'You picked this role.'
+    case 'plan':
+      return 'Your roadmap is for this role.'
+    case 'target':
+      return 'Picked for you: the role you said you want.'
+    case 'rising': {
+      const beside = reason.besideJob ? ' besides your job' : ''
+      return reason.count === 1
+        ? `Picked for you: the only Rising role${beside}.`
+        : `Picked for you: your best fit of the ${reason.count} Rising roles${beside}.`
+    }
+    case 'fit':
+      return 'Picked for you: your best fit, as none is Rising.'
+  }
+}
+
+/** The card to select until the visitor picks one: their best fit of the Rising roles that aren't their job, else their best fit. */
+function defaultSelection(roles: Role[]): { defaultId: string | null; defaultReason: SelectionReason | null } {
+  const others = roles.filter((candidate) => !candidate.isCurrentJob)
+  const rising = others.filter((candidate) => candidate.outlook === 'rising')
+  const pick = bestOf(rising) ?? bestOf(others) ?? roles[0]
+  if (!pick) return { defaultId: null, defaultReason: null }
+  const besideJob = roles.some((candidate) => candidate.isCurrentJob && candidate.outlook === 'rising')
+  return {
+    defaultId: pick.id,
+    defaultReason: rising.length ? { kind: 'rising', count: rising.length, besideJob } : { kind: 'fit' }
+  }
+}
+
+// Roles the user named or whose areas they picked come first, then the ones their field of study leads to, then the
+// roles only related to the job. A qualification the user doesn't hold never moves a role down: its card says so.
+const chosenRank = (role: Role) =>
+  role.reasonCodes?.some((reason) => reason === 'area' || reason === 'target')
+    ? 0
+    : role.reasonCodes?.includes('field')
+      ? 1
+      : 2
+
+/**
+ * The role cards the session goal shows, and the card to select until the visitor picks one. With the intake's wider
+ * pool (#284) the explore and target goals show 6 cards, the user's own choices first.
+ */
 export function pickDisplayRoles(
   goal: GuestSession['goal'],
   targetCode: string | null,
-  ranked: Role[]
-): { roles: Role[]; defaultId: string | null } {
+  ranked: Role[],
+  options: { widened?: boolean; targets?: string[] } = {}
+): { roles: Role[]; defaultId: string | null; defaultReason: SelectionReason | null } {
+  const count = options.widened ? 6 : 3
   const currentJob = ranked.find((candidate) => candidate.isCurrentJob)
   const otherRoles = ranked.filter((candidate) => !candidate.isCurrentJob)
   const jobFirst = currentJob ? [currentJob, ...otherRoles.slice(0, 2)] : ranked.slice(0, 3)
 
   if (goal === 'target' && targetCode) {
     const target = ranked.find((candidate) => candidate.id === targetCode)
-    if (target)
+    if (target) {
+      const named = (options.targets ?? []).flatMap((code) =>
+        code === target.id ? [] : ranked.filter((candidate) => candidate.id === code)
+      )
+      const rest = otherRoles
+        .filter((candidate) => candidate.id !== target.id && !named.includes(candidate))
+        .sort((a, b) => (options.widened ? chosenRank(a) - chosenRank(b) : 0) || b.fit - a.fit)
       return {
-        roles: [target, ...otherRoles.filter((candidate) => candidate.id !== target.id).slice(0, 2)],
-        defaultId: target.id
+        roles: [target, ...named, ...rest].slice(0, count),
+        defaultId: target.id,
+        defaultReason: { kind: 'target' }
       }
+    }
   }
 
   if (goal === 'explore') {
-    const sorted = [...ranked].sort((a, b) => outlookOrder[a.outlook] - outlookOrder[b.outlook] || b.fit - a.fit)
-    const roles = sorted.slice(0, 3)
-    return { roles, defaultId: defaultSelection(roles) }
+    // A widened list orders by the pool's score, which already weighs the outlook and fit; the old list by outlook.
+    const sorted = [...ranked].sort((a, b) =>
+      options.widened
+        ? chosenRank(a) - chosenRank(b) || (b.poolScore ?? 0) - (a.poolScore ?? 0)
+        : outlookOrder[a.outlook] - outlookOrder[b.outlook] || b.fit - a.fit
+    )
+    const roles = sorted.slice(0, count)
+    return { roles, ...defaultSelection(roles) }
   }
 
-  return { roles: jobFirst, defaultId: defaultSelection(jobFirst) }
+  return { roles: jobFirst, ...defaultSelection(jobFirst) }
 }
 
 export function buildExplanationRequest(

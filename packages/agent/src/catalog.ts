@@ -25,10 +25,15 @@ export const TOOL_CATALOG = {
     description:
       "Get a role's can-do questions in Kotak's asking order, Rising corners first. A corner is one skill area of the job. Call it once the user confirms their role (with the target goal, the target role). For each corner, ask the basic statement, then the advanced one, one question per message; the user rates each from 1 (Not yet) to 4 (Yes, on my own). Keep each corner's two ratings as { corner_id, basic, advanced } for run_checkup."
   },
+  suggest_roles: {
+    title: 'Suggest Roles',
+    description:
+      "Suggest roles to check up on before any question, from who the user is: their situation, highest qualification, field of study, the areas they picked, the roles they named and the activities they enjoy. Call it when the user has no job title, doesn't know what they want, or wants to change field; ask about their study and interests first, one question at a time, and use the field and area ids the result lists. Each role says why it is there, its outlook, and its access. Qualification Needed means a regulated profession in Malaysia that needs a qualifying degree and admission to practise: say so, name the regulator from access.profession, and never steer the user away for it; their check-up answers show whether the work suits them, which helps them decide whether the degree is worth it. Let the user pick one, then check them up on it with the target goal."
+  },
   run_checkup: {
     title: 'Run the Check-Up',
     description:
-      "Run a Kotak check-up: each corner's level, target level and verdict with its reason and sources, the user's role and its related roles ranked by fit with the two biggest gaps, and a roadmap of free learning steps with weekly hours and a finish date. Call it once the user has answered every corner, and call it again for each what-if (weekly hours, the fast scenario, another plan role, the April snapshot) instead of working the answer out yourself. Kotak saves nothing, so pass every answer each time. Defaults are the Kotak app's: the May 2026 snapshot, the slow scenario, 4 hours a week, the explore goal and a start date of today in Malaysia."
+      "Run a Kotak check-up: each corner's level, target level and verdict with its reason and sources, the user's role and its related roles ranked by fit with the two biggest gaps, and a roadmap of free learning steps with weekly hours and a finish date. Call it once the user has answered every corner, and call it again for each what-if (weekly hours, the fast scenario, another plan role, the April snapshot) instead of working the answer out yourself. Kotak saves nothing, so pass every answer each time. Pass the user's profile when you know it: the ranking then adds the roles their study, areas and targets lead to, and each role and the roadmap carry an access rule. When roadmap.access.status is qualify, register or check_licence, say the qualification or admission comes before the steps, with the regulator and the route from access.profession. Defaults are the Kotak app's: the May 2026 snapshot, the slow scenario, 4 hours a week, the explore goal and a start date of today in Malaysia."
   },
   what_changed: {
     title: 'What Changed Between Snapshots',

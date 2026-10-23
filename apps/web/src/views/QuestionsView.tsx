@@ -1,4 +1,12 @@
-import { DEFAULT_SCENARIO, REVERSED_SLOTS, reversedRating, type BundleRole, type Rating } from '@kotak/shared'
+import {
+  DEFAULT_SCENARIO,
+  questionOrder,
+  REVERSED_SLOTS,
+  reversedRating,
+  roleVerdicts,
+  type BundleRole,
+  type Rating
+} from '@kotak/shared'
 import { Check } from 'lucide-react'
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { navigate } from '../app/router'
@@ -9,10 +17,11 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
-import { loadRoleBundle, useRoleBundle } from '../engine/bundle'
-import { assessedRoleCode, useCheckup } from '../engine/checkup'
+import { checkupBundleKey, loadCheckupBundleFor, useRoleBundle } from '../engine/bundle'
+import { assessedRoleCode } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
+import { startAgain } from './checkup/startAgain'
 
 // Answers arrive in asking order (rising corners first); the session stores them by the corner's place in the
 // role's batch order: [2i] is corner i's basic rating, [2i + 1] its advanced rating (see engine/checkup.ts).
@@ -37,7 +46,6 @@ export function QuestionsView() {
   const session = useGuestSession()
   const assessedCode = assessedRoleCode(session)
   const bundle = useRoleBundle(assessedCode)
-  const loaded = useCheckup({ onetCode: assessedCode, scenario: DEFAULT_SCENARIO })
   // The effective ratings so far: a reversed question's click is already flipped (see onAnswer).
   const [asked, setAsked] = useState<Rating[]>([])
   // The rating just clicked, held for the 300 ms pause before the next question; null otherwise.
@@ -55,18 +63,18 @@ export function QuestionsView() {
   if (!assessedCode) {
     return (
       <QuestionsFrame>
-        <KopiAside pose="worried" speech="Tell me your job first, then I can ask about it." />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Your Job
+        <KopiAside pose="worried" speech={`${startAgain(session).speech}, then I can ask about it.`} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
+          {startAgain(session).label}
         </Button>
       </QuestionsFrame>
     )
   }
 
-  if (loaded.status !== 'ready' || bundle.status !== 'ready') {
+  if (bundle.status !== 'ready') {
     return (
       <QuestionsFrame>
-        {loaded.status === 'error' || bundle.status === 'error' ? (
+        {bundle.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         ) : (
           <KopiAside pose="thinking" speech="Opening the box on your job…" />
@@ -75,12 +83,12 @@ export function QuestionsView() {
     )
   }
 
-  const { checkup } = loaded.data
   const { role } = bundle.data
-  const order = checkup.questionOrder.map((corner) => corner.corner_id)
+  // Rising corners first, as the check-up asks them (computeCheckup's questionOrder).
+  const order = questionOrder(roleVerdicts(role.signals[session.active_snapshot_id]).corners, DEFAULT_SCENARIO)
   const totalQuestions = order.length * 2
 
-  if (!checkup.questionsReady) {
+  if (!role.questions_ready) {
     return (
       <QuestionsFrame>
         <Banner
@@ -97,7 +105,14 @@ export function QuestionsView() {
 
   // After the last answer the box opens, then the results load.
   if (asked.length >= totalQuestions) {
-    return <PageTransition load={() => loadRoleBundle(assessedCode)} onDone={() => navigate(routes.radar)} />
+    // The box opens while the roles the results rank against load.
+    const key = checkupBundleKey(session)
+    return (
+      <PageTransition
+        load={() => (key ? loadCheckupBundleFor(key) : Promise.resolve(null))}
+        onDone={() => navigate(routes.radar)}
+      />
+    )
   }
 
   const questionIndex = asked.length

@@ -60,11 +60,11 @@ Today they get static lists. TalentCorp's MyMahir maps roles and skills, but sho
 
 ### 2.2. The proposed AI solution (300 words max)
 
-Kotak, Malay for "box", is a web app. Kopi, a cat counsellor, asks 12 yes/no can-do questions about the user's job or a role they want. It draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap in about 3 minutes.
+Kotak, Malay for "box", is a web app. Kopi, a cat counsellor, asks where the user is now, what they studied and what they want, then 12 can-do questions, rated from 1 to 4, about the user's job or a role they want. A user with no job or no role in mind gets roles to check first. It draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap in about 3 minutes.
 
 The six must-haves:
 
-1.  **Skills profile intake**: a job title in any language, a goal (stay, move or explore) and the 12 questions.
+1.  **Skills profile intake**: the user's situation, study and experience, a job title in any language, a goal (stay, move, explore or not sure) and the 12 questions. Without a job, Kotak suggests roles first, and a profession that needs a qualification says so.
 2.  **AI-trend signal layer**: dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights, refreshed weekly.
 3.  **Future-role matching**: ranked roles, each with a fit score, its maths and named gaps.
 4.  **Reskilling pathway**: ordered steps, each with hours and one free resource, and a finish date set by the user's weekly hours.
@@ -75,7 +75,7 @@ Fixed rules, not AI, set every verdict, score, ranking and roadmap order. AI doe
 
 - Before the demo, a RunPod GPU batch groups each O\*NET job's own tasks into 6 skills and drafts the questions. A validator rejects any task outside that job.
 - Live, Claude Haiku 5.5 explains each verdict with its dated sources and matches Malay and local job titles.
-- Ask Kopi, a chat agent, answers through 7 read-only tools over the same rules, which other assistants reach through an MCP server.
+- Ask Kopi, a chat agent, answers through 8 read-only tools over the same rules, which other assistants reach through an MCP server.
 - ElevenLabs voices Kopi, with mute and a text fallback.
 
 From the Phase 1 workshops, we use GenAI APIs (Claude), Postgres (Neon), cloud hosting (Cloudflare Workers and Replit) and RunPod serverless GPUs ([workshops][workshops]; [Workshop 1][w1]).
@@ -93,7 +93,7 @@ Kotak is a TypeScript monorepo run with Bun. It has two apps, `apps/web` (the Re
 - **Rule engine in the browser**: the app loads precomputed, dated JSON snapshots and computes levels, targets, verdicts, fit scores and roadmap order in the browser. Switching the snapshot from April to May 2026 recomputes them at once. A guest session in `localStorage` keeps answers, goals and ticked steps.
 - **API**: Hono, on Cloudflare Workers for the main link and on Bun for Replit. One server serves the React build and the API. Its routes match job titles, write cited explanations, proxy text to speech, run Ask Kopi and serve an MCP endpoint. Zod validates every request and response. On Workers, the MCP and chat routes run in a Durable Object.
 - **GenAI**: the Claude API with Claude Haiku 5.5. The API caches each answer by a SHA-256 hash of the request and pre-warms the cache for the demo roles. A check rejects any explanation that changes a verdict or lacks a dated citation, and falls back to a fixed template.
-- **Agent layer**: `@kotak/agent` exposes 7 read-only tools over `@kotak/sdk`: find a role, get the questions, run a check-up, what changed, national skill gaps, job ads in Malaysia and list sources. Ask Kopi calls them through Claude, and outside assistants call them through `/api/mcp`. Every number the agent quotes comes from a tool.
+- **Agent layer**: `@kotak/agent` exposes 8 read-only tools over `@kotak/sdk`: find a role, get the questions, suggest roles, run a check-up, what changed, national skill gaps, job ads in Malaysia and list sources. Ask Kopi calls them through Claude, and outside assistants call them through `/api/mcp`. Every number the agent quotes comes from a tool.
 - **Voice**: ElevenLabs. Fixed lines are pre-generated with `eleven_v4`, and live lines use `eleven_v4_turbo`. The API caches audio by a hash of the text, and the key stays on the server ([TTS notes][tts]).
 - **Data pipeline**: Bun scripts ingest O\*NET 30.1, filter the Economic Index to Malaysia, Singapore and global rows, and extract DOSM Job Market Insights (Q3 2019 to Q2 2026). Every record carries its source, date and layer. A GitHub Actions workflow checks for new releases every Saturday and rebuilds the snapshots.
 - **Database**: Neon Postgres 18 (region `aws-ap-southeast-1`). One table stores anonymous check-ups: only the role code, the 6 skill levels, a sample flag and the date, and totals show only for groups of 10 or more. Other tables hold the scraper's job listings, the admins' reviews of them, each listing's matched skills and the admin accounts.
@@ -136,7 +136,7 @@ Sponsor platforms: yes, Kotak uses both.
 
 - **Empathise**: on 21 October, we named three kinds of worker: stay strong, move to a target role, or ask where to go ([users][idea-users]). Research showed Malaysian graduates find work, often below their skill level ([hiring-bar evidence][hiring]).
 - **Define**: one user and one moment: a worried worker with a few minutes, who leaves with a plan to start this week.
-- **Ideate**: we gave five AI models the brief, as other teams would, and 17 of their 75 ideas served this same worker ([field simulation][field]). So Kotak's uniqueness comes from its mechanism: yes/no can-do questions, skills built from the job's own tasks, and verdicts set by visible rules.
+- **Ideate**: we gave five AI models the brief, as other teams would, and 17 of their 75 ideas served this same worker ([field simulation][field]). So Kotak's uniqueness comes from its mechanism: rated can-do questions, skills built from the job's own tasks, and verdicts set by visible rules.
 - **Prototype and test**: six AI-played experts raised 43 attacks on the first Kotak ([roast][roast]). We cut the planted-mistake test and moved the demo from a sample card to real data. We set the visual design in Figma before coding.
 - **Deploy**: the live demo swaps the Economic Index from April to May 2026, and the radar, ranking and roadmap move. Cached Claude answers and a fixed-template fallback cover API overload. GitHub Actions deploys to Cloudflare Workers on every merge to `main`, so any member can ship.
 

@@ -89,18 +89,20 @@ Name the sessions `kotak-director` and `kotak-recorder`. They message each other
 
 The Director owns this list; the Recorder confirms each shot on the frozen build. The screens are the views in the [design system][design-screens], and the demo case is a hand-checked sample profile ([#104](https://github.com/TolongLabs/Kotak/issues/104)). Steps between shots run off camera.
 
-| Shot | Length | Screen                           | On camera                                                                                                                | Built in |
-| ---- | -----: | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
-| D1   |   15 s | Desktop, Check-Up: Start         | Load the sample profile: a front-end developer in Kuala Lumpur who picks "show me where I could go" and health           | #59      |
-| D2   |   25 s | Desktop, Check-Up: Questions     | Kopi asks two or three of the 12 can-do questions, answered with the Y and N keys                                        | #59      |
-| D3   |   35 s | Desktop, Radar and Gaps          | The radar, its verdict chips and dated sources; the slow and fast toggle moves the dashed "needed by 2027" line          | #61      |
-| D4   |   25 s | Desktop, Matched Roles           | Three ranked roles; tap a fit score to show its maths                                                                    | #64      |
-| D5   |   30 s | Desktop, Roadmap                 | Milestones with time estimates, free resources and a finish date; tick one and watch the corner level rise               | #67      |
-| D6   |   40 s | Desktop, What Changed            | Load the May 2026 snapshot: the line moves, a verdict flips, the ranking and roadmap reorder, and Kopi says what changed | #69      |
-| D7   |   15 s | Desktop, National View           | The rising skills workers lack most, totals only for groups of 10 or more, and the sample tags                           | #72      |
-| D8   |   10 s | Phone, 390 × 844, Radar and Gaps | The same radar on a phone                                                                                                | #61      |
+| Shot | Length | Screen                           | On camera                                                                                                                                                                                                                                               | Built in  |
+| ---- | -----: | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| D1   |   20 s | Desktop, Check-Up: Start         | The sample profile: a front-end developer in Kuala Lumpur picks Working, a bachelor's in Computer Science and IT and 2 to 3 years, types "web developer", then picks "Show Me Where I Could Go" with the AI and Data and Cloud and Infrastructure areas | #59, #284 |
+| D2   |   25 s | Desktop, Check-Up: Questions     | Kopi asks two or three of the 12 can-do questions, rated with the number keys 1 to 4                                                                                                                                                                    | #59, #238 |
+| D3   |   35 s | Desktop, Radar and Gaps          | The radar, its verdict chips and dated sources; the slow and fast toggle moves the dashed "needed by 2027" line                                                                                                                                         | #61       |
+| D4   |   25 s | Desktop, Matched Roles           | Six roles, each saying why it's there; the highlighted card says in bold why Kopi picked it; open See the Maths for its fit                                                                                                                             | #64, #284 |
+| D5   |   30 s | Desktop, Roadmap                 | Milestones with time estimates, free resources and a finish date; tick one and watch the corner level rise                                                                                                                                              | #67       |
+| D6   |   40 s | Desktop, What Changed            | Load the May 2026 snapshot: the line moves, a verdict flips, the ranking and roadmap reorder, and Kopi says what changed                                                                                                                                | #69       |
+| D7   |   15 s | Desktop, National View           | The rising skills workers lack most, totals only for groups of 10 or more, and the sample tags                                                                                                                                                          | #72       |
+| D8   |   10 s | Phone, 390 × 844, Radar and Gaps | The same radar on a phone                                                                                                                                                                                                                               | #61       |
 
-The shots total 195 seconds before trimming. D6 is the key moment: the rubric names "the trend signal layer feeding role matching" as the feature to show ([live demo][live-demo]).
+The shots total 200 seconds before trimming. D6 is the key moment: the rubric names "the trend signal layer feeding role matching" as the feature to show ([live demo][live-demo]).
+
+If the Director finds 10 spare seconds, a cut-in after D4 shows the intake's other paths ([#284](https://github.com/TolongLabs/Kotak/issues/284)): a linguistics graduate who wants law sees "Qualification Needed" on the Lawyers radar, with the route in beside their fit. Kotak informs and never blocks.
 
 [design-screens]: /docs/DESIGN.md#screens
 [live-demo]: /docs/ideas/0007-kotak.md#must-haves-and-the-live-demo

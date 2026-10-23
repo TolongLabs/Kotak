@@ -29,6 +29,7 @@
     "graph": "graphify update .",
     "ingest:aei": "bun scripts/ingest/aei.ts",
     "ingest:dosm-jmi": "bun scripts/ingest/dosm-jmi.ts",
+    "ingest:pathways": "bun scripts/ingest/pathways.ts",
     "build:corner-groups": "bun scripts/corners/build-groups.ts",
     "batch:corners": "bun scripts/corners/run-batch.ts",
     "refresh:check": "bun scripts/refresh/check.ts",

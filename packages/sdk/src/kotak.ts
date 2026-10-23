@@ -10,18 +10,21 @@ import {
   type SnapshotId
 } from '@kotak/shared'
 import { createBundle, type BundleSource } from './bundle'
-import { answeredLevels, answerSlots, assessedRoleCode, computeCheckup } from './checkup'
+import { answeredLevels, answerSlots, computeCheckup } from './checkup'
+import { loadCheckupBundle, pathwaysSources, suggestRoles } from './pathways'
 import { checkupReport } from './report'
 import {
   CheckupParamsSchema,
   DEFAULT_SNAPSHOT,
+  SuggestRolesParamsSchema,
   WhatChangedParamsSchema,
   type CheckupParams,
   type CheckupReport,
-  type Goal,
   type Manifest,
   type Questions,
   type RoleSummary,
+  type SuggestRolesParams,
+  type SuggestRolesReport,
   type WhatChangedParams,
   type WhatChangedReport
 } from './schemas'
@@ -40,6 +43,13 @@ export interface Kotak {
   checkup: (input: CheckupParams) => Promise<CheckupReport>
   /** What changed between two snapshots for the same answers. */
   whatChanged: (input: WhatChangedParams) => Promise<WhatChangedReport>
+  /** Roles to check up on, before any question, from the user's study, picked areas, targets and interests (#284). */
+  suggestRoles: (input: SuggestRolesParams) => Promise<SuggestRolesReport>
+  /** The fields of study and interest areas a profile may name. */
+  pathwayOptions: () => Promise<{
+    fields: { id: string; label: string; group: string }[]
+    areas: { id: string; label: string }[]
+  }>
 }
 
 /** A role with no can-do statements has no questions, so it is refused rather than given made-up levels. */
@@ -52,8 +62,8 @@ function ready(role: BundleRole): BundleRole {
 export function createKotak({ source }: { source: BundleSource }): Kotak {
   const bundle = createBundle(source)
 
-  async function assessed(input: { role_code: string; goal: Goal; target_role_code: string | null }) {
-    const loaded = await bundle.roleBundle(assessedRoleCode(input))
+  async function assessed(input: Parameters<typeof loadCheckupBundle>[1]) {
+    const loaded = await loadCheckupBundle(bundle, input)
     ready(loaded.role)
     return loaded
   }
@@ -100,7 +110,8 @@ export function createKotak({ source }: { source: BundleSource }): Kotak {
 
     async checkup(input) {
       const params = CheckupParamsSchema.parse(input)
-      const { role, related, unavailable } = await assessed(params)
+      const loaded = await assessed(params)
+      const { role, related, unavailable } = loaded
       const roles = [role, ...related]
       const planRole = params.plan_role_code ? roles.find((r) => r.onet_code === params.plan_role_code) : role
       if (!planRole)
@@ -118,7 +129,7 @@ export function createKotak({ source }: { source: BundleSource }): Kotak {
         startDate: params.start_date,
         planRoleCode: params.plan_role_code
       })
-      return checkupReport(params, roles, checkup, unavailable)
+      return checkupReport(params, roles, checkup, unavailable, loaded)
     },
 
     async whatChanged(input) {
@@ -134,6 +145,20 @@ export function createKotak({ source }: { source: BundleSource }): Kotak {
         params.scenario
       )
       return { input: params, diff, unavailable }
+    },
+
+    async suggestRoles(input) {
+      const params = SuggestRolesParamsSchema.parse(input)
+      const [roles, pathways] = await Promise.all([suggestRoles(bundle, params), bundle.pathways()])
+      return { input: params, roles, sources: pathwaysSources(pathways) }
+    },
+
+    async pathwayOptions() {
+      const { fields, areas } = await bundle.pathways()
+      return {
+        fields: fields.map(({ id, label, group }) => ({ id, label, group })),
+        areas: areas.map(({ id, label }) => ({ id, label }))
+      }
     }
   }
 }

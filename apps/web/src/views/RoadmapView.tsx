@@ -1,12 +1,15 @@
-import { DEFAULT_SCENARIO, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from '@kotak/shared'
+import { accessFor } from '@kotak/sdk'
+import { DEFAULT_SCENARIO, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS, needsQualification } from '@kotak/shared'
 import { Check, Clock3 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
+import { AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoadmapStepCard } from '../components/kotak/RoadmapStepCard'
 import { SourceList } from '../components/kotak/SourceList'
+import { ToolsCard } from '../components/kotak/ToolsCard'
 import { renderCited } from '../components/kotak/renderCited'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
@@ -15,7 +18,7 @@ import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
-import { useRoleBundle } from '../engine/bundle'
+import { useCheckupBundle } from '../engine/bundle'
 import { assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { toIsoDate } from '../engine/dates'
 import {
@@ -25,7 +28,7 @@ import {
   toRoadmapSources,
   toRoadmapWindow
 } from '../engine/roadmapModel'
-import { cornerReasoning } from '../engine/viewModel'
+import { cornerReasoning, isEstimatedLevel } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
@@ -33,6 +36,7 @@ import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
 import { type TimelineStep } from './roadmap/planSupport'
+import { startAgain } from './checkup/startAgain'
 
 function fromIsoDate(value: string) {
   const [year, month, day] = value.split('-').map(Number)
@@ -165,7 +169,7 @@ function RoadmapStepWithoutResource({
 
 export function RoadmapView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(assessedRoleCode(session))
+  const bundle = useCheckupBundle(session)
   const scenario = DEFAULT_SCENARIO
   const [today] = useState(() => toIsoDate(new Date()))
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null)
@@ -227,13 +231,13 @@ export function RoadmapView() {
     return { proposed, readyWeek }
   }, [checkup, bundle, session.answers, session.custom_weekly_hours, startDate])
 
-  if (!session.role_code) {
+  if (!assessedRoleCode(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <Stepper step={5} labels={checkUpSteps} />
-        <CatDialogue pose="worried" speech="Tell me your job first, then I can make a roadmap for it." />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Your Job
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can make a roadmap for it.`} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
+          {startAgain(session).label}
         </Button>
       </div>
     )
@@ -305,6 +309,19 @@ export function RoadmapView() {
       href: 'https://elatih.hrdcorp.gov.my/about-us'
     }
   ]
+  const toolsSource = bundle.data.pathways.sources.onet_tools
+  const toolsSourceNumber = fundingSourceNumber + 2
+  if (role.tools.length)
+    sources.push({
+      n: toolsSourceNumber,
+      name: toolsSource.source_name,
+      detail: `${toolsSource.geo_or_layer} · ${toolsSource.vintage_date}`,
+      href: toolsSource.source_url
+    })
+  // A regulated role the user isn't qualified for puts the qualification before every skill step (#284).
+  const planAccess = accessFor(role.onet_code, session.profile, bundle.data.pathways, session.role_code)
+  const qualificationNeeded = needsQualification(planAccess)
+  const planFit = checkup.roles.find((entry) => entry.onet_code === role.onet_code)
 
   const cornerNames = new Map(checkup.corners.map((corner) => [corner.corner_id, corner.name]))
   const dividend = checkup.roadmap.dividend
@@ -432,6 +449,26 @@ export function RoadmapView() {
             </Button>
           </div>
         </header>
+
+        {planAccess.status !== 'open' && (
+          <div className="space-y-2">
+            <AccessNotice
+              access={planAccess}
+              roleTitle={role.title}
+              fit={
+                planFit
+                  ? { percent: Math.round(planFit.fit.score), estimated: planFit.levels.some(isEstimatedLevel) }
+                  : undefined
+              }
+            />
+            {qualificationNeeded && (
+              <p className="text-body-s text-text-muted">
+                The steps below build the skills the role uses, so you can test whether the work suits you. To practise
+                it, you’d still need the qualification and the admission above.
+              </p>
+            )}
+          </div>
+        )}
 
         <section
           aria-label="Plan Controls"
@@ -629,6 +666,8 @@ export function RoadmapView() {
             </div>
           </div>
         </div>
+
+        <ToolsCard role={role} sourceNumber={toolsSourceNumber} heading="Tools to Learn With" />
 
         <SourceList sources={sources} />
 

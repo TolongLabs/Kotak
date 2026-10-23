@@ -7,6 +7,7 @@ import {
   SourceSchema,
   VerdictSchema
 } from './engine'
+import { ProfileSchema } from './pathways/schemas'
 import { GoalSchema, RatingSchema, WeeklyHoursSchema } from './session'
 
 const UserLevelSchema = z.number().min(0).max(3)
@@ -253,20 +254,26 @@ const ChatTurnSchema = z.discriminatedUnion('role', [
 ])
 
 // The guest session's check-up, as the app computes it. answers are the session's 12 slots on the assessed role's
-// corners (the target role with the target goal), as answerSlots in @kotak/sdk lays them out.
-// start_date is the app's today, so Kopi's dates match the Roadmap page.
+// corners (the target role with the target goal), as answerSlots in @kotak/sdk lays them out. role_code is null when
+// the user has no current job, which needs the target goal. start_date is the app's today, so Kopi's dates match
+// the Roadmap page.
 export const AgentChatCheckupSchema = z
   .object({
-    role_code: OnetRoleCodeSchema,
+    role_code: OnetRoleCodeSchema.nullable(),
     goal: GoalSchema.default('explore'),
     target_role_code: OnetRoleCodeSchema.nullable().default(null),
     plan_role_code: OnetRoleCodeSchema.nullable().default(null),
     answers: z.array(RatingSchema.nullable()).length(12),
     snapshot_id: SnapshotIdSchema.default(DEFAULT_SNAPSHOT),
     weekly_hours: WeeklyHoursSchema,
-    start_date: z.iso.date()
+    start_date: z.iso.date(),
+    profile: ProfileSchema.default(() => ProfileSchema.parse({}))
   })
   .strict()
+  .refine((checkup) => checkup.role_code !== null || (checkup.goal === 'target' && checkup.target_role_code !== null), {
+    message: 'Without a current job, the check-up needs the target goal and a target role.',
+    path: ['role_code']
+  })
 
 export const AgentChatRequestSchema = z
   .object({

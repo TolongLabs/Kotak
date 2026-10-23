@@ -1,12 +1,16 @@
-import { biggestGaps, cornerReasoning, isEstimatedLevel, roleOutlook } from '@kotak/sdk'
+import { accessFor, biggestGaps, cornerReasoning, isEstimatedLevel, rankedReasons, roleOutlook } from '@kotak/sdk'
 import {
   addMonths,
+  describeReasons,
   HORIZON_MONTHS,
+  OUTLOOK_BONUS,
   uniqueSources,
   type BundleRole,
   type CornerVerdict,
+  type GuestSession,
   type Source
 } from '@kotak/shared'
+import type { CheckupBundle } from './bundle'
 import type { Corner, Role, SourceRef, VerdictId } from '../demo/types'
 import type { Checkup } from './checkup'
 
@@ -66,21 +70,52 @@ export function toCorners(checkup: Checkup, numbers: Map<string, number[]>): Cor
   }))
 }
 
-/** The ranked roles, with the two biggest gaps named from each role's own corners. */
-export function toRoles(checkup: Checkup, bundleRoles: BundleRole[], currentCode: string | null): Role[] {
+/**
+ * The ranked roles, with the two biggest gaps named from each role's own corners. With the check-up's bundle and the
+ * session, each role also carries the access rule and why it is listed (#284).
+ */
+export function toRoles(
+  checkup: Checkup,
+  bundleRoles: BundleRole[],
+  currentCode: string | null,
+  pool?: { bundle: CheckupBundle; session: Pick<GuestSession, 'profile'> }
+): Role[] {
   const byCode = new Map(bundleRoles.map((role) => [role.onet_code, role]))
   return checkup.roles.map((role) => {
     const bundleRole = byCode.get(role.onet_code)
     const names = new Map(bundleRole?.corners.map((corner) => [corner.corner_id, corner.name]))
     const gaps = biggestGaps(role.fit).map((term) => names.get(term.corner_id) ?? term.corner_id)
+    // The card already says "(Your Job)".
+    const reasonCodes =
+      pool &&
+      rankedReasons(role.onet_code, {
+        role: pool.bundle.role,
+        roleCode: currentCode,
+        candidates: pool.bundle.candidates
+      }).filter((reason) => reason !== 'current')
+    const outlook = bundleRole ? roleOutlook(bundleRole, checkup.snapshotId) : 'unknown'
+    const candidate = pool?.bundle.candidates.find((entry) => entry.onet_code === role.onet_code)
+    const listed = pool &&
+      reasonCodes && {
+        access: accessFor(role.onet_code, pool.session.profile, pool.bundle.pathways, currentCode),
+        reasonCodes,
+        reasons: describeReasons(
+          { reasons: reasonCodes, area_ids: candidate?.area_ids ?? [] },
+          pool.bundle.pathways,
+          pool.session.profile,
+          { assessed: pool.bundle.role.title }
+        ),
+        poolScore: (candidate?.score ?? 0) + OUTLOOK_BONUS[outlook] + role.fit.score * 0.02
+      }
     return {
       id: role.onet_code,
       title: role.title,
       isCurrentJob: role.onet_code === currentCode,
       fit: Math.round(role.fit.score),
       fitEstimated: role.levels.some(isEstimatedLevel),
-      outlook: bundleRole ? roleOutlook(bundleRole, checkup.snapshotId) : 'unknown',
-      missing: gaps.join(', ')
+      outlook,
+      missing: gaps.join(', '),
+      ...listed
     }
   })
 }
