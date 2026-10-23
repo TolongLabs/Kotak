@@ -12,9 +12,11 @@ export interface RoleCardProps {
   name: string
   // Pinned to the card's bottom edge, so cards in one row line up.
   footer?: ReactNode
+  // Why the card is highlighted, in bold above its title.
+  note?: string
 }
 
-export function RoleCard({ role, selected, onSelect, name, footer }: RoleCardProps) {
+export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleCardProps) {
   return (
     <label
       className={cn(
@@ -25,6 +27,7 @@ export function RoleCard({ role, selected, onSelect, name, footer }: RoleCardPro
       )}
     >
       <input type="radio" name={name} value={role.id} checked={selected} onChange={onSelect} className="sr-only" />
+      {note && <span className="text-body-s font-bold text-text-primary">{note}</span>}
       <div className="flex min-h-12 items-start justify-between gap-3">
         <span className="min-w-0 hyphens-auto text-title-s text-text-primary [overflow-wrap:anywhere]">
           {role.title}

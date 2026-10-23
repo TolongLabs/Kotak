@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { SnapshotIdSchema } from './engine'
+import { ProfileSchema } from './pathways/schemas'
 import { MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from './rules/constants'
 
 /** One answer on the 1 to 4 scale (1 "Not yet" to 4 "Yes, on my own"); a reversed question is stored already flipped. */
@@ -21,7 +22,9 @@ export const GuestSessionSchema = z
     custom_weekly_hours: z.number().positive().nullable(),
     pasted_job_ad_quotes: z.array(z.string()),
     tts_muted: z.boolean(),
-    active_snapshot_id: SnapshotIdSchema
+    active_snapshot_id: SnapshotIdSchema,
+    // Who the user is, from the intake (#284); sessions saved before it start empty.
+    profile: ProfileSchema.default(() => ProfileSchema.parse({}))
   })
   .strict()
 

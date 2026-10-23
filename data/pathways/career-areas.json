@@ -1,0 +1,212 @@
+{
+  "areas": [
+    {
+      "id": "ai-and-data",
+      "label": "AI and Data",
+      "group": "digital",
+      "description": "Building AI models, analysing data and running the databases behind them.",
+      "onet_codes": [
+        "15-2051.00",
+        "15-1221.00",
+        "15-2051.01",
+        "15-1243.00",
+        "15-1243.01",
+        "15-2041.00",
+        "15-2031.00",
+        "15-1242.00",
+        "15-2041.01",
+        "15-2051.02",
+        "15-2099.01"
+      ],
+      "soc_prefixes": []
+    },
+    {
+      "id": "cybersecurity",
+      "label": "Cybersecurity",
+      "group": "digital",
+      "description": "Protecting systems and data, testing defences and investigating attacks.",
+      "onet_codes": ["15-1212.00", "15-1299.05", "15-1299.04", "15-1299.06", "13-1199.07", "13-1199.04", "15-1244.00"],
+      "soc_prefixes": []
+    },
+    {
+      "id": "cloud-and-infrastructure",
+      "label": "Cloud and Infrastructure",
+      "group": "digital",
+      "description": "Running servers, networks, cloud platforms and data centres.",
+      "onet_codes": [
+        "15-1244.00",
+        "15-1241.00",
+        "15-1241.01",
+        "15-1299.08",
+        "15-1231.00",
+        "15-1232.00",
+        "17-2061.00",
+        "49-2011.00",
+        "49-2022.00"
+      ],
+      "soc_prefixes": []
+    },
+    {
+      "id": "software-and-web",
+      "label": "Software and Web",
+      "group": "digital",
+      "description": "Writing, testing and running software, apps and websites.",
+      "onet_codes": [
+        "15-1252.00",
+        "15-1251.00",
+        "15-1253.00",
+        "15-1254.00",
+        "15-1299.01",
+        "15-1299.07",
+        "15-1211.00",
+        "15-1255.01",
+        "15-1299.09"
+      ],
+      "soc_prefixes": []
+    },
+    {
+      "id": "design-and-ux",
+      "label": "Design and UX",
+      "group": "digital",
+      "description": "Designing screens, products, graphics and animation.",
+      "onet_codes": ["15-1255.00", "15-1255.01", "27-1024.00", "27-1021.00", "27-1014.00"],
+      "soc_prefixes": []
+    },
+    {
+      "id": "business-and-finance",
+      "label": "Business and Finance",
+      "group": "other",
+      "description": "Accounting, finance, human resources, operations and analysis.",
+      "onet_codes": ["15-2011.00"],
+      "soc_prefixes": ["13-"]
+    },
+    {
+      "id": "management",
+      "label": "Management",
+      "group": "other",
+      "description": "Leading teams, departments and organisations.",
+      "onet_codes": [],
+      "soc_prefixes": ["11-"]
+    },
+    {
+      "id": "engineering-and-architecture",
+      "label": "Engineering and Architecture",
+      "group": "other",
+      "description": "Designing buildings, machines, circuits and plants.",
+      "onet_codes": [],
+      "soc_prefixes": ["17-"]
+    },
+    {
+      "id": "science-and-research",
+      "label": "Science and Research",
+      "group": "other",
+      "description": "Research in the life, physical and social sciences.",
+      "onet_codes": ["15-2021.00"],
+      "soc_prefixes": ["19-"]
+    },
+    {
+      "id": "health-and-care",
+      "label": "Health and Care",
+      "group": "other",
+      "description": "Treating, nursing and supporting patients.",
+      "onet_codes": [],
+      "soc_prefixes": ["29-", "31-"]
+    },
+    {
+      "id": "law-and-justice",
+      "label": "Law and Justice",
+      "group": "other",
+      "description": "Legal practice, courts and legal support.",
+      "onet_codes": ["13-1041.00"],
+      "soc_prefixes": ["23-"]
+    },
+    {
+      "id": "education-and-training",
+      "label": "Education and Training",
+      "group": "other",
+      "description": "Teaching, training and running libraries.",
+      "onet_codes": [],
+      "soc_prefixes": ["25-"]
+    },
+    {
+      "id": "arts-media-and-communication",
+      "label": "Arts, Media and Communication",
+      "group": "other",
+      "description": "Writing, broadcasting, performing, translating and the arts.",
+      "onet_codes": [],
+      "soc_prefixes": ["27-"]
+    },
+    {
+      "id": "community-and-social-services",
+      "label": "Community and Social Services",
+      "group": "other",
+      "description": "Counselling, social work and community support.",
+      "onet_codes": [],
+      "soc_prefixes": ["21-"]
+    },
+    {
+      "id": "sales-and-marketing",
+      "label": "Sales and Marketing",
+      "group": "other",
+      "description": "Selling, advertising, marketing and buying.",
+      "onet_codes": [],
+      "soc_prefixes": ["41-", "11-2"]
+    },
+    {
+      "id": "office-and-administration",
+      "label": "Office and Administration",
+      "group": "other",
+      "description": "Office, records, customer service and clerical work.",
+      "onet_codes": [],
+      "soc_prefixes": ["43-"]
+    },
+    {
+      "id": "hospitality-and-personal-services",
+      "label": "Hospitality and Personal Services",
+      "group": "other",
+      "description": "Food, hotels, tourism, recreation and personal care.",
+      "onet_codes": [],
+      "soc_prefixes": ["35-", "39-"]
+    },
+    {
+      "id": "building-repair-and-trades",
+      "label": "Building, Repair and Trades",
+      "group": "other",
+      "description": "Construction, installation, maintenance and repair.",
+      "onet_codes": [],
+      "soc_prefixes": ["47-", "49-", "37-"]
+    },
+    {
+      "id": "manufacturing-and-production",
+      "label": "Manufacturing and Production",
+      "group": "other",
+      "description": "Operating plants and machines, assembly and quality control.",
+      "onet_codes": [],
+      "soc_prefixes": ["51-"]
+    },
+    {
+      "id": "transport-and-logistics",
+      "label": "Transport and Logistics",
+      "group": "other",
+      "description": "Driving, flying, shipping and moving goods.",
+      "onet_codes": [],
+      "soc_prefixes": ["53-"]
+    },
+    {
+      "id": "public-safety-and-security",
+      "label": "Public Safety and Security",
+      "group": "other",
+      "description": "Police, firefighting, security and emergency services.",
+      "onet_codes": [],
+      "soc_prefixes": ["33-"]
+    },
+    {
+      "id": "agriculture-and-environment",
+      "label": "Agriculture and Environment",
+      "group": "other",
+      "description": "Farming, fishing, forestry and the environment.",
+      "onet_codes": [],
+      "soc_prefixes": ["45-"]
+    }
+  ]
+}

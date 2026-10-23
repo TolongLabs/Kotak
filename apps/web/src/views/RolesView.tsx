@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { DEFAULT_SCENARIO } from '@kotak/shared'
+import { AccessChip, AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
@@ -12,19 +13,25 @@ import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
-import { useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { toRoles } from '../engine/viewModel'
 import { updateGuestSession, useGuestSession } from '../session/store'
-import { deriveRoleEvidence, kopiRoleSpeech, pickDisplayRoles, sessionHeading } from './roles/derived'
+import {
+  deriveRoleEvidence,
+  kopiRoleSpeech,
+  pickDisplayRoles,
+  selectionNote,
+  sessionHeading,
+  type SelectionReason
+} from './roles/derived'
 import { estimatedCorners, formatFitPercent, formatLevel } from './roles/fit'
 import type { SourceRef } from '../demo/types'
+import { startAgain } from './checkup/startAgain'
 
 export function RolesView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(assessedRoleCode(session))
   const loaded = useCheckup({ scenario: DEFAULT_SCENARIO })
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
@@ -32,25 +39,25 @@ export function RolesView() {
   // Active ads and median pay per ranked role (#272), from JobStreet ads Kotak's admins approved.
   const markets = useJobMarkets(checkup?.roles.map((candidate) => candidate.onet_code) ?? [])
 
-  if (!session.role_code) {
+  if (!assessedRoleCode(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
         <Stepper step={4} labels={checkUpSteps} />
-        <CatDialogue pose="worried" speech="Tell me your job first, then I can find roles that fit." />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Your Job
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can find roles that fit.`} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
+          {startAgain(session).label}
         </Button>
       </div>
     )
   }
 
-  if (loaded.status !== 'ready' || bundle.status !== 'ready' || !checkup) {
+  if (loaded.status !== 'ready' || !checkup) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Matched Roles</h1>
         <Stepper step={4} labels={checkUpSteps} />
-        {loaded.status === 'error' || bundle.status === 'error' ? (
+        {loaded.status === 'error' ? (
           <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
         ) : (
           <CatDialogue pose="thinking" speech="Finding roles that fit your work…" />
@@ -59,21 +66,39 @@ export function RolesView() {
     )
   }
 
-  const { role, related } = bundle.data
+  const pool = loaded.data.bundle
+  const { role, related } = pool
   const bundleRoles = [role, ...related]
-  const ranked = toRoles(checkup, bundleRoles, session.role_code)
+  const ranked = toRoles(checkup, bundleRoles, session.role_code, { bundle: pool, session })
 
-  const { roles: displayRoles, defaultId } = pickDisplayRoles(session.goal, session.target_role_code, ranked)
-  const selected =
-    displayRoles.find((candidate) => candidate.id === selectedId) ??
-    displayRoles.find((candidate) => candidate.id === defaultId)
+  const widened = pool.candidates.length > 0
+  const {
+    roles: displayRoles,
+    defaultId,
+    defaultReason
+  } = pickDisplayRoles(session.goal, session.target_role_code, ranked, {
+    widened,
+    targets: session.profile.target_role_codes
+  })
+  // The visitor's own pick, else the role their roadmap is for, else Kopi's pick; the card says which.
+  const shown = (id: string | null) => (id ? displayRoles.find((candidate) => candidate.id === id) : undefined)
+  const userPick = shown(selectedId)
+  const planPick = shown(session.plan_role_code)
+  const selected = userPick ?? planPick ?? shown(defaultId)
+  const selectionReason: SelectionReason | null = userPick
+    ? { kind: 'picked' }
+    : planPick
+      ? { kind: 'plan' }
+      : defaultReason
 
   const detailCheckupRole = checkup.roles.find((candidate) => candidate.onet_code === selected?.id)
   const detailBundleRole = bundleRoles.find((candidate) => candidate.onet_code === selected?.id)
 
+  const kopiPick = shown(defaultId)
   const speech = kopiRoleSpeech(
-    ranked,
-    session.goal === 'explore' ? undefined : displayRoles.find((candidate) => candidate.id === defaultId)
+    widened ? displayRoles : ranked,
+    session.goal === 'explore' ? undefined : kopiPick,
+    kopiPick && defaultReason ? { role: kopiPick, reason: defaultReason } : undefined
   )
   const heading = sessionHeading(session.goal)
 
@@ -138,7 +163,8 @@ export function RolesView() {
         <h1 className="text-title-m font-bold text-text-primary lg:text-title-l">{heading}</h1>
         <p className="text-body-s text-text-muted">
           Fit is the share of each role’s needed levels you already meet. Outlook comes from DOSM job ads and AI use for
-          that role.
+          that role.{widened && ' Roles from your own choices come first.'} The details below and your roadmap follow
+          the highlighted card; pick any card to switch.
           {marketSource && (
             <>
               {' '}
@@ -159,10 +185,17 @@ export function RolesView() {
               role={displayRole}
               name="role"
               selected={displayRole.id === selected?.id}
+              note={displayRole.id === selected?.id && selectionReason ? selectionNote(selectionReason) : undefined}
               onSelect={() => setSelectedId(displayRole.id)}
               footer={
-                (market || goals.length > 0) && (
+                (market || goals.length > 0 || displayRole.access || displayRole.reasons?.length) && (
                   <span className="flex flex-col gap-2">
+                    {displayRole.access && displayRole.access.status !== 'open' && (
+                      <AccessChip access={displayRole.access} className="self-start" />
+                    )}
+                    {displayRole.reasons && displayRole.reasons.length > 0 && (
+                      <span className="text-body-s text-text-muted">{displayRole.reasons.join(' · ')}</span>
+                    )}
                     {market && (
                       <span className="text-body-s text-text-primary">
                         {market.ads.active.toLocaleString('en-MY')} active {market.ads.active === 1 ? 'ad' : 'ads'}
@@ -185,6 +218,14 @@ export function RolesView() {
           )
         })}
       </section>
+
+      {selected?.access && (
+        <AccessNotice
+          access={selected.access}
+          roleTitle={selected.title}
+          fit={{ percent: selected.fit, estimated: Boolean(selected.fitEstimated) }}
+        />
+      )}
 
       {selected && (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

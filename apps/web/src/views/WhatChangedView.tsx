@@ -7,13 +7,14 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
-import { useRoleBundle } from '../engine/bundle'
+import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { sourceRefs, toCorners } from '../engine/viewModel'
 import { useGuestSession } from '../session/store'
 import { useActiveSnapshot } from '../session/snapshot'
 import { whatChangedItems } from './changes/whatMoved'
 import { WhatChangedRadar } from './changes/WhatChangedRadar'
+import { startAgain } from './checkup/startAgain'
 
 const beforeSnapshot: SnapshotId = '2026-04'
 const afterSnapshot: SnapshotId = '2026-05'
@@ -52,19 +53,19 @@ function changeSpeech(
 
 export function WhatChangedView() {
   const session = useGuestSession()
-  const bundle = useRoleBundle(assessedRoleCode(session))
+  const bundle = useCheckupBundle(session)
   const [activeSnapshot, setActiveSnapshot] = useActiveSnapshot()
   const isMay = activeSnapshot === afterSnapshot
   const beforeLabel = snapshotMonthLabel(beforeSnapshot)
   const afterLabel = snapshotMonthLabel(afterSnapshot)
 
-  if (!session.role_code) {
+  if (!assessedRoleCode(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
-        <CatDialogue pose="worried" speech="Tell me your job first, then I can compare its snapshots." />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Your Job
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can compare its snapshots.`} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
+          {startAgain(session).label}
         </Button>
       </div>
     )

@@ -6,12 +6,15 @@ import {
   DEFAULT_SCENARIO,
   DEFAULT_SNAPSHOT,
   FreeResourceSchema,
+  CandidateReasonSchema,
   GoalSchema,
   OnetSocCodeSchema,
   PREVIOUS_SNAPSHOT,
+  ProfileSchema,
   RatingSchema,
   RoadmapItemSchema,
   RoadmapSchema,
+  RoleAccessSchema,
   ScenarioSchema,
   SdgTargetSchema,
   SnapshotDiffSchema,
@@ -44,11 +47,15 @@ export const CornerAnswerSchema = z
   .strict()
 
 const AssessmentParamsSchema = z.object({
-  role_code: OnetSocCodeSchema, // the user's current job
+  // The user's current job; null without one, which needs the target goal and a target role.
+  role_code: OnetSocCodeSchema.nullable().default(null),
   answers: z.array(CornerAnswerSchema), // on the assessed role's corners; unanswered corners are left out
   goal: GoalSchema.default('explore'),
   target_role_code: OnetSocCodeSchema.nullable().default(null), // with the target goal, the assessed role
-  scenario: ScenarioSchema.default(DEFAULT_SCENARIO)
+  scenario: ScenarioSchema.default(DEFAULT_SCENARIO),
+  // Who the user is (#284): with it, the ranking adds the roles their study, picked areas and targets lead to, and
+  // each role says what stands in the way.
+  profile: ProfileSchema.default(() => ProfileSchema.parse({}))
 })
 
 export const CheckupParamsSchema = AssessmentParamsSchema.extend({
@@ -137,7 +144,9 @@ export const RankedRoleSchema = z
         .object({ corner_id: z.string().min(1), name: z.string().min(1), level: LevelSchema, target_level: z.number() })
         .strict()
     ),
-    outlook: OutlookSchema
+    outlook: OutlookSchema,
+    access: RoleAccessSchema, // what stands between the user and the role, by a fixed rule
+    reasons: z.array(CandidateReasonSchema) // why the role is ranked: related to the job, a target, an area, the field
   })
   .strict()
 
@@ -169,7 +178,13 @@ export const RoadmapReportSchema = RoadmapSchema.pick({
   finish_date: true,
   dividend: true // the hours AI saves, to suggest as weekly hours
 })
-  .extend({ ...RoleRefSchema.shape, steps: z.array(RoadmapStepSchema) })
+  .extend({
+    ...RoleRefSchema.shape,
+    steps: z.array(RoadmapStepSchema),
+    // A qualification or admission comes before the steps when the planned role is a regulated profession.
+    access: RoleAccessSchema,
+    tools: z.array(z.object({ name: z.string().min(1), in_demand: z.boolean() }).strict()) // employers name them
+  })
   .strict()
 
 export const CheckupReportSchema = z
@@ -181,6 +196,33 @@ export const CheckupReportSchema = z
     roadmap: RoadmapReportSchema,
     sources: z.array(SourceSchema), // every source above, once
     unavailable: z.array(OnetSocCodeSchema) // related roles whose file failed, left out of the ranking
+  })
+  .strict()
+
+export const SuggestRolesParamsSchema = z
+  .object({
+    profile: ProfileSchema.default(() => ProfileSchema.parse({})),
+    current_role_code: OnetSocCodeSchema.nullable().default(null), // the user's current job, never suggested
+    snapshot_id: SnapshotIdSchema.default(DEFAULT_SNAPSHOT),
+    limit: z.number().int().min(1).max(12).default(6)
+  })
+  .strict()
+
+export const SuggestedRoleSchema = z
+  .object({
+    ...RoleRefSchema.shape,
+    reasons: z.array(z.string().min(1)), // why, in plain words
+    interest_match: z.number().min(0).max(1).nullable(), // how well the job matches the interests picked
+    outlook: OutlookSchema,
+    access: RoleAccessSchema
+  })
+  .strict()
+
+export const SuggestRolesReportSchema = z
+  .object({
+    input: SuggestRolesParamsSchema,
+    roles: z.array(SuggestedRoleSchema), // best first; empty without a target, area, field or interests
+    sources: z.array(SourceSchema)
   })
   .strict()
 
@@ -207,3 +249,6 @@ export type RoadmapStep = z.infer<typeof RoadmapStepSchema>
 export type RoadmapReport = z.infer<typeof RoadmapReportSchema>
 export type CheckupReport = z.infer<typeof CheckupReportSchema>
 export type WhatChangedReport = z.infer<typeof WhatChangedReportSchema>
+export type SuggestRolesParams = z.input<typeof SuggestRolesParamsSchema>
+export type SuggestedRole = z.infer<typeof SuggestedRoleSchema>
+export type SuggestRolesReport = z.infer<typeof SuggestRolesReportSchema>

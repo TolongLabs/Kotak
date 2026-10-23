@@ -43,7 +43,8 @@ async function bindCheckup(
 ): Promise<{ checkup: BoundCheckup | null; about: string }> {
   if (!chat) return { checkup: null, about: WITHOUT_CHECKUP }
   const { answers, ...checkup } = chat
-  const role = await kotak.role(assessedRoleCode(checkup))
+  // The request schema refuses a check-up with neither a current job nor a target.
+  const role = await kotak.role(assessedRoleCode(checkup)!)
   const bound = cornerAnswers(role, answers)
   if (!bound.length) return { checkup: null, about: withoutAnswers(role) }
   return { checkup: { ...checkup, answers: bound }, about: WITH_CHECKUP }

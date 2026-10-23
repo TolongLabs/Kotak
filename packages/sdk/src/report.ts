@@ -1,13 +1,22 @@
-import { uniqueSources, type BundleRole, type Roadmap, type SnapshotId } from '@kotak/shared'
+import { uniqueSources, type BundleRole, type Roadmap, type RoleAccess, type SnapshotId } from '@kotak/shared'
 import type { z } from 'zod'
 import type { Checkup, CheckupRole } from './checkup'
+import { accessFor, pathwaysSources, rankedReasons, type CheckupBundle } from './pathways'
 import type { CheckupParamsSchema, CheckupReport, CornerReport, RankedRole, RoadmapReport } from './schemas'
 import { biggestGaps, cornerReasoning, isEstimatedLevel, roadmapSchedule, roleOutlook } from './view'
 
 // Turns the engine's check-up into the report. The reason, outlook, gaps and step weeks come from ./view, as the web's
 // view models' do, so the report and the app say the same thing.
 
-function rankedRole(ranked: CheckupRole, role: BundleRole, snapshotId: SnapshotId): RankedRole {
+type Pool = Pick<CheckupBundle, 'role' | 'pathways' | 'candidates'>
+
+function rankedRole(
+  ranked: CheckupRole,
+  role: BundleRole,
+  snapshotId: SnapshotId,
+  input: z.output<typeof CheckupParamsSchema>,
+  pool: Pool
+): RankedRole {
   const names = new Map(role.corners.map((corner) => [corner.corner_id, corner.name]))
   return {
     rank: ranked.rank,
@@ -22,12 +31,18 @@ function rankedRole(ranked: CheckupRole, role: BundleRole, snapshotId: SnapshotI
       level: term.user_level,
       target_level: term.target_level
     })),
-    outlook: roleOutlook(role, snapshotId)
+    outlook: roleOutlook(role, snapshotId),
+    access: accessFor(ranked.onet_code, input.profile, pool.pathways, input.role_code),
+    reasons: rankedReasons(ranked.onet_code, {
+      role: pool.role,
+      roleCode: input.role_code,
+      candidates: pool.candidates
+    })
   }
 }
 
 /** The roadmap's steps in order, each placed in the weeks its hours take at the weekly hours. */
-function roadmapReport(roadmap: Roadmap, role: BundleRole): RoadmapReport {
+function roadmapReport(roadmap: Roadmap, role: BundleRole, access: RoleAccess): RoadmapReport {
   const corners = new Map(role.corners.map((corner) => [corner.corner_id, corner]))
   const steps = roadmapSchedule(roadmap).map(({ item, weeks, start_date, end_date }) => {
     const corner = corners.get(item.corner_id)!
@@ -57,7 +72,9 @@ function roadmapReport(roadmap: Roadmap, role: BundleRole): RoadmapReport {
     weeks: roadmap.weeks,
     start_date: roadmap.start_date,
     finish_date: roadmap.finish_date,
-    dividend: roadmap.dividend
+    dividend: roadmap.dividend,
+    access,
+    tools: role.tools
   }
 }
 
@@ -66,7 +83,8 @@ export function checkupReport(
   input: z.output<typeof CheckupParamsSchema>,
   roles: BundleRole[],
   checkup: Checkup,
-  unavailable: string[]
+  unavailable: string[],
+  pool: Pool
 ): CheckupReport {
   const byCode = new Map(roles.map((role) => [role.onet_code, role]))
   const corners = checkup.corners.map((corner): CornerReport => ({
@@ -91,11 +109,18 @@ export function checkupReport(
     input,
     role: { onet_code: roles[0]!.onet_code, title: roles[0]!.title },
     corners,
-    roles: checkup.roles.map((ranked) => rankedRole(ranked, byCode.get(ranked.onet_code)!, checkup.snapshotId)),
-    roadmap: roadmapReport(checkup.roadmap, byCode.get(checkup.planRoleCode)!),
+    roles: checkup.roles.map((ranked) =>
+      rankedRole(ranked, byCode.get(ranked.onet_code)!, checkup.snapshotId, input, pool)
+    ),
+    roadmap: roadmapReport(
+      checkup.roadmap,
+      byCode.get(checkup.planRoleCode)!,
+      accessFor(checkup.planRoleCode, input.profile, pool.pathways, input.role_code)
+    ),
     sources: uniqueSources([
       ...checkup.corners.flatMap((corner) => corner.verdict.sources),
-      ...checkup.roadmap.dividend.sources
+      ...checkup.roadmap.dividend.sources,
+      ...pathwaysSources(pool.pathways)
     ]),
     unavailable
   }

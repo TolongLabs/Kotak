@@ -5,6 +5,8 @@ import {
   DEFAULT_SNAPSHOT,
   ManifestSchema,
   QuestionsSchema,
+  SuggestRolesParamsSchema,
+  SuggestRolesReportSchema,
   WhatChangedParamsSchema,
   WhatChangedReportSchema,
   type Kotak
@@ -86,8 +88,13 @@ function tool<I extends z.ZodObject, O extends z.ZodObject>(
 
 // The SDK's inputs, with a description per field for the model. Defaults stay the SDK's, which are the web app's.
 const checkup = CheckupParamsSchema.shape
+const profile = checkup.profile.describe(
+  "Who the user is, from what they told you; leave out what you don't know. situation: working, studying, graduated, between_jobs or returning. education_level: secondary (SPM or below), certificate, diploma, bachelor, master or doctorate. field_of_study: a field id from suggest_roles' list. years_experience: whole years of work. interest_areas: up to 3 area ids, such as ai-and-data, cybersecurity, cloud-and-infrastructure, software-and-web, design-and-ux, law-and-justice, health-and-care or business-and-finance. target_role_codes: up to 3 roles they want, from find_role. interests: how many of 3 activities they enjoy in each RIASEC area (realistic, investigative, artistic, social, enterprising, conventional), 0 to 3 each."
+)
 const assessment = {
-  role_code: checkup.role_code.describe("O*NET-SOC code of the user's current job, from find_role, e.g. 15-1254.00."),
+  role_code: checkup.role_code.describe(
+    "O*NET-SOC code of the user's current job, from find_role, e.g. 15-1254.00; null when they have no job, which needs the target goal."
+  ),
   answers: checkup.answers.describe(
     "One entry per corner the user answered, on the corners get_checkup_questions gave for the assessed role (the target role with the target goal). basic and advanced: the user's rating, an integer from 1 (Not yet) to 4 (Yes, on my own), of the corner's basic and advanced statements. Leave out corners the user didn't answer."
   ),
@@ -99,7 +106,8 @@ const assessment = {
   ),
   scenario: checkup.scenario.describe(
     "The AI pace: slow is Malaysia's current pace (default), fast is if AI uptake speeds up."
-  )
+  ),
+  profile
 }
 const snapshot = (what: string, fallback: string) =>
   `${what}: 2026-05 (May 2026, the latest) or 2026-04 (April 2026), ${fallback} by default. It sets the AI-use and job-ad data the verdicts read.`
@@ -152,6 +160,25 @@ const registry = {
       .strict(),
     outputSchema: QuestionsSchema,
     run: ({ role_code, ...options }, { kotak }) => kotak.questions(role_code, options)
+  }),
+
+  suggest_roles: tool('suggest_roles', {
+    inputSchema: SuggestRolesParamsSchema.extend({
+      profile,
+      current_role_code: SuggestRolesParamsSchema.shape.current_role_code.describe(
+        "O*NET-SOC code of the user's current job, from find_role, so it isn't suggested; null without one."
+      ),
+      snapshot_id: SuggestRolesParamsSchema.shape.snapshot_id.describe(snapshot('The data snapshot', DEFAULT_SNAPSHOT)),
+      limit: SuggestRolesParamsSchema.shape.limit.describe('How many roles to suggest, 6 by default.')
+    }),
+    outputSchema: SuggestRolesReportSchema.extend({
+      fields: z.array(z.object({ id: z.string(), label: z.string(), group: z.string() }).strict()),
+      areas: z.array(z.object({ id: z.string(), label: z.string() }).strict())
+    }),
+    async run(input, { kotak }) {
+      const [report, options] = await Promise.all([kotak.suggestRoles(input), kotak.pathwayOptions()])
+      return { ...report, ...options }
+    }
   }),
 
   run_checkup: tool('run_checkup', {

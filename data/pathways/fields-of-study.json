@@ -1,0 +1,302 @@
+{
+  "note": "Fields of study for the intake (#284), each a set of CIP 2020 code prefixes matched against the NCES CIP to SOC crosswalk. A SOC All Other code (ending in 9) only reaches a field through its O*NET detailed occupations when its major group is one of the field group's home_majors, so Psychology never reaches Wind Energy Operations Managers.",
+  "home_majors": {
+    "Computing": ["15"],
+    "Engineering": ["17"],
+    "Built Environment": ["17", "13"],
+    "Health": ["29", "31"],
+    "Business": ["11", "13", "41", "43"],
+    "Law": ["23"],
+    "Arts and Humanities": ["25", "27"],
+    "Social Sciences": ["19", "21", "13"],
+    "Science and Maths": ["19", "15"],
+    "Education": ["25"],
+    "Design and Creative": ["27", "15"],
+    "Hospitality and Tourism": ["35", "39", "11"],
+    "Agriculture and Environment": ["19", "45"],
+    "Other": []
+  },
+  "fields": [
+    {
+      "id": "computer-science",
+      "label": "Computer Science and IT",
+      "group": "Computing",
+      "cip_prefixes": ["11.01", "11.02", "11.04", "11.05", "11.07", "11.09", "11.10", "30.08"]
+    },
+    {
+      "id": "software-engineering",
+      "label": "Software Engineering",
+      "group": "Computing",
+      "cip_prefixes": ["14.0903", "11.02"]
+    },
+    {
+      "id": "cybersecurity",
+      "label": "Cybersecurity",
+      "group": "Computing",
+      "cip_prefixes": ["11.1003", "43.0403", "43.0404"]
+    },
+    {
+      "id": "data-science",
+      "label": "Data Science and Analytics",
+      "group": "Computing",
+      "cip_prefixes": ["30.70", "30.71", "11.0802", "11.0102"]
+    },
+    {
+      "id": "electrical-engineering",
+      "label": "Electrical and Electronic Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.1001", "14.1099", "15.0303", "15.0305", "15.0306", "15.0399"]
+    },
+    {
+      "id": "mechanical-engineering",
+      "label": "Mechanical Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.19", "15.0805", "15.0803"]
+    },
+    {
+      "id": "mechatronics-engineering",
+      "label": "Mechatronics Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.42", "14.41", "15.04"]
+    },
+    {
+      "id": "civil-engineering",
+      "label": "Civil Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.0801", "14.0803", "14.0804", "14.0899", "15.02"]
+    },
+    {
+      "id": "chemical-engineering",
+      "label": "Chemical Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.0701", "14.0799", "41.0303"]
+    },
+    {
+      "id": "petroleum-engineering",
+      "label": "Petroleum Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.25", "15.0903"]
+    },
+    {
+      "id": "manufacturing-engineering",
+      "label": "Manufacturing Engineering",
+      "group": "Engineering",
+      "cip_prefixes": ["14.35", "14.36", "15.06", "15.0702"]
+    },
+    {
+      "id": "architecture",
+      "label": "Architecture",
+      "group": "Built Environment",
+      "cip_prefixes": ["04.02", "04.06", "04.09", "15.1303"]
+    },
+    {
+      "id": "quantity-surveying",
+      "label": "Quantity Surveying",
+      "group": "Built Environment",
+      "cip_prefixes": ["15.1001", "52.20"]
+    },
+    {
+      "id": "estate-management",
+      "label": "Estate Management",
+      "group": "Built Environment",
+      "cip_prefixes": ["52.15", "04.10"]
+    },
+    { "id": "medicine", "label": "Medicine", "group": "Health", "cip_prefixes": ["51.1201"] },
+    { "id": "dentistry", "label": "Dentistry", "group": "Health", "cip_prefixes": ["51.04", "51.05"] },
+    {
+      "id": "pharmacy",
+      "label": "Pharmacy",
+      "group": "Health",
+      "cip_prefixes": ["51.2001", "51.2003", "51.2008", "51.2010", "51.0805"]
+    },
+    { "id": "nursing", "label": "Nursing", "group": "Health", "cip_prefixes": ["51.38", "51.39"] },
+    {
+      "id": "biomedical-science",
+      "label": "Biomedical Science",
+      "group": "Health",
+      "cip_prefixes": ["26.0102", "26.05", "51.10"]
+    },
+    {
+      "id": "physiotherapy",
+      "label": "Physiotherapy and Rehabilitation",
+      "group": "Health",
+      "cip_prefixes": ["51.2306", "51.2308", "51.2314", "51.0803", "51.0806", "51.2605"]
+    },
+    {
+      "id": "occupational-safety-health",
+      "label": "Occupational Safety and Health",
+      "group": "Health",
+      "cip_prefixes": ["15.07", "51.2202", "51.2206"]
+    },
+    { "id": "accounting", "label": "Accounting", "group": "Business", "cip_prefixes": ["52.03", "52.16"] },
+    { "id": "finance", "label": "Finance and Banking", "group": "Business", "cip_prefixes": ["52.08"] },
+    {
+      "id": "business-administration",
+      "label": "Business Administration",
+      "group": "Business",
+      "cip_prefixes": ["52.01", "52.02", "52.07", "52.11"]
+    },
+    { "id": "marketing", "label": "Marketing", "group": "Business", "cip_prefixes": ["52.14", "52.18"] },
+    {
+      "id": "actuarial-science",
+      "label": "Actuarial Science",
+      "group": "Business",
+      "cip_prefixes": ["52.1304", "52.0215", "52.17"]
+    },
+    {
+      "id": "human-resource-management",
+      "label": "Human Resource Management",
+      "group": "Business",
+      "cip_prefixes": ["52.10"]
+    },
+    {
+      "id": "logistics",
+      "label": "Logistics and Supply Chain",
+      "group": "Business",
+      "cip_prefixes": ["52.0202", "52.0203", "52.0209", "52.0409", "52.0410"]
+    },
+    { "id": "law", "label": "Law", "group": "Law", "cip_prefixes": ["22.00", "22.01", "22.02"] },
+    {
+      "id": "linguistics-languages",
+      "label": "Linguistics and Languages",
+      "group": "Arts and Humanities",
+      "cip_prefixes": ["16"]
+    },
+    {
+      "id": "english-language-literature",
+      "label": "English Language and Literature",
+      "group": "Arts and Humanities",
+      "cip_prefixes": ["23"]
+    },
+    {
+      "id": "islamic-studies",
+      "label": "Islamic Studies",
+      "group": "Arts and Humanities",
+      "cip_prefixes": ["38.02", "39.04", "39.06", "39.0802"]
+    },
+    {
+      "id": "mass-communication",
+      "label": "Mass Communication",
+      "group": "Arts and Humanities",
+      "cip_prefixes": ["09", "10.02", "50.06"]
+    },
+    { "id": "psychology", "label": "Psychology", "group": "Social Sciences", "cip_prefixes": ["42"] },
+    { "id": "economics", "label": "Economics", "group": "Social Sciences", "cip_prefixes": ["45.06", "52.06"] },
+    {
+      "id": "political-science",
+      "label": "Politics and International Relations",
+      "group": "Social Sciences",
+      "cip_prefixes": ["45.09", "45.10"]
+    },
+    {
+      "id": "social-work",
+      "label": "Social Work and Sociology",
+      "group": "Social Sciences",
+      "cip_prefixes": ["44.00", "44.07", "45.11"]
+    },
+    {
+      "id": "public-administration",
+      "label": "Public Administration",
+      "group": "Social Sciences",
+      "cip_prefixes": ["44.04", "44.05"]
+    },
+    {
+      "id": "counselling",
+      "label": "Counselling",
+      "group": "Social Sciences",
+      "cip_prefixes": ["13.11", "42.2803", "51.15"]
+    },
+    {
+      "id": "mathematics",
+      "label": "Mathematics and Statistics",
+      "group": "Science and Maths",
+      "cip_prefixes": ["27"]
+    },
+    { "id": "chemistry", "label": "Chemistry", "group": "Science and Maths", "cip_prefixes": ["40.05", "41.03"] },
+    {
+      "id": "biology",
+      "label": "Biology",
+      "group": "Science and Maths",
+      "cip_prefixes": ["26.01", "26.03", "26.04", "26.05", "26.07", "26.08", "26.13"]
+    },
+    {
+      "id": "biotechnology",
+      "label": "Biotechnology",
+      "group": "Science and Maths",
+      "cip_prefixes": ["26.12", "41.01", "26.02", "26.08"]
+    },
+    {
+      "id": "education",
+      "label": "Education and Teaching",
+      "group": "Education",
+      "cip_prefixes": ["13.01", "13.03", "13.10", "13.12", "13.13"]
+    },
+    {
+      "id": "tesl",
+      "label": "TESL and English Teaching",
+      "group": "Education",
+      "cip_prefixes": ["13.1401", "13.1499", "13.1305"]
+    },
+    {
+      "id": "early-childhood-education",
+      "label": "Early Childhood Education",
+      "group": "Education",
+      "cip_prefixes": ["13.1209", "13.1210", "13.1015", "19.0706", "19.0708", "19.0711"]
+    },
+    {
+      "id": "graphic-design",
+      "label": "Graphic Design",
+      "group": "Design and Creative",
+      "cip_prefixes": ["50.0401", "50.0402", "50.0409", "50.0410", "10.0303"]
+    },
+    {
+      "id": "creative-multimedia",
+      "label": "Creative Multimedia",
+      "group": "Design and Creative",
+      "cip_prefixes": ["11.0801", "11.0803", "11.0804", "10.0304", "50.0102", "50.0411", "50.0706", "09.0702"]
+    },
+    {
+      "id": "fashion-design",
+      "label": "Fashion Design",
+      "group": "Design and Creative",
+      "cip_prefixes": ["50.0407", "19.09", "52.1902"]
+    },
+    {
+      "id": "hospitality-tourism",
+      "label": "Hospitality and Tourism",
+      "group": "Hospitality and Tourism",
+      "cip_prefixes": ["52.09", "52.1905", "52.1906", "52.1910"]
+    },
+    { "id": "culinary-arts", "label": "Culinary Arts", "group": "Hospitality and Tourism", "cip_prefixes": ["12.05"] },
+    {
+      "id": "agriculture",
+      "label": "Agriculture and Plantation",
+      "group": "Agriculture and Environment",
+      "cip_prefixes": ["01.00", "01.0101", "01.0102", "01.0104", "01.03", "01.06", "01.11", "01.12"]
+    },
+    {
+      "id": "food-science",
+      "label": "Food Science and Technology",
+      "group": "Agriculture and Environment",
+      "cip_prefixes": ["01.10", "01.04"]
+    },
+    {
+      "id": "environmental-science",
+      "label": "Environmental Science",
+      "group": "Agriculture and Environment",
+      "cip_prefixes": [
+        "03.01",
+        "03.0201",
+        "03.0204",
+        "03.0205",
+        "03.0206",
+        "03.0209",
+        "30.33",
+        "15.0506",
+        "15.0507",
+        "15.0508"
+      ]
+    },
+    { "id": "other", "label": "Other", "group": "Other", "cip_prefixes": [] }
+  ]
+}

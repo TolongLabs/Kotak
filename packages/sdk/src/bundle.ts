@@ -1,9 +1,11 @@
 import {
   BUNDLE_PATHS,
   BundleManifestSchema,
+  BundlePathwaysSchema,
   BundleRoleIndexSchema,
   BundleRoleSchema,
   type BundleManifest,
+  type BundlePathways,
   type BundleRole,
   type BundleRoleIndex
 } from '@kotak/shared'
@@ -84,30 +86,51 @@ async function readFile<T>(source: BundleSource, path: string, schema: { parse: 
 
 export interface RoleBundle {
   role: BundleRole
-  /** The related roles that loaded, in O*NET's order; the fit scores rank them with the role itself. */
+  /**
+   * The related roles that loaded, in O*NET's order, then the extra roles asked for (#284's wider pool); the fit
+   * scores rank them with the role itself.
+   */
   related: BundleRole[]
-  /** Related roles whose file failed; they are left out of the ranking rather than failing the role. */
+  /** Related or extra roles whose file failed; they are left out of the ranking rather than failing the role. */
   unavailable: string[]
 }
 
 export interface Bundle {
   manifest: () => Promise<BundleManifest>
   roleIndex: () => Promise<BundleRoleIndex>
+  /** Fields of study, interest areas, regulated professions and each occupation's preparation (#284). */
+  pathways: () => Promise<BundlePathways>
   role: (onetCode: string) => Promise<BundleRole>
-  /** The role and every related role, which the check-up ranks it against. */
-  roleBundle: (onetCode: string) => Promise<RoleBundle>
+  /** The role, every related role and the `extra` roles, which the check-up ranks it against. */
+  roleBundle: (onetCode: string, extra?: string[]) => Promise<RoleBundle>
 }
+
+/** Role files kept at most; the least recently read goes first. The manifest, index and pathways always stay. */
+const MAX_CACHED_ROLES = 200
 
 /** The bundle's files, each read once and kept; a failed file is read again on the next try. */
 export function createBundle(source: BundleSource): Bundle {
   const cache = new Map<string, Promise<unknown>>()
+  const roleFiles: string[] = []
 
   function load<T>(path: string, schema: { parse: (value: unknown) => T }): Promise<T> {
     let request = cache.get(path) as Promise<T> | undefined
+    const isRole = path.startsWith('/data/roles/')
+    if (request && isRole) {
+      roleFiles.splice(roleFiles.indexOf(path), 1)
+      roleFiles.push(path)
+    }
     if (!request) {
       request = readFile(source, path, schema)
       cache.set(path, request)
-      request.catch(() => cache.delete(path))
+      request.catch(() => {
+        cache.delete(path)
+        if (isRole && roleFiles.includes(path)) roleFiles.splice(roleFiles.indexOf(path), 1)
+      })
+      if (isRole) {
+        roleFiles.push(path)
+        while (roleFiles.length > MAX_CACHED_ROLES) cache.delete(roleFiles.shift()!)
+      }
     }
     return request
   }
@@ -117,16 +140,18 @@ export function createBundle(source: BundleSource): Bundle {
   return {
     manifest: () => load(BUNDLE_PATHS.manifest, BundleManifestSchema),
     roleIndex: () => load(BUNDLE_PATHS.roles, BundleRoleIndexSchema),
+    pathways: () => load(BUNDLE_PATHS.pathways, BundlePathwaysSchema),
     role,
-    async roleBundle(onetCode) {
+    async roleBundle(onetCode, extra = []) {
       const main = await role(onetCode)
-      const results = await Promise.allSettled(main.related.map((related) => role(related.onet_code)))
+      const codes = [...new Set([...main.related.map((related) => related.onet_code), ...extra])].filter(
+        (code) => code !== onetCode
+      )
+      const results = await Promise.allSettled(codes.map((code) => role(code)))
       return {
         role: main,
         related: results.flatMap((result) => (result.status === 'fulfilled' ? [result.value] : [])),
-        unavailable: main.related
-          .filter((_, i) => results[i]!.status === 'rejected')
-          .map((related) => related.onet_code)
+        unavailable: codes.filter((_, i) => results[i]!.status === 'rejected')
       }
     }
   }

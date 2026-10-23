@@ -1,4 +1,4 @@
-import type { FreeResource } from '@kotak/shared'
+import type { CandidateReason, FreeResource, RoleAccess } from '@kotak/shared'
 
 export type VerdictId = 'rising' | 'steady' | 'declining' | 'split' | 'unknown'
 
@@ -35,6 +35,12 @@ export type Role = {
   missing: string
   reasoning?: string
   sources?: number[]
+  // What stands between the user and the role, and why it is listed (#284); left out on the sample profile.
+  access?: RoleAccess
+  reasons?: string[]
+  reasonCodes?: CandidateReason[]
+  // The pool's fixed score with the outlook and fit added, to order a widened list (#284).
+  poolScore?: number
 }
 
 export type RoadmapStep = {
@@ -97,12 +103,6 @@ export type JobSuggestion = {
   onet: string
   onetTitle: string
   alsoKnownAs?: string
-}
-
-export type Goal = {
-  id: 'stay' | 'target' | 'explore'
-  title: string
-  description: string
 }
 
 export type ImpactArea = {

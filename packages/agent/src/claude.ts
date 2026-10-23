@@ -14,7 +14,7 @@ import { kotakTools, malaysiaToday, type ToolDeps } from './tools'
 export type BoundCheckup = Omit<z.output<typeof CheckupParamsSchema>, 'scenario'>
 
 /** Only the user's check-up sets these. */
-const OWN_FIELDS = ['role_code', 'answers', 'goal', 'target_role_code', 'start_date'] as const
+const OWN_FIELDS = ['role_code', 'answers', 'goal', 'target_role_code', 'start_date', 'profile'] as const
 /** The model may change these for a what-if; left out, they keep the user's value. */
 const WHAT_IF_FIELDS = ['plan_role_code', 'snapshot_id', 'weekly_hours'] as const
 
@@ -40,9 +40,21 @@ export function createKotakClaudeTools(
     const own = bound ? OWN_FIELDS.filter((field) => field in shape) : []
     const whatIf = bound ? WHAT_IF_FIELDS.filter((field) => field in shape) : []
     const ownValues = Object.fromEntries(own.map((field) => [field, checkup![field]]))
-    const modelSchema = tool.inputSchema
-      .omit(Object.fromEntries(own.map((field) => [field, true])))
-      .extend(Object.fromEntries(whatIf.map((field) => [field, shape[field].default(checkup![field])])))
+    // suggest_roles takes no answers, but with a check-up it starts from the user's own profile and job, so Kopi
+    // suggests what the app would; the model may still change them to explore.
+    const profileDefaults =
+      !bound && checkup && 'profile' in shape
+        ? {
+            profile: shape.profile.default(checkup.profile),
+            ...('current_role_code' in shape
+              ? { current_role_code: shape.current_role_code.default(checkup.role_code) }
+              : {})
+          }
+        : {}
+    const modelSchema = tool.inputSchema.omit(Object.fromEntries(own.map((field) => [field, true]))).extend({
+      ...Object.fromEntries(whatIf.map((field) => [field, shape[field].default(checkup![field])])),
+      ...profileDefaults
+    })
 
     const runnable: BetaRunnableTool = {
       type: 'custom',
