@@ -47,7 +47,10 @@ const OPTIONAL: Record<string, Schema> = {
   'data/generated/role-corners.json': RoleCornersSchema
 }
 
-const found = new Set(await Array.fromAsync(new Glob('data/**/*.json').scan({ cwd: ROOT })))
+// Glob returns backslash paths on Windows; the schema keys use forward slashes.
+const found = new Set(
+  (await Array.fromAsync(new Glob('data/**/*.json').scan({ cwd: ROOT }))).map((path) => path.replaceAll('\\', '/'))
+)
 let failures = 0
 for (const path of Object.keys(EXPECTED).filter((path) => !found.has(path))) {
   console.error(`missing  ${path}`)
