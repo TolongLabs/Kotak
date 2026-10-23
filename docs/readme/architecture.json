@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Kotak Architecture",
+    "output": ".archify/architecture-kotak-20261023-110500/architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/TolongLabs/sdc-hack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "bf2420349d4060e11905538fb4bdfbbaa0e224d7"
+    }
+  },
+  "components": [
+    {
+      "id": "mcp-clients",
+      "type": "external",
+      "label": "MCP Clients",
+      "sublabel": "Claude, Cursor, VS Code",
+      "pos": [580, 40],
+      "size": [170, 64],
+      "sources": [{ "path": "apps/api/src/routes/mcp.ts", "line": 1, "end_line": 45 }]
+    },
+    {
+      "id": "worker",
+      "type": "external",
+      "label": "Malaysian Worker",
+      "sublabel": "phone or desktop browser",
+      "icon": "person",
+      "pos": [40, 190],
+      "size": [170, 64]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Kotak Web App",
+      "sublabel": "React 19 · @kotak/sdk rules",
+      "pos": [310, 190],
+      "size": [170, 64],
+      "sources": [
+        { "path": "apps/web/src/engine/checkup.ts", "line": 1, "end_line": 8 },
+        { "path": "apps/web/src/engine/bundle.ts", "line": 1, "end_line": 9 }
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Hono API",
+      "sublabel": "Replit (Bun) · CF Worker",
+      "pos": [580, 190],
+      "size": [170, 64],
+      "sources": [
+        { "path": "apps/api/src/app.ts", "line": 49, "end_line": 56 },
+        { "path": "apps/api/src/bun.ts", "line": 11, "end_line": 16 },
+        { "path": "apps/api/src/worker.ts", "line": 70, "end_line": 80 }
+      ]
+    },
+    {
+      "id": "claude",
+      "type": "external",
+      "label": "Claude Haiku 5.5",
+      "sublabel": "explain · match · chat",
+      "pos": [860, 120],
+      "size": [170, 64],
+      "sources": [{ "path": "apps/api/src/ai/claude.ts", "line": 7, "end_line": 33 }]
+    },
+    {
+      "id": "elevenlabs",
+      "type": "external",
+      "label": "ElevenLabs",
+      "sublabel": "Kopi's voice",
+      "pos": [860, 270],
+      "size": [170, 64],
+      "sources": [{ "path": "apps/api/src/routes/tts.ts", "line": 28, "end_line": 31 }]
+    },
+    {
+      "id": "neon",
+      "type": "database",
+      "label": "Neon Postgres",
+      "sublabel": "national view · scraper",
+      "pos": [580, 340],
+      "size": [170, 64],
+      "sources": [
+        { "path": "apps/api/src/routes/national-view.ts", "line": 80, "end_line": 81 },
+        { "path": "apps/api/src/scrapers/jobstreet/database.ts", "line": 1, "end_line": 4 }
+      ]
+    },
+    {
+      "id": "bundle",
+      "type": "database",
+      "label": "Static Data Bundle",
+      "sublabel": "dated JSON snapshots",
+      "pos": [310, 340],
+      "size": [170, 64],
+      "sources": [{ "path": "scripts/build-data.ts", "line": 1, "end_line": 4 }]
+    },
+    {
+      "id": "sources",
+      "type": "external",
+      "label": "Public Data",
+      "sublabel": "O*NET · AEI · DOSM JMI",
+      "pos": [40, 490],
+      "size": [170, 64],
+      "sources": [
+        { "path": "scripts/ingest/onet.ts", "line": 1, "end_line": 5 },
+        { "path": "scripts/ingest/aei.ts", "line": 1, "end_line": 3 },
+        { "path": "scripts/ingest/dosm-jmi.ts", "line": 1, "end_line": 4 }
+      ]
+    },
+    {
+      "id": "scripts",
+      "type": "backend",
+      "label": "Bun Data Scripts",
+      "sublabel": "ingest:* · build:data",
+      "pos": [310, 490],
+      "size": [170, 64],
+      "sources": [
+        { "path": "scripts/build-data.ts", "line": 54, "end_line": 59 },
+        { "path": ".github/workflows/refresh-data.yml", "line": 17, "end_line": 19 }
+      ]
+    },
+    {
+      "id": "runpod",
+      "type": "cloud",
+      "label": "RunPod GPU Batch",
+      "sublabel": "Qwen3.8-27B on vLLM",
+      "pos": [580, 490],
+      "size": [170, 64],
+      "sources": [{ "path": "scripts/corners/run-batch.ts", "line": 1, "end_line": 44 }]
+    }
+  ],
+  "boundaries": [{ "kind": "region", "label": "Build time, before deploy", "wraps": ["scripts", "runpod"] }],
+  "connections": [
+    { "id": "worker-to-web", "from": "worker", "to": "web", "label": "check-up", "variant": "emphasis" },
+    { "id": "web-to-bundle", "from": "web", "to": "bundle", "label": "fetch JSON" },
+    { "id": "web-to-api", "from": "web", "to": "api", "label": "HTTPS /api" },
+    { "id": "mcp-to-api", "from": "mcp-clients", "to": "api", "label": "/api/mcp" },
+    { "id": "api-to-claude", "from": "api", "to": "claude", "label": "Claude API" },
+    { "id": "api-to-elevenlabs", "from": "api", "to": "elevenlabs", "label": "TTS" },
+    { "id": "api-to-neon", "from": "api", "to": "neon", "label": "SQL" },
+    { "id": "sources-to-scripts", "from": "sources", "to": "scripts", "label": "download" },
+    { "id": "scripts-to-runpod", "from": "scripts", "to": "runpod", "label": "batch, once", "variant": "dashed" },
+    { "id": "scripts-to-bundle", "from": "scripts", "to": "bundle", "label": "build:data" }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Rules Decide",
+      "items": [
+        "Fixed rules in @kotak/sdk set every verdict, score and roadmap step, in the browser",
+        "Claude matches job titles and writes explanations; a verifier keeps an explanation only if it states the rules' verdict and cites its sources"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Data",
+      "items": [
+        "O*NET 30.1, Anthropic Economic Index (April and May 2026) and DOSM Job Market Insights",
+        "RunPod drafted 6 skills and 18 can-do statements for each of 923 jobs, once",
+        "GitHub Actions checks for new snapshots every Saturday"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Hosting",
+      "items": [
+        "The same Hono app runs on Replit (Bun) and Cloudflare Workers",
+        "Without keys, explanations fall back to templates and Kopi speaks as text"
+      ]
+    }
+  ]
+}
