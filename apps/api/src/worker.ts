@@ -1,6 +1,6 @@
 import type { ExecutionContext } from 'hono'
 import { app } from './app'
-import { validateSessionRequest, type ScraperAdminBindings } from './admin-auth'
+import { serveAdminDocument, type ScraperAdminBindings } from './admin-auth'
 import type { AiBindings } from './ai/env'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
 import { JOBSTREET_CAREERS } from './scrapers/jobstreet/careers'
@@ -58,22 +58,7 @@ export default {
     }
     const url = new URL(request.url)
     if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
-      if (url.pathname !== '/admin/sign-in') {
-        const user = await validateSessionRequest(request, env.DATABASE_URL)
-        if (!user || url.pathname === '/admin')
-          return new Response(null, {
-            status: 302,
-            headers: {
-              Location: new URL(user ? '/admin/scraping' : '/admin/sign-in', url).href,
-              'Cache-Control': 'no-store'
-            }
-          })
-      }
-      if (!env.ASSETS) return new Response('Admin interface is unavailable.', { status: 503 })
-      const response = await env.ASSETS.fetch(request)
-      const headers = new Headers(response.headers)
-      headers.set('Cache-Control', 'no-store')
-      return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+      return serveAdminDocument(request, env.DATABASE_URL, env.ASSETS)
     }
     return app.fetch(request, env, executionContext)
   },
