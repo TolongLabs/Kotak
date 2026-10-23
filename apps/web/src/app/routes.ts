@@ -10,5 +10,6 @@ export const routes = {
   changes: '/app/changes',
   connect: '/app/connect',
   settings: '/app/settings',
+  adminSignIn: '/admin/sign-in',
   adminScraping: '/admin/scraping'
 } as const

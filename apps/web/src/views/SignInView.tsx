@@ -95,6 +95,16 @@ export function SignInView() {
             <Lock className="mt-0.5 h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
             <span>Your check-up stays on this device.</span>
           </p>
+
+          <p className="text-center text-body-s text-text-muted">
+            Managing scraper data?{' '}
+            <Link
+              to={routes.adminSignIn}
+              className="font-semibold text-text-primary underline decoration-border-control underline-offset-4 hover:decoration-text-primary"
+            >
+              Admin Sign In
+            </Link>
+          </p>
         </div>
       </main>
 

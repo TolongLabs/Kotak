@@ -1,7 +1,10 @@
 import type { ExecutionContext } from 'hono'
 import { app } from './app'
+import { validateSessionRequest, type ScraperAdminBindings } from './admin-auth'
+import type { AiBindings } from './ai/env'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
 import { JOBSTREET_CAREERS } from './scrapers/jobstreet/careers'
+import type { KotakBindings } from './tool-deps'
 
 type ScheduledController = { scheduledTime: number; cron: string }
 type AgentNamespace = {
@@ -28,6 +31,10 @@ export class KotakAgent {
     return response
   }
 }
+type AssetsBinding = { fetch(request: Request): Promise<Response> }
+type WorkerBindings = AiBindings &
+  KotakBindings &
+  ScraperAdminBindings & { ASSETS?: AssetsBinding; KOTAK_AGENT?: AgentNamespace }
 
 function singaporeDate(date: Date) {
   const values = new Map(
@@ -44,12 +51,31 @@ function singaporeDate(date: Date) {
 }
 
 export default {
-  fetch(request: Request, env: { KOTAK_AGENT?: AgentNamespace }, context: ExecutionContext) {
+  async fetch(request: Request, env: WorkerBindings, executionContext: ExecutionContext) {
     if (env.KOTAK_AGENT && AGENT_PATHS.has(new URL(request.url).pathname)) {
       // Kotak's users are in Malaysia; the hint only places the object when it is first created.
       return env.KOTAK_AGENT.getByName('kotak', { locationHint: 'apac' }).fetch(request)
     }
-    return app.fetch(request, env, context)
+    const url = new URL(request.url)
+    if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
+      if (url.pathname !== '/admin/sign-in') {
+        const user = await validateSessionRequest(request, env.DATABASE_URL)
+        if (!user || url.pathname === '/admin')
+          return new Response(null, {
+            status: 302,
+            headers: {
+              Location: new URL(user ? '/admin/scraping' : '/admin/sign-in', url).href,
+              'Cache-Control': 'no-store'
+            }
+          })
+      }
+      if (!env.ASSETS) return new Response('Admin interface is unavailable.', { status: 503 })
+      const response = await env.ASSETS.fetch(request)
+      const headers = new Headers(response.headers)
+      headers.set('Cache-Control', 'no-store')
+      return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+    }
+    return app.fetch(request, env, executionContext)
   },
   async scheduled(controller: ScheduledController, env: { DATABASE_URL?: string }) {
     const url = env.DATABASE_URL?.trim()

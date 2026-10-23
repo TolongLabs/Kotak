@@ -18,6 +18,7 @@ import { SignInView } from './views/SignInView'
 import { SettingsView } from './views/SettingsView'
 import { WhatChangedView } from './views/WhatChangedView'
 import { AdminScrapingView } from './views/AdminScrapingView'
+import { AdminSignInView } from './views/AdminSignInView'
 
 // Validates the sample engine snapshot at startup (#29).
 EngineSnapshotSchema.parse(sampleSnapshot)
@@ -35,6 +36,7 @@ const appViews: Record<string, ComponentType> = {
 }
 
 function Screen({ path, dataLabel }: { path: string; dataLabel: string }) {
+  if (path === routes.adminSignIn) return <AdminSignInView />
   if (path === routes.adminScraping) return <AdminScrapingView />
   if (path === routes.landing) return <LandingView />
   if (path === routes.signIn) return <SignInView />
