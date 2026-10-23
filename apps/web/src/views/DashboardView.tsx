@@ -15,7 +15,7 @@ import { useRoleBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
-import { toReadinessPoints, toRoadmapSteps } from '../engine/roadmapModel'
+import { ROADMAP_WEEKS, toReadinessPoints, toReadinessWindow, toRoadmapSteps } from '../engine/roadmapModel'
 import { useGuestSession } from '../session/store'
 
 const beforeSnapshot: SnapshotId = '2026-04'
@@ -233,14 +233,16 @@ export function DashboardView() {
   const fitRoleCode = planRoleCodeOf(session)
   const fitRole = currentCheckup.roles.find((entry) => entry.onet_code === fitRoleCode)
   const fitBundleRole = [role, ...bundle.data.related].find((entry) => entry.onet_code === fitRoleCode) ?? role
-  const readinessPoints = toReadinessPoints(slowCheckup, fastCheckup, fitBundleRole)
+  const readinessPoints = toReadinessWindow(toReadinessPoints(slowCheckup, fastCheckup, fitBundleRole))
   const readinessKey = DEFAULT_SCENARIO === 'fast' ? 'fast' : 'plan'
   const readinessSeries = readinessPoints.map((point) => ({ week: point.week, value: point[readinessKey] }))
   const readyPoint = readinessPoints.find((point) => point[readinessKey] >= 80)
   const readinessCaption = readyPoint
-    ? `Ready by Week ${readyPoint.week} at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
+    ? readyPoint.week === 0
+      ? 'Already at least 80% fit.'
+      : `80% fit by Week ${readyPoint.week} at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
     : readinessPoints.length > 1
-      ? `Not ready within ${Math.ceil(currentCheckup.roadmap.weeks)} weeks at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
+      ? `Below 80% fit within ${ROADMAP_WEEKS} weeks at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
       : 'No readiness estimate yet.'
 
   const totalWeeks = Math.ceil(currentCheckup.roadmap.weeks)
