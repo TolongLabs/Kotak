@@ -8,7 +8,7 @@ web
 
 Working adults in Malaysia, in any industry, who wonder what AI means for their job, and students, graduates and people between jobs or returning to work who want to know where to start. Four kinds come to Kotak: people who want to stay strong in their current role, people who want to move to a role they already have in mind, people who want to know where they could go, and people who aren't sure yet. They come with a worry and a few minutes, often on a phone, and should leave with a plan they can start this week.
 
-A second audience reads the anonymous national view: officers at TalentCorp or HRD Corp who want to see which rising skills Malaysian workers lack most.
+A second audience reads the anonymous national view: officers at TalentCorp or HRD Corp who want to see which rising skills Malaysian workers lack most. The app has had no National View screen since [#167](https://github.com/TolongLabs/Kotak/pull/167), so they reach it through Kotak's `national_skill_gaps` tool, in Ask Kopi or their own AI assistant over MCP, or through the API's summary route. Until real check-ups arrive, the view holds labelled sample rows.
 
 ## Product Purpose
 

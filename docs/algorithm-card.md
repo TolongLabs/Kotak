@@ -62,6 +62,7 @@ Levels are self-reported, and the radar says so.
 - **Slow scenario**: a least-squares line through the dated points, run 12 months past the latest data month.
 - **Fast scenario**: Malaysia moves halfway to Singapore's usage index (May 2026: 0.87 for Malaysia, 5.81 for Singapore). Growing use grows that many times faster; shrinking use shrinks that many times slower, so the fast scenario never flips a shrinking corner.
 - Every projected value is labelled an estimate.
+- The engine computes both scenarios for every corner. The app shows the slow one and has had no scenario switch since [#167]; the fast one shows only when the two scenarios disagree, as a Split corner's second future, and Ask Kopi and MCP clients can still ask for it.
 
 ```text
 target       = clamp(2.0 + ai_effect + demand_effect, 1.0, 3.0)
@@ -69,7 +70,9 @@ ai_effect    = ± growth ÷ (growth + 0.5)      + for augmentation, − for auto
 demand_effect = +0.5 up, 0 flat or Unknown, −0.5 down
 ```
 
-The radar's dashed line draws the target, so a new snapshot or the scenario toggle moves it.
+The radar's dashed line draws the slow scenario's target, so a new snapshot moves it. Its label counts 12 months from the latest data month: "Needed by May 2027" on the May 2026 snapshot.
+
+[#167]: https://github.com/TolongLabs/Kotak/pull/167
 
 ## Fit score
 

@@ -19,8 +19,8 @@ Contents:
 
 - **Snapshot**: the verdicts, fit scores and roadmaps come only from dated files committed to `data/` and built into static JSON by `bun run build:data`. The build fails if a number has no source URL or date.
 - **Live**: the national view's totals and the job-ad market are read from Neon Postgres at request time. Neither sets a verdict.
-- **Sample**: the national view shows labelled sample rows until a group has 10 real check-ups, and the demo profiles are written by the team.
-- **Personal data**: none. Kotak asks for no name, email or CV, and the national view stores a role code, corner levels and a date.
+- **Sample**: the national view shows labelled sample rows until a group has 10 real check-ups, and no screen posts check-ups. The demo profiles are written by the team.
+- **Personal data**: none. Kotak asks for no name, email or CV, and the national view's table takes only a role code, corner levels and a date.
 
 ## Loaded datasets
 
@@ -52,9 +52,10 @@ Where Malaysian Economic Index rows are missing or suppressed, the engine borrow
 
 ## Live data
 
-- **National view** (`national_checkups` on Neon): a finished check-up posts its role code, 1 to 6 corner levels and the date. The summary shows real averages only for a group with 10 or more real check-ups.
+- **National view** (`national_checkups` on Neon): `POST /api/national-view/checkups` stores a role code, 1 to 6 corner levels and a date, but no screen calls it, so the table holds the labelled sample rows. The summary, from `GET /api/national-view/summary` and the `national_skill_gaps` tool in Ask Kopi and MCP clients, shows real averages only for a role with 10 or more real check-ups. The app has had no National View screen since [#167].
 - **JobStreet Malaysia job ads**: the team's scraper collects JobStreet search results nightly from 22 October 2026, and an admin approves each ad under one O\*NET occupation. Only approved ads count. Kotak shows ad counts, advertised pay quartiles, states, work types and skill-mention shares, each with its date, and never an ad's text, title or employer. The figures sit beside the verdicts and set none; [#275] tracks a demand rule once there are enough weeks.
 
+[#167]: https://github.com/TolongLabs/Kotak/pull/167
 [#275]: https://github.com/TolongLabs/Kotak/issues/275
 
 ## Cited, not loaded
@@ -71,7 +72,7 @@ DOSM Quarterly Employment Statistics, the other OpenDOSM series and the GitHub I
 
 ## Samples
 
-- **National view seed rows**: at least 10 labelled rows per occupation group, re-seeded on each deploy with `is_sample = true`. They never count toward a group's 10 real check-ups, and the screen tags a seed-backed group "Sample Data (until n >= 10)".
+- **National view seed rows**: at least 10 labelled rows per occupation group, re-seeded on each deploy with `is_sample = true`. They never count toward a group's 10 real check-ups. The summary marks a seed-backed role `is_sample: true`, and the `national_skill_gaps` tool labels its count "sample rows, not real check-ups".
 - **Demo profiles**: the persona in the pitch and the demo video are written by the team and labelled as samples. They are not user research.
 
 ## Known gaps
