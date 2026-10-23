@@ -65,12 +65,10 @@ jobs:
             ANTHROPIC_API_KEY
             ELEVENLABS_API_KEY
             DATABASE_URL
-            SCRAPER_ADMIN_TOKEN
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SCRAPER_ADMIN_TOKEN: ${{ secrets.SCRAPER_ADMIN_TOKEN }}
 
       # TRD.md: the build writes the national view's labelled sample rows, at least 10 per occupation group (#147).
       # The seed replaces only rows where is_sample is true. It runs after the deploy, because the Worker it replaces

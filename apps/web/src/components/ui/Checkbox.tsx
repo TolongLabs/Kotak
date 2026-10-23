@@ -59,8 +59,17 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           aria-checked={indeterminate ? 'mixed' : checked}
           aria-invalid={ariaInvalid}
           onChange={(event) => onChange(event.currentTarget.checked)}
+          // The fill follows the props, not :checked or :disabled, so a mixed box is filled like a ticked one and a
+          // disabled ticked box still shows its mark. Pass disabled here rather than relying on a disabled fieldset.
           className={cn(
-            'peer absolute inset-0 h-5 w-5 appearance-none rounded-sm border border-border-control bg-bg-default checked:border-text-primary checked:bg-text-primary focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 focus-visible:outline-bg-default disabled:cursor-not-allowed disabled:border-border-subtle disabled:bg-bg-panel aria-invalid:border-state-error',
+            'peer absolute inset-0 h-5 w-5 appearance-none rounded-sm border focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2 focus-visible:outline-bg-default disabled:cursor-not-allowed aria-invalid:border-state-error',
+            checked || indeterminate
+              ? disabled
+                ? 'border-text-muted bg-text-muted'
+                : 'border-text-primary bg-text-primary'
+              : disabled
+                ? 'border-border-subtle bg-bg-panel'
+                : 'border-border-control bg-bg-default',
             className
           )}
         />

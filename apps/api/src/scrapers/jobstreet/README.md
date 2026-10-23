@@ -58,8 +58,7 @@ The production API and web app run on Cloudflare Workers. A Worker cannot launch
 
 1. Create or select the Neon project used by the production app. Create a database and copy its pooled Postgres connection string from the Neon connection details.
 2. Add `DATABASE_URL` as a GitHub Actions repository secret. The deploy workflow applies the idempotent SQL migrations before deploying and passes this secret to the Worker.
-3. Generate a long random `SCRAPER_ADMIN_TOKEN`. Add it as a GitHub Actions secret and as a Cloudflare Worker secret for trusted automation. Browser admins use the provisioned accounts described below; the service token is not entered into or stored by the browser UI.
-4. For a local database migration or data import, set `DATABASE_URL` in the shell without committing it. Preview local captures first with `bun run jobs:import --dry-run`, then run `bun run jobs:import` to import every completed capture under `data/jobstreet/`.
+3. For a local database migration or data import, set `DATABASE_URL` in the shell without committing it. Preview local captures first with `bun run jobs:import --dry-run`, then run `bun run jobs:import` to import every completed capture under `data/jobstreet/`.
 
 The import is repeatable and commits each run in one transaction. Job listings are keyed by JobStreet job ID and search career. Each distinct run observation remains in `jobstreet_observations` with its original `scraped_at` and run ID; legacy captures without an ID receive a stable content-derived ID. Detail attempts come from the raw `details.jsonl` ledger, while cached descriptions in an enriched view do not become fresh attempts. Depth captures without an enriched file can recover listing snapshots from their raw details. The latest successful detail is also attached to the listing, and older imports cannot replace a newer description. Re-running an import does not duplicate an identical observation. Failed runs with valid partial captures are imported with their failed status so their data remains traceable.
 
@@ -67,13 +66,32 @@ Runner artifacts retain `database_run_id` alongside the browser pipeline's `run_
 
 ### Browser runner
 
-On a Windows host with Clearcote available, install the repository dependencies and set `DATABASE_URL`. Start `bun run scraper:worker` as a long-running process. The worker polls Neon for queued breadth or depth runs and uses the same pipeline, profile lifecycle, scrolling, pagination, delays and verification timeout as local commands. `BROWSER_PROFILE_ID` is optional. `JOBSTREET_DELAY_MS` and `JOBSTREET_DELAY_JITTER_MS` default to 30,000 ms each.
+On a Windows host with Clearcote available, install the repository dependencies. From a trusted checkout, set the owner `DATABASE_URL` only while running `bun run scraper:setup`. The setup creates the unprivileged SQL role `kotak_jobstreet_runner`, grants it access only to the JobStreet queue and data tables plus their two identity sequences, and saves its connection URL to the Git-ignored `.local/jobstreet-runner.json`. It does not grant deletion, schema changes, admin-session access or access to national-view tables.
+
+Start `bun run scraper:worker` as a long-running process. The fixed launcher reads the private runner URL, starts only the JobStreet runner, disables child `.env` loading and passes an explicit environment allowlist. The child receives `JOBSTREET_RUNNER_DATABASE_URL`; it does not receive `DATABASE_URL`, admin credentials, AI keys or cloud API keys. The runner writes only under `data/jobstreet/production`, and browser profiles stay under `.local/browser-profiles`. `BROWSER_PROFILE_ID` is optional and must be a UUID. `JOBSTREET_DELAY_MS` and `JOBSTREET_DELAY_JITTER_MS` default to 30,000 ms each.
 
 The scraper remains headed by default to match local operation. Set `BROWSER_HEADLESS=true` only when the production host cannot keep a desktop session open. Headless mode is configurable, but a verification page still requires completion in a visible browser; the unattended runner waits for the configured timeout and records a failed run rather than trying to bypass it.
 
+At startup the runner checks that its database role is exactly the restricted one. It refuses to run if the role can change search titles, delete scrape data, use any other table or view, create schemas or tables, or holds role attributes or memberships that would lift those limits; table and column grants both count. Its console output strips control characters from database values. One runner runs per machine: a `runner.lock` file under `data/jobstreet/production` holds its process ID, and a lock left by an exited process is replaced. While a run continues, the runner saves its progress to Neon at most once a minute, sending only the listings found since the last save. A failed save is logged and retried at the next save, and the scrape continues. A run that was ended elsewhere, for example after its heartbeat expired, stays ended: the runner stops scraping it and does not change its status, though the listings it found are still saved. The browser may only open the task's own JobStreet pages. A redirect or any other navigation that leaves `https://my.jobstreet.com` closes the page and ends the scrape.
+
+The website writes queue rows to Neon; the runner makes outbound database and JobStreet connections while polling those rows. It opens no inbound server, exposes no HTTP control surface and accepts no generic command or user-supplied process arguments. These boundaries restrict its task interface and database credentials. Bun, Clearcote and Chromium still run as ordinary processes under the Windows user account; this launcher is not an operating-system sandbox.
+
 ### Admin panel and schedule
 
-Open `/admin/sign-in`, or use **Admin Sign In** on the public sign-in page. `/admin` and `/admin/scraping` redirect unauthenticated visitors there. Sign in with a provisioned admin username and password, choose one of the seeded career queries, and select breadth or depth. The page shows listing and description counts plus the latest 50 run records. The seeded searches are Software Engineer, Front-End Developer, Design Systems Developer and Accessibility Engineer. These JobStreet search titles are separate from the public check-up's O*NET suggestions.
+Open `/admin/sign-in`, or use **Admin Sign In** on the public sign-in page. `/admin` and `/admin/scraping` redirect unauthenticated visitors there. Sign in with a provisioned admin username and password, choose an active search title, and select breadth or depth. The page shows each title's listing, approval and description counts plus the latest 50 run records.
+
+**Search titles.** Each search title is a row in `jobstreet_careers` and runs exactly one JobStreet keyword search, `https://my.jobstreet.com/<slug>-jobs`. The seeded titles are Software Engineer, Front-End Developer, Design Systems Developer and Accessibility Engineer. Under **Search Titles**, an admin adds a title as Malaysian ads write it, such as "UI/UX Designer", and picks the O*NET occupation it is for. The picker lists the check-up's own title match first, labelled as Kopi's match, an exact O*NET title or a closest title-search match to check, then other O*NET title-search hits. Nothing is chosen until the admin picks one. After an occupation is chosen, the alternate titles O*NET lists for it appear as one-click starting points.
+
+A title must start with a letter or number and may use English letters, accented letters, numbers, spaces and `& / . , ' ( ) -`. The admin page checks it with the API's own rules, `parseCareerTitle` in `@kotak/shared`. The slug keeps only English letters and digits, so `+` and `#` are refused: "C++ Developer" would search for "C Developer". The page previews the resulting search URL. A title's occupation can change until listings are approved under it, and changing it clears the title's stored sorting answers. Each title has three switches: **Show in Check-Up**, **Nightly Refresh** and **Active**. Turning a title off stops new runs; the runner also refuses a queued run whose title is off.
+
+**Reviewing a batch.** JobStreet's keyword search pads thin results with loosely related ads. In stored data, only 1 of 1,192 Design Systems Developer listings had "design system" in its title. A title therefore reaches the check-up only through listings an admin approves. **Review** on a finished breadth run, including a failed run that saved listings, sorts each listing title against the search title's occupation:
+
+- A title that is the search title itself is a match without AI. Case, spacing, hyphens, seniority words such as Senior or Junior, and bracketed notes about the work arrangement, such as "(Hybrid)" or "(12 Months Contract)", are ignored. Plurals are not, because "Account Executive" (sales) and "Accounts Executive" (accounting) are different jobs. One-word search titles never match this way.
+- Claude sorts every other title as a match, a different occupation or unsure, 40 titles per request. The request names the occupation's O*NET alternate titles and its neighbouring occupations, and treats the titles as data. An answer counts only if it copies its title back. Answers are stored per search title and exact listing title in `jobstreet_title_verdicts`, so later batches reuse them; a wrong or partial answer is not kept.
+
+O*NET title search alone was not used for sorting: it maps Malaysian titles such as "Accounts Executive" to the wrong occupation. A listing starts ticked when its current decision is an approval. A listing that was never decided starts ticked when the admin approved every earlier listing with the same title, or, without that history, when its title is a match. **Approve** records a decision for every listing the page showed in `jobstreet_listing_reviews`, under the title's current occupation; listings saved to the batch after the page loaded stay undecided. A listing keeps the decision of the newest batch reviewed, so approving an older batch leaves newer decisions alone, and the review page locks those rows. **Reject** withdraws the decisions the batch made; listings it had taken over from an older batch become undecided again.
+
+A search title is in the check-up's job-title suggestions while it has at least one listing approved under its current occupation and **Show in Check-Up** is on. `GET /api/roles/aliases` serves those titles with their O*NET codes. Each Worker keeps the list for a minute and browsers for five minutes, so a change can take a few minutes to appear. If Claude is unavailable, the batch can still be reviewed by hand.
 
 There is no public admin registration. After applying database migrations, provision an account from a trusted checkout with `DATABASE_URL` configured:
 
@@ -83,11 +101,11 @@ bun run admin:create --username admin
 
 The command generates a strong password and writes it to the Git-ignored `.local/admin-credentials.txt`; it never prints the password. Each contributor can receive a separate username by running the command with a different `--username` and a fresh `--output .local/<name>-credentials.txt`. An existing credential file is never overwritten. To choose a password, put it in a local environment variable and pass its name with `--password-env`; the password must contain 16–72 UTF-8 bytes. To rotate an existing account's password and revoke all of its sessions, add `--reset-password` and choose a fresh output filename. Setting that user's `enabled` column to `false` also denies its current sessions immediately.
 
-Passwords are stored as salted bcrypt hashes in Neon. Sessions use opaque random tokens, stored only as SHA-256 hashes in the database, with an eight-hour expiry. The browser receives a `Secure`, `HttpOnly`, `SameSite=Strict` cookie; passwords and service tokens are not retained in browser storage. Sign Out revokes the database session. The Worker gates the dashboard document as well as every scraper data/action endpoint. Login has an IP rate limit and a 15-minute account lock after five failed attempts; unsafe cookie-authenticated requests require same-origin JSON requests. Guest sessions confer no admin access. Trusted scripts can continue using `Authorization: Bearer <SCRAPER_ADMIN_TOKEN>`.
+Passwords are stored as salted bcrypt hashes in Neon. Sessions use opaque random tokens, stored only as SHA-256 hashes in the database, with an eight-hour expiry. The browser receives a `Secure`, `HttpOnly`, `SameSite=Strict` cookie; passwords are not retained in browser storage. Sign Out revokes the database session. The Worker gates the dashboard document as well as every scraper data/action endpoint. Login has an IP rate limit and a 15-minute account lock after five failed attempts; unsafe cookie-authenticated requests require same-origin JSON requests. Guest sessions confer no admin access. Admin access is account-only; there is no trusted-script bearer-token fallback.
 
-Cloudflare queues one breadth refresh for each career daily at **12:00 a.m. Asia/Singapore** (`16:00 UTC`). Keep in mind that result totals are estimates for broad JobStreet queries, not exact counts of jobs whose title matches the career. Breadth stores each repeated sighting with its date while updating the latest listing view. Depth is manual and selects listings without a saved description; it does not refresh existing descriptions by default.
+Cloudflare queues one breadth refresh daily at **12:00 a.m. Asia/Singapore** (`16:00 UTC`) for each active title with **Nightly refresh** on. The four seeded titles start with it on; titles added on the admin page start with it off. Keep in mind that result totals are estimates for broad JobStreet queries, not exact counts of jobs whose title matches the career. Breadth stores each repeated sighting with its date while updating the latest listing view. Depth is manual and selects listings without a saved description; it does not refresh existing descriptions by default.
 
-The queue is consumed only while the Bun runner is online. If no runner is connected, runs stay queued and the admin page shows that status. The Cloudflare Worker handles scheduling and queueing; it does not run a browser. A run left in `running` for more than 12 hours is marked failed on the next runner poll so it cannot block later work for that career. The timeout is intentionally much longer than ordinary runs at the configured pace.
+The queue is consumed only while the Bun runner is online. If no runner is connected, runs stay queued and the admin page shows that status. The Cloudflare Worker handles scheduling and queueing; it does not run a browser. A running scrape renews its heartbeat every minute. A run whose heartbeat is more than five minutes old is marked failed on the next runner poll, so a crashed host cannot block later work for that title. Runs from runner versions without a heartbeat keep a 12-hour limit.
 
 ## Depth and description reuse
 
@@ -238,6 +256,11 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 ## Implementation
 
 - `cli.ts`: command arguments and environment configuration.
+- `careers.ts`: search-title validation, slugs and the one JobStreet search URL each title may open.
+- `tasks.ts`: the queue's capability boundary: only a search-title slug and breadth or depth.
+- `runner.ts`: the production queue runner and its database-role check.
+- `review.ts`: batch sorting: the search-title rule and the Claude prompt.
+- `store.ts`: run, listing, observation and depth persistence to Neon.
 - `browser-profile.ts`: adapter to the local `@kotak/browser` profile lifecycle.
 - `pipeline.ts`: bounded navigation, retries, card validation, pagination checks and persisted artifacts.
 - `depth.ts`: description extraction, cache reuse, dated detail attempts and the unified enriched view.
@@ -248,7 +271,7 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 - `prepare.ts`, `prepare-cli.ts`: offline contributor-file merge, retained observation history and date summaries.
 - `files.ts`: exclusive output directories and report/view replacement.
 
-The admin API only queues work; the standalone Bun runner owns browser launch and database ingestion. Scraped listings are not currently fed into the role-scoring engine.
+The admin API queues and reviews work; the standalone Bun runner owns browser launch and database ingestion. Approved titles feed the check-up's job-title suggestions. Scraped listings are not currently fed into the role-scoring engine.
 
 ## References
 
@@ -257,5 +280,8 @@ The admin API only queues work; the standalone Bun runner owns browser launch an
 - [Playwright persistent context API](https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context)
 - [Playwright navigation](https://playwright.dev/docs/api/class-page#page-goto)
 - [Cloudflare challenge response detection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/detect-response/)
+- [Neon role management](https://neon.com/docs/manage/roles)
+- [PostgreSQL `GRANT`](https://www.postgresql.org/docs/current/sql-grant.html)
+- [Bun environment variables](https://bun.sh/docs/runtime/environment-variables)
 - [Node file operations](https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath)
 - [JobStreet robots directives](https://my.jobstreet.com/robots.txt)
