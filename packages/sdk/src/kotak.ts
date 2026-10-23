@@ -2,7 +2,6 @@ import {
   DEFAULT_SCENARIO,
   diffSnapshots,
   engineInputs,
-  followUpStatement,
   questionOrder,
   roleVerdicts,
   transferAnswers,
@@ -92,8 +91,8 @@ export function createKotak({ source }: { source: BundleSource }): Kotak {
             corner_id: id,
             name: corner.name,
             verdict: verdicts.find((v) => v.corner_id === id)!.status,
-            can_do: statements.working,
-            follow_up: { if_yes: statements[followUpStatement(true)], if_no: statements[followUpStatement(false)] }
+            basic: statements.basic,
+            advanced: statements.advanced
           }
         })
       }

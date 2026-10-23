@@ -7,9 +7,9 @@ import {
   SourceSchema,
   VerdictSchema
 } from './engine'
-import { GoalSchema, WeeklyHoursSchema } from './session'
+import { GoalSchema, RatingSchema, WeeklyHoursSchema } from './session'
 
-const UserLevelSchema = z.number().int().min(0).max(3)
+const UserLevelSchema = z.number().min(0).max(3)
 const TargetLevelSchema = z.number().min(1).max(3)
 // O*NET-SOC codes such as 15-1254.00, and SOC major groups such as 15-0000.
 const OnetRoleCodeSchema = z.string().regex(/^\d{2}-\d{4}\.\d{2}$/)
@@ -195,7 +195,7 @@ export const AgentChatCheckupSchema = z
     goal: GoalSchema.default('explore'),
     target_role_code: OnetRoleCodeSchema.nullable().default(null),
     plan_role_code: OnetRoleCodeSchema.nullable().default(null),
-    answers: z.array(z.boolean().nullable()).length(12),
+    answers: z.array(RatingSchema.nullable()).length(12),
     snapshot_id: SnapshotIdSchema.default(DEFAULT_SNAPSHOT),
     weekly_hours: WeeklyHoursSchema,
     start_date: z.iso.date()

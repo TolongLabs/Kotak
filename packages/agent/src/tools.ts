@@ -85,7 +85,7 @@ const checkup = CheckupParamsSchema.shape
 const assessment = {
   role_code: checkup.role_code.describe("O*NET-SOC code of the user's current job, from find_role, e.g. 15-1254.00."),
   answers: checkup.answers.describe(
-    "One entry per corner the user answered, on the corners get_checkup_questions gave for the assessed role (the target role with the target goal). can_do: the answer to the corner's can_do statement. follow_up: the answer to the follow-up it picked. Leave out corners the user didn't answer."
+    "One entry per corner the user answered, on the corners get_checkup_questions gave for the assessed role (the target role with the target goal). basic and advanced: the user's rating, an integer from 1 (Not yet) to 4 (Yes, on my own), of the corner's basic and advanced statements. Leave out corners the user didn't answer."
   ),
   goal: checkup.goal.describe(
     'stay: stay strong in the current job. target: move to target_role_code, which the check-up then assesses. explore: see which related roles fit. Default explore.'

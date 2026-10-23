@@ -20,7 +20,11 @@ console.info(
 
 for (const { onet_code } of demo.roles) {
   const questions = await kotak.questions(onet_code)
-  const answers = questions.corners.map((corner) => ({ corner_id: corner.corner_id, can_do: false, follow_up: true }))
+  const answers = questions.corners.map((corner) => ({
+    corner_id: corner.corner_id,
+    basic: 3 as const,
+    advanced: 1 as const
+  }))
   const report = CheckupReportSchema.parse(
     await kotak.checkup({ role_code: onet_code, answers, start_date: START_DATE })
   )
@@ -28,7 +32,7 @@ for (const { onet_code } of demo.roles) {
   const { input, roadmap } = report
 
   console.info(`\n${report.role.title} (${onet_code}), snapshot ${input.snapshot_id}, ${input.scenario} scenario`)
-  console.info(`Asked first: ${questions.corners[0]!.name}: "${questions.corners[0]!.can_do}"`)
+  console.info(`Asked first: ${questions.corners[0]!.name}: "${questions.corners[0]!.basic}"`)
   for (const corner of report.corners)
     console.info(
       `  ${corner.name}: level ${corner.level} (${corner.level_label}), target ${corner.target_level.toFixed(1)}, ${corner.verdict_label}. ${corner.reason}`

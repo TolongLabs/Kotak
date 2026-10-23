@@ -10,11 +10,16 @@ export const RoleQualitySchema = z.enum(['auto-generated', 'human-checked'])
 /** A UN SDG target, such as `4.4`, `8.5` or `4.a`. */
 export const SdgTargetSchema = z.string().regex(/^(?:[1-9]|1[0-7])\.(?:[1-9]\d?|[a-z])$/)
 
-/** Yes/no can-do statements; the check-up asks `working` first, then `advanced` or `basic`. */
+/** Can-do statements; the check-up asks `basic` and `advanced`, each on a 1 to 4 scale. */
 export const CanDoStatementsSchema = z
   .object({ basic: z.string().min(1), working: z.string().min(1), advanced: z.string().min(1) })
   .strict()
   .refine((s) => new Set([s.basic, s.working, s.advanced]).size === 3, 'the three statements must differ')
+
+/** Optional reversed wording (agreeing means less skill) for the `basic` and `advanced` statements; shown in the reversed question slots. */
+export const ReversedStatementsSchema = z
+  .object({ basic: z.string().min(1).optional(), advanced: z.string().min(1).optional() })
+  .strict()
 
 /** AI-drafted hours to reach each statement from the level below it. Estimates, never shown as data. */
 export const MilestoneHoursSchema = z
@@ -40,6 +45,7 @@ export const RoleCornerSchema = z
     /** The IWAs of `task_ids` that the corner covers. */
     iwa_ids: z.array(OnetIwaIdSchema).min(1),
     statements: CanDoStatementsSchema,
+    reversed_statements: ReversedStatementsSchema.nullish(),
     hours: MilestoneHoursSchema,
     sdg_targets: z.array(SdgTargetSchema).min(1),
     resources: z.array(FreeResourceSchema).min(1)

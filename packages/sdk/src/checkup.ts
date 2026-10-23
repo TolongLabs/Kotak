@@ -12,6 +12,7 @@ import {
   type CornerVerdict,
   type FitScore,
   type GuestSession,
+  type Rating,
   type Roadmap,
   type Scenario,
   type SnapshotId,
@@ -27,7 +28,7 @@ export interface CheckupInput {
   role: BundleRole
   related: BundleRole[]
   /** The session's 12 answer slots, as answerSlots lays them out. */
-  answers: (boolean | null)[]
+  answers: (Rating | null)[]
   snapshotId: SnapshotId
   scenario: Scenario
   weeklyHours: number | null
@@ -73,35 +74,35 @@ export interface Checkup {
 type AnsweredRole = { onet_code: string; corners: { corner_id: string }[] }
 
 /**
- * The session's 12 answer slots, as the app keeps them, from a role's answers: [2i] is the role's corner i's can-do
- * answer and [2i + 1] its follow-up; a corner left out stays null. Throws on a corner the role doesn't have.
+ * The session's 12 answer slots, as the app keeps them, from a role's answers: [2i] is the role's corner i's basic
+ * rating and [2i + 1] its advanced rating; a corner left out stays null. Throws on a corner the role doesn't have.
  */
-export function answerSlots(role: AnsweredRole, answers: CornerAnswer[]): (boolean | null)[] {
-  const slots = Array<boolean | null>(12).fill(null)
+export function answerSlots(role: AnsweredRole, answers: CornerAnswer[]): (Rating | null)[] {
+  const slots = Array<Rating | null>(12).fill(null)
   for (const answer of answers) {
     const i = role.corners.findIndex((corner) => corner.corner_id === answer.corner_id)
     if (i < 0)
       throw new Error(
         `${role.onet_code} has no corner ${answer.corner_id}; its corners are ${role.corners.map((c) => c.corner_id).join(', ')}.`
       )
-    slots[2 * i] = answer.can_do
-    slots[2 * i + 1] = answer.follow_up
+    slots[2 * i] = answer.basic
+    slots[2 * i + 1] = answer.advanced
   }
   return slots
 }
 
 /** The answers in a role's 12 answer slots (see answerSlots), in corner order; a corner without both is left out. */
-export function cornerAnswers(role: AnsweredRole, slots: (boolean | null)[]): CornerAnswer[] {
+export function cornerAnswers(role: AnsweredRole, slots: (Rating | null)[]): CornerAnswer[] {
   return role.corners.flatMap(({ corner_id }, i) => {
-    const [can_do, follow_up] = [slots[2 * i], slots[2 * i + 1]]
-    return can_do == null || follow_up == null ? [] : [{ corner_id, can_do, follow_up }]
+    const [basic, advanced] = [slots[2 * i], slots[2 * i + 1]]
+    return basic == null || advanced == null ? [] : [{ corner_id, basic, advanced }]
   })
 }
 
-/** Levels 0 to 3 by corner ID for every corner with both questions answered. */
-export function answeredLevels(role: BundleRole, answers: (boolean | null)[]): Record<string, number> {
+/** Levels 0 to 3 (steps of 0.5) by corner ID for every corner with both questions answered. */
+export function answeredLevels(role: BundleRole, answers: (Rating | null)[]): Record<string, number> {
   return Object.fromEntries(
-    cornerAnswers(role, answers).map((answer) => [answer.corner_id, cornerLevel(answer.can_do, answer.follow_up)])
+    cornerAnswers(role, answers).map((answer) => [answer.corner_id, cornerLevel(answer.basic, answer.advanced)])
   )
 }
 

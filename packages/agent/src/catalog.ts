@@ -23,7 +23,7 @@ export const TOOL_CATALOG = {
   get_checkup_questions: {
     title: 'Get the Check-Up Questions',
     description:
-      "Get a role's can-do questions in Kotak's asking order, Rising corners first. A corner is one skill area of the job. Call it once the user confirms their role (with the target goal, the target role). For each corner, ask the can_do statement as a yes or no question, then follow_up.if_yes after a yes or follow_up.if_no after a no, one question per message. Keep each corner's two answers as { corner_id, can_do, follow_up } for run_checkup."
+      "Get a role's can-do questions in Kotak's asking order, Rising corners first. A corner is one skill area of the job. Call it once the user confirms their role (with the target goal, the target role). For each corner, ask the basic statement, then the advanced one, one question per message; the user rates each from 1 (Not yet) to 4 (Yes, on my own). Keep each corner's two ratings as { corner_id, basic, advanced } for run_checkup."
   },
   run_checkup: {
     title: 'Run the Check-Up',

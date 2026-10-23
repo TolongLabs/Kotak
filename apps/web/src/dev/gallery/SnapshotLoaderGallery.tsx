@@ -1,4 +1,4 @@
-import type { BundleDemoRole, Scenario } from '@kotak/shared'
+import type { BundleDemoRole, Rating, Scenario } from '@kotak/shared'
 import { useState } from 'react'
 import { useManifest } from '../../engine/bundle'
 import { useCheckup, type LoadedCheckup } from '../../engine/checkup'
@@ -11,8 +11,11 @@ import { VerdictChip, type VerdictType } from '../../components/ui/VerdictChip'
 // Dev panel for #41: loads a demo role from /data, then the engine recomputes on every snapshot or scenario switch.
 
 // The demo's synthetic answers: `sample_level` on every corner, as the build's precomputed diff assumes.
-const demoAnswers = (level: number) =>
-  Array.from({ length: 12 }, (_, i) => (i % 2 === 0 ? level >= 2 : level % 2 === 1))
+const demoAnswers = (level: number): Rating[] =>
+  Array.from(
+    { length: 12 },
+    (_, i) => (i % 2 === 0 ? 1 + Math.min(3, 2 * level) : 1 + Math.max(0, 2 * level - 3)) as Rating
+  )
 
 const unknownReason: Record<string, string> = {
   too_few_points: 'Fewer than 2 dated points',

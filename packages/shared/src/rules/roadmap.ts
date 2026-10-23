@@ -82,10 +82,8 @@ export function roadmapItems(
   return ordered
     .flatMap((gap) => {
       const tier = TIER[gap.status]
-      const levels = Array.from(
-        { length: Math.ceil(gap.target_level) - gap.user_level },
-        (_, i) => gap.user_level + 1 + i
-      )
+      const done = Math.floor(gap.user_level) // a half step (2.5) has not reached the next whole statement
+      const levels = Array.from({ length: Math.ceil(gap.target_level) - done }, (_, i) => done + 1 + i)
       return levels.map((to_level): Omit<RoadmapItem, 'rank'> => {
         const statement = STATEMENT[to_level]!
         return {

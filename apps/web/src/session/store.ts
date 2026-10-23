@@ -1,4 +1,4 @@
-import { GuestSessionSchema, type GuestSession } from '@kotak/shared'
+import { GuestSessionSchema, type GuestSession, type Rating } from '@kotak/shared'
 import { useSyncExternalStore } from 'react'
 
 // The guest's check-up state, kept in this browser only (TRD.md "Client runtime"). Same key as the #136 stand-in.
@@ -11,7 +11,7 @@ const cleanSession: GuestSession = {
   impact_area: null,
   target_role_code: null,
   plan_role_code: null,
-  answers: Array<boolean | null>(12).fill(null),
+  answers: Array<Rating | null>(12).fill(null),
   follow_up_answers: {},
   ticked_milestones: [],
   custom_weekly_hours: 4,
@@ -32,11 +32,19 @@ function parseJson(raw: string): unknown {
   }
 }
 
+// Sessions saved before the 1 to 4 scale hold yes/no answers: keep everything else and start the answers blank.
+function withoutOldAnswers(saved: unknown): unknown {
+  if (typeof saved !== 'object' || saved === null || !('answers' in saved) || !Array.isArray(saved.answers))
+    return saved
+  if (!saved.answers.some((answer) => typeof answer === 'boolean')) return saved
+  return { ...saved, answers: Array(12).fill(null) }
+}
+
 function load(): GuestSession {
   try {
     const raw = localStorage.getItem(GUEST_SESSION_KEY)
     if (raw === null) return cleanSession
-    const parsed = GuestSessionSchema.safeParse(parseJson(raw))
+    const parsed = GuestSessionSchema.safeParse(withoutOldAnswers(parseJson(raw)))
     if (parsed.success) return parsed.data
     console.warn('The saved guest session was invalid, so Kotak reset it.')
     localStorage.removeItem(GUEST_SESSION_KEY)
