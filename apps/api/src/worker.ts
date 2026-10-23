@@ -4,6 +4,7 @@ import { serveAdminDocument, type ScraperAdminBindings } from './admin-auth'
 import type { AiBindings } from './ai/env'
 import { refreshAllListingSkills } from './market/stats'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
+import { queueDailyRefresh } from './scrapers/jobstreet/schedule'
 import type { KotakBindings } from './tool-deps'
 
 type ScheduledController = { scheduledTime: number; cron: string }
@@ -84,28 +85,14 @@ export default {
     if (!url) throw new Error('DATABASE_URL must be configured for the daily JobStreet queue')
     const sql = jobstreetDatabase(url)
     const scheduledFor = singaporeDate(new Date(controller.scheduledTime))
-    // Admins choose which search titles the midnight refresh covers.
-    const careers = (await sql.query(
-      'SELECT slug FROM jobstreet_careers WHERE enabled AND daily_refresh ORDER BY created_at, slug'
-    )) as Array<{ slug: string }>
-    for (const career of careers) {
-      await sql.query(
-        `INSERT INTO jobstreet_scrape_runs (id, career_slug, mode, status, source, scheduled_for)
-         SELECT $1, $2, 'breadth', 'queued', 'schedule', $3::date
-         WHERE NOT EXISTS (
-           SELECT 1 FROM jobstreet_scrape_runs
-           WHERE career_slug = $2 AND status IN ('queued', 'running')
-         )
-         ON CONFLICT DO NOTHING`,
-        [crypto.randomUUID(), career.slug, scheduledFor]
-      )
-    }
+    // Admins choose which search titles the midnight refresh covers. One query queues them all (#283).
+    const { titles, queued } = await queueDailyRefresh(sql, scheduledFor)
     console.info(
-      `Queued daily JobStreet breadth refresh for ${careers.length} search title(s) on ${scheduledFor} (Asia/Singapore).`
+      `Queued daily JobStreet breadth refresh for ${queued} of ${titles} search title(s) on ${scheduledFor} (Asia/Singapore).`
     )
     // The job-ad market (#271): match the skills of listings scraped or changed since the last night. Postgres does the
-    // work, so the Worker only waits. Each batch is one of the 50 subrequests the free plan gives an invocation,
-    // shared with the queueing above.
+    // work, so the Worker only waits. Each batch is one of the 50 subrequests the free plan gives an invocation, so
+    // with the queueing query the cron makes at most 11, however many search titles there are.
     try {
       const matched = await refreshAllListingSkills(sql, { batch: 1000, maxBatches: 10 })
       console.info(`Matched skills for ${matched} JobStreet listing(s).`)
