@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { interestPicks, type ProfileInput } from '@kotak/shared'
+import { interestPicks, type BundlePathways, type ProfileInput } from '@kotak/shared'
 import { createKotak } from './kotak'
 
 // The four situations behind #284, run through the SDK on the built bundle (bun run build:data). Each states what
@@ -125,5 +125,53 @@ describe.skipIf(!built)('the intake pathways (#284)', () => {
       start_date: START
     })
     expect(report.role.onet_code).toBe(picked)
+  })
+})
+
+// The "I'm not sure" screen for a student with no field or area: the activities' subjects must count, not only the
+// six interest scores' shape, which put zoologists and astronomers first for computers and data.
+describe.skipIf(!built)('not sure, with no field or area', () => {
+  const unsure = (ids: string[]): ProfileInput => ({
+    situation: 'studying',
+    interests: interestPicks(ids),
+    interest_activities: ids
+  })
+
+  test('a student who enjoys computers and data gets computing roles, without claiming they picked an area', async () => {
+    const pathways = (await Bun.file(join(PUBLIC, 'data/pathways.json')).json()) as BundlePathways
+    const pointed = new Set(
+      pathways.areas
+        .filter((area) => ['ai-and-data', 'cloud-and-infrastructure', 'cybersecurity'].includes(area.id))
+        .flatMap((area) => area.onet_codes)
+    )
+    const { roles } = await kotak.suggestRoles({
+      profile: unsure(['solve-puzzles', 'analyse-data', 'set-up-equipment'])
+    })
+    expect(roles).toHaveLength(6)
+    expect(roles.every((role) => pointed.has(role.onet_code))).toBe(true)
+    expect(roles.some((role) => ['15-1212.00', '15-1299.05'].includes(role.onet_code))).toBe(true) // security
+    expect(roles.every((role) => role.reasons.every((reason) => !reason.startsWith('In ')))).toBe(true)
+  })
+
+  test('a student who enjoys caring for people gets health roles, not teaching ones', async () => {
+    const { roles } = await kotak.suggestRoles({
+      profile: unsure(['care-wellbeing', 'help-problems', 'research-deeply'])
+    })
+    expect(roles.filter((role) => /^(29|31)-/.test(role.onet_code)).length).toBeGreaterThanOrEqual(2)
+    expect(roles.every((role) => !role.onet_code.startsWith('25-'))).toBe(true)
+  })
+
+  test('picks spread evenly still say nothing', async () => {
+    const { roles } = await kotak.suggestRoles({
+      profile: unsure([
+        'build-with-hands',
+        'analyse-data',
+        'design-looks',
+        'care-wellbeing',
+        'lead-team',
+        'work-numbers'
+      ])
+    })
+    expect(roles).toEqual([])
   })
 })

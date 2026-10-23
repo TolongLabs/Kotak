@@ -3,10 +3,12 @@
 // regulated professions with the fields that qualify for them, and each role's preparation and interest scores.
 
 import {
+  ACTIVITY_AREAS,
   BundlePathwaysSchema,
   CareerAreasFileSchema,
   CipSocFileSchema,
   FieldsOfStudyFileSchema,
+  INTEREST_ACTIVITIES,
   OnetHotTechnologiesFileSchema,
   OnetPreparationFileSchema,
   RegulatedProfessionsFileSchema,
@@ -120,6 +122,12 @@ export function buildPathways(
       onet_codes: [...new Set([...listed, ...byPrefix])]
     }
   })
+  for (const [activity, ids] of Object.entries(ACTIVITY_AREAS)) {
+    if (!INTEREST_ACTIVITIES.some((known) => known.id === activity))
+      failures.push(`pathways: ACTIVITY_AREAS names activity ${activity}, which doesn't exist`)
+    for (const id of ids.filter((id) => !areas.some((area) => area.id === id)))
+      failures.push(`pathways: activity ${activity} names area ${id}, which doesn't exist`)
+  }
 
   // A field qualifies when one of its CIP codes sits inside a qualifying one: Law (22.01) for 22.01, but not
   // Psychology (42) for counselling (42.2803). A profession no field qualifies for reads "Licence Required".

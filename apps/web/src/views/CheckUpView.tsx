@@ -235,7 +235,8 @@ export function CheckUpView() {
     years_experience: situation === 'studying' ? null : years,
     interest_areas: effectiveGoal === 'explore' ? areas : [],
     target_role_codes: effectiveGoal === 'target' ? targets.map((target) => target.onet_code) : [],
-    interests: effectiveGoal === 'unsure' ? saved.interests : null
+    interests: effectiveGoal === 'unsure' ? saved.interests : null,
+    interest_activities: effectiveGoal === 'unsure' ? saved.interest_activities : []
   })
 
   // A new check-up starts from blank answers, so the radar never mixes two jobs' answers.
