@@ -1,7 +1,9 @@
 import { roadmapSchedule } from '@kotak/sdk'
-import { fitScore, uniqueSources, type BundleRole, type Source } from '@kotak/shared'
+import { addDays, fitScore, uniqueSources, type BundleRole, type Source } from '@kotak/shared'
 import type { RoadmapStep, SourceRef } from '../demo/types'
 import type { Checkup } from './checkup'
+
+export const ROADMAP_WEEKS = 12
 
 type RoleFit = Checkup['roles'][number]
 type PlanReadinessPoint = { week: number; plan: number }
@@ -73,6 +75,49 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
       }
     }
   )
+}
+
+/** The first 12 weeks of the full SDK path. Partial milestones earn no level gain. */
+export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: string[]) {
+  const fullSteps = toRoadmapSteps(checkup, role, ticked)
+  const budget = ROADMAP_WEEKS * checkup.roadmap.weekly_hours
+  const hoursById = new Map(checkup.roadmap.items.map((item) => [`${item.corner_id}:${item.statement}`, item.hours]))
+  const partialIds = new Set<string>()
+  const stepHours = new Map<string, number>()
+  const later: RoadmapStep[] = []
+  const steps: RoadmapStep[] = []
+  let used = 0
+  for (const step of fullSteps) {
+    const hours = hoursById.get(step.id)!
+    const allocated = Math.max(0, Math.min(hours, budget - used))
+    used += hours
+    if (allocated < hours) later.push(step)
+    if (allocated === 0) continue
+    stepHours.set(step.id, allocated)
+    if (allocated === hours) {
+      steps.push(step)
+      continue
+    }
+    partialIds.add(step.id)
+    const start = addDays(checkup.roadmap.start_date, (step.weeks[0] - 1) * 7)
+    const end = addDays(checkup.roadmap.start_date, ROADMAP_WEEKS * 7 - 1)
+    steps.push({
+      ...step,
+      weeks: [step.weeks[0], ROADMAP_WEEKS],
+      when: `Estimated · Weeks ${step.weeks[0]}–${ROADMAP_WEEKS} · ${formatDateRange(start, end)}${step.conditional ? ` · ${step.conditional}` : ''}`,
+      description:
+        `${step.description} First ${allocated} of ${hours} estimated hours. Continue after Week ${ROADMAP_WEEKS}.`.trim(),
+      gain: `Target after the full milestone: ${step.gain}`
+    })
+  }
+  return { steps, stepHours, partialIds, later, remainingHours: Math.max(0, checkup.roadmap.total_hours - budget) }
+}
+
+/** Carry the last completed milestone's fit to week 12; never credit a clipped milestone. */
+export function toReadinessWindow<T extends PlanReadinessPoint>(points: T[]): T[] {
+  const visible = points.filter((point) => point.week <= ROADMAP_WEEKS)
+  const last = visible[visible.length - 1]
+  return last && last.week < ROADMAP_WEEKS ? [...visible, { ...last, week: ROADMAP_WEEKS }] : visible
 }
 
 export function toReadinessPoints(checkup: Checkup, role: BundleRole): PlanReadinessPoint[]

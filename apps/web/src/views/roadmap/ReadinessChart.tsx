@@ -34,9 +34,11 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
   const annotationFit = annotationPoint ? Math.round(annotationPoint.plan) : undefined
   const annotation =
     readyPoint && annotationFit !== undefined
-      ? `Ready by Week ${readyPoint.week} · ${annotationFit}%`
+      ? readyPoint.week === 0
+        ? `Already at least 80% Fit · ${annotationFit}%`
+        : `80% Fit by Week ${readyPoint.week} · ${annotationFit}%`
       : annotationPoint && annotationFit !== undefined
-        ? `Not Ready Yet · ${annotationFit}% by Week ${annotationPoint.week}`
+        ? `Below 80% Fit · ${annotationFit}% by Week ${annotationPoint.week}`
         : 'No Readiness Estimate Yet'
 
   const minimumFit =
@@ -67,7 +69,7 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
           </li>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
             <span aria-hidden="true" className="h-0 w-6 border-t-2 border-dashed border-text-muted" />
-            Ready = 80% Fit
+            Threshold = 80% Fit
           </li>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
             <span aria-hidden="true" className="h-4 w-0 border-l-2 border-text-primary" />
@@ -137,7 +139,7 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
               {showToday && <ReferenceLine x={todayWeek} stroke="var(--color-text-primary)" strokeWidth={2} />}
               <ReferenceLine y={80} stroke="var(--color-text-muted)" strokeDasharray="4 4" />
               <Line
-                type="monotone"
+                type="stepAfter"
                 dataKey="plan"
                 name="Your Plan"
                 stroke="var(--color-text-primary)"

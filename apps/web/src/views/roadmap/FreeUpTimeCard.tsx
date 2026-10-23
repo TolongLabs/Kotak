@@ -26,14 +26,16 @@ interface FreeUpTimeCardProps {
 }
 
 function resultLine(applied: boolean, before: number | null, after: number | null, planWeeks: number): string | null {
+  if (before === 0 || after === 0) return 'Already at least 80% Fit'
   if (!applied) {
-    if (after !== null && before !== null && after !== before) return `Ready By Week ${after}, Was Week ${before}`
-    if (after !== null && before === null) return `Ready By Week ${after} · Was Not Ready Yet`
-    if (after !== null) return `Ready By Week ${after} Already`
-    return `Not Ready Within ${planWeeks} Weeks`
+    if (after !== null && before !== null && after !== before) return `80% Fit by Week ${after}, Was Week ${before}`
+    if (after !== null && before === null) return `80% Fit by Week ${after} · Was Below 80%`
+    if (after !== null) return `80% Fit by Week ${after} With These Hours`
+    if (before !== null) return `80% Fit by Week ${before} With Current Hours`
+    return `Below 80% Fit Within ${planWeeks} Weeks`
   }
-  if (before !== null) return `Ready By Week ${before}`
-  return `Not Ready Within ${planWeeks} Weeks`
+  if (before !== null) return `80% Fit by Week ${before}`
+  return `Below 80% Fit Within ${planWeeks} Weeks`
 }
 
 export function FreeUpTimeCard({

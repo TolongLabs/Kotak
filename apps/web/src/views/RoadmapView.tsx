@@ -18,7 +18,13 @@ import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
 import { useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { toIsoDate } from '../engine/dates'
-import { toReadinessPoints, toRoadmapSources, toRoadmapSteps } from '../engine/roadmapModel'
+import {
+  ROADMAP_WEEKS,
+  toReadinessPoints,
+  toReadinessWindow,
+  toRoadmapSources,
+  toRoadmapWindow
+} from '../engine/roadmapModel'
 import { cornerReasoning } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { updateGuestSession, useGuestSession } from '../session/store'
@@ -68,16 +74,19 @@ interface LessImportantItem {
 function RoadmapStepToggle({
   step,
   onChange,
-  children
+  children,
+  partial = false
 }: {
   step: RoadmapStep
   onChange: (checked: boolean) => void
   children: ReactNode
+  partial?: boolean
 }) {
   return (
     <div className="relative">
       <input
         type="checkbox"
+        disabled={partial}
         checked={step.state === 'done'}
         aria-label={`Mark ${step.skill} ${step.state === 'done' ? 'Incomplete' : 'Complete'}`}
         onChange={(event) => onChange(event.currentTarget.checked)}
@@ -213,7 +222,7 @@ export function RoadmapView() {
       startDate,
       planRoleCode: checkup.planRoleCode
     })
-    const points = toReadinessPoints(checkupWithHours, role)
+    const points = toReadinessWindow(toReadinessPoints(checkupWithHours, role))
     const readyWeek = points.find((point) => point.plan >= 80)?.week ?? null
     return { proposed, readyWeek }
   }, [checkup, bundle, session.answers, session.custom_weekly_hours, startDate])
@@ -270,10 +279,13 @@ export function RoadmapView() {
   const role =
     [bundle.data.role, ...bundle.data.related].find((candidate) => candidate.onet_code === checkup?.planRoleCode) ??
     bundle.data.role
-  const steps = toRoadmapSteps(checkup, role, session.ticked_milestones)
-  const stepHours = new Map(checkup.roadmap.items.map((item) => [`${item.corner_id}:${item.statement}`, item.hours]))
+  const { steps, stepHours, partialIds, later, remainingHours } = toRoadmapWindow(
+    checkup,
+    role,
+    session.ticked_milestones
+  )
   const timelineSteps: TimelineStep[] = steps.map((step) => ({ ...step, totalHours: stepHours.get(step.id) ?? 0 }))
-  const readinessPoints = toReadinessPoints(checkup, role)
+  const readinessPoints = toReadinessWindow(toReadinessPoints(checkup, role))
   const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
   const selectedImpactArea = impactAreaGoals.find((goal) => String(goal) === session.impact_area) ?? null
   const sourceRefs = toRoadmapSources(checkup)
@@ -324,11 +336,13 @@ export function RoadmapView() {
     })
   const readyPoint = readinessPoints.find((point) => point.plan >= 80)
   const readyCopy = readyPoint
-    ? `Ready by Week ${readyPoint.week}`
-    : readinessPoints.length > 1
-      ? `Not Ready Within ${Math.ceil(checkup.roadmap.weeks)} Weeks`
+    ? readyPoint.week === 0
+      ? 'Already at least 80% Fit'
+      : `80% Fit by Week ${readyPoint.week}`
+    : readinessPoints.length > 0
+      ? `Below 80% Fit Within ${ROADMAP_WEEKS} Weeks`
       : 'No Readiness Estimate Yet'
-  const planWeeks = Math.ceil(checkup.roadmap.weeks)
+  const planWeeks = ROADMAP_WEEKS
   const reasonStep = steps[0]
   const reasonCorner = reasonStep && checkup.corners.find((corner) => corner.corner_id === reasonStep.id.split(':')[0])
   const reasonNumbers = reasonCorner ? (sourceRefs.cornerNumbers.get(reasonCorner.corner_id) ?? []) : []
@@ -395,9 +409,9 @@ export function RoadmapView() {
           pose="happy"
           speech={
             steps.length > 0
-              ? readyPoint
-                ? `Your plan is ready. ${formatEstimate(checkup.roadmap.weekly_hours)} hours a week gets you there by Week ${readyPoint.week}.`
-                : `Your plan is ready. About ${planWeeks} weeks at ${formatEstimate(checkup.roadmap.weekly_hours)} hours a week.`
+              ? readyPoint?.week === 0
+                ? `You already meet the 80% fit threshold. These next ${planWeeks} weeks build your remaining skills at ${formatEstimate(checkup.roadmap.weekly_hours)} hours a week.`
+                : `Your next ${planWeeks} weeks are planned at ${formatEstimate(checkup.roadmap.weekly_hours)} hours a week. ${readyCopy}.`
               : 'There are no learning steps for this snapshot yet.'
           }
         />
@@ -405,10 +419,10 @@ export function RoadmapView() {
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1.5">
             <h1 className="text-title-m text-text-primary lg:text-title-l">
-              {planWeeks > 0 ? `Your ${planWeeks}-Week Roadmap` : 'Your Roadmap'}
+              {steps.length > 0 ? `Your ${planWeeks}-Week Roadmap` : 'Your Roadmap'}
             </h1>
             <p className="text-body-s text-text-muted">
-              {role.title} · {readyCopy} at {formatEstimate(checkup.roadmap.weekly_hours)} h a Week · Starts{' '}
+              {role.title} · {readyCopy} · {formatEstimate(checkup.roadmap.weekly_hours)} h a Week · Starts{' '}
               {formatDate(checkup.roadmap.start_date)}
             </p>
           </div>
@@ -518,6 +532,7 @@ export function RoadmapView() {
               <div className="space-y-0">
                 {steps.map((step, index) => (
                   <RoadmapStepToggle
+                    partial={partialIds.has(step.id)}
                     key={step.id}
                     step={step}
                     onChange={(checked) => toggleMilestone(step.id, checked)}
@@ -550,6 +565,24 @@ export function RoadmapView() {
               <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
                 No learning steps are needed for this snapshot.
               </p>
+            )}
+            {later.length > 0 && (
+              <div className="space-y-2 text-body-s text-text-muted">
+                <h3 className="text-label-l text-text-primary">After Week {planWeeks}</h3>
+                <p>
+                  About {formatEstimate(remainingHours)} learning hours remain after this window. The full path is about{' '}
+                  {Math.ceil(checkup.roadmap.weeks)} weeks at these hours. The 80% fit threshold does not mean every
+                  skill target is met.
+                </p>
+                <ul className="list-disc pl-5">
+                  {later.map((step) => (
+                    <li key={step.id}>
+                      {partialIds.has(step.id) ? 'Continue: ' : ''}
+                      {step.title || step.skill}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </section>
 
