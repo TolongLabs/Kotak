@@ -36,7 +36,8 @@
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
     "prepare": "husky",
-    "build:proofs": "bun scripts/proof-of-use/build.ts"
+    "build:proofs": "bun scripts/proof-of-use/build.ts",
+    "build:submission": "uv run scripts/submission/build.py"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown"
