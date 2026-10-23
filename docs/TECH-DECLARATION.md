@@ -28,7 +28,8 @@ Contents:
 
 - **Team name**: T010NG.
 - **Project name**: Kotak.
-- **Team leader**: Hee Zi Jie (AlaskanTuna). The leader's email, phone and university go only in the exported PDF.
+- **Team leader**: Hee Zi Jie (AlaskanTuna). The leader's email and phone go only in the exported PDF.
+- **University affiliations**: Asia Pacific University of Technology & Innovation (APU), University of Reading and University of Sheffield.
 - **Live prototype URL**: <https://kotak-alaskxntxna.replit.app>, published on Replit. A mirror runs at <https://kotak.tp073654.workers.dev>.
 - **Code repository URL**: the team's public submission repository ([#45]).
 

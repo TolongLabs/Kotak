@@ -6,14 +6,14 @@
 
 ## Team Information
 
-| Field                 | Details                                      |
-| --------------------- | -------------------------------------------- |
-| **Team Name**         | T010NG                                       |
-| **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce |
-| **SDG Track (1–17)**  | SDG 4 — Quality Education (target 4.4)       |
-| **Team Leader**       | Hee Zi Jie                                   |
-| **University**        | _To be filled in by the team leader_         |
-| **Number of Members** | 5                                            |
+| Field                 | Details                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Team Name**         | T010NG                                                                                                      |
+| **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce                                                                |
+| **SDG Track (1–17)**  | SDG 4 — Quality Education (target 4.4)                                                                      |
+| **Team Leader**       | Hee Zi Jie                                                                                                  |
+| **University**        | Asia Pacific University of Technology & Innovation (APU), University of Reading and University of Sheffield |
+| **Number of Members** | 5                                                                                                           |
 
 ## Links
 
@@ -204,13 +204,13 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 ## Team
 
-| Name       | Role                | GitHub                                         |
-| ---------- | ------------------- | ---------------------------------------------- |
-| Hee Zi Jie | Team Lead / Product | [@AlaskanTuna](https://github.com/AlaskanTuna) |
-| Yu Kang    | Backend / Engine    | [@kymil4](https://github.com/kymil4)           |
-| L Hao      | Data                | [@chaosiris](https://github.com/chaosiris)     |
-| Jin Siang  | Frontend / QA       | [@DrxgClanPC](https://github.com/DrxgClanPC)   |
-| Jun Song   | Member              | [@Doraemon-00](https://github.com/Doraemon-00) |
+| Name           | Role                | GitHub                                         |
+| -------------- | ------------------- | ---------------------------------------------- |
+| Hee Zi Jie     | Team Lead / Product | [@AlaskanTuna](https://github.com/AlaskanTuna) |
+| Lim Yuh Kang   | Backend / Engine    | [@kymil4](https://github.com/kymil4)           |
+| Yow Li Hao     | Data                | [@chaosiris](https://github.com/chaosiris)     |
+| Liau Jin Siang | Frontend / QA       | [@DrxgClanPC](https://github.com/DrxgClanPC)   |
+| Chew Jun Song  | Member              | [@Doraemon-00](https://github.com/Doraemon-00) |
 
 ---
 

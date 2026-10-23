@@ -27,16 +27,17 @@ Contents:
 - **Selected domain**: Domain 1, the Aiversecity Future-Ready Workforce Domain ([problem statement][d1]).
 - **Selected SDG track**: SDG 4, Quality Education, through target 4.4.
 - **Project name**: Kotak.
-- **Team leader**: Hee Zi Jie (AlaskanTuna). The leader's email and phone, and each member's university, go only in the exported PDF.
+- **Team leader**: Hee Zi Jie (AlaskanTuna). The leader's email and phone go only in the exported PDF.
+- **University affiliations**: Asia Pacific University of Technology & Innovation (APU), University of Reading and University of Sheffield.
 - **Number of team members**: 5 ([team portal][portal]).
 
 The members:
 
-- Hee Zi Jie (AlaskanTuna), product lead
-- Yu Kang (kymil4)
-- L Hao (chaosiris)
-- Jin Siang (DrxgClanPC)
-- Jun Song (Doraemon-00)
+- Hee Zi Jie (AlaskanTuna), product lead, APU
+- Lim Yuh Kang (kymil4), APU
+- Yow Li Hao (chaosiris), APU
+- Liau Jin Siang (DrxgClanPC), University of Reading
+- Chew Jun Song (Doraemon-00), University of Sheffield
 
 [portal]: /docs/sources/sdchack.my/team-portal.md#registration-status
 [d1]: /docs/sources/drive.google.com/domain-1-aiversecity.md
