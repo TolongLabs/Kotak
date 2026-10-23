@@ -7,7 +7,7 @@ import {
   type CornerVerdict,
   type Source
 } from '@kotak/shared'
-import type { Corner, Level, Role, SourceRef, VerdictId } from '../demo/types'
+import type { Corner, Role, SourceRef, VerdictId } from '../demo/types'
 import type { Checkup } from './checkup'
 
 // Turns the engine's check-up into the shapes the screens' components already take (demo/types.ts), so the approved
@@ -58,7 +58,7 @@ export function toCorners(checkup: Checkup, numbers: Map<string, number[]>): Cor
     id: corner.corner_id,
     name: corner.name,
     verdict: verdictId(corner.verdict.status),
-    you: corner.level.level as Level,
+    you: corner.level.level,
     neededSlow: neededLevel(corner.verdict.scenarios.slow.target.value),
     neededFast: neededLevel(corner.verdict.scenarios.fast.target.value),
     reasoning: cornerReasoning(corner.verdict, checkup.scenario),

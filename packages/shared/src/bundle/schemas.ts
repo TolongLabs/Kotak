@@ -11,6 +11,7 @@ import {
 } from '../data/onet'
 import {
   CanDoStatementsSchema,
+  ReversedStatementsSchema,
   FreeResourceSchema,
   MilestoneHoursSchema,
   RoleQualitySchema,
@@ -52,6 +53,7 @@ export const BundleCornerSchema = z
     iwa_ids: z.array(OnetIwaIdSchema).min(1),
     /** null until the batch writes them; the build never makes them up. */
     statements: CanDoStatementsSchema.nullable(),
+    reversed_statements: ReversedStatementsSchema.nullish(),
     hours: MilestoneHoursSchema.nullable(),
     sdg_targets: z.array(SdgTargetSchema),
     resources: z.array(FreeResourceSchema)

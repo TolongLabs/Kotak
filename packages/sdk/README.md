@@ -56,23 +56,23 @@ A missing or invalid bundle file throws a `BundleFileError` naming its path. To 
 
 ### Get the can-do questions
 
-`questions` lists a role's corners in Kotak's asking order, Rising corners first. Each corner has a `can_do` statement to ask first and the follow-up that answer picks.
+`questions` lists a role's corners in Kotak's asking order, Rising corners first. Each corner has a `basic` and an `advanced` statement, each rated 1 (Not yet) to 4 (Yes, on my own).
 
 ```ts
 const ROLE = '15-1254.00' // Web Developers
 
 const questions = await kotak.questions(ROLE)
-for (const corner of questions.corners) console.log(`${corner.verdict} ${corner.name}: ${corner.can_do}`)
+for (const corner of questions.corners) console.log(`${corner.verdict} ${corner.name}: ${corner.basic}`)
 ```
 
 A role whose `questions_ready` is false has no can-do statements, so `questions` and `checkup` throw for it rather than make up levels. `kotak.role(code)` tells you before you ask.
 
 ### Run a check-up
 
-`checkup` turns the answers into levels, verdicts, the ranked roles and a roadmap. Each answer is `{ corner_id, can_do, follow_up }`: `can_do` answers the `can_do` statement, and `follow_up` answers `follow_up.if_yes` after a yes or `follow_up.if_no` after a no. Leave out corners the user didn't answer.
+`checkup` turns the answers into levels, verdicts, the ranked roles and a roadmap. Each answer is `{ corner_id, basic, advanced }`: the 1 to 4 ratings of the two statements; the level is 0 to 3 in steps of 0.5. Leave out corners the user didn't answer.
 
 ```ts
-const answers = questions.corners.map((corner) => ({ corner_id: corner.corner_id, can_do: false, follow_up: true }))
+const answers = questions.corners.map((corner) => ({ corner_id: corner.corner_id, basic: 3, advanced: 1 }))
 
 const report = await kotak.checkup({ role_code: ROLE, answers, start_date: '2026-10-26' })
 

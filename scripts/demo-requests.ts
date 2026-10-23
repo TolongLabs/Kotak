@@ -23,7 +23,7 @@ const explanations = await Promise.all(
     const checkup = computeCheckup({
       role,
       related: await Promise.all(role.related.map((related) => loadRole(related.onet_code))),
-      answers: role.corners.flatMap(() => [false, true]),
+      answers: role.corners.flatMap(() => [3, 1] as const), // basic 3 and advanced 1 rate level 1
       snapshotId: '2026-05',
       scenario: DEFAULT_SCENARIO,
       weeklyHours: 4,

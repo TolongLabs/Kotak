@@ -16,7 +16,7 @@ import { assessedRoleCode } from '../engine/checkup'
 import { fetchRoleAliases, fetchRoleMatch, type ApiResult, type RoleAlias } from '../engine/api'
 import { updateGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
-import type { RoleMatchResponse } from '@kotak/shared'
+import type { Rating, RoleMatchResponse } from '@kotak/shared'
 
 const goalIcons = { stay: Briefcase, target: Route, explore: PackageOpen }
 // The three roles the team hand-checks (#104) plus Software Developers lead the list before anything is typed.
@@ -228,7 +228,7 @@ export function CheckUpView() {
   useEffect(() => {
     if (previousAssessedCode.current === assessedCode) return
     previousAssessedCode.current = assessedCode
-    updateGuestSession({ answers: Array<boolean | null>(12).fill(null), plan_role_code: null })
+    updateGuestSession({ answers: Array<Rating | null>(12).fill(null), plan_role_code: null })
   }, [assessedCode])
 
   const updateJobQuery = (value: string) => {
@@ -279,7 +279,7 @@ export function CheckUpView() {
       role_code: acceptedJob.onet_code,
       goal: goalId,
       target_role_code: isTargetGoal && acceptedTarget ? acceptedTarget.onet_code : null,
-      answers: Array<boolean | null>(12).fill(null),
+      answers: Array<Rating | null>(12).fill(null),
       plan_role_code: null,
       ticked_milestones: []
     })

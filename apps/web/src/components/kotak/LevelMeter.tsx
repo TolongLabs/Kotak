@@ -1,8 +1,7 @@
-import type { Level } from '../../demo/types'
 import { cn } from '../ui/cn'
 
 export interface LevelMeterProps {
-  you: Level
+  you: number
   needed: 1 | 2 | 3
   neededLabel?: string
 }

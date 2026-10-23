@@ -156,3 +156,13 @@
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes kopi-hop {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.kopi-hop {
+  animation: kopi-hop 300ms ease-out;
+}

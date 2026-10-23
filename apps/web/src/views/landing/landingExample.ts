@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { DEFAULT_SCENARIO, type BundleRole } from '@kotak/shared'
+import { DEFAULT_SCENARIO, type BundleRole, type Rating } from '@kotak/shared'
 import { computeCheckup, type Checkup } from '../../engine/checkup'
 import { useRoleBundle, type Loaded } from '../../engine/bundle'
 import { sourceRefs, toCorners } from '../../engine/viewModel'
@@ -10,14 +10,14 @@ export const EXAMPLE_ROLE_CODE = '15-1254.00'
 // Keep engine citations after the three research citations in LandingEvidence.
 const evidenceCitationCount = 3
 
-// Each pair answers the working question first, then the follow-up for that answer.
-const exampleAnswers: Record<string, readonly [boolean, boolean]> = {
-  'web-site-building': [true, true],
-  'web-testing-and-updates': [true, false],
-  'technical-documentation': [false, true],
-  'web-design-and-databases': [false, false],
-  'web-specifications-and-standards': [true, false],
-  'web-performance-and-support': [false, true]
+// Each pair rates the basic statement, then the advanced one (levels 3, 2, 1 and 0).
+const exampleAnswers: Record<string, readonly [Rating, Rating]> = {
+  'web-site-building': [4, 4],
+  'web-testing-and-updates': [4, 2],
+  'technical-documentation': [3, 1],
+  'web-design-and-databases': [1, 1],
+  'web-specifications-and-standards': [4, 2],
+  'web-performance-and-support': [3, 1]
 }
 
 export interface LandingExample {
@@ -33,7 +33,7 @@ export interface LandingExampleQuestion {
   cornerId: string
   name: string
   statement: string
-  workingAnswer: boolean
+  basicRating: Rating
 }
 
 export function useLandingExample(): Loaded<LandingExample> {
@@ -82,9 +82,9 @@ export function useLandingExample(): Loaded<LandingExample> {
 
 export function getLandingExampleQuestions(example: LandingExample): LandingExampleQuestion[] {
   return example.checkup.questionOrder.flatMap(({ corner_id, name }) => {
-    const statement = example.role.corners.find((corner) => corner.corner_id === corner_id)?.statements?.working
+    const statement = example.role.corners.find((corner) => corner.corner_id === corner_id)?.statements?.basic
     const answer = exampleAnswers[corner_id]
 
-    return statement && answer ? [{ cornerId: corner_id, name, statement, workingAnswer: answer[0] }] : []
+    return statement && answer ? [{ cornerId: corner_id, name, statement, basicRating: answer[0] }] : []
   })
 }
