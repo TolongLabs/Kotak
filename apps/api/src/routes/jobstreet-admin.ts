@@ -19,6 +19,7 @@ import {
   verdictRequest,
   type Verdict
 } from '../scrapers/jobstreet/review'
+import { SYNC_APPROVED_AT } from '../scrapers/jobstreet/schedule'
 import { parseJobstreetTask } from '../scrapers/jobstreet/tasks'
 
 type AdminContext = Context<ScraperAdminEnv>
@@ -106,6 +107,13 @@ const STANDING_DECISIONS = `(SELECT count(*) FILTER (WHERE decision.approved)::i
 // Locks a search title's row against occupation changes and other reviews, while the runner can still save
 // listings that reference it (their foreign-key checks take KEY SHARE locks, which this lock allows).
 const LOCK_CAREER = 'SELECT slug FROM jobstreet_careers WHERE slug = $1 FOR NO KEY UPDATE'
+
+// The first statement of every transaction that runs SYNC_APPROVED_AT, which writes jobstreet_listings last. Every
+// deploy reruns the migrations, and CREATE INDEX IF NOT EXISTS takes a SHARE lock on its table even when the index
+// exists: jobstreet_listings in 0002, then jobstreet_listing_reviews in 0006. A transaction that wrote the reviews and
+// only then the listings would take them in the other order and could deadlock with a deploy. ROW EXCLUSIVE is the
+// lock the sync takes anyway; it doesn't conflict with the runner's saves or other writes, only with those SHARE locks.
+const LOCK_LISTINGS = 'LOCK TABLE jobstreet_listings IN ROW EXCLUSIVE MODE'
 
 async function loadBatch(sql: Sql, runId: string): Promise<Batch | undefined> {
   const rows = await sql.query(
@@ -258,7 +266,8 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
     const sql = database(context)
     if (!sql) return noDatabase(context)
 
-    const [locked, updated] = (await sql.transaction((transaction) => [
+    const [, locked, updated] = (await sql.transaction((transaction) => [
+      transaction.query(LOCK_LISTINGS),
       transaction.query(LOCK_CAREER, [slug]),
       transaction.query(
         `WITH previous AS (SELECT onet_code FROM jobstreet_careers WHERE slug = $1),
@@ -280,8 +289,11 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
          )
          SELECT * FROM changed`,
         [slug, change.onet_code ?? null, change.daily_refresh ?? null, change.enabled ?? null, change.hidden ?? null]
-      )
-    ])) as [unknown[], Array<Record<string, unknown> & { onet_code: string | null }>]
+      ),
+      // An occupation change is refused while approvals stand under the old one, so this writes nothing today; it
+      // keeps approved_at right if that rule changes.
+      transaction.query(SYNC_APPROVED_AT, [slug])
+    ])) as [unknown[], unknown[], Array<Record<string, unknown> & { onet_code: string | null }>, unknown[]]
     if (!locked.length) return context.json({ error: 'Search title not found.' }, 404)
     const [career] = updated
     if (!career)
@@ -599,7 +611,8 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
 
     if (body.data.decision === 'reject') {
       // The same lock as approving, so a reject and an approve of one batch run one after the other.
-      const [, , , [checkup]] = (await sql.transaction((transaction) => [
+      const [, , , , [checkup]] = (await sql.transaction((transaction) => [
+        transaction.query(LOCK_LISTINGS),
         transaction.query(LOCK_CAREER, [batch.career_slug]),
         transaction.query(
           `INSERT INTO jobstreet_run_reviews (scrape_run_id, status, approved_count, excluded_count, reviewed_by)
@@ -609,8 +622,9 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
           [batch.id, user.id]
         ),
         transaction.query('DELETE FROM jobstreet_listing_reviews WHERE scrape_run_id = $1', [batch.id]),
-        transaction.query(IN_CHECKUP, [batch.career_slug])
-      ])) as [unknown[], unknown[], unknown[], Array<{ in_checkup: boolean }>]
+        transaction.query(IN_CHECKUP, [batch.career_slug]),
+        transaction.query(SYNC_APPROVED_AT, [batch.career_slug])
+      ])) as [unknown[], unknown[], unknown[], unknown[], Array<{ in_checkup: boolean }>, unknown[]]
       return context.json({
         review: { status: 'rejected', approved_count: 0, excluded_count: 0 },
         in_checkup: checkup?.in_checkup === true && occupationTitle(batch.onet_code) !== null
@@ -635,6 +649,7 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
     // The search title's row is locked for the whole transaction, and every write checks that its occupation is
     // still the one this review was for. Only listings the page showed (up to seen_through) are decided.
     const results = (await sql.transaction((transaction) => [
+      transaction.query(LOCK_LISTINGS),
       transaction.query(LOCK_CAREER, [batch.career_slug]),
       transaction.query(
         `INSERT INTO jobstreet_listing_reviews (job_id, career_slug, approved, onet_code, scrape_run_id, reviewed_by)
@@ -664,14 +679,19 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
          RETURNING approved_count, excluded_count`,
         [batch.id, user.id, batch.career_slug, batch.onet_code]
       ),
-      transaction.query(IN_CHECKUP, [batch.career_slug])
+      transaction.query(IN_CHECKUP, [batch.career_slug]),
+      // The runner's depth order (#276). Listings a runner save holds right now are skipped, not waited for; the
+      // nightly cron syncs them.
+      transaction.query(SYNC_APPROVED_AT, [batch.career_slug])
     ])) as [
       unknown[],
       unknown[],
+      unknown[],
       Array<{ approved_count: number; excluded_count: number }>,
-      Array<{ in_checkup: boolean }>
+      Array<{ in_checkup: boolean }>,
+      unknown[]
     ]
-    const [review] = results[2]
+    const [review] = results[3]
     if (!review) return occupationChanged(context)
     // The job-ad market (#271) reads approvals live; match the batch's skills now rather than at the nightly refresh.
     // A failure only delays them until then.
@@ -683,7 +703,7 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
     } catch {
       await matching // Bun has no execution context: finish before answering.
     }
-    return context.json({ review: { status: 'approved', ...review }, in_checkup: results[3][0]?.in_checkup === true })
+    return context.json({ review: { status: 'approved', ...review }, in_checkup: results[4][0]?.in_checkup === true })
   })
 
   return route

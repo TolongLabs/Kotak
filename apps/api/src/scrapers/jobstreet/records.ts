@@ -90,6 +90,13 @@ export function nextSearchUrl(current: string, href: string): string {
   return target
 }
 
+// The search page after this one, for a browser relaunched before it could read this page's Next link.
+export function followingSearchUrl(current: string): string {
+  const url = new URL(searchUrl(current))
+  url.searchParams.set('page', String(Number(url.searchParams.get('page') ?? '1') + 1))
+  return nextSearchUrl(current, url.href)
+}
+
 // These are estimates from the site's relative labels, never exact posting dates.
 function estimateListedAt(label: string | null, observedAt: string): string | null {
   const match = label?.match(/^(\d+)\s*(m|min|minute|h|hr|hour|d|day|w|week)s?\s+ago$/i)

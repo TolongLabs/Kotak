@@ -31,3 +31,38 @@ export async function queueDailyRefresh(sql: Pick<Sql, 'query'>, scheduledFor: s
   const [counts] = (await sql.query(QUEUE_DAILY_REFRESH, [scheduledFor])) as Array<{ titles: number; queued: number }>
   return counts
 }
+
+// Copies each listing's standing approval to jobstreet_listings.approved_at (#276): the review's reviewed_at while an
+// approval stands under the search title's current occupation, else null. The runner's role can't read the reviews,
+// so this is how its depth runs describe approved listings first; nothing else reads the column. $1 is one search
+// title's slug, or null for every title. Only listings whose value is wrong are locked and written; synced counts them.
+//
+// The runner saves its progress in one transaction that locks listing rows in scrape order, so a writer of many rows in
+// another order could deadlock with it. This statement never waits for a row lock instead: SKIP LOCKED passes over
+// rows another transaction holds. FOR NO KEY UPDATE is the lock the update takes anyway, which the foreign-key checks
+// of review, observation and skill inserts don't conflict with. A skipped listing keeps its old value until the next
+// sync: the admin route syncs a title in every transaction that changes its reviews, and the nightly cron syncs all.
+export const SYNC_APPROVED_AT = `WITH standing AS (
+    SELECT listing.job_id, listing.career_slug, review.reviewed_at AS approved_at
+    FROM jobstreet_listings listing
+    JOIN jobstreet_careers career ON career.slug = listing.career_slug
+    LEFT JOIN jobstreet_listing_reviews review
+      ON review.job_id = listing.job_id AND review.career_slug = listing.career_slug
+      AND review.approved AND review.onet_code = career.onet_code
+    WHERE ($1::text IS NULL OR listing.career_slug = $1::text)
+      AND listing.approved_at IS DISTINCT FROM review.reviewed_at
+    FOR NO KEY UPDATE OF listing SKIP LOCKED
+  ),
+  synced AS (
+    UPDATE jobstreet_listings listing SET approved_at = standing.approved_at
+    FROM standing
+    WHERE listing.job_id = standing.job_id AND listing.career_slug = standing.career_slug
+    RETURNING 1
+  )
+  SELECT count(*)::int AS synced FROM synced`
+
+// The nightly repair pass: syncs every search title in one query, including the listings an admin's sync skipped.
+export async function syncAllApprovedAt(sql: Pick<Sql, 'query'>) {
+  const [counts] = (await sql.query(SYNC_APPROVED_AT, [null])) as Array<{ synced: number }>
+  return counts?.synced ?? 0
+}

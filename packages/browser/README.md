@@ -43,7 +43,7 @@ const title = await withProfile({ profileId: '…' }, async (page) => {
 })
 ```
 
-`createProfile()`, `readProfile()`, `listProfiles()`, `startProfile()` and `deleteProfile()` are exported for lower-level control. `startProfile()` returns a Playwright `BrowserContext` whose cookies and storage persist in the profile.
+`createProfile()`, `readProfile()`, `listProfiles()`, `startProfile()` and `deleteProfile()` are exported for lower-level control. On Windows, `deleteProfile()` waits up to 10 seconds for files that a closing or killed browser still holds. `startProfile()` returns a Playwright `BrowserContext` whose cookies and storage persist in the profile.
 
 ## Design
 

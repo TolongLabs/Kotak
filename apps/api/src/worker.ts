@@ -4,7 +4,7 @@ import { serveAdminDocument, type ScraperAdminBindings } from './admin-auth'
 import type { AiBindings } from './ai/env'
 import { refreshAllListingSkills } from './market/stats'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
-import { queueDailyRefresh } from './scrapers/jobstreet/schedule'
+import { queueDailyRefresh, syncAllApprovedAt } from './scrapers/jobstreet/schedule'
 import type { KotakBindings } from './tool-deps'
 
 type ScheduledController = { scheduledTime: number; cron: string }
@@ -85,6 +85,14 @@ export default {
     if (!url) throw new Error('DATABASE_URL must be configured for the daily JobStreet queue')
     const sql = jobstreetDatabase(url)
     const scheduledFor = singaporeDate(new Date(controller.scheduledTime))
+    // The depth order's copy of the approvals (#276): an admin's approval skips the listings a runner save holds at
+    // that moment, so one query syncs every search title here. A failure only leaves those listings for the next night.
+    try {
+      const synced = await syncAllApprovedAt(sql)
+      console.info(`Synced the approval of ${synced} JobStreet listing(s) for the depth order.`)
+    } catch (error) {
+      console.error('Could not sync listing approvals:', error instanceof Error ? error.message : error)
+    }
     // Admins choose which search titles the midnight refresh covers. One query queues them all (#283).
     const { titles, queued } = await queueDailyRefresh(sql, scheduledFor)
     console.info(
@@ -92,7 +100,7 @@ export default {
     )
     // The job-ad market (#271): match the skills of listings scraped or changed since the last night. Postgres does the
     // work, so the Worker only waits. Each batch is one of the 50 subrequests the free plan gives an invocation, so
-    // with the queueing query the cron makes at most 11, however many search titles there are.
+    // with the approval sync and the queueing query the cron makes at most 12, however many search titles there are.
     try {
       const matched = await refreshAllListingSkills(sql, { batch: 1000, maxBatches: 10 })
       console.info(`Matched skills for ${matched} JobStreet listing(s).`)
