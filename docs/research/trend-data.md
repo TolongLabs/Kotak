@@ -170,7 +170,7 @@ Contents:
   - Limits: 10,000 requests per hour per IP.
   - Fit: "Who is hiring" comments are mostly US and remote, and they contain personal posts. Use only aggregate counts of keywords.
 - **Scraping forbidden**
-  - JobStreet ([terms](https://www.jobstreet.com.my/terms)): "You may not use data mining, robots, screen scraping, or similar automated data gathering…".
+  - JobStreet ([terms](https://www.jobstreet.com.my/terms)): "You may not use data mining, robots, screen scraping, or similar automated data gathering…". On 23 October 2026 the team decided to collect JobStreet ads anyway and to publish only totals from ads an admin approved ([#277](https://github.com/TolongLabs/Kotak/issues/277)).
   - LinkedIn ([User Agreement §8.2][linkedin-user-agreement]): no "bots or other unauthorized automated methods".
 
 [opendosm-api]: https://developer.data.gov.my/static-api/opendosm
@@ -193,7 +193,7 @@ Contents:
 
 ## JobStreet research implementation
 
-As of 22 October 2026, the repository includes a [JobStreet research scraper and contributor guide](/apps/api/src/scrapers/jobstreet/README.md), using the Clearcote browser package with Playwright Core. `bun run scrape:jobstreet --mode breadth` paginates search-card observations; `--mode depth --input PATH` fetches descriptions for saved IDs and writes a unified enriched view. Known descriptions are reused by default, with refresh available only as an explicit option. `bun run jobs:prepare` merges contributor breadth captures, preserves dated observation history and first/last-seen summaries, and writes a sorted latest-job view. Repeat sightings remain available for trend analysis; absence from a bounded scrape is not treated as closure. Depth retains explicit posting/closing dates when matching job metadata supplies them, otherwise `null`. Production persistence is wired to Neon Postgres, with the admin queue, browser runner and daily breadth schedule documented in the scraper guide; production credentials and initial data import are operator setup steps. The pipeline is separate from the app's scoring engine and does not change the source-access findings above or the recommended minimal stack.
+As of 22 October 2026, the repository includes a [JobStreet research scraper and contributor guide](/apps/api/src/scrapers/jobstreet/README.md), using the Clearcote browser package with Playwright Core. `bun run scrape:jobstreet --mode breadth` paginates search-card observations; `--mode depth --input PATH` fetches descriptions for saved IDs and writes a unified enriched view. Known descriptions are reused by default, with refresh available only as an explicit option. `bun run jobs:prepare` merges contributor breadth captures, preserves dated observation history and first/last-seen summaries, and writes a sorted latest-job view. Repeat sightings remain available for trend analysis; absence from a bounded scrape is not treated as closure. Depth retains explicit posting/closing dates when matching job metadata supplies them, otherwise `null`. Production persistence is wired to Neon Postgres, with the admin queue, browser runner and daily breadth schedule documented in the scraper guide; production credentials and initial data import are operator setup steps. Since 23 October 2026, ads an admin approves feed the app's job-ad market, beside the verdicts ([#271](https://github.com/TolongLabs/Kotak/issues/271)). They set no verdict, and the recommended minimal stack is unchanged.
 
 ## Risks and fallbacks
 

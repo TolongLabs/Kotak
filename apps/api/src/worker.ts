@@ -2,6 +2,7 @@ import type { ExecutionContext } from 'hono'
 import { app } from './app'
 import { serveAdminDocument, type ScraperAdminBindings } from './admin-auth'
 import type { AiBindings } from './ai/env'
+import { refreshAllListingSkills } from './market/stats'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
 import type { KotakBindings } from './tool-deps'
 
@@ -102,5 +103,14 @@ export default {
     console.info(
       `Queued daily JobStreet breadth refresh for ${careers.length} search title(s) on ${scheduledFor} (Asia/Singapore).`
     )
+    // The job-ad market (#271): match the skills of listings scraped or changed since the last night. Postgres does the
+    // work, so the Worker only waits. Each batch is one of the 50 subrequests the free plan gives an invocation,
+    // shared with the queueing above.
+    try {
+      const matched = await refreshAllListingSkills(sql, { batch: 1000, maxBatches: 10 })
+      console.info(`Matched skills for ${matched} JobStreet listing(s).`)
+    } catch (error) {
+      console.error('Could not match listing skills:', error instanceof Error ? error.message : error)
+    }
   }
 }

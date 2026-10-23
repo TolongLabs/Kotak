@@ -75,7 +75,7 @@ Fixed rules, not AI, set every verdict, score, ranking and roadmap order. AI doe
 
 - Before the demo, a RunPod GPU batch groups each O\*NET job's own tasks into 6 skills and drafts the questions. A validator rejects any task outside that job.
 - Live, Claude Haiku 5.5 explains each verdict with its dated sources and matches Malay and local job titles.
-- Ask Kopi, a chat agent, answers through 6 read-only tools over the same rules, which other assistants reach through an MCP server.
+- Ask Kopi, a chat agent, answers through 7 read-only tools over the same rules, which other assistants reach through an MCP server.
 - ElevenLabs voices Kopi, with mute and a text fallback.
 
 From the Phase 1 workshops, we use GenAI APIs (Claude), Postgres (Neon), cloud hosting (Cloudflare Workers and Replit) and RunPod serverless GPUs ([workshops][workshops]; [Workshop 1][w1]).
@@ -93,10 +93,10 @@ Kotak is a TypeScript monorepo run with Bun. It has two apps, `apps/web` (the Re
 - **Rule engine in the browser**: the app loads precomputed, dated JSON snapshots and computes levels, targets, verdicts, fit scores and roadmap order in the browser. Switching the snapshot from April to May 2026 recomputes them at once. A guest session in `localStorage` keeps answers, goals and ticked steps.
 - **API**: Hono, on Cloudflare Workers for the main link and on Bun for Replit. One server serves the React build and the API. Its routes match job titles, write cited explanations, proxy text to speech, run Ask Kopi and serve an MCP endpoint. Zod validates every request and response. On Workers, the MCP and chat routes run in a Durable Object.
 - **GenAI**: the Claude API with Claude Haiku 5.5. The API caches each answer by a SHA-256 hash of the request and pre-warms the cache for the demo roles. A check rejects any explanation that changes a verdict or lacks a dated citation, and falls back to a fixed template.
-- **Agent layer**: `@kotak/agent` exposes 6 read-only tools over `@kotak/sdk`: find a role, get the questions, run a check-up, what changed, national skill gaps and list sources. Ask Kopi calls them through Claude, and outside assistants call them through `/api/mcp`. Every number the agent quotes comes from a tool.
+- **Agent layer**: `@kotak/agent` exposes 7 read-only tools over `@kotak/sdk`: find a role, get the questions, run a check-up, what changed, national skill gaps, job ads in Malaysia and list sources. Ask Kopi calls them through Claude, and outside assistants call them through `/api/mcp`. Every number the agent quotes comes from a tool.
 - **Voice**: ElevenLabs. Fixed lines are pre-generated with `eleven_v4`, and live lines use `eleven_v4_turbo`. The API caches audio by a hash of the text, and the key stays on the server ([TTS notes][tts]).
 - **Data pipeline**: Bun scripts ingest O\*NET 30.1, filter the Economic Index to Malaysia, Singapore and global rows, and extract DOSM Job Market Insights (Q3 2019 to Q2 2026). Every record carries its source, date and layer. A GitHub Actions workflow checks for new releases every Saturday and rebuilds the snapshots.
-- **Database**: Neon Postgres 18 (region `aws-ap-southeast-1`). One table stores anonymous check-ups: only the role code, the 6 skill levels, a sample flag and the date, and totals show only for groups of 10 or more. Other tables hold the research scraper's job listings and its admin accounts.
+- **Database**: Neon Postgres 18 (region `aws-ap-southeast-1`). One table stores anonymous check-ups: only the role code, the 6 skill levels, a sample flag and the date, and totals show only for groups of 10 or more. Other tables hold the scraper's job listings, the admins' reviews of them, each listing's matched skills and the admin accounts.
 - **GPU**: a RunPod serverless endpoint runs `Qwen/Qwen3.8-27B-FP8` on vLLM for the one-time batch that builds 6 skills and 18 can-do statements for each of 923 jobs.
 - **Hosting and CI**: GitHub Actions type-checks, builds and deploys Kotak to Cloudflare Workers on every merge to `main`, or when a member clicks "Run workflow" ([deploy notes][deploy]). Replit publishes the same `main` branch from the team's own account. API keys and the database URL live in GitHub, Cloudflare and Replit secrets, never in code.
 

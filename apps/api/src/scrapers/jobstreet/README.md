@@ -16,6 +16,7 @@ Contents:
 1.  [Reliability and failure handling](#reliability-and-failure-handling)
 1.  [Verification](#verification)
 1.  [Implementation](#implementation)
+1.  [Job-ad market](#job-ad-market)
 1.  [References](#references)
 
 ## Run
@@ -132,7 +133,7 @@ bun run scrape:jobstreet --mode depth --input data/jobstreet/new-run/jobs.jsonl 
 bun run scrape:jobstreet --mode depth --input data/jobstreet/new-run/jobs.jsonl --refresh-after-hours 0
 ```
 
-The first refreshes descriptions at least a week old; zero forces a new fetch. There is no refresh scheduler. Newly fetched descriptions include visible text, source HTML, a SHA-256 hash of normalized text, detail title, company and classification when available. Explicit matching `JobPosting` JSON-LD dates become `date_posted` and `valid_through`; absent or invalid dates remain `null`. No automatic skill extraction or demand scoring is performed.
+The first refreshes descriptions at least a week old; zero forces a new fetch. There is no refresh scheduler. Newly fetched descriptions include visible text, source HTML, a SHA-256 hash of normalized text, detail title, company and classification when available. Explicit matching `JobPosting` JSON-LD dates become `date_posted` and `valid_through`; absent or invalid dates remain `null`. The scraper extracts no skills and scores no demand; the app's job-ad market does that for approved listings (see [Job-ad market](#job-ad-market)).
 
 ## Merge contributor captures
 
@@ -187,7 +188,7 @@ Breadth and the offline merger accept `--sort`; these sorts have no connection t
 
 Text keys use Unicode NFKC normalization and lowercase code-point ordering, independent of the machine's locale. Every tie uses numeric job ID, without assuming IDs encode posting dates.
 
-`listed_at_estimate` derives from `scraped_at` and numeric English labels such as `5m ago`, `12h ago`, `6d ago` or `2 weeks ago`. It is approximate because JobStreet rounds these labels. Unsupported labels produce `null`; the original label is retained. Salary remains displayed text, without currency or pay-period normalization for numeric salary sorting. These sorts organize research records; they do not compute skill demand, relevance or role-fit scores.
+`listed_at_estimate` derives from `scraped_at` and numeric English labels such as `5m ago`, `12h ago`, `6d ago` or `2 weeks ago`. It is approximate because JobStreet rounds these labels. Unsupported labels produce `null`; the original label is retained. Salary remains displayed text, without currency or pay-period normalization for numeric salary sorting. These sorts organize research records; they do not compute skill demand, relevance or role-fit scores. The app's job-ad market parses ringgit pay per month for approved listings.
 
 For a scrape, `jobs.jsonl` keeps encounter order and `jobs.sorted.jsonl` contains the chosen sorted view of the same selected jobs. `--max-jobs` limits collection before sorting: `newest` orders the captured subset, not the entire site. The offline merger writes its deduplicated, sorted view to `jobs.jsonl`.
 
@@ -232,7 +233,7 @@ HTTP 401 and ordinary HTTP 403/429 responses stop the run; recognized verificati
 
 A malformed card is quarantined while valid cards continue. Success requires at least one saved job and successful profile cleanup; it can still have rejected records, so inspect report counts. An entirely invalid offline input fails with exit code 1. Reports and sorted views use temporary files followed by rename. Raw observations are appended as accepted, preserving earlier results when a later page fails.
 
-Depth continues after individual detail failures, retaining successful records and a `partial` report. Partial and failed depth runs exit with code 1. Access denials and verification timeouts stop the run. Cache-only runs need no browser. Both modes run independently of Hono and Cloudflare Workers and do not feed the app's scoring engine.
+Depth continues after individual detail failures, retaining successful records and a `partial` report. Partial and failed depth runs exit with code 1. Access denials and verification timeouts stop the run. Cache-only runs need no browser. Both modes run independently of Hono and Cloudflare Workers and feed no verdict or fit score.
 
 ## Verification
 
@@ -271,7 +272,21 @@ Live tests saved 35 unique breadth jobs across two pages and fetched three full 
 - `prepare.ts`, `prepare-cli.ts`: offline contributor-file merge, retained observation history and date summaries.
 - `files.ts`: exclusive output directories and report/view replacement.
 
-The admin API queues and reviews work; the standalone Bun runner owns browser launch and database ingestion. Approved titles feed the check-up's job-title suggestions. Scraped listings are not currently fed into the role-scoring engine.
+The admin API queues and reviews work; the standalone Bun runner owns browser launch and database ingestion. Approved titles feed the check-up's job-title suggestions, and approved listings feed the job-ad market. Scraped listings feed no verdict, fit score or roadmap.
+
+## Job-ad market
+
+Approved listings show what Malaysian employers advertise for a role ([#271](https://github.com/TolongLabs/Kotak/issues/271)). `GET /api/market?codes=…` gives, per O\*NET occupation:
+
+- active ads (seen in the 14 days before the latest scrape) and employers;
+- the median and quartiles of advertised monthly pay in ringgit;
+- the top five states, how many ads name none, remote and hybrid counts, and work types;
+- the tools, languages and AI skills the ads mention;
+- weekly counts.
+
+The Future Skills Radar page and Roles That Fit show them, and Kopi's `job_market` tool answers from them. Only ads approved under the occupation count, and only from search titles that aren't hidden.
+
+`market/stats.ts` parses pay and states in Postgres. `market/skills.ts` holds the skill vocabulary: Postgres matches each listing's title, summary, card text without the employer's name, and description against it and keeps the result in `jobstreet_listing_skills`. Matching runs when an admin approves a batch and every night after the queue is set. Bump `SKILL_VOCABULARY_VERSION` after changing a pattern, so every listing is matched again; until then, the older matches still count. Most ads show only a summary until a depth run fetches the description, so skill shares count mentions, not requirements ([#276](https://github.com/TolongLabs/Kotak/issues/276)).
 
 ## References
 

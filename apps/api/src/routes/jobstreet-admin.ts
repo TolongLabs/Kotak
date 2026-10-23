@@ -7,6 +7,7 @@ import { withinRateLimit, type AiDeps } from '../ai/deps'
 import type { AiContext } from '../ai/env'
 import { neighbouringOccupations, occupationAlternateTitles } from '../ai/occupation-index'
 import { getConfig } from '../config'
+import { refreshAllListingSkills } from '../market/stats'
 import { careerSearchUrl, isCareerSlug, parseCareerTitle, slugForTitle } from '../scrapers/jobstreet/careers'
 import { jobstreetDatabase } from '../scrapers/jobstreet/database'
 import {
@@ -627,6 +628,16 @@ export function createJobstreetAdminRoute(deps: AiDeps) {
     ]
     const [review] = results[2]
     if (!review) return occupationChanged(context)
+    // The job-ad market (#271) reads approvals live; match the batch's skills now rather than at the nightly refresh.
+    // A failure only delays them until then.
+    const matching = refreshAllListingSkills(sql, { careerSlug: batch.career_slug, batch: 1000, maxBatches: 5 }).catch(
+      (error) => console.error('Could not match listing skills:', error instanceof Error ? error.message : error)
+    )
+    try {
+      context.executionCtx.waitUntil(matching)
+    } catch {
+      await matching // Bun has no execution context: finish before answering.
+    }
     return context.json({ review: { status: 'approved', ...review }, in_checkup: results[3][0]?.in_checkup === true })
   })
 

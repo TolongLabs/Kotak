@@ -18,7 +18,8 @@ async function warmUp() {
   const idle = { checkup: () => Promise.reject(new Error('warm-up')) } as unknown as Kotak
   const [client, server] = InMemoryTransport.createLinkedPair()
   const nationalView = () => Promise.reject(new Error('warm-up'))
-  await createKotakMcpServer({ kotak: idle, searchTitles, nationalView }).connect(server)
+  const jobMarket = () => Promise.reject(new Error('warm-up'))
+  await createKotakMcpServer({ kotak: idle, searchTitles, nationalView, jobMarket }).connect(server)
   await client.start()
   for (const message of [
     {

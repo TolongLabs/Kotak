@@ -4,6 +4,8 @@ import {
   ApiErrorSchema,
   ExplanationRequestSchema,
   ExplanationResponseSchema,
+  JOB_MARKET_MAX_CODES,
+  JobMarketResponseSchema,
   RoleAliasesResponseSchema,
   RoleMatchRequestSchema,
   RoleMatchResponseSchema,
@@ -11,6 +13,7 @@ import {
   type AgentChatResponse,
   type ExplanationRequest,
   type ExplanationResponse,
+  type JobMarket,
   type RoleAliasesResponse,
   type RoleMatchResponse
 } from '@kotak/shared'
@@ -158,4 +161,47 @@ export async function askKopi(body: AgentChatRequest): Promise<KopiChatResult> {
   } catch {
     return failed
   }
+}
+
+export type { JobMarket } from '@kotak/shared'
+
+const jobMarketCache = new Map<string, Promise<JobMarket | null>>()
+
+/**
+ * What Malaysian job ads say about each role (#272), by O*NET code; a role without approved ads is left out. Each code
+ * is fetched once per page load, in one request for the codes not asked for yet. A failed request leaves those roles
+ * out and is retried on the next call, as is a role missing while the database is unreachable.
+ */
+export async function fetchJobMarkets(codes: string[]): Promise<Map<string, JobMarket>> {
+  const missing = [...new Set(codes)].filter((code) => !jobMarketCache.has(code))
+  // The route takes up to JOB_MARKET_MAX_CODES codes a request.
+  for (let start = 0; start < missing.length; start += JOB_MARKET_MAX_CODES) {
+    const chunk = missing.slice(start, start + JOB_MARKET_MAX_CODES)
+    const request = fetch(`/api/market?codes=${chunk.map(encodeURIComponent).join(',')}`).then(async (response) => {
+      if (response.status !== 200) throw new Error(`HTTP ${response.status}`)
+      const result = JobMarketResponseSchema.safeParse(await response.json())
+      if (!result.success) throw new Error('Unexpected job-ad response')
+      return result.data
+    })
+    for (const code of chunk) {
+      jobMarketCache.set(
+        code,
+        request.then(
+          ({ markets, database_available }) => {
+            const market = markets.find((found) => found.onet_code === code) ?? null
+            // While the database is unreachable the route still sends what it cached, but a role it left out may
+            // have ads.
+            if (!market && !database_available) jobMarketCache.delete(code)
+            return market
+          },
+          () => {
+            jobMarketCache.delete(code)
+            return null
+          }
+        )
+      )
+    }
+  }
+  const entries = await Promise.all(codes.map(async (code) => [code, await jobMarketCache.get(code)] as const))
+  return new Map(entries.flatMap(([code, market]) => (market ? [[code, market] as const] : [])))
 }

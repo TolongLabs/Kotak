@@ -18,7 +18,8 @@ Contents:
 - **DOSM Job Market Insights**: Data source: Department of Statistics Malaysia, used under [DOSM's Terms of Use](https://www.dosm.gov.my/portal-main/article/term-of-use).
 - **OpenDOSM**: skill-related underemployment by age, under [CC BY 4.0](https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age). Kotak cites one figure.
 - **UN SDG indicators**: indicator 4.4.1 for Malaysia, from the [UN SDG API](https://unstats.un.org/sdgapi/). Kotak cites one baseline.
-- **Cited figures**: TalentCorp, MOHE, the World Bank, JobStreet and MyCOL figures appear as dated citations only. Kotak does not redistribute their files.
+- **JobStreet job ads**: Kotak shows totals from JobStreet Malaysia ads it collected and an admin reviewed: ad counts, advertised pay quartiles, states, work types and skill-mention shares, each cited with its date. It republishes no ad text, job titles or employer names.
+- **Cited figures**: TalentCorp, MOHE, the World Bank and MyCOL figures appear as dated citations only. Kotak does not redistribute their files.
 
 ## Models and services
 
