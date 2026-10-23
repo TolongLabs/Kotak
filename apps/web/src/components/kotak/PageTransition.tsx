@@ -4,6 +4,7 @@ import { cn } from '../ui/cn'
 export interface PageTransitionProps {
   onDone: () => void
   durationMs?: number
+  load?: () => Promise<unknown>
 }
 
 // The flaps swing open and Kopi's ears rise. Reduced motion skips to the open box and a 200 ms fade (DESIGN.md).
@@ -50,10 +51,11 @@ function OpeningBox({ open, className }: { open: boolean; className?: string }) 
 }
 
 // Full-screen "Opening the Box…" moment between the last question and the results.
-export function PageTransition({ onDone, durationMs = 2400 }: PageTransitionProps) {
+export function PageTransition({ onDone, durationMs = 2400, load }: PageTransitionProps) {
   const [open, setOpen] = useState(false)
   const [progress, setProgress] = useState(0)
   const onDoneRef = useRef(onDone)
+  const loadRef = useRef(load)
 
   useEffect(() => {
     onDoneRef.current = onDone
@@ -63,11 +65,19 @@ export function PageTransition({ onDone, durationMs = 2400 }: PageTransitionProp
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const total = reduced ? 200 : durationMs
     const start = performance.now()
+    // With a load, the bar holds at 90% until it settles, so it never reads 100% before the next screen's data is in.
+    let settled = !loadRef.current
+    void loadRef
+      .current?.()
+      .catch(() => {})
+      .finally(() => {
+        settled = true
+      })
     let frame = requestAnimationFrame(function tick(now) {
-      const share = Math.min(1, (now - start) / total)
+      const percent = Math.round(Math.min(1, (now - start) / total) * 100)
       setOpen(true)
-      setProgress(Math.round(share * 100))
-      if (share < 1) frame = requestAnimationFrame(tick)
+      setProgress(settled ? percent : Math.min(90, percent))
+      if (percent < 100 || !settled) frame = requestAnimationFrame(tick)
       else onDoneRef.current()
     })
 
