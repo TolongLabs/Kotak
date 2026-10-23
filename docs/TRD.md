@@ -690,7 +690,7 @@ The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels
 
 ### Health check
 
-`GET /api/health` returns `{ "status": "ok" }`. After each deploy, the workflow checks that it answers 200 ([#62]) and that an MCP `tools/list` at `/api/mcp` names all six Kotak tools ([#186]).
+`GET /api/health` returns `{ "status": "ok" }`. After each deploy, the workflow checks that it answers 200 ([#62]) and that an MCP `tools/list` at `/api/mcp` names all eight Kotak tools ([#186]).
 
 ## AI models
 
@@ -780,7 +780,7 @@ This set-up, fixed on 22 October, replaces the Replit Reserved VM plan in [#65],
 5.  Apply the Neon migrations (`bun run db:migrate`).
 6.  Deploy with `cloudflare/wrangler-action@v4`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. The token uses the "Edit Cloudflare Workers" template.
 7.  Re-seed the national view's labelled sample rows (`bun run db:seed`), after the deploy so the old Worker never reads rows it can't parse ([#147]).
-8.  Run the post-deploy smoke checks against the live link: `/api/health` answers 200, and an MCP `tools/list` at `/api/mcp` names all six Kotak tools ([#186]).
+8.  Run the post-deploy smoke checks against the live link: `/api/health` answers 200, and an MCP `tools/list` at `/api/mcp` names all eight Kotak tools ([#186]).
 
 Worker routing ([deploy notes][deploy]):
 
