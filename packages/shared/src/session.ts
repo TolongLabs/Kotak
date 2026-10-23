@@ -2,6 +2,10 @@ import { z } from 'zod'
 import { SnapshotIdSchema } from './engine'
 import { MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from './rules/constants'
 
+/** One answer on the 1 to 4 scale (1 "Not yet" to 4 "Yes, on my own"); a reversed question is stored already flipped. */
+export const RatingSchema = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)])
+export type Rating = z.infer<typeof RatingSchema>
+
 export const GuestSessionSchema = z
   .object({
     is_guest: z.boolean(),
@@ -11,7 +15,7 @@ export const GuestSessionSchema = z
     target_role_code: z.string().nullable(),
     // The role the roadmap plans for when the user picks one on the Roles page; null plans for the assessed role.
     plan_role_code: z.string().nullable().default(null),
-    answers: z.array(z.boolean().nullable()).length(12),
+    answers: z.array(RatingSchema.nullable()).length(12),
     follow_up_answers: z.record(z.string(), z.boolean().nullable()),
     ticked_milestones: z.array(z.string()),
     custom_weekly_hours: z.number().positive().nullable(),

@@ -9,6 +9,7 @@ import {
   GoalSchema,
   OnetSocCodeSchema,
   PREVIOUS_SNAPSHOT,
+  RatingSchema,
   RoadmapItemSchema,
   RoadmapSchema,
   ScenarioSchema,
@@ -31,14 +32,14 @@ import { z } from 'zod'
 export { DEFAULT_SNAPSHOT, GoalSchema }
 
 const RoleRefSchema = z.object({ onet_code: OnetSocCodeSchema, title: z.string().min(1) }).strict()
-const LevelSchema = z.number().int().min(0).max(3)
+const LevelSchema = z.number().min(0).max(3)
 
-/** One corner's two answers: "can you do this?" on the working statement, then the follow-up that answer picks. */
+/** One corner's two ratings, 1 (Not yet) to 4 (Yes, on my own): the basic statement and the advanced one. */
 export const CornerAnswerSchema = z
   .object({
     corner_id: z.string().min(1),
-    can_do: z.boolean(),
-    follow_up: z.boolean() // on the advanced statement after a yes, the basic one after a no
+    basic: RatingSchema,
+    advanced: RatingSchema
   })
   .strict()
 
@@ -92,8 +93,8 @@ export const QuestionsSchema = z
           corner_id: z.string().min(1),
           name: z.string().min(1),
           verdict: VerdictSchema,
-          can_do: z.string().min(1), // asked first
-          follow_up: z.object({ if_yes: z.string().min(1), if_no: z.string().min(1) }).strict()
+          basic: z.string().min(1), // each statement is rated 1 to 4
+          advanced: z.string().min(1)
         })
         .strict()
     )

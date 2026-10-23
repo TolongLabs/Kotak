@@ -15,7 +15,7 @@ export type Corner = {
   id: string
   name: string
   verdict: VerdictId
-  you: Level
+  you: number // 0 to 3, in steps of 0.5 for a rated corner
   neededSlow: 1 | 2 | 3
   neededFast: 1 | 2 | 3
   reasoning?: string

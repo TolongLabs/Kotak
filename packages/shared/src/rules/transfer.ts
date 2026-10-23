@@ -64,7 +64,7 @@ export function transferLevels(
     return {
       onet_code: role.onet_code,
       corner_id: corner.corner_id,
-      level: Math.floor(weighted ?? 0),
+      level: own ? own.level : Math.floor(weighted ?? 0),
       label,
       basis: {
         task_links: taskLinks.length,

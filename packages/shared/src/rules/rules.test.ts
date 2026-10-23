@@ -5,7 +5,8 @@ import {
   cornerVerdict,
   CornerVerdictSchema,
   fitScore,
-  followUpStatement,
+  REVERSED_SLOTS,
+  reversedRating,
   roleVerdicts,
   RoleVerdictsSchema,
   transferLevels,
@@ -172,13 +173,23 @@ describe('#81 verdict rules', () => {
 
 describe('#83 scoring', () => {
   test.each([
-    [true, true, 'advanced', 3],
-    [true, false, 'advanced', 2],
-    [false, true, 'basic', 1],
-    [false, false, 'basic', 0]
-  ] as const)('working %p, follow-up %p asks %s and gives level %d', (working, followUp, statement, level) => {
-    expect(followUpStatement(working)).toBe(statement)
-    expect(cornerLevel(working, followUp)).toBe(level)
+    [4, 4, 3],
+    [4, 2, 2],
+    [3, 1, 1],
+    [1, 1, 0],
+    [2, 1, 0.5]
+  ] as const)('basic %d and advanced %d rate level %d', (basic, advanced, level) => {
+    expect(cornerLevel(basic, advanced)).toBe(level)
+  })
+
+  test('the reversed slots are questions 2, 4, 7, 10 and 12, never two in a row', () => {
+    expect(REVERSED_SLOTS.map((slot) => slot + 1)).toEqual([2, 4, 7, 10, 12])
+    expect(REVERSED_SLOTS.some((slot, i) => REVERSED_SLOTS[i + 1] === slot + 1)).toBe(false)
+  })
+
+  test('a reversed answer is saved as 5 minus the rating', () => {
+    expect(reversedRating(4)).toBe(1)
+    expect(reversedRating(1)).toBe(4)
   })
 
   test('fit score is sum(min(user, target)) / sum(target) * 100, with its terms', () => {

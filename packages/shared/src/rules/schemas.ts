@@ -5,7 +5,8 @@ import { SignalSchema, SnapshotIdSchema, SourceSchema, VerdictSchema } from '../
 import { LESS_IMPORTANT_TAG } from './constants'
 
 const DateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
-const UserLevelSchema = z.number().int().min(0).max(3)
+// 0 to 3 in steps of 0.5 for a corner the user rated; a transferred estimate is rounded down to a whole level.
+const UserLevelSchema = z.number().min(0).max(3)
 const TargetLevelSchema = z.number().min(1).max(3)
 const FallbackLabelSchema = z.string().min(1).nullable()
 const TaskIdSchema = z.union([z.string().min(1), z.number().int().nonnegative()])
