@@ -292,7 +292,7 @@ bun test
 
 - **Hosting:** Replit publishes Kotak from the `main` branch on the team's own account, at the Live Demo link above.
 - **Run configuration:** `.replit` installs with Bun, builds the data and the app, and starts the Hono server on port 5000.
-- **Secrets:** API keys are stored in Replit Secrets, never in the code.
+- **Secrets:** API keys and the Neon `DATABASE_URL` are stored in Replit Secrets, never in the code. The admin page at `/admin/sign-in` needs `DATABASE_URL`, and the published app needs it in its deployment secrets too.
 
 📄 Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](/submission/REPLIT%20PROOF%20OF%20USE.pdf)
 
