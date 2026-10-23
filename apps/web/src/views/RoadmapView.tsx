@@ -23,6 +23,7 @@ import { cornerReasoning } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
+import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
 import { type TimelineStep } from './roadmap/planSupport'
@@ -276,6 +277,22 @@ export function RoadmapView() {
   const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
   const selectedImpactArea = impactAreaGoals.find((goal) => String(goal) === session.impact_area) ?? null
   const sourceRefs = toRoadmapSources(checkup)
+  const fundingSourceNumber = sourceRefs.sources.length + 1
+  const sources = [
+    ...sourceRefs.sources,
+    {
+      n: fundingSourceNumber,
+      name: 'HRD Corp',
+      detail: 'HRD Corp Claimable Courses · accessed 20 Oct 2026',
+      href: 'https://hrdcorp.gov.my/hrdcorp-claimable-courses'
+    },
+    {
+      n: fundingSourceNumber + 1,
+      name: 'HRD Corp',
+      detail: 'e-LATiH · accessed 20 Oct 2026',
+      href: 'https://elatih.hrdcorp.gov.my/about-us'
+    }
+  ]
 
   const cornerNames = new Map(checkup.corners.map((corner) => [corner.corner_id, corner.name]))
   const dividend = checkup.roadmap.dividend
@@ -537,6 +554,7 @@ export function RoadmapView() {
           </section>
 
           <div className="roadmap-sticky-column space-y-4 lg:sticky lg:top-24 lg:self-start">
+            <EmployerFundingCard sourceNumber={fundingSourceNumber} />
             {reasonText && (
               <section aria-label="Roadmap Reasoning" className="[&>section>p:first-of-type]:text-body-s">
                 <Reasoning text={reasonText} />
@@ -579,13 +597,7 @@ export function RoadmapView() {
           </div>
         </div>
 
-        {sourceRefs.sources.length > 0 ? (
-          <SourceList sources={sourceRefs.sources} />
-        ) : (
-          <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
-            No sources are available for this role yet.
-          </p>
-        )}
+        <SourceList sources={sources} />
 
         {/* One print action per screen: the header button on desktop, this sticky bar on phones. The plan already stays on
             this device, so nothing here claims to save it. */}
