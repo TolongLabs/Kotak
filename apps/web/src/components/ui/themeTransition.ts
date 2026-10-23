@@ -5,9 +5,10 @@ import { setTheme, type Theme } from './theme'
 // toggle with the old theme ahead and the new theme behind. Each ring cell shows what the page has there, in the
 // page's own colours: text as dense glyphs, borders as +-| boxes, media as mid-density fill and the rest as faint
 // grain. Glyphs re-roll 20 times a second along a 70-step density ramp, and the theme flips along a dithered seam
-// marked in the accent. Underneath runs a view transition: the old view is a still, the new view is live and its clip
-// follows the seam. Safari keeps the canvas's capture still, so it shows the clip alone, as a circular reveal.
-// Reduced motion, and browsers without view transitions, swap at once.
+// marked in the accent. Underneath runs a view transition: the old view is a still, the new view is live, and its clip
+// runs just behind the ring's leading edge. The canvas is part of the new view, which every engine keeps live. A canvas
+// with its own view-transition-name would stay a still in Safari. Reduced motion, and browsers without view
+// transitions, swap at once.
 
 // Paul Bourke's 70-step ramp, densest first.
 const RAMP = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. '
@@ -149,7 +150,8 @@ function colours({ kind, owner, top }: Probe): Colours {
       for (let ancestor: Element | null = element; ancestor; ancestor = ancestor.parentElement) {
         const background = getComputedStyle(ancestor).backgroundColor
         if (opaque(background)) {
-          color = background
+          // The new view lies under the ring, so a glass surface draws solid rather than letting it through.
+          color = background.replace(/^rgba\((.*),\s*[\d.]+\)$/, 'rgb($1)')
           break
         }
       }
@@ -189,15 +191,18 @@ export function switchTheme(theme: Theme, origin: { x: number; y: number }) {
   const before = colours(cells)
   let after = before
 
-  // The canvas exists only in the new view, so its capture stays live and draws on top of everything.
+  // The canvas exists only in the new view. As a manual popover it sits in the top layer, above an open menu drawer.
   const canvas = document.createElement('canvas')
   canvas.setAttribute('aria-hidden', 'true')
+  canvas.popover = 'manual'
   canvas.style.cssText =
-    'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;view-transition-name:theme-ascii'
+    `position:fixed;inset:0;width:${innerWidth}px;height:${innerHeight}px;margin:0;padding:0;border:0;` +
+    'background:transparent;pointer-events:none'
   const transition = document.startViewTransition(() => {
     flushSync(() => setTheme(theme))
     after = colours(cells)
     document.body.append(canvas)
+    canvas.showPopover()
   })
   transition.ready.then(
     () => play(canvas, grid, origin, cells.kind, before, after),
@@ -229,7 +234,7 @@ function play(
   context.textAlign = 'center'
   context.textBaseline = 'middle'
 
-  // The ring's edges and its seam dither on a 4x4 Bayer matrix.
+  // The ring's trailing edge and its seam dither on a 4x4 Bayer matrix.
   const far = Math.max(
     Math.hypot(origin.x, origin.y),
     Math.hypot(width - origin.x, origin.y),
@@ -248,13 +253,15 @@ function play(
     }
   }
 
-  // The new view's clip trails the ring's leading edge by half the band, so it always sits under solid cells.
+  // The canvas is clipped with the new view, so the clip runs two cells behind the ring's leading edge. Every cell
+  // inside it then has a dithered distance under the edge and is drawn, and the new page never shows ahead of the ring.
   const travel = far + band + cellH * 2
+  const lag = cellH * 2
   const at = `at ${origin.x}px ${origin.y}px`
   const animation = document.documentElement.animate(
     {
-      clipPath: [`circle(0px ${at})`, `circle(0px ${at})`, `circle(${travel - band / 2}px ${at})`],
-      offset: [0, band / 2 / travel, 1]
+      clipPath: [`circle(0px ${at})`, `circle(0px ${at})`, `circle(${travel - lag}px ${at})`],
+      offset: [0, lag / travel, 1]
     },
     { duration: DURATION_MS, fill: 'forwards', pseudoElement: '::view-transition-new(root)' }
   )
