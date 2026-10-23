@@ -58,7 +58,8 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
                 resource.kind === 'search' && !resource.title.startsWith('Search:')
                   ? `Search: ${resource.title}`
                   : resource.title,
-              href: resource.url
+              href: resource.url,
+              kind: resource.kind
             }
           : { label: '', href: '' },
         sdgs: [

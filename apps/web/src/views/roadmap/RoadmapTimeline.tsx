@@ -64,7 +64,12 @@ function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }
           </dd>
         </div>
       </dl>
-      {step.resource.label && <p className="text-label-s text-text-muted">Resource: {step.resource.label}</p>}
+      {step.resource.label && (
+        <div className="space-y-1 text-label-s text-text-muted">
+          <p>Resource: {step.resource.label}</p>
+          <p>{step.resource.kind === 'search' ? 'Search suggestion, not checked' : 'Free'}</p>
+        </div>
+      )}
       {step.sdgs.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-0.5">
           {step.sdgs.map((goal) => (

@@ -1,3 +1,5 @@
+import type { FreeResource } from '@kotak/shared'
+
 export type VerdictId = 'rising' | 'steady' | 'declining' | 'split' | 'unknown'
 
 export type Level = 0 | 1 | 2 | 3
@@ -45,7 +47,7 @@ export type RoadmapStep = {
   description: string
   gain: string
   hoursPerWeek: number
-  resource: { label: string; href: string; citation?: number }
+  resource: { label: string; href: string; citation?: number; kind?: FreeResource['kind'] }
   sdgs: number[]
   conditional?: string
 }
