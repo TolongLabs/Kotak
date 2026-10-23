@@ -220,6 +220,12 @@ async function runQueued(input: unknown) {
   }
   const persistFinal = (report: Record<string, unknown>) =>
     persistRunOutput(sql, outputPath, report, run.source, run.scheduled_for, run.id, { queued })
+  // After a failed scrape, save what it found; the scrape's own error is the one the run keeps, so a save that fails
+  // (for example with no listings at all) is only logged.
+  const saveAfterFailure = (report: Record<string, unknown>) =>
+    persistFinal(report).catch((error) =>
+      console.error(`Could not save the output of failed run ${run.id}:`, printable(error))
+    )
 
   if (run.mode === 'breadth') {
     try {
@@ -232,7 +238,6 @@ async function runQueued(input: unknown) {
         delayMs,
         delayJitterMs,
         headless,
-        browserScope: { mode: 'breadth', searchUrl: career.searchUrl },
         onProgress
       })
       await persistFinal(report)
@@ -240,7 +245,7 @@ async function runQueued(input: unknown) {
       const report = await Bun.file(resolve(outputPath, 'run.json'))
         .json()
         .catch(() => null)
-      if (report) await persistFinal(report)
+      if (report) await saveAfterFailure(report)
       throw error
     }
     return
@@ -283,7 +288,6 @@ async function runQueued(input: unknown) {
       delayJitterMs,
       headless,
       discoverLocalCache: false,
-      browserScope: { mode: 'depth', jobIds: listings.map((listing) => listing.job_id) },
       onProgress
     })
     await persistFinal(report)
@@ -291,7 +295,7 @@ async function runQueued(input: unknown) {
     const report = await Bun.file(resolve(outputPath, 'run.json'))
       .json()
       .catch(() => null)
-    if (report) await persistFinal(report)
+    if (report) await saveAfterFailure(report)
     throw error
   }
 }
