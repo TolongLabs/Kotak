@@ -8,12 +8,12 @@ import { SearchField } from '../components/ui/SearchField'
 import { TextField } from '../components/ui/TextField'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
-import type { BundleRoleIndexEntry, Occupation } from '@kotak/shared'
+import { normalizeTitle, type BundleRoleIndexEntry, type Occupation } from '@kotak/shared'
 import { goals } from '../demo/data'
 import type { Goal } from '../demo/types'
 import { useRoleIndex } from '../engine/bundle'
 import { assessedRoleCode } from '../engine/checkup'
-import { fetchRoleMatch, type ApiResult } from '../engine/api'
+import { fetchRoleAliases, fetchRoleMatch, type ApiResult, type RoleAlias } from '../engine/api'
 import { updateGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import type { RoleMatchResponse } from '@kotak/shared'
@@ -25,6 +25,8 @@ const suggestedTitles: Record<string, string> = {
   '15-1252.00': 'Software Engineer'
 }
 const maxSuggestions = 8
+// Approved market titles shown above the O*NET titles, so they never crowd the occupations out.
+const maxAliasSuggestions = 3
 
 function normalizeJobQuery(value: string) {
   return value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase()
@@ -48,6 +50,45 @@ function getSuggestedRoles(roles: BundleRoleIndexEntry[]) {
 
 function matchesQuery(role: BundleRoleIndexEntry, query: string) {
   return role.title.toLocaleLowerCase().includes(query) || getRoleDisplayTitle(role).toLocaleLowerCase().includes(query)
+}
+
+// One row of the job-title suggestions: an O*NET occupation, or a market title an admin approved for one.
+type RoleSuggestion = { key: string; role: BundleRoleIndexEntry; label: string; codeLine: string }
+
+function roleSuggestion(role: BundleRoleIndexEntry): RoleSuggestion {
+  return { key: role.onet_code, role, label: getRoleDisplayTitle(role), codeLine: getRoleCodeLine(role) }
+}
+
+// Up to three approved market titles that contain the query (normalised with normalizeJobQuery), for occupations in
+// the role index, the exact title first. A title that repeats its occupation's own title, plural or not, shows as
+// that occupation instead.
+function aliasSuggestions(aliases: RoleAlias[], roles: BundleRoleIndexEntry[], query: string): RoleSuggestion[] {
+  if (!aliases.length) return []
+  const byCode = new Map(roles.map((role) => [role.onet_code, role]))
+  const matches = aliases.flatMap((alias) => {
+    const role = byCode.get(alias.onet_code)
+    const aliasKey = normalizeJobQuery(alias.title)
+    if (!role || !aliasKey.includes(query)) return []
+    const title = normalizeTitle(alias.title)
+    const suggestion =
+      title === normalizeTitle(role.title) || title === normalizeTitle(getRoleDisplayTitle(role))
+        ? roleSuggestion(role)
+        : { key: `alias:${alias.title}`, role, label: alias.title, codeLine: `O*NET ${role.onet_code} · ${role.title}` }
+    return [{ suggestion, exact: aliasKey === query }]
+  })
+  return matches
+    .sort((a, b) => Number(b.exact) - Number(a.exact))
+    .slice(0, maxAliasSuggestions)
+    .map((match) => match.suggestion)
+}
+
+// Market titles first, then O*NET occupations, each occupation once.
+function mergeSuggestions(...lists: RoleSuggestion[][]): RoleSuggestion[] {
+  const seen = new Set<string>()
+  return lists
+    .flat()
+    .filter((suggestion) => !seen.has(suggestion.key) && seen.add(suggestion.key))
+    .slice(0, maxSuggestions)
 }
 
 function getInitialJobQuery() {
@@ -91,17 +132,35 @@ export function CheckUpView() {
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null)
   const [submitVersion, setSubmitVersion] = useState(0)
   const [goalId, setGoalId] = useState<Goal['id']>('explore')
+  const [aliases, setAliases] = useState<RoleAlias[]>([])
 
-  const normalizedQuery = jobQuery.trim().toLocaleLowerCase()
+  useEffect(() => {
+    let current = true
+    void fetchRoleAliases().then((list) => {
+      if (current) setAliases(list)
+    })
+    return () => {
+      current = false
+    }
+  }, [])
+
   const queryKey = normalizeJobQuery(jobQuery)
+  const normalizedQuery = queryKey
   const hasExactLocalMatch =
     queryKey.length > 0 &&
-    roles.some(
+    (roles.some(
       (role) => normalizeJobQuery(role.title) === queryKey || normalizeJobQuery(getRoleDisplayTitle(role)) === queryKey
-    )
-  const matchingSuggestions = normalizedQuery
-    ? roles.filter((role) => matchesQuery(role, normalizedQuery)).slice(0, maxSuggestions)
-    : getSuggestedRoles(roles)
+    ) ||
+      aliases.some(
+        (alias) =>
+          normalizeJobQuery(alias.title) === queryKey && roles.some((role) => role.onet_code === alias.onet_code)
+      ))
+  const matchingSuggestions: RoleSuggestion[] = normalizedQuery
+    ? mergeSuggestions(
+        aliasSuggestions(aliases, roles, normalizedQuery),
+        roles.filter((role) => matchesQuery(role, normalizedQuery)).map(roleSuggestion)
+      )
+    : getSuggestedRoles(roles).map(roleSuggestion)
   const currentRoleMatch = roleMatchState?.queryKey === queryKey ? roleMatchState : null
   const waitingForRoleMatch =
     roleIndex.status === 'ready' &&
@@ -126,13 +185,17 @@ export function CheckUpView() {
     roleIndex.status === 'ready' &&
     normalizedQuery.length > 0 &&
     !acceptedJob &&
+    !(hasExactLocalMatch && matchingSuggestions.length > 0) &&
     (roleMatchFallback || (matchingSuggestions.length === 0 && !waitingForRoleMatch && !hasRemoteSuggestion))
   const closeMatches = noJobMatch ? closestRoles(roles, normalizedQuery) : []
   const noMatchSuggestions = closeMatches.length ? closeMatches : noJobMatch ? getSuggestedRoles(roles) : []
   const isTargetGoal = goalId === 'target'
-  const normalizedTargetQuery = targetQuery.trim().toLocaleLowerCase()
-  const targetSuggestions = normalizedTargetQuery
-    ? roles.filter((role) => matchesQuery(role, normalizedTargetQuery)).slice(0, maxSuggestions)
+  const normalizedTargetQuery = normalizeJobQuery(targetQuery)
+  const targetSuggestions: RoleSuggestion[] = normalizedTargetQuery
+    ? mergeSuggestions(
+        aliasSuggestions(aliases, roles, normalizedTargetQuery),
+        roles.filter((role) => matchesQuery(role, normalizedTargetQuery)).map(roleSuggestion)
+      )
     : []
   const targetMatchesJob =
     acceptedJob !== null && acceptedTarget !== null && acceptedJob.onet_code === acceptedTarget.onet_code
@@ -174,8 +237,8 @@ export function CheckUpView() {
     setSuggestionsOpen(true)
   }
 
-  const acceptJob = (role: Pick<Occupation, 'onet_code' | 'title'>) => {
-    setJobQuery(getRoleDisplayTitle(role))
+  const acceptJob = (role: Pick<Occupation, 'onet_code' | 'title'>, label = getRoleDisplayTitle(role)) => {
+    setJobQuery(label)
     setAcceptedJob(role)
     setSuggestionsOpen(false)
   }
@@ -187,8 +250,8 @@ export function CheckUpView() {
     if (acceptedTarget) updateGuestSession({ target_role_code: null })
   }
 
-  const acceptTarget = (role: Pick<Occupation, 'onet_code' | 'title'>) => {
-    setTargetQuery(getRoleDisplayTitle(role))
+  const acceptTarget = (role: Pick<Occupation, 'onet_code' | 'title'>, label = getRoleDisplayTitle(role)) => {
+    setTargetQuery(label)
     setAcceptedTarget(role)
     setTargetSuggestionsOpen(false)
     updateGuestSession({ target_role_code: role.onet_code })
@@ -341,18 +404,18 @@ export function CheckUpView() {
                 </button>
               </li>
             )}
-            {matchingSuggestions.map((role, index) => (
-              <li key={role.onet_code}>
+            {matchingSuggestions.map((suggestion, index) => (
+              <li key={suggestion.key}>
                 <button
                   type="button"
-                  onClick={() => acceptJob(role)}
+                  onClick={() => acceptJob(suggestion.role, suggestion.label)}
                   className={cn(
                     'flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2',
                     index === 0 && 'bg-bg-panel'
                   )}
                 >
-                  <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
-                  <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
+                  <span className="w-full break-words text-label-l">{suggestion.label}</span>
+                  <span className="font-mono text-mono-s text-text-muted">{suggestion.codeLine}</span>
                 </button>
               </li>
             ))}
@@ -414,18 +477,18 @@ export function CheckUpView() {
                 aria-label="Target Role Suggestions"
                 className="w-full min-w-0 space-y-0.5 rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
               >
-                {targetSuggestions.map((role, index) => (
-                  <li key={role.onet_code}>
+                {targetSuggestions.map((suggestion, index) => (
+                  <li key={suggestion.key}>
                     <button
                       type="button"
-                      onClick={() => acceptTarget(role)}
+                      onClick={() => acceptTarget(suggestion.role, suggestion.label)}
                       className={cn(
                         'flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2',
                         index === 0 && 'bg-bg-panel'
                       )}
                     >
-                      <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
-                      <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
+                      <span className="w-full break-words text-label-l">{suggestion.label}</span>
+                      <span className="font-mono text-mono-s text-text-muted">{suggestion.codeLine}</span>
                     </button>
                   </li>
                 ))}

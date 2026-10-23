@@ -3,7 +3,6 @@ import { app } from './app'
 import { serveAdminDocument, type ScraperAdminBindings } from './admin-auth'
 import type { AiBindings } from './ai/env'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
-import { JOBSTREET_CAREERS } from './scrapers/jobstreet/careers'
 import type { KotakBindings } from './tool-deps'
 
 type ScheduledController = { scheduledTime: number; cron: string }
@@ -84,7 +83,11 @@ export default {
     if (!url) throw new Error('DATABASE_URL must be configured for the daily JobStreet queue')
     const sql = jobstreetDatabase(url)
     const scheduledFor = singaporeDate(new Date(controller.scheduledTime))
-    for (const career of JOBSTREET_CAREERS) {
+    // Admins choose which search titles the midnight refresh covers.
+    const careers = (await sql.query(
+      'SELECT slug FROM jobstreet_careers WHERE enabled AND daily_refresh ORDER BY created_at, slug'
+    )) as Array<{ slug: string }>
+    for (const career of careers) {
       await sql.query(
         `INSERT INTO jobstreet_scrape_runs (id, career_slug, mode, status, source, scheduled_for)
          SELECT $1, $2, 'breadth', 'queued', 'schedule', $3::date
@@ -96,6 +99,8 @@ export default {
         [crypto.randomUUID(), career.slug, scheduledFor]
       )
     }
-    console.info(`Queued daily JobStreet breadth refresh for ${scheduledFor} (Asia/Singapore).`)
+    console.info(
+      `Queued daily JobStreet breadth refresh for ${careers.length} search title(s) on ${scheduledFor} (Asia/Singapore).`
+    )
   }
 }

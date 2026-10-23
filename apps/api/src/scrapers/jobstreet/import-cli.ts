@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import { parseArgs } from 'node:util'
 import { jobstreetDatabase } from './database'
 import { persistRunOutput, readRunOutput } from './store'
-import { careerForSearchUrl } from './careers'
+import { slugForSearchUrl } from './careers'
 
 const { values } = parseArgs({
   args: Bun.argv.slice(2),
@@ -35,16 +35,16 @@ for (const runFile of runFiles) {
     const { rows } = await readRunOutput(outputPath, report)
     const searchUrl = rows.find((row) => typeof row.search_url === 'string')?.search_url
     if (typeof searchUrl !== 'string') throw new Error('no searchable job rows')
-    const career = careerForSearchUrl(searchUrl)
+    const career = slugForSearchUrl(searchUrl)
     if (sql) {
       const result = await persistRunOutput(sql, outputPath, report, 'local_import')
       imported += result.imported
     }
-    const tally = byCareer.get(career.title) ?? { runs: 0, rows: 0 }
+    const tally = byCareer.get(career) ?? { runs: 0, rows: 0 }
     tally.runs++
     tally.rows += rows.length
-    byCareer.set(career.title, tally)
-    console.info(`${career.title}: ${rows.length} rows from ${outputPath}`)
+    byCareer.set(career, tally)
+    console.info(`${career}: ${rows.length} rows from ${outputPath}`)
   } catch (error) {
     if (String(error).includes('no searchable job rows')) {
       skipped++

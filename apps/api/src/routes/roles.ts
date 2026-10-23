@@ -1,11 +1,20 @@
-import { RoleMatchRequestSchema, RoleMatchResponseSchema, type RoleMatchResponse } from '@kotak/shared'
+import {
+  RoleAliasSchema,
+  RoleAliasesResponseSchema,
+  RoleMatchRequestSchema,
+  RoleMatchResponseSchema,
+  type RoleAlias,
+  type RoleMatchResponse
+} from '@kotak/shared'
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { z } from 'zod'
 import { generateCached, type AiDeps } from '../ai/deps'
 import type { AiBindings } from '../ai/env'
-import { invalidRequest, tooLarge } from '../ai/errors'
+import { fail, invalidRequest, tooLarge } from '../ai/errors'
 import type { OccupationIndex } from '../ai/occupation-index'
+import { getConfig } from '../config'
+import { jobstreetDatabase } from '../scrapers/jobstreet/database'
 
 const MatchDraftSchema = z.object({ onet_code: z.string().nullable() })
 
@@ -35,6 +44,12 @@ function matchSystemPrompt(index: OccupationIndex): string {
 function promptTitle(title: string): string {
   return title.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase()
 }
+
+// Approved market titles, kept for a minute per database so a busy check-up does not query Neon on every page view.
+// While Neon is unreachable, a list up to an hour old is served instead of none.
+const ALIASES_TTL_MS = 60_000
+const ALIASES_STALE_MS = 60 * 60_000
+const aliasesCache = new Map<string, { expires: number; aliases: RoleAlias[] }>()
 
 function respond(body: RoleMatchResponse) {
   return RoleMatchResponseSchema.parse(body)
@@ -127,6 +142,41 @@ export function createRolesRoute(deps: AiDeps) {
           : { occupation: null, needs_confirmation: false, match_source: 'none', cached, fallback_reason }
       )
     )
+  })
+
+  // Market titles an admin approved from JobStreet listings (the review flow on /admin/scraping): a search title that
+  // is not hidden and has a listing approved under its current O*NET occupation. Public and read-only: only a title
+  // and its O*NET code, and only for occupations in the O*NET list. A row that does not fit is left out.
+  route.get('/aliases', async (context) => {
+    const databaseUrl = getConfig(context, 'DATABASE_URL')
+    if (!databaseUrl) return context.json(RoleAliasesResponseSchema.parse({ aliases: [] }))
+    const cached = aliasesCache.get(databaseUrl)
+    let aliases = cached && cached.expires > Date.now() ? cached.aliases : null
+    if (!aliases) {
+      try {
+        const rows = await jobstreetDatabase(databaseUrl).query(
+          `SELECT career.title, career.onet_code FROM jobstreet_careers career
+           WHERE NOT career.hidden AND career.onet_code IS NOT NULL
+             AND EXISTS (
+               SELECT 1 FROM jobstreet_listing_reviews review
+               WHERE review.career_slug = career.slug AND review.approved AND review.onet_code = career.onet_code
+             )
+           ORDER BY career.title`
+        )
+        aliases = rows.flatMap((row) => {
+          const alias = RoleAliasSchema.safeParse(row)
+          return alias.success && deps.occupations.getOccupation(alias.data.onet_code) ? [alias.data] : []
+        })
+        aliasesCache.set(databaseUrl, { expires: Date.now() + ALIASES_TTL_MS, aliases })
+      } catch (error) {
+        console.error('Could not read approved job titles:', error instanceof Error ? error.message : error)
+        if (!cached || cached.expires + ALIASES_STALE_MS < Date.now())
+          return fail(context, 503, 'unavailable', 'Approved job titles are unavailable right now.')
+        aliases = cached.aliases
+      }
+    }
+    context.header('Cache-Control', 'public, max-age=300')
+    return context.json(RoleAliasesResponseSchema.parse({ aliases }))
   })
 
   return route

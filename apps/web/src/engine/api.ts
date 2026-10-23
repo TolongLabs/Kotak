@@ -4,12 +4,14 @@ import {
   ApiErrorSchema,
   ExplanationRequestSchema,
   ExplanationResponseSchema,
+  RoleAliasesResponseSchema,
   RoleMatchRequestSchema,
   RoleMatchResponseSchema,
   type AgentChatRequest,
   type AgentChatResponse,
   type ExplanationRequest,
   type ExplanationResponse,
+  type RoleAliasesResponse,
   type RoleMatchResponse
 } from '@kotak/shared'
 
@@ -59,6 +61,27 @@ export function fetchRoleMatch(jobTitle: string): Promise<ApiResult<RoleMatchRes
   const request = postJson('/api/roles/match', { job_title: jobTitle }, RoleMatchRequestSchema, RoleMatchResponseSchema)
   roleMatchCache.set(key, request)
   return request
+}
+
+export type RoleAlias = RoleAliasesResponse['aliases'][number]
+
+let roleAliasesRequest: Promise<RoleAlias[]> | null = null
+
+// Market job titles an admin approved from JobStreet listings. Fetched once per page load; a failed request leaves
+// the check-up with the O*NET titles alone and is retried on the next visit.
+export function fetchRoleAliases(): Promise<RoleAlias[]> {
+  roleAliasesRequest ??= fetch('/api/roles/aliases')
+    .then(async (response) => {
+      if (response.status !== 200) throw new Error(`HTTP ${response.status}`)
+      const result = RoleAliasesResponseSchema.safeParse(await response.json())
+      if (!result.success) throw new Error('Invalid role aliases')
+      return result.data.aliases
+    })
+    .catch(() => {
+      roleAliasesRequest = null
+      return []
+    })
+  return roleAliasesRequest
 }
 
 type CornerExplanation = ExplanationResponse['explanations'][number]

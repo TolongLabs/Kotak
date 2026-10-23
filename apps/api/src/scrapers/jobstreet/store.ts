@@ -2,7 +2,7 @@ import { readFile, stat } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import type { NeonQueryFunction } from '@neondatabase/serverless'
-import { careerForSearchUrl } from './careers'
+import { slugForSearchUrl } from './careers'
 import { writeJson } from './files'
 import { parseListing } from './records'
 import type { JobListing } from './records'
@@ -19,14 +19,25 @@ type RunRecord = {
   scheduledFor?: string | null
 }
 
-function runStatement(run: RunRecord): Statement {
+export interface PersistRunOutputOptions {
+  // Progress while the run continues: the run stays running. A breadth checkpoint sends only the listings after the
+  // first `saved` rows of jobs.jsonl, which the runner appends to; a depth checkpoint sends only the run's report.
+  checkpoint?: { saved: number }
+  // A run the runner claimed from the queue: every row must be for this search title, and the run's row changes
+  // only while it is queued or running, so a run that was ended elsewhere stays ended.
+  queued?: { careerSlug: string }
+}
+
+function runStatement(run: RunRecord, activeOnly: boolean): Statement {
   return {
     text: `INSERT INTO jobstreet_scrape_runs
       (id, career_slug, mode, status, source, scheduled_for, started_at, finished_at, report, error)
      VALUES ($1, $2, $3, $4, $5, $6::date, $7::timestamptz, $8::timestamptz, $9::jsonb, $10)
      ON CONFLICT (id) DO UPDATE SET
        status = EXCLUDED.status, started_at = EXCLUDED.started_at, finished_at = EXCLUDED.finished_at,
-       report = EXCLUDED.report, error = EXCLUDED.error`,
+       report = EXCLUDED.report, error = EXCLUDED.error
+     ${activeOnly ? "WHERE jobstreet_scrape_runs.status IN ('queued', 'running')" : ''}
+     RETURNING id`,
     params: [
       run.id,
       run.careerSlug,
@@ -219,25 +230,31 @@ export async function persistRunOutput(
   report: Record<string, unknown>,
   source: RunRecord['source'],
   scheduledFor?: string | null,
-  runIdOverride?: string
+  runIdOverride?: string,
+  options: PersistRunOutputOptions = {}
 ) {
   const mode = report.mode === 'depth' ? 'depth' : 'breadth'
   const reportRunId = typeof report.run_id === 'string' ? report.run_id : ''
   const { rows, details } = await readRunOutput(outputPath, report)
   const first = rows.find((row) => typeof row.search_url === 'string')
   if (!first || typeof first.search_url !== 'string') throw new Error('Scrape output has no searchable job rows')
-  const career = careerForSearchUrl(first.search_url)
+  const career = { slug: slugForSearchUrl(first.search_url) }
+  if (options.queued && options.queued.careerSlug !== career.slug)
+    throw new Error(`Scrape output is for ${career.slug}, not the queued search title ${options.queued.careerSlug}`)
   for (const row of rows) {
-    if (typeof row.search_url !== 'string' || careerForSearchUrl(row.search_url).slug !== career.slug)
-      throw new Error('A database scrape run must contain one supported career query')
+    if (typeof row.search_url !== 'string' || slugForSearchUrl(row.search_url) !== career.slug)
+      throw new Error('A database scrape run must contain one search title')
   }
+  const known = await sql.query('SELECT 1 FROM jobstreet_careers WHERE slug = $1', [career.slug])
+  if (!known.length)
+    throw new Error(`Search title ${career.slug} is not in jobstreet_careers; add it on the admin page first`)
   for (const detail of details) {
     const breadth = detail.breadth_observation as Record<string, unknown> | undefined
     if (
       !breadth ||
       breadth.job_id !== detail.job_id ||
       typeof breadth.search_url !== 'string' ||
-      careerForSearchUrl(breadth.search_url).slug !== career.slug ||
+      slugForSearchUrl(breadth.search_url) !== career.slug ||
       (reportRunId && detail.depth_run_id !== reportRunId)
     )
       throw new Error('Detail ledger identity or career does not match its scrape run')
@@ -245,28 +262,42 @@ export async function persistRunOutput(
   const legacyRunId = `legacy-${createHash('sha256').update(JSON.stringify({ report, rows, details })).digest('hex').slice(0, 32)}`
   const databaseRunId = typeof report.database_run_id === 'string' ? report.database_run_id : ''
   const id = runIdOverride || databaseRunId || reportRunId || legacyRunId
-  const finalStatus = report.status === 'partial' || report.status === 'success' ? report.status : 'failed'
+  const checkpoint = options.checkpoint !== undefined
+  const finalStatus = checkpoint
+    ? 'running'
+    : report.status === 'partial' || report.status === 'success'
+      ? report.status
+      : 'failed'
   const storedReport = {
     ...report,
-    finished_at: typeof report.finished_at === 'string' ? report.finished_at : new Date().toISOString(),
+    ...(checkpoint ? { status: 'running' as const } : {}),
+    finished_at: checkpoint
+      ? null
+      : typeof report.finished_at === 'string'
+        ? report.finished_at
+        : new Date().toISOString(),
     ...(reportRunId && id !== reportRunId ? { pipeline_run_id: reportRunId } : {}),
     ...(runIdOverride || databaseRunId ? { database_run_id: id } : {}),
     run_id: id
   }
   const statements = [
-    runStatement({
-      id,
-      careerSlug: career.slug,
-      mode,
-      source,
-      status: finalStatus,
-      scheduledFor,
-      report: storedReport
-    })
+    runStatement(
+      {
+        id,
+        careerSlug: career.slug,
+        mode,
+        source,
+        status: finalStatus,
+        scheduledFor,
+        report: storedReport
+      },
+      options.queued !== undefined
+    )
   ]
   if (mode === 'breadth') {
-    statements.push(...breadthStatements(career.slug, id, rows.map(parseListing)))
-  } else {
+    const unsaved = rows.slice(options.checkpoint?.saved ?? 0)
+    statements.push(...breadthStatements(career.slug, id, unsaved.map(parseListing)))
+  } else if (!checkpoint) {
     const mapped = rows.flatMap((row) => {
       if (typeof row.job_id === 'string' && typeof row.scraped_at === 'string') return [parseListing(row)]
       const detail = row.detail ?? row.detail_last_attempt
@@ -282,9 +313,11 @@ export async function persistRunOutput(
     statements.push(...depthStatements(career.slug, id, rows, details))
   }
   // Preserve the queue identity if these same browser artifacts are imported offline later.
-  if (runIdOverride) await writeJson(join(outputPath, 'run.json'), { ...report, database_run_id: id })
-  await sql.transaction((transaction) => statements.map(({ text, params }) => transaction.query(text, params)), {
-    fetchOptions: { signal: AbortSignal.timeout(60_000) }
-  })
-  return { runId: id, careerSlug: career.slug, imported: rows.length }
+  if (runIdOverride && !checkpoint) await writeJson(join(outputPath, 'run.json'), { ...report, database_run_id: id })
+  const [runRows] = (await sql.transaction(
+    (transaction) => statements.map(({ text, params }) => transaction.query(text, params)),
+    { fetchOptions: { signal: AbortSignal.timeout(60_000) } }
+  )) as unknown[][]
+  // active is false when a queued run was no longer queued or running; its listings are still saved.
+  return { runId: id, careerSlug: career.slug, imported: rows.length, active: runRows.length > 0 }
 }

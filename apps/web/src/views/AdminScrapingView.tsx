@@ -3,31 +3,14 @@ import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
+import { BatchReview } from './admin/BatchReview'
+import { SearchTitles } from './admin/SearchTitles'
+import { AdminSessionExpiredError, isAbortError, isReviewable, type Career, type ScrapeRun } from './admin/scraper'
 
-type Career = { slug: string; title: string; search_url: string; listing_count: number; described_count: number }
-type ScrapeRun = {
-  id: string
-  career_slug: string
-  career_title: string
-  mode: 'breadth' | 'depth'
-  status: string
-  source: string
-  created_at: string
-  started_at: string | null
-  finished_at: string | null
-  report: Record<string, unknown> | null
-  error: string | null
-}
 type AdminUser = { id: string; username: string }
 type AuthStatus = 'checking' | 'authenticated' | 'error'
 
 const LEGACY_TOKEN_KEY = 'kotak:scraper-admin-token'
-
-class AdminSessionExpiredError extends Error {}
-
-function isAbortError(cause: unknown) {
-  return cause instanceof DOMException && cause.name === 'AbortError'
-}
 
 function getApiError(data: unknown, fallback: string) {
   if (typeof data === 'object' && data !== null && 'error' in data && typeof data.error === 'string') {
@@ -48,6 +31,10 @@ export function AdminScrapingView() {
   const [signingOut, setSigningOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [review, setReview] = useState<{ runId: string; careerSlug: string } | null>(null)
+  const reviewRef = useRef<HTMLDivElement>(null)
+  // The Review button that opened the batch, which gets focus back when the review closes.
+  const reviewOpenerRef = useRef<HTMLButtonElement | null>(null)
   const controllersRef = useRef(new Set<AbortController>())
   const generationRef = useRef(0)
   const refreshIdRef = useRef(0)
@@ -65,6 +52,7 @@ export function AdminScrapingView() {
     setUser(null)
     setCareers([])
     setRuns([])
+    setReview(null)
     setNotice(null)
     setError(null)
     navigate(routes.adminSignIn)
@@ -200,9 +188,38 @@ export function AdminScrapingView() {
     return () => window.clearInterval(timer)
   }, [authStatus, refresh])
 
+  // Only active search titles can be queued; keep the choice valid as titles are added or switched off.
+  const activeCareers = careers.filter((career) => career.enabled)
+  const selectedSlug = activeCareers.some((career) => career.slug === careerSlug)
+    ? careerSlug
+    : (activeCareers[0]?.slug ?? '')
+
+  const openReview = (run: ScrapeRun, opener: HTMLButtonElement) => {
+    reviewOpenerRef.current = opener
+    setReview({ runId: run.id, careerSlug: run.career_slug })
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Focus moves to the review only when the admin opens it, not when it remounts for a changed occupation.
+    window.requestAnimationFrame(() => {
+      reviewRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+      document.getElementById('batch-review-heading')?.focus({ preventScroll: true })
+    })
+  }
+
+  const closeReview = useCallback(() => {
+    setReview(null)
+    const opener = reviewOpenerRef.current
+    window.requestAnimationFrame(() => {
+      if (opener?.isConnected) opener.focus()
+      else document.getElementById('runs-title')?.focus()
+    })
+  }, [])
+
+  // A changed occupation remounts the review, so its listings are sorted and ticked against the new one.
+  const reviewOccupation = review ? (careers.find((career) => career.slug === review.careerSlug)?.onet_code ?? '') : ''
+
   async function startRun(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (loading) return
+    if (loading || !selectedSlug) return
 
     const generation = generationRef.current
     setLoading(true)
@@ -212,7 +229,7 @@ export function AdminScrapingView() {
     try {
       const result = (await requestScraper('/runs', {
         method: 'POST',
-        body: JSON.stringify({ career_slug: careerSlug, mode })
+        body: JSON.stringify({ career_slug: selectedSlug, mode })
       })) as { run: ScrapeRun }
 
       if (!mountedRef.current || generation !== generationRef.current) return
@@ -262,9 +279,10 @@ export function AdminScrapingView() {
     <main className="mx-auto min-h-dvh w-full max-w-6xl space-y-8 px-5 py-10 text-text-primary lg:px-10">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0 space-y-2">
-          <h1 className="text-title-m lg:text-title-l">JobStreet scraping</h1>
+          <h1 className="text-title-m lg:text-title-l">JobStreet Scraping</h1>
           <p className="max-w-2xl text-body-m text-text-muted">
-            Queue a breadth discovery run or a depth description run. Jobs execute on the connected scraper runner.
+            Queue a breadth run to find listings or a depth run to fetch their descriptions, then review each breadth
+            batch. Runs execute on the connected scraper runner.
           </p>
         </div>
         {authStatus === 'authenticated' && user && (
@@ -289,7 +307,7 @@ export function AdminScrapingView() {
         <div className="max-w-xl space-y-4">
           <Banner
             type="error"
-            title="Session check failed"
+            title="Session Check Failed"
             body={sessionError ?? 'Kotak could not verify your admin session.'}
             role="alert"
           />
@@ -303,13 +321,13 @@ export function AdminScrapingView() {
         <>
           <form onSubmit={startRun} className="surface-card grid gap-4 p-5 md:grid-cols-[1fr_1fr_auto] md:items-end">
             <label className="space-y-2 text-label-m">
-              <span>Career search</span>
+              <span>Search Title</span>
               <select
                 className="min-h-11 w-full rounded-md border border-border-control bg-bg-default px-3 py-2 text-body-m"
-                value={careerSlug}
+                value={selectedSlug}
                 onChange={(event) => setCareerSlug(event.target.value)}
               >
-                {careers.map((career) => (
+                {activeCareers.map((career) => (
                   <option key={career.slug} value={career.slug}>
                     {career.title}
                   </option>
@@ -327,27 +345,17 @@ export function AdminScrapingView() {
                 <option value="depth">Depth · fetch descriptions</option>
               </select>
             </label>
-            <Button variant="primary" disabled={!careers.length} loading={loading} type="submit">
-              {loading ? 'Queueing…' : 'Start run'}
+            <Button variant="primary" disabled={!selectedSlug} loading={loading} type="submit">
+              {loading ? 'Queueing…' : 'Start Run'}
             </Button>
           </form>
 
-          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Career listing totals">
-            {careers.map((career) => (
-              <article className="surface-card space-y-1 p-4" key={career.slug}>
-                <h2 className="text-label-m">{career.title}</h2>
-                <p className="text-body-s text-text-muted">
-                  {career.listing_count.toLocaleString()} listings · {career.described_count.toLocaleString()}{' '}
-                  descriptions
-                </p>
-              </article>
-            ))}
-          </section>
+          <SearchTitles careers={careers} request={requestScraper} onChanged={refresh} />
 
           <section className="surface-card overflow-hidden" aria-labelledby="runs-title">
             <div className="flex items-center justify-between gap-4 border-b border-border-subtle p-4">
-              <h2 id="runs-title" className="text-title-s">
-                Recent runs
+              <h2 id="runs-title" tabIndex={-1} className="text-title-s focus:outline-none">
+                Recent Runs
               </h2>
               <Button variant="ghost" size="md" onClick={() => void refresh()}>
                 Refresh
@@ -357,12 +365,13 @@ export function AdminScrapingView() {
               <table className="w-full min-w-[720px] text-left text-body-s">
                 <thead className="bg-bg-panel text-label-s text-text-muted">
                   <tr>
-                    <th className="p-3">Career</th>
+                    <th className="p-3">Search Title</th>
                     <th className="p-3">Mode</th>
                     <th className="p-3">Status</th>
                     <th className="p-3">Source</th>
                     <th className="p-3">Created</th>
                     <th className="p-3">Results</th>
+                    <th className="p-3">Review</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -376,11 +385,33 @@ export function AdminScrapingView() {
                       <td className="p-3 font-mono tabular-nums">
                         {String(run.report?.jobs_saved ?? run.report?.jobs_fetched ?? '—')}
                       </td>
+                      <td className="p-3">
+                        {isReviewable(run) ? (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-text-muted">
+                              {run.review_status === 'approved'
+                                ? `${(run.approved_count ?? 0).toLocaleString()} approved`
+                                : run.review_status === 'rejected'
+                                  ? 'Rejected'
+                                  : 'Not reviewed'}
+                            </span>
+                            <Button
+                              variant="secondary"
+                              aria-label={`Review the ${run.career_title} batch from ${new Date(run.created_at).toLocaleString()}`}
+                              onClick={(event) => openReview(run, event.currentTarget)}
+                            >
+                              Review
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-text-muted">—</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                   {!runs.length && (
                     <tr>
-                      <td className="p-4 text-text-muted" colSpan={6}>
+                      <td className="p-4 text-text-muted" colSpan={7}>
                         No runs recorded yet.
                       </td>
                     </tr>
@@ -390,12 +421,24 @@ export function AdminScrapingView() {
             </div>
           </section>
 
+          {review && (
+            <div ref={reviewRef} className="scroll-mt-6">
+              <BatchReview
+                key={`${review.runId}:${reviewOccupation}`}
+                runId={review.runId}
+                request={requestScraper}
+                onClose={closeReview}
+                onReviewed={refresh}
+              />
+            </div>
+          )}
+
           {notice && (
             <p role="status" className="text-body-s text-text-muted">
               {notice}
             </p>
           )}
-          {error && <Banner type="error" title="Admin request failed" body={error} role="alert" />}
+          {error && <Banner type="error" title="Admin Request Failed" body={error} role="alert" />}
         </>
       )}
     </main>

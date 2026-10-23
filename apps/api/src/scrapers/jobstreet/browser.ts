@@ -81,9 +81,11 @@ async function waitForVerification(
       `Verification required at ${entry.url}. Waiting up to ${options.timeoutMs / 1000}s. Complete any required verification manually in the browser window; profile ID is in run.json.`
     )
     await page.bringToFront().catch(() => {})
-    if (options.evidencePrefix) await saveEvidence(page, options.evidencePrefix)
+    // The verification document can navigate immediately. Record its HTML now;
+    // capture screenshots after clearance or timeout, rather than during that transition.
+    if (options.evidencePrefix) await saveEvidence(page, options.evidencePrefix, { screenshot: false })
     let nextNotice = started + 15_000
-    while (Date.now() < deadline) {
+    while (true) {
       if (page.isClosed()) throw new Error('Browser page closed while waiting for verification')
       const response = latestResponse()
       // Clearance must lead to a new top-level document response. Removing a banner alone is insufficient.
@@ -101,6 +103,8 @@ async function waitForVerification(
           if (!/Execution context was destroyed|Cannot find context/.test(String(error))) throw error
         }
       }
+      // Check an already-received clearance response before expiring the wait.
+      if (Date.now() >= deadline) break
       if (Date.now() >= nextNotice) {
         console.info(`Still waiting for verification at ${entry.url}; complete any verification in the browser window.`)
         nextNotice = Date.now() + 15_000
@@ -111,6 +115,7 @@ async function waitForVerification(
     state.finished_at = new Date().toISOString()
     state.final_http_status = latestResponse()?.status() ?? null
     await save()
+    if (options.evidencePrefix) await saveEvidence(page, options.evidencePrefix)
     throw new VerificationTimeoutError(
       'Verification did not clear before the wait ended; partial results are preserved'
     )
@@ -179,11 +184,12 @@ export async function navigate(
   }
 }
 
-export async function saveEvidence(page: Page, prefix: string): Promise<void> {
+export async function saveEvidence(page: Page, prefix: string, options: { screenshot?: boolean } = {}): Promise<void> {
   await page
     .content()
     .then((html) => writeFile(`${prefix}.html`, html))
     .catch((error) => console.error(`HTML evidence unavailable: ${String(error)}`))
+  if (options.screenshot === false) return
   await page
     .screenshot({ path: `${prefix}.png`, fullPage: true, timeout: 10_000 })
     .catch((error) => console.error(`Screenshot unavailable: ${String(error)}`))

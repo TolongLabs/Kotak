@@ -46,6 +46,11 @@ export const RoleMatchResponseSchema = z
   })
   .strict()
 
+// Market job titles an admin approved from JobStreet listings, each for one O*NET occupation. The check-up offers
+// them alongside the O*NET titles.
+export const RoleAliasSchema = z.object({ title: z.string().min(1).max(80), onet_code: OnetRoleCodeSchema }).strict()
+export const RoleAliasesResponseSchema = z.object({ aliases: z.array(RoleAliasSchema) }).strict()
+
 export const ExplanationRequestSchema = z
   .object({
     snapshot_id: SnapshotIdSchema,
@@ -228,6 +233,8 @@ export type HealthResponse = z.infer<typeof HealthResponseSchema>
 export type SampleResponse = z.infer<typeof SampleResponseSchema>
 export type RoleMatchRequest = z.infer<typeof RoleMatchRequestSchema>
 export type RoleMatchResponse = z.infer<typeof RoleMatchResponseSchema>
+export type RoleAlias = z.infer<typeof RoleAliasSchema>
+export type RoleAliasesResponse = z.infer<typeof RoleAliasesResponseSchema>
 export type ExplanationRequest = z.infer<typeof ExplanationRequestSchema>
 export type ExplanationResponse = z.infer<typeof ExplanationResponseSchema>
 export type JobAdExtractRequest = z.infer<typeof JobAdExtractRequestSchema>

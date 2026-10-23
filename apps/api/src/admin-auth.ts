@@ -11,11 +11,9 @@ const USERNAME_PATTERN = /^[a-z0-9][a-z0-9._-]{2,63}$/
 const encoder = new TextEncoder()
 
 export type ScraperAdminUser = { id: string; username: string }
-export type ScraperAdminAuthMethod = 'session' | 'token'
 
 export type ScraperAdminBindings = {
   DATABASE_URL?: string
-  SCRAPER_ADMIN_TOKEN?: string
   SCRAPER_LOGIN_LIMITER?: RateLimiter
   SCRAPER_LOGIN_CLIENT_IP?: string
 }
@@ -24,7 +22,6 @@ export type ScraperAdminEnv = {
   Bindings: ScraperAdminBindings
   Variables: {
     scraperAdminUser: ScraperAdminUser
-    scraperAdminAuthMethod: ScraperAdminAuthMethod
   }
 }
 
@@ -139,25 +136,10 @@ export const serveAdminDocument = async (
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
 }
 
-const bearerToken = (request: Request) => {
-  const authorization = request.headers.get('Authorization')
-  const match = authorization?.match(/^Bearer ([^\s]+)$/i)
-  return match?.[1]
-}
-
 export const requireScraperAdmin: MiddlewareHandler<ScraperAdminEnv> = async (context, next) => {
-  const expectedToken = getConfig(context, 'SCRAPER_ADMIN_TOKEN')
-  const suppliedToken = bearerToken(context.req.raw)
-  if (expectedToken && suppliedToken === expectedToken) {
-    context.set('scraperAdminAuthMethod', 'token')
-    await next()
-    return
-  }
-
   const user = await validateSessionToken(getConfig(context, 'DATABASE_URL'), readSessionToken(context))
   if (!user) return context.json({ error: 'unauthorized' }, 401)
   context.set('scraperAdminUser', user)
-  context.set('scraperAdminAuthMethod', 'session')
 
   if (!['GET', 'HEAD', 'OPTIONS'].includes(context.req.method)) {
     if (!isJsonRequest(context.req.raw)) return context.json({ error: 'content type must be application/json' }, 415)
