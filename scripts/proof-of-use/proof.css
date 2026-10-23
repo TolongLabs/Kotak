@@ -1,0 +1,686 @@
+/* Shared print styles for the sponsor proof-of-use PDFs, in Kotak's ASCII language (docs/DESIGN.md tokens). */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+:root {
+  --ink: #191812;
+  --bg: #ffffff;
+  --panel: #f8f7f2;
+  --muted: #595851;
+  --rule: #d8d8d2;
+  --box: #f6d732;
+  --dark: #10100b;
+  --dark-panel: #1b1a13;
+  --dark-text: #f3f2ed;
+  --dark-muted: #acaba3;
+  --dark-rule: #37362f;
+  --dark-box: #efd127;
+  --sans: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  --pad: 14mm;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font: 400 9.5pt/1.45 var(--sans);
+  text-wrap: pretty;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+code,
+.mono {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+.nw {
+  white-space: nowrap;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.5pt;
+  text-underline-offset: 1.5pt;
+}
+
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  padding: var(--pad);
+  overflow: hidden;
+  break-after: page;
+  display: flex;
+  flex-direction: column;
+}
+
+.page > * {
+  flex-shrink: 0;
+}
+
+.page:last-child {
+  break-after: auto;
+}
+
+.dark {
+  background: var(--dark);
+  color: var(--dark-text);
+}
+
+/* ---------- Cover: after Awwwards' Site of the Day header ---------- */
+
+.strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 5mm;
+  border-bottom: 1px solid var(--dark-rule);
+  font: 500 8.5pt/1 var(--mono);
+  letter-spacing: 0.04em;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 2.4mm;
+  font: 800 15pt/1 var(--sans);
+  letter-spacing: -0.02em;
+}
+
+.brand img {
+  width: 8.5mm;
+  height: 8.5mm;
+}
+
+.award {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  margin-top: 9mm;
+  font-size: 9.5pt;
+  color: var(--dark-muted);
+}
+
+.award .date {
+  padding: 0.8mm 2mm;
+  border: 1px solid var(--dark-muted);
+  border-radius: 1.2mm;
+  color: var(--dark-text);
+}
+
+.award b {
+  color: var(--dark-text);
+  font-weight: 600;
+}
+
+.fit {
+  display: block;
+  white-space: nowrap;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.8;
+  margin: 4mm 0 0 -1.2mm;
+}
+
+.fit span {
+  display: inline-block;
+}
+
+.lede {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10mm;
+  margin-top: 6mm;
+}
+
+.lede p {
+  max-width: 108mm;
+  font-size: 12pt;
+  line-height: 1.4;
+  color: var(--dark-muted);
+}
+
+.lede p b {
+  color: var(--dark-text);
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.6mm;
+  font: 500 8pt/1 var(--mono);
+}
+
+.chips span {
+  padding: 1.3mm 2.2mm;
+  border: 1px solid var(--dark-rule);
+  border-radius: 99mm;
+  white-space: nowrap;
+}
+
+.chips span::before {
+  content: '■ ';
+  color: var(--dark-box);
+}
+
+/* ---------- ASCII split hero: after ascii-magic's before/after slider ---------- */
+
+.split {
+  position: relative;
+  margin-top: 7mm;
+  border: 1px solid var(--dark-rule);
+  border-radius: 2mm;
+  overflow: hidden;
+}
+
+.split img {
+  display: block;
+  width: 100%;
+}
+
+.split pre {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--dark);
+  clip-path: inset(0 0 0 50%);
+}
+
+.split-caption {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.4mm;
+  font: 400 7.5pt/1 var(--mono);
+  color: var(--dark-muted);
+}
+
+.split-caption b {
+  margin-right: 1.5mm;
+  padding: 0.8mm 1.6mm;
+  border: 1px solid var(--dark-rule);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--dark-text);
+}
+
+.split .handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  border-left: 1px solid var(--dark-text);
+}
+
+.split .handle::after {
+  content: '‹ ›';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  width: 10mm;
+  height: 10mm;
+  border-radius: 50%;
+  background: rgb(16 16 11 / 0.92);
+  border: 1px solid var(--dark-text);
+  display: grid;
+  place-items: center;
+  font: 700 9pt/1 var(--sans);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: auto;
+  border-top: 1px solid var(--dark-rule);
+}
+
+.stats div {
+  padding: 4mm 3mm 0 0;
+}
+
+.stats div + div {
+  padding-left: 4mm;
+  border-left: 1px solid var(--dark-rule);
+}
+
+.stats b {
+  display: block;
+  font: 800 25pt/1 var(--sans);
+  letter-spacing: -0.03em;
+}
+
+.stats span {
+  display: block;
+  margin-top: 2mm;
+  font: 400 8pt/1.35 var(--mono);
+  color: var(--dark-muted);
+}
+
+/* The cover's contents, as mkdir.directory's ruled rows. */
+.toc {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 8mm;
+  margin-top: 8mm;
+}
+
+.toc li {
+  display: grid;
+  grid-template-columns: 7mm 1fr auto;
+  align-items: baseline;
+  padding: 2.2mm 0;
+  border-bottom: 1px solid var(--dark-rule);
+  font: 600 11pt/1.2 var(--sans);
+}
+
+.toc li span:first-child,
+.toc li span:last-child {
+  font: 400 7.5pt/1 var(--mono);
+  color: var(--dark-muted);
+}
+
+/* ASCII glyph colours, shared by the hero, Kopi and the wordmark. */
+pre.ascii {
+  font-family: var(--mono);
+  font-weight: 500;
+  color: var(--dark-muted);
+}
+
+pre.ascii .hi {
+  color: var(--dark-text);
+}
+
+pre.ascii .hot {
+  color: var(--dark-box);
+}
+
+/* ---------- Inner pages ---------- */
+
+.runhead {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 3mm;
+  border-bottom: 1px solid var(--ink);
+  font: 500 8pt/1 var(--mono);
+  letter-spacing: 0.03em;
+}
+
+.runhead span:first-child::before {
+  content: '■ ';
+  color: var(--box);
+  -webkit-text-stroke: 0.4pt var(--ink);
+}
+
+/* Section titles after mkdir.directory's numbered rows: a small mono index beside display type. */
+.section {
+  display: flex;
+  align-items: baseline;
+  gap: 4mm;
+  margin: 8mm 0 3mm;
+}
+
+.section .no {
+  width: 8mm;
+  font: 400 8pt/1 var(--mono);
+  color: var(--muted);
+}
+
+.section h2 {
+  font: 800 25pt/1 var(--sans);
+  letter-spacing: -0.02em;
+}
+
+.section p {
+  margin-left: auto;
+  font: 400 8pt/1.3 var(--mono);
+  color: var(--muted);
+  text-align: right;
+}
+
+.intro {
+  margin: 0 0 3mm 12mm;
+  max-width: 150mm;
+  color: var(--muted);
+}
+
+.rows {
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+
+.rows li {
+  display: grid;
+  grid-template-columns: 8mm 40mm 1fr;
+  gap: 4mm;
+  align-items: baseline;
+  padding: 2mm 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rows .no {
+  font: 400 7.5pt/1 var(--mono);
+  color: var(--muted);
+}
+
+.rows .k {
+  font: 700 10.5pt/1.25 var(--sans);
+}
+
+.rows.steps li {
+  grid-template-columns: 8mm 26mm 1fr;
+}
+
+/* The handbook checklist: [x] marks and figure references in mono. */
+.checks li {
+  grid-template-columns: 8mm 1fr 72mm;
+}
+
+.checks .no {
+  font: 700 8.5pt/1 var(--mono);
+  color: var(--ink);
+}
+
+.checks .k small {
+  display: block;
+  margin-top: 0.8mm;
+  font: 400 8.5pt/1.4 var(--sans);
+  color: var(--muted);
+}
+
+.checks .where {
+  font: 500 8pt/1.5 var(--mono);
+  text-align: right;
+}
+
+.ref {
+  display: inline-block;
+  padding: 0.2mm 1.2mm;
+  margin-left: 0.6mm;
+  background: var(--box);
+  border: 1px solid var(--ink);
+  font: 700 7.5pt/1.3 var(--mono);
+  white-space: nowrap;
+}
+
+.flow {
+  margin: 1mm 0 3mm;
+  padding: 3.5mm 4mm;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  font: 500 7.2pt/1.25 var(--mono);
+  white-space: pre;
+}
+
+.flow b {
+  font-weight: 700;
+}
+
+.code {
+  background: var(--dark);
+  color: var(--dark-text);
+  border-radius: 2mm;
+  overflow: hidden;
+}
+
+.code .head {
+  display: flex;
+  justify-content: space-between;
+  padding: 2.2mm 4mm;
+  border-bottom: 1px solid var(--dark-rule);
+  font: 500 7.5pt/1 var(--mono);
+  color: var(--dark-muted);
+}
+
+.code .head span:first-child::before {
+  content: '● ● ●  ';
+  color: var(--dark-rule);
+}
+
+.code pre {
+  padding: 3.5mm 4mm 4mm;
+  font: 400 7.8pt/1.45 var(--mono);
+  white-space: pre-wrap;
+}
+
+.code pre i {
+  font-style: normal;
+  color: var(--dark-box);
+}
+
+.code pre em {
+  font-style: normal;
+  color: var(--dark-muted);
+}
+
+/* Two short code blocks side by side. */
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4mm;
+}
+
+.pair pre {
+  padding: 3mm;
+  font-size: 6.8pt;
+}
+
+/* ---------- Figures with numbered callouts ---------- */
+
+.fig {
+  margin-top: 6mm;
+}
+
+.fig header {
+  display: flex;
+  align-items: baseline;
+  gap: 3mm;
+  margin-bottom: 2.4mm;
+}
+
+.fig header .no {
+  padding: 0.6mm 1.6mm;
+  background: var(--ink);
+  color: var(--bg);
+  font: 700 7.5pt/1.2 var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.fig header h3 {
+  font: 700 12pt/1.2 var(--sans);
+}
+
+.fig header span:last-child {
+  margin-left: auto;
+  font: 400 7.5pt/1 var(--mono);
+  color: var(--muted);
+}
+
+.shot {
+  position: relative;
+  border: 1px solid var(--ink);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+}
+
+.shot b {
+  position: absolute;
+  left: calc(var(--x) / var(--iw) * 100%);
+  top: calc(var(--y) / var(--ih) * 100%);
+  width: calc(var(--w) / var(--iw) * 100%);
+  height: calc(var(--h) / var(--ih) * 100%);
+  border: 1.4pt solid var(--box);
+  box-shadow: 0 0 0 0.8pt var(--ink);
+  border-radius: 0.6mm;
+}
+
+.shot b::before {
+  content: attr(data-n);
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(calc(-100% - 1mm));
+  width: 3.8mm;
+  height: 3.8mm;
+  display: grid;
+  place-items: center;
+  background: var(--box);
+  border: 0.8pt solid var(--ink);
+  font: 700 7pt/1 var(--mono);
+  color: var(--ink);
+}
+
+.shot b[data-at='r']::before {
+  left: 100%;
+  transform: translateX(1mm);
+}
+
+.shot b[data-at='t']::before {
+  transform: translateY(calc(-100% - 1mm));
+}
+
+.notes {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4mm 6mm;
+  margin-top: 3mm;
+  font-size: 8.5pt;
+  line-height: 1.4;
+}
+
+.notes li {
+  position: relative;
+  padding-left: 5mm;
+}
+
+.notes li > i {
+  position: absolute;
+  left: 0;
+  top: 0.3mm;
+}
+
+.notes li > i,
+.inline-n {
+  width: 3.6mm;
+  height: 3.6mm;
+  display: inline-grid;
+  place-items: center;
+  background: var(--box);
+  border: 0.8pt solid var(--ink);
+  font: 700 7pt/1 var(--mono);
+  font-style: normal;
+}
+
+.notes li.caption {
+  grid-column: 1 / -1;
+  padding-left: 0;
+  color: var(--muted);
+}
+
+/* Square screenshots sit beside their notes. */
+.fig.side {
+  display: grid;
+  grid-template-columns: 112mm 1fr;
+  gap: 6mm;
+  align-items: start;
+}
+
+.fig.side header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2mm;
+}
+
+.fig.side header span:last-child {
+  margin-left: 0;
+}
+
+.fig.side .notes {
+  grid-template-columns: 1fr;
+  gap: 2mm;
+}
+
+/* ---------- Coda: the banner's dark scene, Kopi on the box, and the cut ASCII wordmark ---------- */
+
+.coda {
+  flex: 1 0 104mm;
+  display: grid;
+  grid-template-rows: 1fr 50mm;
+  margin: 8mm calc(-1 * var(--pad)) calc(-1 * var(--pad));
+}
+
+.coda .scene {
+  position: relative;
+  padding: 10mm var(--pad) 0;
+}
+
+.coda .no {
+  display: block;
+  margin-bottom: 3mm;
+  font-size: 8pt;
+  color: var(--dark-muted);
+}
+
+.coda h2 {
+  max-width: 120mm;
+  font: 800 27pt/1.02 var(--sans);
+  letter-spacing: -0.025em;
+}
+
+.coda dl {
+  display: grid;
+  grid-template-columns: 26mm 1fr;
+  gap: 1.3mm 4mm;
+  max-width: 128mm;
+  margin-top: 6mm;
+  font: 400 7.8pt/1.35 var(--mono);
+}
+
+.coda dt {
+  color: var(--dark-muted);
+}
+
+.coda .kopi {
+  position: absolute;
+  right: 14mm;
+  bottom: 0;
+  width: 46mm;
+  height: 64mm;
+}
+
+.coda .kopi pre {
+  position: absolute;
+  inset: 0;
+}
+
+.coda .floor {
+  position: relative;
+  overflow: hidden;
+  background: var(--box);
+  padding: 4mm var(--pad) 0;
+}
+
+.coda .floor pre.ascii {
+  color: var(--ink);
+}

@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>RunPod Proof of Use</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;500;700&family=Atkinson+Hyperlegible+Next:wght@400;500;600;700;800&display=block"
+    />
+    <link rel="stylesheet" href="proof.css" />
+    <script src="proof.js" defer></script>
+  </head>
+  <body>
+    <!-- 1 · Cover -->
+    <section class="page dark">
+      <div class="strip">
+        <span class="brand"><img src="/apps/web/public/favicon.svg" alt="" />kotak</span>
+        <span>SDC Hackathon 2026</span>
+        <span>Domain 1</span>
+        <span>Team T010NG</span>
+        <span>Batch run 22 Oct 2026</span>
+      </div>
+      <div class="award">
+        <span>Proof of Use</span><span class="date">22 Oct 2026</span><span>HTTP errors <b>0</b> of 930</span>
+      </div>
+      <h1 class="fit"><span>RunPod</span></h1>
+      <div class="lede">
+        <p>
+          One serverless H100 run drafted the skill corners for <b>all 923 O*NET occupations</b> Kotak checks people
+          against, ahead of time and once.
+        </p>
+        <div class="chips">
+          <span>kotak-corners-batch</span>
+          <span>Qwen3.8-27B-FP8</span>
+          <span>1 × H100 SXM 80 GB</span>
+        </div>
+      </div>
+      <figure class="split">
+        <img src="figures/runpod/1-overview.jpg" alt="RunPod console, endpoint overview" />
+        <pre class="ascii" aria-hidden="true"></pre>
+        <span class="handle"></span>
+      </figure>
+      <div class="split-caption">
+        <span><b>CONSOLE</b>Fig 1, the endpoint overview</span
+        ><span>the same screen, redrawn in glyphs <b>GLYPHS</b></span>
+      </div>
+      <ol class="toc">
+        <li><span>01</span>What ran on RunPod<span>p. 2</span></li>
+        <li><span>04</span>Example request<span>p. 3</span></li>
+        <li><span>02</span>Handbook checklist<span>p. 2</span></li>
+        <li><span>05</span>Console figures 1–5<span>p. 4</span></li>
+        <li><span>03</span>Workload<span>p. 3</span></li>
+        <li><span>06</span>Sources<span>p. 6</span></li>
+      </ol>
+      <div class="stats">
+        <div><b>923</b><span>occupations drafted</span></div>
+        <div>
+          <b>1,285 s</b><span>GPU runtime,<br />smoke + full run</span>
+        </div>
+        <div>
+          <b>2.23 M</b><span>tokens in and out<br />of Qwen3.8-27B</span>
+        </div>
+        <div>
+          <b>0</b><span>roles failed;<br />7 answers redrawn</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · Facts and the handbook checklist -->
+    <section class="page">
+      <div class="runhead">
+        <span>RunPod Proof of Use</span><span>Kotak · Team T010NG · SDC Hackathon 2026, Domain 1</span
+        ><span>02 / 06</span>
+      </div>
+      <div class="section">
+        <span class="no">01</span>
+        <h2>What ran on RunPod</h2>
+        <p>Source: RunPod console and<br />data/generated/role-corners-run.json</p>
+      </div>
+      <ol class="rows">
+        <li>
+          <span class="no">01</span><span class="k">RunPod account</span
+          ><span>Team account (AlaskanTuna), funded by the SDC RunPod voucher: US$25 credit redeemed 22 Oct 2026</span>
+        </li>
+        <li>
+          <span class="no">02</span><span class="k">Product</span
+          ><span>Serverless, queue-based endpoint <code>kotak-corners-batch</code></span>
+        </li>
+        <li>
+          <span class="no">03</span><span class="k">Endpoint ID</span><span><code>5yjk19uqmrpbp7</code></span>
+        </li>
+        <li>
+          <span class="no">04</span><span class="k">Endpoint URL</span
+          ><span
+            ><code>https://api.runpod.ai/v2/5yjk19uqmrpbp7</code> (OpenAI-compatible route
+            <code>/openai/v1</code>)</span
+          >
+        </li>
+        <li>
+          <span class="no">05</span><span class="k">Worker image</span
+          ><span
+            ><code>runpod/worker-v1-vllm:v2.28.0</code> (vLLM v0.30.0, CUDA 13.0), the stock RunPod vLLM worker</span
+          >
+        </li>
+        <li>
+          <span class="no">06</span><span class="k">Model</span
+          ><span><code>Qwen/Qwen3.8-27B-FP8</code>, open weights under Apache 2.0</span>
+        </li>
+        <li>
+          <span class="no">07</span><span class="k">GPU</span
+          ><span
+            >1 × NVIDIA H100 80GB HBM3 (H100 SXM), data centre AP-IN-1; pools 80 GB PRO and 80 GB; max 1 worker</span
+          >
+        </li>
+        <li>
+          <span class="no">08</span><span class="k">Runtime</span
+          ><span>1,285 s in total: smoke run 502 s (with cold start), full run 783 s</span>
+        </li>
+        <li>
+          <span class="no">09</span><span class="k">Volume</span
+          ><span>930 requests, 0 HTTP errors, 7 answers rejected by the validator and regenerated, 0 roles failed</span>
+        </li>
+        <li>
+          <span class="no">10</span><span class="k">Tokens</span><span>1,092,522 prompt, 1,137,450 completion</span>
+        </li>
+        <li>
+          <span class="no">11</span><span class="k">Cost</span
+          ><span
+            >About US$1.25: account balance US$25.00 before, US$23.75 after (RunPod console, Billing page, 22 Oct 2026
+            16:05 MYT)</span
+          >
+        </li>
+      </ol>
+
+      <div class="section">
+        <span class="no">02</span>
+        <h2>Handbook checklist</h2>
+        <p>Participant Handbook<br />sections 10.7 and 9.4</p>
+      </div>
+      <ol class="rows checks">
+        <li>
+          <span class="no">[x]</span
+          ><span class="k"
+            >Endpoint URL, in place of a Pod ID<small
+              >10.7: a Serverless team shows its endpoint URL. The endpoint ID and the
+              <code>api.runpod.ai/v2/5yjk19uqmrpbp7</code> URL both appear on the endpoint page.</small
+            ></span
+          ><span class="where">Fig 1 <span class="ref">1</span><span class="ref">2</span></span>
+        </li>
+        <li>
+          <span class="no">[x]</span
+          ><span class="k"
+            >GPU type<small
+              >The endpoint's GPU pools (80 GB Pro, 80 GB), and the H100 SXM the worker actually ran on.</small
+            ></span
+          ><span class="where">Fig 1 <span class="ref">1</span> · Fig 2 <span class="ref">2</span></span>
+        </li>
+        <li>
+          <span class="no">[x]</span
+          ><span class="k"
+            >Runtime<small
+              >The worker's uptime mid-run (11 m 16 s) and the endpoint's execution time. The run record gives the exact
+              total: 1,285 s.</small
+            ></span
+          ><span class="where">Fig 2 <span class="ref">3</span> · Fig 4 <span class="ref">2</span></span>
+        </li>
+        <li>
+          <span class="no">[x]</span
+          ><span class="k"
+            >The team's own account<small
+              >Every figure is the same signed-in console, with the account's balance and avatar top right.</small
+            ></span
+          ><span class="where">Fig 1 <span class="ref">5</span> · all figures</span>
+        </li>
+        <li>
+          <span class="no">[x]</span
+          ><span class="k"
+            >GPU work runs on RunPod<small
+              >9.4: this batch is Kotak's only GPU work. No model is fine-tuned or self-trained, and the live app calls
+              the Claude and ElevenLabs APIs instead of running a model.</small
+            ></span
+          ><span class="where">Section 03, Workload</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 3 · Workload, example request, rerun -->
+    <section class="page">
+      <div class="runhead">
+        <span>RunPod Proof of Use</span><span>Kotak · Team T010NG · SDC Hackathon 2026, Domain 1</span
+        ><span>03 / 06</span>
+      </div>
+      <div class="section">
+        <span class="no">03</span>
+        <h2>Workload</h2>
+        <p>Code: scripts/corners/run-batch.ts<br />Notes: runpod/README.md</p>
+      </div>
+      <p class="intro">
+        Kotak turns any job into six skill corners and asks twelve yes/no questions about them. RunPod generates that
+        content once, ahead of time, for every one of the 923 O*NET occupations. There is no custom handler: the stock
+        RunPod vLLM worker serves the model. This is Kotak's only GPU work: the live app calls the Claude and ElevenLabs
+        APIs (Technical Declaration, sections 3 and 4).
+      </p>
+      <!-- prettier-ignore -->
+      <pre class="flow">+-------------+    +---------------+    <b>+====================+</b>    +-----------+    +-------------------+
+| O*NET tasks |---&gt;| prompt+schema |---&gt;<b>| Qwen3.8-27B · H100 |</b>---&gt;| validator |---&gt;| role-corners.json |
++-------------+    +---------------+    <b>+====================+</b>    +-----------+    +-------------------+
+   923 jobs         1 request each        RunPod Serverless        3 tries max       radar, roadmap</pre>
+      <ol class="rows steps">
+        <li>
+          <span class="no">01</span><span class="k">Input</span
+          ><span
+            >The job's title, description and O*NET tasks, grouped by work activity into at most six groups by fixed
+            rules, with no AI.</span
+          >
+        </li>
+        <li>
+          <span class="no">02</span><span class="k">Ask</span
+          ><span
+            >The model groups the tasks into six named corners and writes three can-do statements per corner (basic,
+            working, advanced), with learning hours, SDG targets and search-link resources.</span
+          >
+        </li>
+        <li>
+          <span class="no">03</span><span class="k">Constrain</span
+          ><span
+            >A strict JSON schema goes in <code>response_format</code>; vLLM's structured outputs make every token
+            follow it.</span
+          >
+        </li>
+        <li>
+          <span class="no">04</span><span class="k">Check</span
+          ><span
+            >A validator rejects any answer that drops a task, puts a task in two corners or cites a task the job does
+            not have.</span
+          >
+        </li>
+        <li>
+          <span class="no">05</span><span class="k">Retry</span
+          ><span>A rejected answer goes back to the model with its errors. Seven were regenerated; none failed.</span>
+        </li>
+        <li>
+          <span class="no">06</span><span class="k">Write</span
+          ><span
+            ><code>data/generated/role-corners.json</code> feeds the check-up questions, the Future Skills Radar and the
+            roadmap; <code>role-corners-run.json</code> records every run.</span
+          >
+        </li>
+      </ol>
+
+      <div class="section">
+        <span class="no">04</span>
+        <h2>Example request</h2>
+        <p>Endpoint settings:<br />runpod/README.md</p>
+      </div>
+      <div class="code">
+        <div class="head"><span>request.sh</span><span>POST /openai/v1/chat/completions</span></div>
+        <pre>
+curl https://api.runpod.ai/v2/<i>5yjk19uqmrpbp7</i>/openai/v1/chat/completions \
+  -H "Authorization: Bearer <i>$RUNPOD_API_KEY</i>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen/Qwen3.8-27B-FP8",
+    "messages": [{"role": "user", "content": "Name one skill of a graphic designer as JSON."}],
+    "temperature": 0,
+    "max_tokens": 50,
+    "chat_template_kwargs": {"enable_thinking": false},
+    "response_format": {"type": "json_schema", "json_schema": {"name": "skill", "schema": {
+      "type": "object", "properties": {"skill": {"type": "string"}},
+      "required": ["skill"], "additionalProperties": false}}}
+  }'</pre>
+      </div>
+      <div class="code" style="margin-top: 4mm">
+        <div class="head"><span>rerun.sh</span><span>RUNPOD_API_KEY and RUNPOD_ENDPOINT_ID set</span></div>
+        <pre>
+<em># smoke run on the three demo roles, then the full run; it skips jobs already done</em>
+bun run batch:corners --codes 15-1254.00,15-1255.00,43-3031.00
+bun run batch:corners</pre>
+      </div>
+    </section>
+
+    <!-- 4 · Figures 1 and 2 -->
+    <section class="page">
+      <div class="runhead">
+        <span>RunPod Proof of Use</span><span>Kotak · Team T010NG · SDC Hackathon 2026, Domain 1</span
+        ><span>04 / 06</span>
+      </div>
+      <div class="section">
+        <span class="no">05</span>
+        <h2>Console figures</h2>
+        <p>Captured during the full run,<br />22 Oct 2026, about 16:00 MYT</p>
+      </div>
+      <figure class="fig">
+        <header>
+          <span class="no">FIG 1</span>
+          <h3>Endpoint overview</h3>
+          <span>16:00 MYT</span>
+        </header>
+        <div class="shot" style="--iw: 1568; --ih: 772">
+          <img src="figures/runpod/1-overview.jpg" alt="Endpoint overview" />
+          <b data-n="1" style="--x: 318; --y: 505; --w: 553; --h: 62"></b>
+          <b data-n="2" style="--x: 630; --y: 402; --w: 345; --h: 20"></b>
+          <b data-n="3" style="--x: 318; --y: 207; --w: 465; --h: 22"></b>
+          <b data-n="4" style="--x: 1254; --y: 708; --w: 194; --h: 50"></b>
+          <b data-n="5" style="--x: 1428; --y: 6; --w: 134; --h: 32"></b>
+        </div>
+        <ol class="notes">
+          <li><i>1</i>Endpoint ID 5yjk19uqmrpbp7, the worker image and the GPU pools: 80 GB Pro, 80 GB.</li>
+          <li><i>2</i>The endpoint URL, in RunPod's own cURL example.</li>
+          <li><i>3</i>Running, with 1 worker and 31 jobs in progress.</li>
+          <li><i>4</i>800 requests completed in the past hour.</li>
+          <li><i>5</i>The account's balance, US$23.75, and avatar.</li>
+        </ol>
+      </figure>
+      <figure class="fig">
+        <header>
+          <span class="no">FIG 2</span>
+          <h3>Workers tab</h3>
+          <span>during the full run</span>
+        </header>
+        <div class="shot" style="--iw: 1568; --ih: 772">
+          <img src="figures/runpod/2-workers.jpg" alt="Workers tab" />
+          <b data-n="1" style="--x: 330; --y: 361; --w: 290; --h: 43"></b>
+          <b data-n="2" style="--x: 696; --y: 361; --w: 132; --h: 43"></b>
+          <b data-n="3" style="--x: 986; --y: 361; --w: 112; --h: 43"></b>
+        </div>
+        <ol class="notes">
+          <li><i>1</i>Worker 3e599v14mq7d8c, running in AP-IN-1.</li>
+          <li><i>2</i>GPU type: H100 SXM, 28 vCPUs, 251 GB RAM.</li>
+          <li><i>3</i>Uptime 11 m 16 s, since 3:49:10 PM.</li>
+        </ol>
+      </figure>
+    </section>
+
+    <!-- 5 · Figures 3 and 4 -->
+    <section class="page">
+      <div class="runhead">
+        <span>RunPod Proof of Use</span><span>Kotak · Team T010NG · SDC Hackathon 2026, Domain 1</span
+        ><span>05 / 06</span>
+      </div>
+      <figure class="fig">
+        <header>
+          <span class="no">FIG 3</span>
+          <h3>Logs tab</h3>
+          <span>15:59 MYT</span>
+        </header>
+        <div class="shot" style="--iw: 1568; --ih: 772">
+          <img src="figures/runpod/3-logs.jpg" alt="Logs tab" />
+          <b data-n="1" data-at="r" style="--x: 607; --y: 433; --w: 520; --h: 20"></b>
+          <b data-n="2" data-at="r" style="--x: 607; --y: 673; --w: 818; --h: 20"></b>
+          <b data-n="3" data-at="t" style="--x: 512; --y: 336; --w: 92; --h: 416"></b>
+        </div>
+        <ol class="notes">
+          <li><i>1</i>vLLM serving <code>POST /v1/chat/completions</code> with 200 OK.</li>
+          <li><i>2</i>The engine's average prompt throughput, 1,881.5 tokens/s.</li>
+          <li><i>3</i>Every line comes from worker 3e599v14mq7d8c.</li>
+          <li class="caption">About 30 jobs are in progress at once: the runner sends 32 requests in parallel.</li>
+        </ol>
+      </figure>
+      <figure class="fig">
+        <header>
+          <span class="no">FIG 4</span>
+          <h3>Metrics tab</h3>
+          <span>at capture time</span>
+        </header>
+        <div class="shot" style="--iw: 1568; --ih: 772">
+          <img src="figures/runpod/4-metrics.jpg" alt="Metrics tab" />
+          <b data-n="1" style="--x: 580; --y: 345; --w: 286; --h: 22"></b>
+          <b data-n="2" style="--x: 1202; --y: 345; --w: 226; --h: 22"></b>
+          <b data-n="3" style="--x: 1352; --y: 596; --w: 76; --h: 22"></b>
+        </div>
+        <ol class="notes">
+          <li><i>1</i>859 requests completed, 0 failed, 0 retried.</li>
+          <li><i>2</i>Execution time, 6 h summed over parallel jobs.</li>
+          <li><i>3</i>4 cold starts across both runs.</li>
+          <li class="caption">
+            The filter starts on 15 Oct, so the totals cover both runs; the bars sit at 16:00 on 22 Oct.
+          </li>
+        </ol>
+      </figure>
+    </section>
+
+    <!-- 6 · Figure 5 and the coda -->
+    <section class="page">
+      <div class="runhead">
+        <span>RunPod Proof of Use</span><span>Kotak · Team T010NG · SDC Hackathon 2026, Domain 1</span
+        ><span>06 / 06</span>
+      </div>
+      <figure class="fig">
+        <header>
+          <span class="no">FIG 5</span>
+          <h3>Requests tab</h3>
+          <span>during the full run</span>
+        </header>
+        <div class="shot" style="--iw: 1568; --ih: 772">
+          <img src="figures/runpod/5-requests.jpg" alt="Requests tab" />
+          <b data-n="1" style="--x: 716; --y: 400; --w: 98; --h: 320"></b>
+          <b data-n="2" style="--x: 1104; --y: 434; --w: 120; --h: 286"></b>
+          <b data-n="3" style="--x: 1336; --y: 728; --w: 94; --h: 22"></b>
+        </div>
+        <ol class="notes">
+          <li><i>1</i>Batch jobs in progress and in queue.</li>
+          <li><i>2</i>Each one on worker 3e599v14mq7d8c.</li>
+          <li><i>3</i>Page 1 of 10 of the request list.</li>
+        </ol>
+      </figure>
+      <div class="coda">
+        <div class="scene dark">
+          <span class="no mono">06 · Sources</span>
+          <h2>Where every number here comes from.</h2>
+          <dl>
+            <dt>Console</dt>
+            <dd>Figures 1–5, 22 Oct 2026</dd>
+            <dt>Run record</dt>
+            <dd>data/generated/role-corners-run.json</dd>
+            <dt>Deploy notes</dt>
+            <dd>runpod/README.md</dd>
+            <dt>Credit, cost</dt>
+            <dd>Handbook 9.1.2; RunPod Billing page</dd>
+            <dt>This PDF</dt>
+            <dd>scripts/proof-of-use/runpod.html</dd>
+            <dt>Repository</dt>
+            <dd>github.com/TolongLabs/sdc-hack</dd>
+          </dl>
+          <div class="kopi"><pre class="ascii" aria-hidden="true"></pre></div>
+        </div>
+        <div class="floor"><pre class="ascii" data-word="kotak" aria-hidden="true"></pre></div>
+      </div>
+    </section>
+  </body>
+</html>
