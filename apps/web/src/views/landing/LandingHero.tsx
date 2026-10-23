@@ -122,7 +122,7 @@ export function LandingHero() {
                   corners={example.corners}
                   scenario={example.checkup.scenario}
                   size="sm"
-                  neededLabel="Needed by Oct 2027"
+                  neededLabel="Needed by May 2027"
                   className="w-full"
                 />
 

@@ -275,8 +275,9 @@ No setup is needed to try Kotak: open the [live demo](https://kotak-alaskxntxna.
 - Optional keys, listed in [`.env.example`](/.env.example):
   - `ANTHROPIC_API_KEY` for job-title matching, explanations and Ask Kopi
   - `ELEVENLABS_API_KEY` for Kopi's voice
+  - `DATABASE_URL`, a Neon Postgres URL, for the job-ad cards, the admin page and the national view's database
 
-The app runs without keys too: explanations fall back to fixed templates, and Kopi's lines show as text.
+The app runs without keys too: exact job titles still match, explanations fall back to fixed templates, Ask Kopi says it can't chat, Kopi's lines show as text, the job-ad cards stay hidden and the national view serves its built-in sample rows. The RunPod, Cloudflare and scraper settings in `.env.example` are only for the corner batch, the deploy and the JobStreet scraper.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -298,8 +299,8 @@ cd Kotak
 # 2. Install dependencies
 bun install
 
-# 3. Configure environment variables
-cp .env.example .env            # then fill in your values
+# 3. Optional: copy the environment file, then add any keys you have
+cp .env.example .env
 
 # 4. Build the data snapshots and the web app
 bun run build
@@ -307,6 +308,13 @@ bun run build
 # 5. Start the server, then open http://localhost:8787
 bun run start
 ```
+
+Every key is optional; [Prerequisites](#prerequisites) says what each one adds and what the app does without it.
+
+On Windows:
+
+- Clone to a short path, such as `git clone https://github.com/TolongLabs/Kotak.git C:\kotak`. In a long path, such as a folder deep under `Documents`, `bun install` fails with `ENAMETOOLONG` on 6 packages, among them commitlint and miniflare. Otherwise, [enable long paths](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation#enable-long-paths-in-windows-10-version-1607-and-later) and open a new terminal.
+- Step 3 is `Copy-Item .env.example .env` in PowerShell, or `copy .env.example .env` in Command Prompt, which has no `cp`.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -316,6 +324,8 @@ bun run start
 bun run typecheck
 bun test
 ```
+
+`bun test` skips the 15 browser integration tests of the JobStreet scraper unless `BROWSER_INTEGRATION=1` is set, because they launch its Chromium build ([scraper guide](/apps/api/src/scrapers/jobstreet/README.md#verification)). It also skips the intake pathway tests until `bun run build` has written the data bundle.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
