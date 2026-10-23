@@ -79,6 +79,9 @@ export function RoadmapStepCard({
               {step.resource.label}
             </TextLink>
             {step.resource.citation !== undefined && <Citation n={step.resource.citation} />}
+            <span className="w-full text-body-s text-text-muted">
+              {step.resource.kind === 'search' ? 'Search suggestion, not checked' : 'Free'}
+            </span>
           </div>
         </div>
 
