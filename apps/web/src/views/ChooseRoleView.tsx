@@ -171,7 +171,7 @@ export function ChooseRoleView() {
 
   // After the interest screen, focus moves to the roles' heading, so the keyboard doesn't drop to the page.
   const finishInterests = (ids: string[]) => {
-    updateGuestSession({ profile: { ...profile, interests: interestPicks(ids) } })
+    updateGuestSession({ profile: { ...profile, interests: interestPicks(ids), interest_activities: ids } })
     window.history.replaceState(null, '', routes.choose)
     setInterestsDone(true)
     requestAnimationFrame(() => headingRef.current?.focus())

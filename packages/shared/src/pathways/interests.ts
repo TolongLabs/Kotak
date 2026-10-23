@@ -31,6 +31,26 @@ export const INTEREST_ACTIVITIES: InterestActivity[] = [
   { id: 'work-numbers', area: 'C', label: 'Work with numbers, budgets or accounts' }
 ]
 
+/**
+ * The career areas (data/pathways/career-areas.json) an activity's subject belongs to. The six interest scores carry
+ * only a shape, so "set up computers" and "analyse data" alone match a zoologist better than a network engineer.
+ * Activities that name no subject, such as solving puzzles, have none. build:data checks the ids.
+ */
+export const ACTIVITY_AREAS: Record<string, string[]> = {
+  'set-up-equipment': ['cloud-and-infrastructure', 'cybersecurity'],
+  'analyse-data': ['ai-and-data'],
+  'research-deeply': ['science-and-research'],
+  'design-looks': ['design-and-ux'],
+  'make-media': ['arts-media-and-communication'],
+  'teach-explain': ['education-and-training'],
+  'help-problems': ['community-and-social-services'],
+  'care-wellbeing': ['health-and-care'],
+  'lead-team': ['management'],
+  'persuade-sell': ['sales-and-marketing'],
+  'organise-records': ['office-and-administration'],
+  'work-numbers': ['business-and-finance']
+}
+
 /** At least this many picks before Kotak matches them. */
 export const MIN_INTEREST_PICKS = 3
 
@@ -41,4 +61,10 @@ export function interestPicks(activityIds: string[]): InterestPicks {
       INTEREST_ACTIVITIES.filter((activity) => activity.area === area && activityIds.includes(activity.id)).length
   )
   return counts as InterestPicks
+}
+
+/** The career areas the chosen activities are about, each once, in the activities' order. */
+export function activityAreas(activityIds: string[]): string[] {
+  const picked = INTEREST_ACTIVITIES.filter((activity) => activityIds.includes(activity.id))
+  return [...new Set(picked.flatMap((activity) => ACTIVITY_AREAS[activity.id] ?? []))]
 }

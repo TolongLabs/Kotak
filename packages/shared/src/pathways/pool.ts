@@ -1,4 +1,5 @@
 import { roleAccess } from './access'
+import { activityAreas } from './interests'
 import type { BundlePathways, CandidateReason, EducationLevel, InterestPicks, Profile, RoleAccess } from './schemas'
 
 // Which roles to put in front of the user (#284), by fixed rules: the roles they named, the roles in the areas they
@@ -13,7 +14,7 @@ export interface Candidate {
   onet_code: string
   title: string
   reasons: CandidateReason[]
-  /** The user's picked areas the role is in. */
+  /** The user's picked areas the role is in; without any, the areas their picked activities are about. */
   area_ids: string[]
   /** How closely the job's interest scores follow the user's picks, 0 to 1; null without a usable pattern. */
   interest_match: number | null
@@ -27,6 +28,7 @@ const WEIGHTS: Record<CandidateReason, number> = {
   area: 3,
   field: 3,
   interests: 0, // scaled by the match instead, below
+  activity_area: 2.5, // below a picked area, which says more than an activity does
   job_related: 1,
   related: 0, // the assessed role's own related list, which the check-up ranks anyway
   current: 0
@@ -135,6 +137,16 @@ export function candidateRoles(profile: Profile, pathways: BundlePathways, optio
         .sort((a, b) => b[1] - a[1])
         .slice(0, INTEREST_SHORTLIST)
         .forEach(([code]) => add(code, 'interests'))
+    // The scores carry only a shape, so without an area or a field, the areas the picked activities are about
+    // (ACTIVITY_AREAS) join too, below a picked area, and the match ranks within them.
+    if (profile.interest_areas.length === 0 && profile.field_of_study === null)
+      for (const id of activityAreas(profile.interest_activities))
+        pathways.areas
+          .find((area) => area.id === id)
+          ?.onet_codes.forEach((code) => {
+            add(code, 'activity_area')
+            areasOf.set(code, [...(areasOf.get(code) ?? []), id])
+          })
   }
 
   return [...reasons]
@@ -188,10 +200,20 @@ export function describeReasons(
     area: areas.length ? `In ${areas.join(' and ')}` : null,
     field: field && field.onet_codes.length ? `Your ${field.label} study leads here` : null,
     interests: 'Matches what you enjoy',
+    activity_area: areas.length ? `Your picks point to ${areas.join(' and ')}` : null,
     job_related: titles.job ? `Related to ${titles.job}` : 'Related to your job',
     related: titles.assessed ? `Related to ${titles.assessed}` : null,
     current: 'Your current job'
   }
-  const order: CandidateReason[] = ['current', 'target', 'field', 'area', 'interests', 'job_related', 'related']
+  const order: CandidateReason[] = [
+    'current',
+    'target',
+    'field',
+    'area',
+    'activity_area',
+    'interests',
+    'job_related',
+    'related'
+  ]
   return order.flatMap((reason) => (candidate.reasons.includes(reason) && text[reason] ? [text[reason]!] : []))
 }
