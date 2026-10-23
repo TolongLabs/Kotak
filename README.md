@@ -19,7 +19,7 @@
     <br />
     <a href="https://kotak-alaskxntxna.replit.app"><strong>Live Demo &rarr;</strong></a>
     &middot;
-    <a href="#screenshots">Screenshots</a>
+    <a href="#">Demo Video</a>
     &middot;
     <a href="https://github.com/TolongLabs/sdc-hack/issues/new?labels=bug">Report a Bug</a>
     <br />
@@ -49,16 +49,12 @@
 <details>
   <summary>Expand</summary>
   <ol>
-    <li><a href="#team-information">Team Information</a></li>
-    <li><a href="#links">Links</a></li>
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
-        <li><a href="#problem">Problem</a></li>
-        <li><a href="#solution">Solution</a></li>
         <li><a href="#screenshots">Screenshots</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="#key-features">Key Features</a></li>
+        <li><a href="#features">Features</a></li>
         <li><a href="#architecture">Architecture</a></li>
         <li><a href="#project-structure">Project Structure</a></li>
         <li><a href="#tech-stack">Tech Stack</a></li>
@@ -74,62 +70,22 @@
     </li>
     <li><a href="#how-we-use-replit-required">How We Use Replit (Required)</a></li>
     <li><a href="#how-we-use-runpod-required">How We Use RunPod (Required)</a></li>
-    <li><a href="#challenges--learnings">Challenges & Learnings</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#team">Team</a></li>
-    <li><a href="#submission-checklist">Submission Checklist</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
-<!-- HACKATHON -->
-
-## Team Information
-
-| Field                 | Details                                                                                                     |
-| --------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Team Name**         | T010NG                                                                                                      |
-| **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce                                                                |
-| **SDG Track (1–17)**  | SDG 4 — Quality Education (target 4.4)                                                                      |
-| **Team Leader**       | Hee Zi Jie                                                                                                  |
-| **University**        | Asia Pacific University of Technology & Innovation (APU), University of Reading and University of Sheffield |
-| **Number of Members** | 5                                                                                                           |
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-## Links
-
-| Resource          | Link                                                                                   |
-| ----------------- | -------------------------------------------------------------------------------------- |
-| GitHub Repository | https://github.com/TolongLabs/sdc-hack                                                 |
-| Replit Project    | https://replit.com/@alaskxntxna/Kotak                                                  |
-| Live Demo         | https://kotak-alaskxntxna.replit.app (mirror: https://kotak.tp073654.workers.dev)      |
-| RunPod Endpoint   | https://api.runpod.ai/v2/5yjk19uqmrpbp7 (idle at 0 workers; it ran the one-time batch) |
-| Slide Deck        | _Added before submission_                                                              |
-| Demo Video        | _Added before submission_                                                              |
-| Rule Engine       | [`packages/shared/src/rules/`](/packages/shared/src/rules/)                            |
-| Citation Check    | [`apps/api/src/ai/verifier.ts`](/apps/api/src/ai/verifier.ts)                          |
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
 
-Kotak is Malay for box. It opens the box on a worker's job: which skills AI is raising, which it is taking over, and what to learn next, with a date and a source on every answer. Kotak is T010NG's entry to [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, for SDG 4.4.
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-### Problem
-
 AI is changing Malaysian jobs faster than training can keep up: 56% of Malaysian professionals use AI tools at work, but only 26% have had formal training (Hays Asia Salary Guide 2025). Workers who wonder what AI means for their job get static skills lists with no dates, no scores and no plan. Without dated evidence, they cannot tell which skills to learn first, and may spend scarce hours on tasks AI is taking over.
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
+Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, asks 12 yes/no can-do questions about the user's job or a role they want. Kotak then draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap, in about 3 minutes. Fixed rules over dated public data set every verdict, score and step, so every number cites its source. AI does the language work around those rules: a RunPod GPU batch built each job's skills and questions from its own O\*NET tasks, Claude explains verdicts and matches Malay job titles, and ElevenLabs gives Kopi a voice.
 
-### Solution
-
-Kopi, a cat counsellor, asks 12 yes/no can-do questions about the user's job or a role they want. Kotak then draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap, in about 3 minutes. Fixed rules over dated public data set every verdict, score and step, so every number cites its source. AI does the language work around those rules: a RunPod GPU batch built each job's skills and questions from its own O\*NET tasks, Claude explains verdicts and matches Malay job titles, and ElevenLabs gives Kopi a voice.
+Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -202,7 +158,7 @@ A check-up for a web developer who wants to see where they could go, as the scre
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
-### Key Features
+### Features
 
 - **Skills profile intake** — a job title in any language, a goal (stay strong, move to a chosen role, or explore) and 12 can-do questions.
 - **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights, refreshed weekly. A Before/After switch shows what changed when May's data arrived.
@@ -222,7 +178,7 @@ A check-up for a web developer who wants to see where they could go, as the scre
   <img src="/docs/readme/architecture-light.svg" alt="Kotak architecture">
 </picture>
 
-The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step from a static bundle of dated snapshots, so a check-up needs no server. The Hono API does the language work: Claude matches titles and writes explanations, ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view and the JobStreet scraper's runs. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
+The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API does the language work: Claude matches titles and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources, ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view and the JobStreet scraper's runs. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
 
 Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json).
 
@@ -230,31 +186,33 @@ Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`
 
 ### Project Structure
 
-```
+```text
 .
 ├── apps/
-│   ├── api/                 # Hono API: title match, explanations, voice, Ask Kopi, MCP
-│   └── web/                 # React app and the static data snapshots
+│   ├── api/            # Hono API: title match, explanations, voice, Ask Kopi and MCP
+│   └── web/            # React app, served with the static data bundle
 ├── packages/
-│   ├── shared/              # Rules, verdicts, roadmap and Zod schemas
-│   ├── sdk/                 # The check-up engine
-│   ├── agent/               # Ask Kopi's tools and the MCP server
-│   └── browser/             # Browser for the JobStreet research scraper
-├── plugins/kotak/           # Claude Code plugin with the check-up skill
-├── scripts/                 # Data ingestion, the RunPod batch runner and refresh checks
-├── data/                    # Dated source snapshots and generated skills
-├── runpod/                  # RunPod endpoint notes and example requests
-├── docs/                    # PRD, technical design, declaration, research and README images
-├── submission/              # Required submission documents
-│   ├── REPLIT PROOF OF USE.pdf
-│   ├── RUNPOD PROOF OF USE.pdf
-│   ├── SDC2026_T010NG_Preliminary.pdf
-│   └── SDC2026_T010NG_TechDeclaration.pdf
-├── .env.example             # Example environment variables
-├── .replit                  # Replit run configuration
-├── wrangler.jsonc           # Cloudflare Workers configuration
-├── LICENSE
-├── NOTICE.md                # Third-party credits
+│   ├── shared/         # Rules, verdicts, roadmap and Zod schemas
+│   ├── sdk/            # Check-up engine shared by the app and the MCP tools
+│   ├── agent/          # Ask Kopi's tools and the MCP server
+│   └── browser/        # Browser for the JobStreet research scraper
+├── plugins/kotak/      # Claude Code plugin with the check-up skill
+├── scripts/
+│   ├── ingest/         # O*NET, Economic Index and DOSM ingestion
+│   ├── corners/        # RunPod batch that drafts each job's skills and questions
+│   └── refresh/        # Weekly check for new data snapshots
+├── data/
+│   ├── onet/           # O*NET 30.1 occupations, tasks and work activities
+│   ├── snapshots/      # Dated Economic Index and DOSM snapshots
+│   └── generated/      # Each job's AI-drafted skills and questions
+├── runpod/             # RunPod endpoint settings and example requests
+├── docs/               # PRD, technical design, declaration, research and README images
+├── submission/         # Submission template and the Replit and RunPod proofs of use
+├── .env.example        # Environment variables
+├── .replit             # Replit run configuration
+├── wrangler.jsonc      # Cloudflare Workers configuration
+├── LICENSE             # Apache License 2.0
+├── NOTICE.md           # Third-party credits
 └── README.md
 ```
 
@@ -274,7 +232,7 @@ Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`
 
 ## Getting Started
 
-No setup is needed to try Kotak: open the [live demo](https://kotak-alaskxntxna.replit.app). To run your own copy, use Replit or run it locally.
+No setup is needed to try Kotak: open the [live demo](https://kotak-alaskxntxna.replit.app), or its [Cloudflare mirror](https://kotak.tp073654.workers.dev). To run your own copy, use Replit or run it locally.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -343,7 +301,7 @@ bun test
 ## How We Use RunPod _(Required)_
 
 - **Workload:** a RunPod serverless GPU ran `Qwen/Qwen3.8-27B-FP8` on vLLM once, before the demo, to group each O\*NET job's own tasks into 6 skills and draft 18 can-do statements for each of 923 jobs. A JSON schema constrains every answer, and a validator rejects any task from another job.
-- **Setup:** the stock RunPod vLLM worker, `runpod/worker-v1-vllm:v2.28.0`, on one H100 80 GB GPU. [`runpod/README.md`](/runpod/README.md) has the endpoint settings.
+- **Setup:** the stock RunPod vLLM worker, `runpod/worker-v1-vllm:v2.28.0`, on one H100 80 GB GPU, as endpoint `5yjk19uqmrpbp7`, now idle at 0 workers. [`runpod/README.md`](/runpod/README.md) has the endpoint settings.
 - **Integration:** [`scripts/corners/run-batch.ts`](/scripts/corners/run-batch.ts) sends the requests with `RUNPOD_API_KEY` and `RUNPOD_ENDPOINT_ID`, and writes the results into the data snapshots that the app ships. The full run took 783 seconds and cost about US$1.25.
 
 Example request:
@@ -368,55 +326,23 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
-## Challenges & Learnings
-
-- **Making AI answers checkable.** Letting a model pick skills or verdicts made results impossible to verify. We moved every verdict, score and step into fixed rules over dated data, and kept AI for language: drafting skills from a job's own tasks, explaining verdicts and matching titles, with a validator or a check on each.
-- **Thin trend data.** The Economic Index has only two monthly points for Malaysia so far. Instead of hiding that, Kotak labels every target an estimate and shows Split and Unknown verdicts.
-- **Shipping as a team of five.** GitHub Actions deploys every merge to `main`, so any member can ship, and Replit publishes the same branch.
-
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
 <!-- ROADMAP -->
 
 ## Roadmap
 
 See [open issues](https://github.com/TolongLabs/sdc-hack/issues) for a full list of proposed features (and known issues).
 
-### Future Improvements
-
-- [ ] Have people review the AI-drafted skills for the most common jobs
-- [ ] Load MyCOL critical-occupation editions and OpenDOSM wage series as extra demand signals
-- [ ] Paste a job ad to check a specific vacancy
-- [ ] Malay and Chinese interface translations
-
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
-<!-- TEAM -->
+<!-- CONTRIBUTING -->
 
 ## Team
 
-| Name           | Role                | GitHub                                         |
-| -------------- | ------------------- | ---------------------------------------------- |
-| Hee Zi Jie     | Team Lead / Product | [@AlaskanTuna](https://github.com/AlaskanTuna) |
-| Lim Yuh Kang   | Backend / Engine    | [@kymil4](https://github.com/kymil4)           |
-| Yow Li Hao     | Data                | [@chaosiris](https://github.com/chaosiris)     |
-| Liau Jin Siang | Frontend / QA       | [@DrxgClanPC](https://github.com/DrxgClanPC)   |
-| Chew Jun Song  | Member              | [@Doraemon-00](https://github.com/Doraemon-00) |
+<a href="https://github.com/TolongLabs/sdc-hack/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=TolongLabs/sdc-hack" alt="Kotak team" />
+</a>
 
-<p align="right"><a href="#readme-top">&uarr;</a></p>
-
-<!-- SUBMISSION CHECKLIST -->
-
-## Submission Checklist
-
-- [x] Team name, domain (Domain 1 / Domain 2) and SDG track filled in
-- [ ] Slide deck link added
-- [ ] Demo video link added
-- [ ] Replit used, with proof of use in `submission/`
-- [x] RunPod used, with proof of use in `submission/`
-- [ ] Submission template completed in `submission/`
-- [ ] "How to Run" steps verified
-- [ ] No API keys or secrets committed to the repository
+Made with [contrib.rocks](https://contrib.rocks).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -424,7 +350,7 @@ See [open issues](https://github.com/TolongLabs/sdc-hack/issues) for a full list
 
 ## License
 
-This project is licensed under the [Apache License 2.0](/LICENSE). The licence covers Kotak's own code: the data, models, Live2D model and fonts it uses keep their own licences, credited in [NOTICE.md](/NOTICE.md). As a hackathon entry, Kotak is also subject to the organiser's [terms and conditions](/docs/sources/sdchack.my/terms-and-conditions.md#12-intellectual-property).
+See [LICENSE](/LICENSE) for more information.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -439,6 +365,7 @@ This project is licensed under the [Apache License 2.0](/LICENSE). The licence c
 - [Live2D](https://www.live2d.com/) — the Hijiki sample model that became Kopi.
 - [NOTICE.md](/NOTICE.md) — every dataset, model, asset and library Kotak uses, with its licence.
 - [Archify](https://github.com/tt-a1i/archify)
+- [contrib.rocks](https://contrib.rocks)
 - [Shields.io](https://shields.io)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
