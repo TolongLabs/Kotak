@@ -20,17 +20,33 @@ CREATE TABLE IF NOT EXISTS jobstreet_scrape_runs (
   error text
 );
 
-CREATE INDEX IF NOT EXISTS jobstreet_scrape_runs_created_at_idx
-  ON jobstreet_scrape_runs (created_at DESC);
-CREATE INDEX IF NOT EXISTS jobstreet_scrape_runs_queue_idx
-  ON jobstreet_scrape_runs (status, created_at)
-  WHERE status = 'queued';
-CREATE UNIQUE INDEX IF NOT EXISTS jobstreet_scrape_runs_one_active_per_career_idx
-  ON jobstreet_scrape_runs (career_slug)
-  WHERE status IN ('queued', 'running');
-CREATE UNIQUE INDEX IF NOT EXISTS jobstreet_scrape_runs_daily_idx
-  ON jobstreet_scrape_runs (career_slug, scheduled_for)
-  WHERE source = 'schedule';
+-- Every deploy runs every migration (migrate.ts), and CREATE INDEX IF NOT EXISTS takes a SHARE lock on its table even
+-- when the index exists: the deploy would wait for open writes to the table and block new ones until it commits. So
+-- each index is created inside a DO block that checks the catalog first, and later deploys take no lock (#291).
+-- migrate.ts splits statements at semicolons that end a line, so the semicolons inside the DO blocks start their lines.
+DO $$
+BEGIN
+  IF to_regclass('public.jobstreet_scrape_runs_created_at_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_scrape_runs_created_at_idx
+      ON jobstreet_scrape_runs (created_at DESC)
+    ; END IF
+  ; IF to_regclass('public.jobstreet_scrape_runs_queue_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_scrape_runs_queue_idx
+      ON jobstreet_scrape_runs (status, created_at)
+      WHERE status = 'queued'
+    ; END IF
+  ; IF to_regclass('public.jobstreet_scrape_runs_one_active_per_career_idx') IS NULL THEN
+    CREATE UNIQUE INDEX IF NOT EXISTS jobstreet_scrape_runs_one_active_per_career_idx
+      ON jobstreet_scrape_runs (career_slug)
+      WHERE status IN ('queued', 'running')
+    ; END IF
+  ; IF to_regclass('public.jobstreet_scrape_runs_daily_idx') IS NULL THEN
+    CREATE UNIQUE INDEX IF NOT EXISTS jobstreet_scrape_runs_daily_idx
+      ON jobstreet_scrape_runs (career_slug, scheduled_for)
+      WHERE source = 'schedule'
+    ; END IF
+  ; END
+$$;
 
 CREATE TABLE IF NOT EXISTS jobstreet_listings (
   job_id text NOT NULL,
@@ -42,8 +58,14 @@ CREATE TABLE IF NOT EXISTS jobstreet_listings (
   PRIMARY KEY (job_id, career_slug)
 );
 
-CREATE INDEX IF NOT EXISTS jobstreet_listings_career_latest_idx
-  ON jobstreet_listings (career_slug, latest_seen_at DESC);
+DO $$
+BEGIN
+  IF to_regclass('public.jobstreet_listings_career_latest_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_listings_career_latest_idx
+      ON jobstreet_listings (career_slug, latest_seen_at DESC)
+    ; END IF
+  ; END
+$$;
 
 CREATE TABLE IF NOT EXISTS jobstreet_observations (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -56,8 +78,14 @@ CREATE TABLE IF NOT EXISTS jobstreet_observations (
   FOREIGN KEY (job_id, career_slug) REFERENCES jobstreet_listings(job_id, career_slug)
 );
 
-CREATE INDEX IF NOT EXISTS jobstreet_observations_career_observed_idx
-  ON jobstreet_observations (career_slug, observed_at DESC);
+DO $$
+BEGIN
+  IF to_regclass('public.jobstreet_observations_career_observed_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_observations_career_observed_idx
+      ON jobstreet_observations (career_slug, observed_at DESC)
+    ; END IF
+  ; END
+$$;
 
 CREATE TABLE IF NOT EXISTS jobstreet_detail_attempts (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -71,8 +99,14 @@ CREATE TABLE IF NOT EXISTS jobstreet_detail_attempts (
   FOREIGN KEY (job_id, career_slug) REFERENCES jobstreet_listings(job_id, career_slug)
 );
 
-CREATE INDEX IF NOT EXISTS jobstreet_detail_attempts_career_idx
-  ON jobstreet_detail_attempts (career_slug, attempted_at DESC);
+DO $$
+BEGIN
+  IF to_regclass('public.jobstreet_detail_attempts_career_idx') IS NULL THEN
+    CREATE INDEX IF NOT EXISTS jobstreet_detail_attempts_career_idx
+      ON jobstreet_detail_attempts (career_slug, attempted_at DESC)
+    ; END IF
+  ; END
+$$;
 
 INSERT INTO jobstreet_careers (slug, title, search_url) VALUES
   ('software-engineer', 'Software Engineer', 'https://my.jobstreet.com/software-engineer-jobs'),
