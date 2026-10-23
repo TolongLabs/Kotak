@@ -216,6 +216,8 @@ The app has grown past the mockups in two places ([#284](https://github.com/Tolo
 
 On Matched Roles and Roles to Check, the highlighted card carries one bold line saying why it is highlighted, such as "Picked for you: your best fit of the 4 Rising roles."
 
+The app dropped two parts of the mockups in [#167](https://github.com/TolongLabs/Kotak/pull/167): the National View screen and the radar's Scenario Switch. The radar shows the slow scenario, and the national view is read through Kotak's `national_skill_gaps` tool in Ask Kopi or an MCP client.
+
 ## See also
 
 - [PRODUCT.md](PRODUCT.md): users, principles and voice.

@@ -13,6 +13,7 @@ The product and guardrail choices behind Kotak, newest last, each with its reaso
 | 22 Oct | Every O\*NET job, with a few hand-checked demo roles                                                                                      | Kotak must work in any industry                                                                                              | [Locked idea][idea]                  |
 | 22 Oct | Guest sign-in only, with the check-up kept in the browser                                                                                 | Kotak holds no personal data, and a judge needs no account                                                                   | [#57], [TRD privacy](TRD.md#privacy) |
 | 22 Oct | A live, anonymous national view, totals only for groups of 10 or more, with labelled sample rows until then                               | Agencies get a real view without exposing anyone                                                                             | [Locked idea][idea], [#34], [#147]   |
+| 22 Oct | Drop the National View page, the radar's Slow/Fast switch and the Check-Up's SDG step; the national view stays a route and a tool         | Fixes for the UX problems an end-to-end run of the live app found, to make the results readable for a first-time user        | [#167]                               |
 | 23 Oct | Rate each question from 1 to 4, with no middle option, and reverse five of the twelve statements                                          | A review of the build: Yes or Not Yet hid how much a user can do, and picking the top answer everywhere read as a strong fit | [#238]                               |
 | 23 Oct | Pitch one persona, one payer and one moment: a digital worker at an employer that pays the HRD Corp levy                                  | Mentor feedback on 23 October                                                                                                | [#279], [#281]                       |
 | 23 Oct | Show a 12-week roadmap window, with the hours left listed after it                                                                        | The page showed the whole path, up to 495 weeks, against the 12-week plan on the landing page and in the deck                | [#282]                               |
@@ -65,6 +66,7 @@ The product and guardrail choices behind Kotak, newest last, each with its reaso
 [#105]: https://github.com/TolongLabs/Kotak/issues/105
 [#147]: https://github.com/TolongLabs/Kotak/issues/147
 [#151]: https://github.com/TolongLabs/Kotak/issues/151
+[#167]: https://github.com/TolongLabs/Kotak/pull/167
 [#214]: https://github.com/TolongLabs/Kotak/pull/214
 [#235]: https://github.com/TolongLabs/Kotak/pull/235
 [#238]: https://github.com/TolongLabs/Kotak/pull/238

@@ -141,7 +141,7 @@ Copy each declaration section from the part of this document shown. The [declara
 
 This paragraph fits declaration section 2.1 (under 200 words).
 
-Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights, the NCES CIP to SOC crosswalk and the team's list of Malaysian regulated professions. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. A Zod-checked build fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker serving the React app, the JSON snapshots and a Hono API. Fixed rules in a TypeScript SDK set every level, verdict, target, fit score and roadmap position, in the browser and on the server. The API calls Claude Haiku 5.5 to match local job titles and write cited explanations, and caches each answer. ElevenLabs voices the cat. An agent layer serves the SDK as read-only tools: through an MCP server to any AI assistant, and to Claude in Kopi's in-app chat. A Neon Postgres database stores anonymous check-ups for the national view and the JobStreet ads the team's admins approve. A copy runs on Replit for the proof of use.
+Kotak is a web app. Before the demo, Bun scripts turn dated public data into static JSON: O\*NET 30.1, two Anthropic Economic Index snapshots (April and May 2026), DOSM Job Market Insights, the NCES CIP to SOC crosswalk and the team's list of Malaysian regulated professions. A one-time batch on a RunPod serverless GPU groups each job's O\*NET tasks into 6 skill corners and drafts the can-do questions. A Zod-checked build fails if a number lacks a source or a date. GitHub Actions deploys one Cloudflare Worker serving the React app, the JSON snapshots and a Hono API. Fixed rules in a TypeScript SDK set every level, verdict, target, fit score and roadmap position, in the browser and on the server. The API calls Claude Haiku 5.5 to match local job titles and write cited explanations, and caches each answer. ElevenLabs voices the cat. An agent layer serves the SDK as read-only tools: through an MCP server to any AI assistant, and to Claude in Kopi's in-app chat. A Neon Postgres database holds the national view's labelled sample rows and the JobStreet ads the team's admins approve. A copy runs on Replit for the proof of use.
 
 ### Components
 
@@ -158,7 +158,7 @@ Kotak is a web app. Before the demo, Bun scripts turn dated public data into sta
 | Engine module     | Pure TypeScript functions for verdicts, projections, targets, scoring, transfers, roadmaps and diffs. Runs at build time and in the browser | [#81], [#83], [#86]    |
 | Batch generator   | The corner and question prompt harness and its validator, run on a RunPod serverless GPU                                                    | [#74], [#77]           |
 | Static build      | `bun run build:data` joins everything into Zod-validated static JSON                                                                        | [#88]                  |
-| National view     | A Postgres table on Neon, its seed script and two Hono routes                                                                               | [#34]                  |
+| National view     | A Postgres table on Neon, its seed script, two Hono routes and the `national_skill_gaps` tool. No screen since [#167]                       | [#34], [#167], [#190]  |
 
 Hono runs on the Cloudflare Workers runtime in production and on Bun locally and on Replit. Code in `apps/api`, `packages/sdk`, `packages/agent` and the engine module must therefore avoid Bun-only and Node-only APIs. The Bun entry point, `apps/api/src/bun.ts`, injects what needs the disk: the data bundle reader and the AI cache. Ingestion and build scripts run only under Bun.
 
@@ -172,7 +172,7 @@ Hono runs on the Cloudflare Workers runtime in production and on Bun locally and
 6.  **Explain.** The browser sends computed verdicts, levels and source metadata to the API. The API returns cited explanations and never changes a number ([#43]).
 7.  **Ask.** Kopi's chat sends the conversation and the guest's check-up to the API. Claude answers by calling Kotak's tools, which run the same SDK over the same bundle on the server, and the API returns the reply, the tools Claude ran and their sources ([#189], [#191]).
 8.  **Connect.** An outside AI assistant calls the same tools through the MCP server at `/api/mcp` ([#186]).
-9.  **Aggregate.** A finished check-up posts its role code, corner levels (one per corner, up to 6) and date to Postgres ([#34], [#67]).
+9.  **Aggregate.** `POST /api/national-view/checkups` can store a check-up's role code, corner levels (one per corner, up to 6) and date in Postgres, but no screen posts one, so the national view serves its labelled sample rows ([#34], [#167]).
 10. **Refresh.** A scheduled workflow checks for new upstream releases, rebuilds the JSON and opens a commit or pull request with the snapshot diff ([#90]).
 
 ### Architecture diagram
@@ -218,7 +218,7 @@ flowchart LR
   SK --> ASSETS
   BD -. "published by hand" .-> REPLIT
   ASSETS --> WEB
-  WEB -- "match, explain, job-ad market, TTS, national view" --> API
+  WEB -- "match, explain, job-ad market, TTS" --> API
   WEB -- "Ask Kopi" --> CHAT
   PLUGIN -. "claude plugin install" .-> ASSIST
   ASSIST -- "MCP over HTTP" --> MCP
@@ -235,8 +235,8 @@ flowchart LR
 ### Client runtime
 
 - **Guest session.** A Zod-validated `localStorage` store holds guest status, role code, goal, impact area, target role code, the 12 answers, follow-up answers, ticked milestones, custom weekly hours, pasted job-ad quotes, the TTS mute state and the active snapshot ID (`2026-04` or `2026-05`). A stored value that fails validation resets to clean defaults. A reset action clears the session ([#41]).
-- **Snapshot loader.** It reads the precomputed slow and fast targets for the active snapshot, defaulting to April 2026, and calls the engine functions from [#83], through `@kotak/sdk`, for levels, fit scores, estimate labels and roadmap order. Switching to `2026-05` recomputes them synchronously ([#41], [#185]).
-- **Screens.** Landing ([#54]), guest sign-in and dashboard ([#57]), check-up start and 12 questions ([#59]), Future Skills Radar ([#61]), matched roles ([#64]), roadmap ([#67]), What Changed and the demo switcher ([#69]), national view ([#72]) and Connect your AI ([#192]). The shell, transitions and the Loading, AI Error and No Match states are in [#51]. Kopi is in [#49]. The [Ask Kopi](#ask-kopi) chat panel opens from the shell on every `/app` page ([#191]).
+- **Snapshot loader.** It reads the precomputed slow and fast targets for the active snapshot, defaulting to May 2026 since [#167], and calls the engine functions from [#83], through `@kotak/sdk`, for levels, fit scores, estimate labels and roadmap order. Switching snapshots recomputes them synchronously ([#41], [#185]).
+- **Screens.** Landing ([#54]), guest sign-in and dashboard ([#57]), check-up start and 12 questions ([#59]), Future Skills Radar ([#61]), matched roles ([#64]), roadmap ([#67]), What Changed and the demo switcher ([#69]) and Connect your AI ([#192]). The shell, transitions and the Loading, AI Error and No Match states are in [#51]. Kopi is in [#49]. The [Ask Kopi](#ask-kopi) chat panel opens from the shell on every `/app` page ([#191]). [#167] removed the National View screen at `/app/national` and the radar's Slow/Fast switch: the screens show the slow scenario, and the national view is the [summary route](#national-view-routes) and the `national_skill_gaps` tool.
 - **Visual design.** `DESIGN.md` governs tokens, type, surfaces and components ([#31], [#32]).
 
 ## Stack
@@ -245,27 +245,27 @@ flowchart LR
 
 The issues pin no library versions. `bun.lock` records them once [#29] scaffolds the workspace. A dash means no version is set in the issues.
 
-| Name                                                                  | Version | Purpose                                                               | Issues              |
-| --------------------------------------------------------------------- | ------- | --------------------------------------------------------------------- | ------------------- |
-| TypeScript                                                            | —       | The language of the app, API, engine and scripts                      | [#29]               |
-| Bun                                                                   | —       | Package manager, workspaces, script runner and local server           | [#29]               |
-| React                                                                 | —       | `apps/web` user interface                                             | [#29]               |
-| Vite                                                                  | —       | `apps/web` build                                                      | [#29]               |
-| Tailwind CSS                                                          | —       | Theme, tokens and utilities from `DESIGN.md`                          | [#32]               |
-| Recharts                                                              | —       | Radar chart, readiness graph and national view charts                 | [#61], [#67], [#72] |
-| Lucide                                                                | —       | The 60-icon registry                                                  | [#32]               |
-| pixi-live2d-display, a PixiJS plugin                                  | —       | Renders the Live2D cat                                                | [#49]               |
-| Live2D sample model Hijiki                                            | —       | Kopi the cat counsellor                                               | [#49]               |
-| Hono                                                                  | —       | API routes, on the Workers runtime in production and on Bun elsewhere | [#27]               |
-| Zod                                                                   | —       | Shared schemas for data files, session state and API payloads         | [#29], [#40]        |
-| `@anthropic-ai/sdk`                                                   | —       | Claude Messages calls, and the beta tool runner for Kopi's chat       | [#43], [#189]       |
-| `@modelcontextprotocol/server`, the MCP TypeScript SDK                | v2      | Serves Kotak's tools over MCP at `/api/mcp`, on the Worker and on Bun | [#186]              |
-| `@kotak/sdk` and `@kotak/agent`, Kotak's own packages                 | —       | The check-up engine for any runtime; Kotak's tools and agent rules    | [#185], [#186]      |
-| fflate                                                                | —       | Zips the kotak-checkup skill for claude.ai                            | [#188]              |
-| Postgres on Neon                                                      | 18      | National view storage                                                 | [#34]               |
-| Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono, Shantell Sans | —       | Interface type, figures and Kopi's speech box                         | [#32]               |
-| `cloudflare/wrangler-action`                                          | v4      | Deploy step in GitHub Actions ([deploy notes][deploy])                | [#62]               |
-| RunPod serverless worker                                              | —       | vLLM, or an embedding and structured-output worker, for the batch     | [#77]               |
+| Name                                                                  | Version | Purpose                                                               | Issues         |
+| --------------------------------------------------------------------- | ------- | --------------------------------------------------------------------- | -------------- |
+| TypeScript                                                            | —       | The language of the app, API, engine and scripts                      | [#29]          |
+| Bun                                                                   | —       | Package manager, workspaces, script runner and local server           | [#29]          |
+| React                                                                 | —       | `apps/web` user interface                                             | [#29]          |
+| Vite                                                                  | —       | `apps/web` build                                                      | [#29]          |
+| Tailwind CSS                                                          | —       | Theme, tokens and utilities from `DESIGN.md`                          | [#32]          |
+| Recharts                                                              | —       | Radar chart and readiness graph                                       | [#61], [#67]   |
+| Lucide                                                                | —       | The 60-icon registry                                                  | [#32]          |
+| pixi-live2d-display, a PixiJS plugin                                  | —       | Renders the Live2D cat                                                | [#49]          |
+| Live2D sample model Hijiki                                            | —       | Kopi the cat counsellor                                               | [#49]          |
+| Hono                                                                  | —       | API routes, on the Workers runtime in production and on Bun elsewhere | [#27]          |
+| Zod                                                                   | —       | Shared schemas for data files, session state and API payloads         | [#29], [#40]   |
+| `@anthropic-ai/sdk`                                                   | —       | Claude Messages calls, and the beta tool runner for Kopi's chat       | [#43], [#189]  |
+| `@modelcontextprotocol/server`, the MCP TypeScript SDK                | v2      | Serves Kotak's tools over MCP at `/api/mcp`, on the Worker and on Bun | [#186]         |
+| `@kotak/sdk` and `@kotak/agent`, Kotak's own packages                 | —       | The check-up engine for any runtime; Kotak's tools and agent rules    | [#185], [#186] |
+| fflate                                                                | —       | Zips the kotak-checkup skill for claude.ai                            | [#188]         |
+| Postgres on Neon                                                      | 18      | National view storage                                                 | [#34]          |
+| Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono, Shantell Sans | —       | Interface type, figures and Kopi's speech box                         | [#32]          |
+| `cloudflare/wrangler-action`                                          | v4      | Deploy step in GitHub Actions ([deploy notes][deploy])                | [#62]          |
+| RunPod serverless worker                                              | —       | vLLM, or an embedding and structured-output worker, for the batch     | [#77]          |
 
 Licences go in `NOTICE.md` ([#47]). The repo docs state two of them: Lucide is ISC, and the Live2D model is under the Live2D Free Material License Agreement.
 
@@ -359,7 +359,7 @@ Layer 1 was planned as context only, and has no loaded source. The verdict uses 
 
 ## Engine
 
-The engine is pure TypeScript. It runs at build time and in the browser, so the scenario toggle and the snapshot switch update the radar at once ([#81]). The rules below come from the [locked idea][kotak] and [#81], [#83] and [#86]; they agree unless a note says otherwise. The [SDK layer](#sdk-layer) composes them into a whole check-up for the browser, Bun and the Worker.
+The engine is pure TypeScript. It runs at build time and in the browser, so the snapshot switch updates the radar at once ([#81]). It computes both the slow and the fast scenario for every corner. The radar shows the slow one, and a corner whose scenarios disagree shows as Split with both futures; the app has had no scenario switch since [#167]. The rules below come from the [locked idea][kotak] and [#81], [#83] and [#86]; they agree unless a note says otherwise. The [SDK layer](#sdk-layer) composes them into a whole check-up for the browser, Bun and the Worker.
 
 ### Engine schemas
 
@@ -412,16 +412,16 @@ The status chips show five states: Rising, Steady, Declining, Split and Unknown 
 
 ### Projections and scenarios
 
-- **Horizon**: each trend runs 12 months ahead. Every projected value is labelled an estimate ([#81]). The radar labels the red line "Needed by Oct 2027" ([#61]), 12 months from today, while the latest data month is May 2026.
-- **Slow**: keeps Malaysia's current pace of AI use.
-- **Fast**: moves Malaysia halfway to Singapore's level, which raises every corner's projected AI-use growth.
+- **Horizon**: each trend runs 12 months ahead. Every projected value is labelled an estimate ([#81]). The horizon counts from the latest data month, not from today (`HORIZON_MONTHS`), so on the May 2026 snapshot the radar labels the red line "Needed by May 2027" ([#61]).
+- **Slow**: keeps Malaysia's current pace of AI use. It is the default (`DEFAULT_SCENARIO`), and the only scenario the screens show ([#167]).
+- **Fast**: moves Malaysia halfway to Singapore's level, which raises every corner's projected AI-use growth. The app shows it only when the two scenarios disagree, as the second future of a Split corner; Ask Kopi and MCP clients can still ask `run_checkup` and `what_changed` for it.
 - **Anchors**: kymil4's notes give May 2026 usage-per-capita indexes of 5.81 for Singapore and 0.87 for Malaysia. [#50] re-checks both against the release file before the engine uses them.
 - **Formula**: the exact projection formula, within these rules, belongs to [#81].
 - **AI advancement**: the Economic Index is the only AI signal. The landing page cites Epoch AI as context only; no Epoch data is loaded ([#66]).
 
 ### Target level
 
-The red line on the radar draws the target. Every new snapshot and the scenario toggle move it ([#81]).
+The red line on the radar draws the slow scenario's target. Every new snapshot moves it ([#81], [#167]).
 
 ```text
 target = clamp(2.0 + ai_effect + demand_effect, 1.0, 3.0)
@@ -642,9 +642,9 @@ The [chat route](#kopis-chat-route) runs Claude with Kotak's tools in process ([
 
 The table `national_checkups` stores only `id`, `onet_role_code`, `corner_levels` (JSONB of 1 to 6 numbers from 0 to 3, one per corner of the role), `is_sample` (boolean) and `created_date` (date). It holds no names, user IDs or free text ([#34]).
 
-- **`POST /api/national-view/checkups`**: records a finished check-up. The Zod schema rejects any payload with extra personal fields. It stores only role code, 1 to 6 corner levels and date ([#34], [#152]). The roadmap screen posts it when the check-up finishes ([#67]).
-- **`GET /api/national-view/summary`**: aggregates rising skill gaps by role and occupation group. It returns real averages only when `COUNT(*) >= 10` over rows where `is_sample = false`. Otherwise it returns the labelled sample rows with `is_sample: true`. Once 10 real rows exist for a role code, it returns the real aggregate with `is_sample: false` ([#34]).
-- **Screen**: filters by major occupation group or demo role. It shows the badge "Shown only for groups of 10 or more anonymous check-ups" and tags seed-backed groups "Sample Data (until n >= 10)". No single check-up row or identifier ever appears in the UI or a network response ([#72]).
+- **`POST /api/national-view/checkups`**: records a check-up. The Zod schema rejects any payload with extra personal fields. It stores only role code, 1 to 6 corner levels and date ([#34], [#152]). No screen posts it, so the table holds only the labelled sample rows unless someone calls the route directly.
+- **`GET /api/national-view/summary`**: each role's average corner levels, filtered by occupation group or role code. A role shows real averages only from 10 real check-ups (`is_sample = false`), counted in whole blocks of 10, so `checkup_count` is 10, 20 and so on, never the exact count; averages are rounded to one decimal. Otherwise it returns the role's labelled sample rows with `is_sample: true`. With no database, or one it can't reach, it returns the built-in sample rows with `database_available: false` ([#34]). No single check-up row or identifier appears in a response.
+- **No screen**: [#167] removed the National View page at `/app/national` ([#72]) and the landing page's For Government section that linked to it. Ask Kopi and MCP clients read the view through the `national_skill_gaps` tool ([#190]).
 - **Seed**: a seed script inserts labelled sample rows for the demo occupations and groups ([#34]).
 - **Shared summary**: the summary route and the `national_skill_gaps` tool both call `nationalViewSummary`, so they give the same rows ([#190]).
 
@@ -894,7 +894,7 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 - **Guest only.** Email and password fields are disabled; only "Sign In as Guest" works ([#57]).
 - **Local state.** The check-up lives in the browser's `localStorage` ([#41]).
 - **No personal data.** No CV upload, no real CVs and no free-text profile. The demo uses synthetic profiles only ([non-goals][anti-goals]).
-- **Anonymous aggregates.** The national view stores only role code, corner levels and date, and shows totals only for groups of 10 or more real check-ups ([#34]).
+- **Anonymous aggregates.** The national view's table stores only role code, corner levels and date, and the summary shows averages only for roles with 10 or more real check-ups. No screen posts a check-up, so it serves labelled sample rows ([#34], [#167]).
 - **Third parties.** A typed job title goes to the Anthropic API, and so do a scraped batch's listing titles when an admin sorts them. Kopi's lines go to ElevenLabs as text.
 - **Kopi's chat.** A question to Kopi sends the conversation and the guest's check-up (role codes, goal, the 12 answers, snapshot, weekly hours and start date) to Kotak's API, which sends them, with the tool results, to the Anthropic API. The API doesn't store, cache or log them, and the panel keeps the conversation only in the page's memory ([#189], [#191]).
 - **MCP.** The MCP server is stateless: it uses an assistant's tool inputs, such as a job title or answers, for that call only, and stores and logs none of them. What the assistant keeps is up to its provider ([#186]).
@@ -903,7 +903,7 @@ Every screen works at 390 px (phone) and 1440 px (desktop). Desktop shows a pers
 
 This paragraph fits declaration section 6.1 (under 150 words).
 
-Kotak has no accounts. Users sign in as a guest, and their check-up stays in the browser's local storage until they reset it. Kotak asks for no name, email, CV or free-text profile, and the demo uses synthetic profiles only. A finished check-up sends only the role code, up to 6 corner levels from 0 to 3 and the date to a Postgres database on Neon. The national view shows totals only for groups of 10 or more real check-ups and labels sample rows. A typed job title or a pasted public job ad goes to the Anthropic API to find a role or skills, and the result is cached by a hash. A question to Kopi's chat goes there too, with the check-up's answers; Kotak stores and logs neither. The cat's lines go to ElevenLabs as text. API keys stay in server secrets and never reach the browser.
+Kotak has no accounts. Users sign in as a guest, and their check-up stays in the browser's local storage until they reset it. Kotak asks for no name, email, CV or free-text profile, and the demo uses synthetic profiles only. No screen sends a check-up to be stored. The national view's Postgres table on Neon accepts only a role code, up to 6 corner levels from 0 to 3 and a date; its summary shows totals only for groups of 10 or more real check-ups and labels sample rows. A typed job title goes to the Anthropic API to find a role, and the result is cached by a hash. A question to Kopi's chat goes there too, with the check-up's answers; Kotak stores and logs neither. The cat's lines go to ElevenLabs as text. API keys stay in server secrets and never reach the browser.
 
 ### Security
 
@@ -962,16 +962,16 @@ These plans from the issues are not in the submitted build. The schemas and the 
 | Section                                                     | Issues that implement it                                                                                                  |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [Overview](#overview)                                       | [#27], [#37], [#56], [#93]                                                                                                |
-| [System architecture](#system-architecture)                 | [#26], [#28], [#29], [#41], [#51], [#56], [#88]                                                                           |
+| [System architecture](#system-architecture)                 | [#26], [#28], [#29], [#41], [#51], [#56], [#88], [#167]                                                                   |
 | [Stack](#stack)                                             | [#29], [#32], [#49], [#61], [#73]                                                                                         |
 | [Data sources](#data-sources)                               | [#30], [#44], [#47], [#50], [#52], [#55], [#60], [#63], [#66], [#71], [#93], [#95]                                        |
-| [Engine](#engine)                                           | [#37], [#40], [#59], [#64], [#67], [#69], [#81], [#83], [#86], [#88]                                                      |
+| [Engine](#engine)                                           | [#37], [#40], [#59], [#64], [#67], [#69], [#81], [#83], [#86], [#88], [#167]                                              |
 | [SDK layer](#sdk-layer)                                     | [#184], [#185], [#187]                                                                                                    |
 | [Agent layer](#agent-layer)                                 | [#184], [#186], [#188], [#189], [#190], [#191], [#192]                                                                    |
-| [API routes](#api-routes)                                   | [#27], [#34], [#43], [#46], [#72], [#186], [#189], [#190]                                                                 |
+| [API routes](#api-routes)                                   | [#27], [#34], [#43], [#46], [#72], [#167], [#186], [#189], [#190]                                                         |
 | [AI models](#ai-models)                                     | [#35], [#43], [#46], [#74], [#77], [#79], [#91], [#104], [#189], [#235]                                                   |
 | [Deployment and environments](#deployment-and-environments) | [#33], [#53], [#62], [#65], [#68], [#70], [#89], [#90], [#99], [#100], [#101], [#102], [#103], [#186], [#188]             |
-| [Non-functional requirements](#non-functional-requirements) | [#28], [#34], [#36], [#41], [#49], [#51], [#54], [#57], [#75], [#78], [#94], [#186], [#189], [#191]                       |
+| [Non-functional requirements](#non-functional-requirements) | [#28], [#34], [#36], [#41], [#49], [#51], [#54], [#57], [#75], [#78], [#94], [#167], [#186], [#189], [#191]               |
 | [Known limitations and risks](#known-limitations-and-risks) | [#43], [#46], [#47], [#48], [#55], [#60], [#63], [#66], [#77], [#79], [#89], [#95], [#99], [#105], [#186], [#188], [#189] |
 | Declaration and README that copy from this document         | [#39], [#56], [#73], [#76]                                                                                                |
 
@@ -1070,6 +1070,7 @@ These plans from the issues are not in the submitted build. The schemas and the 
 [#152]: https://github.com/TolongLabs/Kotak/issues/152
 [#154]: https://github.com/TolongLabs/Kotak/issues/154
 [#155]: https://github.com/TolongLabs/Kotak/issues/155
+[#167]: https://github.com/TolongLabs/Kotak/pull/167
 [#184]: https://github.com/TolongLabs/Kotak/issues/184
 [#185]: https://github.com/TolongLabs/Kotak/issues/185
 [#186]: https://github.com/TolongLabs/Kotak/issues/186

@@ -36,7 +36,7 @@ Contents:
 - **Mostly demo.** The organisers asked for a balance of slides and demo, with the demo first in priority ([context][ctx]).
 - **Our own voices.** Team members narrate at 1.0× speed. No AI-generated narration and no sped-up audio ([context][ctx]; [#82][i82]).
 - **Problem and user first.** The first 15 seconds say the same user, moment and reason as PRD section 2.1 and the first slide ([context][ctx]).
-- **Sample means labelled.** Demo profiles are sample data, the radar keeps its "self-reported" label, and the national view keeps its sample tags ([content rules][design-content]).
+- **Sample means labelled.** Demo profiles are sample data, the radar keeps its "self-reported" label, and Kopi calls the national view's sample rows sample data ([content rules][design-content]).
 - **Every number has a source.** Spoken numbers match the deck and its sources. Never state a percentage chance for a verdict ([content rules][design-content]).
 
 [brief-deliv]: /docs/BRIEF.md#preliminary-deliverables
@@ -93,11 +93,11 @@ The Director owns this list; the Recorder confirms each shot on the frozen build
 | ---- | -----: | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
 | D1   |   20 s | Desktop, Check-Up: Start         | The sample profile: a front-end developer in Kuala Lumpur picks Working, a bachelor's in Computer Science and IT and 2 to 3 years, types "web developer", then picks "Show Me Where I Could Go" with the AI and Data and Cloud and Infrastructure areas | #59, #284 |
 | D2   |   25 s | Desktop, Check-Up: Questions     | Kopi asks two or three of the 12 can-do questions, rated with the number keys 1 to 4                                                                                                                                                                    | #59, #238 |
-| D3   |   35 s | Desktop, Radar and Gaps          | The radar, its verdict chips and dated sources; the slow and fast toggle moves the dashed "needed by 2027" line                                                                                                                                         | #61       |
+| D3   |   35 s | Desktop, Radar and Gaps          | The radar, its verdict chips, dated sources and the dashed "Needed by May 2027" line; open About Needed By to show the need is an estimate 12 months ahead. The slow and fast toggle has not been in the build since #167                               | #61, #167 |
 | D4   |   25 s | Desktop, Matched Roles           | Six roles, each saying why it's there; the highlighted card says in bold why Kopi picked it; open See the Maths for its fit                                                                                                                             | #64, #284 |
 | D5   |   30 s | Desktop, Roadmap                 | Milestones with time estimates, free resources and a finish date; tick one and watch the corner level rise                                                                                                                                              | #67       |
 | D6   |   40 s | Desktop, What Changed            | Load the May 2026 snapshot: the line moves, a verdict flips, the ranking and roadmap reorder, and Kopi says what changed                                                                                                                                | #69       |
-| D7   |   15 s | Desktop, National View           | The rising skills workers lack most, totals only for groups of 10 or more, and the sample tags                                                                                                                                                          | #72       |
+| D7   |   15 s | Desktop, Ask Kopi                | Ask which rising skills web developers lack most; Kopi runs National Skill Gaps and calls the rows sample data. The National View screen has not been in the build since #167; an MCP client can ask the same instead                                   | #190      |
 | D8   |   10 s | Phone, 390 × 844, Radar and Gaps | The same radar on a phone                                                                                                                                                                                                                               | #61       |
 
 The shots total 200 seconds before trimming. D6 is the key moment: the rubric names "the trend signal layer feeding role matching" as the feature to show ([live demo][live-demo]).
@@ -143,8 +143,8 @@ await page.screencast.stop()
 
 - **A fresh browser context for every take.** The guest session lives in `localStorage` ([#41](https://github.com/TolongLabs/Kotak/issues/41)), so nothing carries over.
 - **The same sample profile** starts every take.
-- **Fixed snapshot order:** every take starts on the April 2026 snapshot. The demo switcher toggles back after D6 for repeat takes ([#69](https://github.com/TolongLabs/Kotak/issues/69)).
-- **Fixed words:** the demo roles run from the pre-warmed answer and audio caches ([#43](https://github.com/TolongLabs/Kotak/issues/43); [#46](https://github.com/TolongLabs/Kotak/issues/46)), so Kopi says the same lines in every take.
+- **Fixed snapshot order:** the app opens on the May 2026 snapshot since [#167](https://github.com/TolongLabs/Kotak/pull/167), so each D6 take starts by selecting Before (April) on What Changed off camera. The demo switcher toggles back after D6 for repeat takes ([#69](https://github.com/TolongLabs/Kotak/issues/69)).
+- **Fixed words:** the demo roles run from the pre-warmed answer and audio caches ([#43](https://github.com/TolongLabs/Kotak/issues/43); [#46](https://github.com/TolongLabs/Kotak/issues/46)), so Kopi says the same lines in every take. Ask Kopi in D7 is the exception: its replies are live and never cached, so they differ between takes.
 - **Fix the clock:** `page.clock.setFixedTime('2026-10-24T09:00:00+08:00')`, so the roadmap's finish dates stay the same across takes.
 - **Same build for every final take.** Re-record every shot after any frontend change.
 
@@ -194,7 +194,7 @@ ffmpeg -i raw/D6-take2.webm -vf fps=30 -c:v libx264 -crf 16 -pix_fmt yuv420p -an
 
 - **The app is the star.** Show the app window inset on a calm background, about 0.86 scale, with room for one callout beside it. The phone shot sits in a plain phone frame.
 - **Guide the eye.** A gentle push-in, about 1.12×, toward the cue's box at each key action, and a ring at the click point.
-- **Chapter chip per shot:** Intake, Questions, Radar, Roles, Roadmap, What Changed, National View.
+- **Chapter chip per shot:** Intake, Questions, Radar, Roles, Roadmap, What Changed, Ask Kopi.
 - **One callout per shot,** five words at most, for example "The data moved the line" in D6.
 - **Motion rules:** deterministic by frame, eased in and at rest; no bounce, whip-pan or smear. Cut on the narration.
 - **Look:** Atkinson Hyperlegible Next and the colour tokens in the [design system](/docs/DESIGN.md). Overlay text is at least 54 px.
@@ -215,7 +215,7 @@ Automated, in the QA script:
 - The whole video runs 330 to 390 seconds, and the live demo at least 180 seconds.
 - Loudness is within 0.7 LU of −14 LUFS, and true peak is at most −1 dBTP.
 - The narration and captions contain no banned phrase: "chance of", "guarantee", "AI decides", "will replace you", "certified", "real user". The Director extends the list.
-- The Recorder's harness confirms the "self-reported" label on every radar cue and the sample tags on every national-view cue.
+- The Recorder's harness confirms the "self-reported" label on every radar cue, and that Kopi's national-view answer in D7 calls its rows sample data.
 - Overlay text is at least 54 px.
 
 By hand, before upload:
