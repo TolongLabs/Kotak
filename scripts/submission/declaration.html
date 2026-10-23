@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>Technical Tools Declaration, Kotak (Team T010NG)</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=block"
+    />
+    <link rel="stylesheet" href="submission.css" />
+    <script>
+      // Marks text that overflows its box, or runs into the page-number band; build.py fails on any mark.
+      addEventListener('load', () =>
+        document.fonts.ready.then(() => {
+          for (const el of document.querySelectorAll('.fill, .box, .stack, .note')) {
+            const page = el.closest('.page')
+            const low = el.getBoundingClientRect().bottom - page.getBoundingClientRect().top > (752 * 4) / 3
+            if (el.scrollHeight > el.clientHeight + 1 || low) el.dataset.overflow = page.dataset.base
+          }
+        })
+      )
+    </script>
+  </head>
+  <body>
+    <!-- Cover, with the deadline filled in -->
+    <section class="page red" data-base="1" data-strip="text 338 560 452 580;erase 336 557 462 584">
+      <div class="deadline" style="left: 340.7pt; top: 554.9pt">25 October 2026</div>
+    </section>
+
+    <!-- 1. Team and project overview -->
+    <section class="page red" data-base="2" data-strip="text 279 752 317 788">
+      <div class="field" style="top: 251.6pt">T010NG</div>
+      <div class="field" style="top: 329.3pt">Kotak</div>
+      <div class="field" style="top: 406.9pt">Hee Zi Jie</div>
+      <div class="field" style="top: 484.5pt">heezijie2004@gmail.com, +60125118986</div>
+      <div class="field small" style="top: 562.1pt">
+        Asia Pacific University of Technology &amp; Innovation (APU), University of Reading and University of Sheffield
+      </div>
+      <div class="field small" style="top: 639.8pt">
+        <a href="https://kotak-alaskxntxna.replit.app">https://kotak-alaskxntxna.replit.app</a> (mirror:
+        <a href="https://kotak.tp073654.workers.dev">https://kotak.tp073654.workers.dev</a>)
+      </div>
+      <div class="field" style="top: 717.4pt">
+        <a href="https://github.com/TolongLabs/Kotak">https://github.com/TolongLabs/Kotak</a>
+      </div>
+    </section>
+
+    <!-- 2.1 -->
+    <section class="page yellow" data-base="3" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 371.6pt; width: 451.2pt; height: 375.3pt">
+        <p>
+          A user opens Kotak in the browser. The React app loads dated JSON snapshots built from O*NET, the Anthropic
+          Economic Index and DOSM Job Market Insights, and computes every verdict, fit score and roadmap in the browser
+          with fixed rules. Answers stay in the browser's <code>localStorage</code>.
+        </p>
+        <p>
+          The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations
+          with Claude Haiku 5.5, then checks each explanation against the rules and falls back to a template if it
+          fails. It sends Kopi's lines to ElevenLabs for speech, and caches both by a hash of the request. Ask Kopi and
+          the MCP endpoint call 6 read-only tools over the same rules; one tool reads anonymous check-up totals from
+          Neon Postgres.
+        </p>
+        <p>
+          Before the demo, a RunPod serverless GPU ran Qwen3.8-27B to build each job's 6 skills and 18 questions, which
+          ship inside the snapshots.
+        </p>
+        <p>
+          GitHub Actions builds and deploys the app and API to Cloudflare Workers on every merge to <code>main</code>,
+          and refreshes the data every Saturday. Replit publishes the same code from the team's account. Keys live only
+          in GitHub, Cloudflare and Replit secrets.
+        </p>
+        <p>System block diagram: see Appendix A.</p>
+      </div>
+    </section>
+
+    <!-- 2.2, first rows -->
+    <section class="page yellow" data-base="4" data-strip="text 279 752 317 788;all 45 349 552 750">
+      <div class="stack" style="left: 49.7pt; top: 350.9pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div>TypeScript 7.0</div>
+          <div>The language of the whole codebase</div>
+          <div>Apache 2.0</div>
+          <div>Bun 1.4</div>
+          <div>Runtime, package manager, test runner and Replit server</div>
+          <div>MIT</div>
+          <div>React 19.3</div>
+          <div>The web app's user interface</div>
+          <div>MIT</div>
+          <div>Vite 8.3</div>
+          <div>Builds and serves the web app</div>
+          <div>MIT</div>
+          <div>Tailwind CSS 4.3</div>
+          <div>Styling and design tokens</div>
+          <div>MIT</div>
+          <div>Recharts 3.10</div>
+          <div>The Future Skills Radar and the roadmap charts</div>
+          <div>MIT</div>
+          <div>Lucide React 1.61</div>
+          <div>Icons</div>
+          <div>ISC</div>
+          <div>pixi.js 6.5 and pixi-live2d-display 0.4</div>
+          <div>Renders Kopi, the Live2D cat</div>
+          <div>MIT</div>
+          <div>Hono 4.13</div>
+          <div>The API server on Cloudflare Workers and Bun</div>
+          <div>MIT</div>
+          <div>Zod 4.6</div>
+          <div>Validates every request, response and data file</div>
+          <div>MIT</div>
+          <div>Anthropic TypeScript SDK 1.1</div>
+          <div>Calls the Claude API</div>
+          <div>Apache 2.0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2.2 continued -->
+    <section class="page yellow" data-base="4" data-strip="text 279 752 317 788;all 45 226 552 750">
+      <div class="cont" style="left: 375.4pt; top: 202.9pt">(continued)</div>
+      <div class="stack" style="left: 49.7pt; top: 232pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div class="h" style="min-height: 17pt">Name &amp; Version</div>
+          <div class="h" style="min-height: 17pt">Purpose in Project</div>
+          <div class="h" style="min-height: 17pt">License</div>
+          <div>MCP server SDK 2.3</div>
+          <div>Serves Kotak's tools to AI assistants at <code>/api/mcp</code></div>
+          <div>Apache 2.0</div>
+          <div>Neon serverless driver 1.2</div>
+          <div>Connects the API to Postgres</div>
+          <div>MIT</div>
+          <div>Wrangler 4.151</div>
+          <div>Deploys to Cloudflare Workers</div>
+          <div>MIT or Apache 2.0</div>
+          <div>Playwright Core 1.64 and Clearcote 0.60</div>
+          <div>Drives the browser for the JobStreet research scraper</div>
+          <div>Apache 2.0, BSD-3</div>
+          <div>Live2D Cubism Core for Web</div>
+          <div>Runtime that plays Live2D models, loaded from Live2D's CDN</div>
+          <div>Live2D Proprietary Software License</div>
+          <div>Atkinson Hyperlegible and Shantell Sans fonts</div>
+          <div>Body, mono and Kopi's handwritten type, from Google Fonts</div>
+          <div>SIL Open Font License 1.1</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.1 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;all 45 286 552 750">
+      <div class="stack" style="left: 49.7pt; top: 288.6pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div>Claude API, Anthropic</div>
+          <div>Matches job titles, explains verdicts and runs Ask Kopi</div>
+          <div>Paid</div>
+          <div>Text to Speech API, ElevenLabs</div>
+          <div>Kopi's voice</div>
+          <div>Paid</div>
+          <div>RunPod Serverless API, RunPod</div>
+          <div>The one-time GPU batch that built each job's skills and questions</div>
+          <div>Sponsor-provided credit</div>
+          <div>Google Fonts, Google</div>
+          <div>Serves the app's fonts</div>
+          <div>Free</div>
+          <div>Live2D Cubism CDN, Live2D</div>
+          <div>Serves the Cubism Core runtime for Kopi</div>
+          <div>Free</div>
+        </div>
+        <p class="after">
+          The data sources in section 4.2 are downloaded files, not live APIs: the app never calls them at runtime. API
+          keys are not shown in this document.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3.2 -->
+    <section class="page green" data-base="6" data-strip="text 279 752 317 788;all 45 286 552 750">
+      <div class="stack" style="left: 49.7pt; top: 288.6pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div>Replit Deployments, Replit</div>
+          <div>Publishes the live demo from <code>main</code> on the team's own account</div>
+          <div>Replit Core (sponsor-provided)</div>
+          <div>Cloudflare Workers, Cloudflare</div>
+          <div>The mirror deployment: app, API, KV cache and a Durable Object for MCP and chat</div>
+          <div>Workers Free; global, Durable Object in APAC</div>
+          <div>Neon Postgres, Neon</div>
+          <div>Anonymous check-up totals, research job listings and admin accounts</div>
+          <div>Free; <code>aws-ap-southeast-1</code>, Postgres 18</div>
+          <div>RunPod Serverless, RunPod</div>
+          <div>The vLLM GPU endpoint for the one-time batch; 0 workers when idle</div>
+          <div>Sponsor credit; one H100 80 GB GPU</div>
+          <div>GitHub and GitHub Actions, GitHub</div>
+          <div>Code hosting, CI, deploys on every merge to <code>main</code> and the Saturday data refresh</div>
+          <div>Free</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.1 -->
+    <section class="page blue" data-base="7" data-strip="text 279 752 317 788;all 45 340 552 750">
+      <div class="stack" style="left: 48.6pt; top: 341.5pt; width: 500.6pt">
+        <div class="tbl" style="grid-template-columns: 106.8pt 106.3pt 168.7pt 118.8pt">
+          <div>Claude Haiku 5.5 (<code>claude-haiku-5-5</code>)</div>
+          <div>Anthropic, Claude API</div>
+          <div>Pre-trained</div>
+          <div>Anthropic Commercial Terms of Service</div>
+          <div>ElevenLabs <code>eleven_v4</code> and <code>eleven_v4_turbo</code>, voice Johari</div>
+          <div>ElevenLabs</div>
+          <div>Pre-trained</div>
+          <div>ElevenLabs Terms of Service</div>
+          <div>Qwen3.8-27B-FP8</div>
+          <div>Qwen, run on RunPod with vLLM</div>
+          <div>Pre-trained</div>
+          <div>Apache 2.0</div>
+        </div>
+        <p class="after">No model is fine-tuned or self-trained.</p>
+      </div>
+    </section>
+
+    <!-- 4.2, first rows -->
+    <section class="page blue" data-base="8" data-strip="text 279 752 317 788;all 45 322 552 750">
+      <div class="stack" style="left: 46.9pt; top: 324.4pt; width: 502.3pt">
+        <div class="tbl narrow" style="grid-template-columns: 88.1pt 88.3pt 124.9pt 102.3pt 98.7pt">
+          <div>O*NET 30.1 Database</div>
+          <div><a href="https://www.onetcenter.org/database.html">https://www.onetcenter.org/database.html</a></div>
+          <div>Public</div>
+          <div>CC BY 4.0</div>
+          <div>N</div>
+          <div>Anthropic Economic Index, April and May 2026</div>
+          <div>
+            <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex"
+              >https://huggingface.co/datasets/Anthropic/EconomicIndex</a
+            >
+          </div>
+          <div>Public</div>
+          <div>Data CC BY; code MIT</div>
+          <div>N</div>
+          <div>DOSM Job Market Insights, Q3 2019 to Q2 2026</div>
+          <div><a href="https://www.dosm.gov.my">https://www.dosm.gov.my</a></div>
+          <div>Public</div>
+          <div>DOSM terms, with source credit</div>
+          <div>N</div>
+          <div>OpenDOSM skill-related underemployment by age</div>
+          <div>
+            <a href="https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age"
+              >https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age</a
+            >
+          </div>
+          <div>Public</div>
+          <div>CC BY 4.0; one figure cited</div>
+          <div>N</div>
+          <div>UN SDG indicator 4.4.1, Malaysia</div>
+          <div><a href="https://unstats.un.org/sdgapi/">https://unstats.un.org/sdgapi/</a></div>
+          <div>Public</div>
+          <div>UN terms of use; one baseline cited</div>
+          <div>N</div>
+          <div>Kotak skills and questions for 923 jobs</div>
+          <div>Built from O*NET by the RunPod batch</div>
+          <div>Synthetic, from public data</div>
+          <div>The team's own work</div>
+          <div>N</div>
+          <div>JobStreet job listings</div>
+          <div>
+            Collected by the team's research scraper from
+            <a href="https://my.jobstreet.com">https://my.jobstreet.com</a>
+          </div>
+          <div>Self-collected</div>
+          <div>JobStreet's terms apply</div>
+          <div>N; job ads only</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.2 continued -->
+    <section class="page blue" data-base="8" data-strip="text 279 752 317 788;all 45 212 552 750">
+      <div class="cont" style="left: 169.9pt; top: 189.2pt">(continued)</div>
+      <div class="stack" style="left: 46.9pt; top: 218pt; width: 502.3pt">
+        <div class="tbl narrow" style="grid-template-columns: 88.1pt 88.3pt 124.9pt 102.3pt 98.7pt">
+          <div class="h" style="min-height: 28.2pt">Dataset Name</div>
+          <div class="h" style="min-height: 28.2pt">Source / URL</div>
+          <div class="h" style="min-height: 28.2pt">Type (public / private / self-collected / synthetic)</div>
+          <div class="h" style="min-height: 28.2pt">License</div>
+          <div class="h" style="min-height: 28.2pt">Personal Data? (Y/N)</div>
+          <div>Demo check-up profiles</div>
+          <div>Written by the team</div>
+          <div>Synthetic</div>
+          <div>The team's own work</div>
+          <div>N</div>
+        </div>
+        <p class="after">
+          MyCOL and Epoch AI are cited as context only; Kotak loads no data from them. The research listings feed no
+          verdict, score or roadmap.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4.3: Yes -->
+    <section class="page blue" data-base="9" data-strip="text 279 752 317 788;all 45 455 552 750">
+      <i class="tick" style="left: 85.8pt; top: 373.2pt"></i>
+      <div class="stack" style="left: 49.7pt; top: 457pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div>Claude Code, with Claude models</div>
+          <div>Code, reviews, research, documentation and pull requests</div>
+          <div>Major</div>
+          <div>Codex CLI, OpenCode and Antigravity CLI, with GPT, DeepSeek, GLM and Gemini models</div>
+          <div>Parallel code changes from written briefs</div>
+          <div>Moderate</div>
+          <div>Claude, GPT and Gemini chat models</div>
+          <div>The field simulation and design review in <code>docs/research</code></div>
+          <div>Minor</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.3 review -->
+    <section class="page blue" data-base="10" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 284.4pt; width: 451.2pt; height: 375.3pt">
+        <p>
+          Every change went through a pull request that ran type-checks and a build in CI before a member merged it. The
+          team checked each feature by running the app in a browser at phone and desktop widths, not by trusting the
+          tool's report. Facts in the app and in these documents link a dated public source. AI-drafted skills carry a
+          visible label in the app until a person reviews them. The team owns every merged line and corrected tool
+          mistakes before merging.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5: Yes -->
+    <section class="page red" data-base="11" data-strip="text 279 752 317 788;all 45 413 552 750">
+      <i class="tick" style="left: 74pt; top: 314.8pt"></i>
+      <div class="stack" style="left: 49.7pt; top: 415pt; width: 498pt">
+        <div class="tbl" style="grid-template-columns: 134.7pt 213.6pt 149.7pt">
+          <div>Replit</div>
+          <div>Platform, Core</div>
+          <div>Hosts the live demo, published from <code>main</code> on the team's own account</div>
+          <div>RunPod</div>
+          <div>Credits</div>
+          <div>A serverless H100 ran the batch: 923 jobs, 783 seconds for the full run, about US$1.25</div>
+          <div>SDC mentors (KrackedDevs)</div>
+          <div>Mentoring</div>
+          <div>
+            One mentor session on 23 October 2026; feedback recorded in
+            <a href="https://github.com/TolongLabs/Kotak/issues/98">#98</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Essential or replaceable -->
+    <section class="page red" data-base="12" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 299.1pt; width: 451.2pt; height: 375.3pt">
+        <p>
+          RunPod was essential to build Kotak's data: it turned O*NET's tasks into 6 skills and 18 questions for each of
+          923 jobs, which no person could write by the deadline. The batch runs once, so the live app does not depend on
+          RunPod, and the Claude Message Batches API could replace it. Replit hosts the submitted live demo; the same
+          build also runs on Cloudflare Workers, so the hosting is replaceable.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6.1 -->
+    <section class="page yellow" data-base="13" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 343.6pt; width: 451.2pt; height: 375.4pt">
+        <p>
+          Kotak has no user accounts. A check-up runs in guest mode: the job, goal and answers stay in the browser's
+          <code>localStorage</code>, and Settings &gt; Reset All clears them.
+        </p>
+        <p>
+          The app sends a typed job title to the Claude API for matching, and a role's skill data for explanations. Ask
+          Kopi sends the user's message, and the results of tools run on their check-up, to Claude. Kopi's lines go to
+          ElevenLabs for speech. Neither request carries a name, email or ID. The API caches answers and audio by a hash
+          of the request.
+        </p>
+        <p>
+          Postgres stores anonymous check-ups as a role code, 6 skill levels, a sample flag and a date, and shows totals
+          only for groups of 10 or more. The research scraper stores public job ads, not personal profiles. Keys live
+          only in host secrets.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6.2 -->
+    <section class="page yellow" data-base="14" data-strip="text 279 752 317 788">
+      <div class="fill" style="left: 84.7pt; top: 343.6pt; width: 451.2pt; height: 375.4pt">
+        <ul>
+          <li>
+            <strong>Hallucination</strong>: Claude only explains verdicts that fixed rules set. A check rejects any
+            explanation that changes a verdict or lacks a dated citation, and a template replaces it.
+          </li>
+          <li><strong>Wrong job match</strong>: the user confirms every AI title match.</li>
+          <li>
+            <strong>Unreviewed skills</strong>: an open model drafted each job's skills. A validator rejects tasks from
+            other jobs, and the app labels the skills AI-drafted.
+          </li>
+          <li>
+            <strong>Thin trend data</strong>: the Economic Index has two monthly points, so 12-month projections are
+            rough. Every target is labelled an estimate, and thin data shows Unknown.
+          </li>
+          <li><strong>Data bias</strong>: O*NET describes US jobs, and DOSM counts only online job ads.</li>
+          <li>
+            <strong>Single providers and rate limits</strong>: cached answers, templates and text cover Claude or
+            ElevenLabs outages and HTTP 429 or 529 errors. A limit of 30 Claude calls a minute protects the key.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. Compliance and readiness checklist -->
+    <section class="page green" data-base="15" data-strip="text 279 752 317 788">
+      <i class="tick" style="left: 70.9pt; top: 225.5pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 288.8pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 373.9pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 436.7pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 499.5pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 562.4pt"></i>
+      <i class="tick" style="left: 70.9pt; top: 625.3pt"></i>
+    </section>
+
+    <!-- 8. Declaration, signed by the team leader -->
+    <section class="page blue" data-base="16" data-strip="text 279 752 317 788;text 60 276 160 302;text 60 403 120 428">
+      <img class="sig" src="assets/signature.png" alt="Signature of Hee Zi Jie" style="left: 64pt; top: 276pt" />
+      <div class="date" style="left: 66.9pt; top: 406.5pt">24 October 2026</div>
+    </section>
+
+    <!-- Appendix A, under section 2 -->
+    <section class="page yellow" data-base="3" data-strip="text 279 752 317 788;all 45 195 555 750">
+      <div class="subhead" style="top: 203.7pt"><b>A.</b>Appendix A: System Block Diagram</div>
+      <div class="figure" style="left: 84.7pt; top: 236pt; width: 451.2pt">
+        <img src="assets/system-diagram.png" alt="System block diagram" />
+      </div>
+      <p class="note" style="left: 84.7pt; top: 581pt; width: 451.2pt">
+        Data flows top to bottom: dated public data and the RunPod batch build the snapshots, the browser computes every
+        verdict, and the API adds Claude, ElevenLabs and the agent tools.
+      </p>
+    </section>
+
+    <!-- Appendix B, under section 5 -->
+    <section
+      class="page red"
+      data-base="11"
+      data-strip="text 279 752 317 788;all 45 175 555 745"
+      data-append="submission/REPLIT PROOF OF USE.pdf"
+    >
+      <div class="subhead" style="top: 189pt"><b>B.</b>Appendix B: Replit Proof of Use</div>
+      <div class="box" style="left: 84.7pt; top: 222pt; width: 451.2pt; height: 108pt">
+        <p>
+          Handbook 10.6 asks for proof that Replit was used, showing the team's own account and project. The following
+          pages show the live deployment at
+          <a href="https://kotak-alaskxntxna.replit.app">https://kotak-alaskxntxna.replit.app</a> and the project
+          <a href="https://replit.com/@alaskxntxna/Kotak">https://replit.com/@alaskxntxna/Kotak</a> with its publish and
+          Git history, from the team leader's account. The same file is
+          <code>submission/REPLIT PROOF OF USE.pdf</code> in the repository.
+        </p>
+      </div>
+    </section>
+
+    <!-- Appendix C, under section 5 -->
+    <section
+      class="page red"
+      data-base="11"
+      data-strip="text 279 752 317 788;all 45 175 555 745"
+      data-append="submission/RUNPOD PROOF OF USE.pdf"
+      style="counter-increment: sheet 7"
+    >
+      <div class="subhead" style="top: 189pt"><b>C.</b>Appendix C: RunPod Proof of Use</div>
+      <div class="box" style="left: 84.7pt; top: 222pt; width: 451.2pt; height: 108pt">
+        <p>
+          Handbook 10.7 asks for a RunPod dashboard screenshot showing the endpoint URL, the GPU type and the runtime,
+          from the team's own account. The following pages show the serverless endpoint kotak-corners-batch
+          (<code>https://api.runpod.ai/v2/5yjk19uqmrpbp7</code>) on one NVIDIA H100 80GB GPU, and the batch runtime. The
+          same file is <code>submission/RUNPOD PROOF OF USE.pdf</code> in the repository.
+        </p>
+      </div>
+    </section>
+  </body>
+</html>

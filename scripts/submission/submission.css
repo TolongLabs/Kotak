@@ -1,0 +1,278 @@
+/* Answers printed over the organisers' Canva templates. Positions are in points from the page's top-left corner, measured
+   from the templates; the type is Montserrat, the templates' own body face, in their #444 text colour. */
+@page {
+  size: 595.5pt 842.25pt;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background: transparent;
+}
+
+body {
+  counter-reset: sheet -1;
+  font:
+    500 10pt/1.42 'Montserrat',
+    sans-serif;
+  color: #444;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+a {
+  color: #0078a8;
+  text-decoration-thickness: 0.5pt;
+  text-underline-offset: 1.5pt;
+}
+
+code {
+  font: inherit;
+  font-weight: 600;
+}
+
+strong {
+  font-weight: 700;
+}
+
+.page {
+  counter-increment: sheet;
+  position: relative;
+  width: 595.5pt;
+  height: 842.25pt;
+  overflow: hidden;
+  break-after: page;
+}
+
+.page:last-child {
+  break-after: auto;
+}
+
+.red {
+  --accent: #c44a4f;
+}
+.yellow {
+  --accent: #fbc20a;
+}
+.green {
+  --accent: #4b9d37;
+}
+.blue {
+  --accent: #0078a8;
+}
+
+/* The template keeps its page-number badge; the digits follow the physical page. */
+.page:not(:first-child)::after {
+  content: counter(sheet);
+  position: absolute;
+  left: 281.1pt;
+  width: 33.3pt;
+  top: 756.2pt;
+  font:
+    500 23.5pt/28.7pt 'Montserrat',
+    sans-serif;
+  color: #fff;
+  text-align: center;
+}
+
+.page.unnumbered::after {
+  content: none;
+}
+
+/* Text set inside a template box (.fill) or in a box this sheet draws (.box). The build fails if either overflows. */
+.fill,
+.box {
+  position: absolute;
+  padding: 10pt 12pt;
+  overflow: hidden;
+}
+
+.box {
+  border: 1.5pt solid #444;
+}
+
+.fill p + p,
+.fill p + ul,
+.fill p + ol,
+.fill ul + p,
+.fill ol + p,
+.box p + p,
+.box p + ul,
+.box p + ol,
+.box ul + p,
+.box ol + p {
+  margin-top: 5pt;
+}
+
+ul,
+ol {
+  padding-left: 13pt;
+}
+
+li + li {
+  margin-top: 2.5pt;
+}
+
+li::marker {
+  color: var(--accent, #444);
+  font-weight: 700;
+}
+
+/* "(continued)" after a template subheading, in the subheading's own style. */
+.cont {
+  position: absolute;
+  font:
+    600 15pt/18.3pt 'Montserrat',
+    sans-serif;
+  color: #444;
+}
+
+/* An appendix subheading drawn like the template's: a coloured badge and a SemiBold title. */
+.subhead {
+  position: absolute;
+  left: 64.6pt;
+  display: flex;
+  align-items: center;
+  gap: 4pt;
+  font:
+    600 15pt/18pt 'Montserrat',
+    sans-serif;
+}
+
+.subhead b {
+  padding: 0 2pt;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Section 1: answers sit on the template's ruled lines. */
+.field {
+  position: absolute;
+  left: 128pt;
+  width: 372pt;
+  transform: translateY(-100%);
+  padding-bottom: 3pt;
+  font:
+    500 12pt/14.5pt 'Montserrat',
+    sans-serif;
+}
+
+.field.small {
+  font-size: 10pt;
+  line-height: 12pt;
+}
+
+/* A tick in a template checkbox. */
+.tick {
+  position: absolute;
+  width: 13pt;
+  height: 13pt;
+}
+
+.tick::before {
+  content: '';
+  position: absolute;
+  left: 27%;
+  top: -1%;
+  width: 34%;
+  height: 64%;
+  border: solid #444;
+  border-width: 0 2.4pt 2.4pt 0;
+  transform: rotate(40deg);
+}
+
+/* Tables drawn like the templates': separate cells with a 3 pt border in the section colour. A .stack places a table
+   and the paragraphs that follow it. */
+.stack {
+  position: absolute;
+}
+
+.stack .after {
+  margin: 9pt 0 0 34.7pt;
+  max-width: 451.2pt;
+  font-size: 9.5pt;
+}
+
+.stack .after + .after {
+  margin-top: 5pt;
+}
+
+.tbl {
+  display: grid;
+  gap: 1.6pt 0;
+  font-size: 8.4pt;
+  line-height: 1.32;
+}
+
+.tbl > div {
+  border: 3pt solid var(--accent);
+  padding: 4pt 5.5pt;
+  overflow-wrap: anywhere;
+}
+
+/* The five-column datasets table is too narrow for its longest words. */
+.tbl.narrow > div {
+  hyphens: auto;
+}
+
+.tbl > .h {
+  display: grid;
+  place-items: center;
+  min-height: 34pt;
+  background: var(--accent);
+  color: #fff;
+  margin-bottom: 3pt;
+  padding: 2pt 4pt;
+  border-color: transparent;
+  background-clip: padding-box;
+  font:
+    700 11pt/1.15 'Montserrat',
+    sans-serif;
+  text-align: center;
+}
+
+.note {
+  position: absolute;
+  font-size: 9pt;
+  line-height: 1.4;
+}
+
+.sig {
+  position: absolute;
+  height: 62pt;
+}
+
+.date {
+  position: absolute;
+  font:
+    400 15pt/18.3pt 'Montserrat',
+    sans-serif;
+}
+
+.deadline {
+  position: absolute;
+  font:
+    600 17.6pt/21.45pt 'Montserrat',
+    sans-serif;
+  white-space: nowrap;
+  text-shadow: 0.4pt 0.7pt 1.3pt rgb(0 0 0 / 0.25);
+}
+
+.figure {
+  position: absolute;
+  background: #fff;
+  border: 1.5pt solid #444;
+  padding: 8pt;
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+}
