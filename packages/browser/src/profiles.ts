@@ -66,7 +66,17 @@ export async function listProfiles(root = DEFAULT_ROOT): Promise<Profile[]> {
 
 export async function deleteProfile(id: string, root = DEFAULT_ROOT): Promise<void> {
   await readProfile(id, root) // Refuse to remove a directory that is not a profile.
-  await rm(join(root, id), { recursive: true, force: true })
+  // On Windows a browser that was killed or has just closed can hold files in its profile for a few seconds (EBUSY,
+  // EPERM). Bun's rm ignores maxRetries, so retry here, for up to 10 seconds.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await rm(join(root, id), { recursive: true, force: true })
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code ?? ''
+      if (attempt >= 40 || !['EBUSY', 'EPERM', 'ENOTEMPTY'].includes(code)) throw error
+      await Bun.sleep(250)
+    }
+  }
 }
 
 // Launch a profile as a persistent Chromium context; cookies and storage live in its data directory.

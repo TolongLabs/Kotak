@@ -13,8 +13,9 @@ import type { NavigationState } from './browser'
 import { createOutputDirectory, writeJson, writeListings } from './files'
 import { withBrowserProfile } from './browser-profile'
 import { PaginationHand } from './hand'
-import { nextSearchUrl, parseListing, parseSort, searchUrl, sortListings } from './records'
+import { followingSearchUrl, nextSearchUrl, parseListing, parseSort, searchUrl, sortListings } from './records'
 import type { JobListing, SortMode } from './records'
+import { isBrowserCrash, MAX_BROWSER_RELAUNCHES, withRelaunches, type OpenBrowser } from './relaunch'
 
 export type { JobListing } from './records'
 export { searchUrl } from './records'
@@ -32,6 +33,8 @@ export interface ScrapeOptions {
   sort?: SortMode
   headless?: boolean
   onProgress?: (report: Record<string, unknown>) => void | Promise<void>
+  // Opens the browser for each launch; tests pass a fake. Defaults to the Clearcote profile.
+  openBrowser?: OpenBrowser
 }
 
 interface PageResult extends NavigationState {
@@ -155,6 +158,8 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
     delay_jitter_ms: delayJitterMs,
     browser_mode: options.headless ? 'headless' : 'headed',
     profile_id: null as string | null,
+    relaunches: 0,
+    relaunch_errors: [] as string[],
     pages: [] as PageResult[],
     jobs_saved: 0,
     duplicates_skipped: 0,
@@ -165,16 +170,18 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
   }
   const saveReport = () => writeJson(resolve(output, 'run.json'), report)
   await saveReport()
+  // Kept across browser relaunches, so a relaunched browser carries on where the crashed one stopped.
+  let targetJobs = options.maxJobs
+  let openNext: ((entry: NavigationState) => Promise<null>) | undefined
+  let previousRawSignature: string | null = null
+  const visited = new Set<string>()
+  const pageSignatures = new Set<string>()
   try {
-    await withBrowserProfile(
+    await withRelaunches(
+      options.openBrowser ?? withBrowserProfile,
       { profileId: options.profileId, headless: options.headless ?? false },
       async (page) => {
         const hand = new PaginationHand(page)
-        let targetJobs = options.maxJobs
-        let openNext: ((entry: NavigationState) => Promise<null>) | undefined
-        let previousRawSignature: string | null = null
-        const visited = new Set<string>()
-        const pageSignatures = new Set<string>()
         while (next && report.pages.length < options.maxPages && report.jobs_saved < targetJobs) {
           const url: string = searchUrl(next)
           if (visited.has(url)) throw new Error('Pagination returned a previously visited search URL')
@@ -337,6 +344,19 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
                     return null
                   }
                 : undefined
+          } catch (error) {
+            if (isBrowserCrash(error)) {
+              // The relaunched browser opens the first page not yet saved: this one again, or, once its listings
+              // are saved, the page after it. It opens it directly, since the crashed tab's Next link is gone.
+              if (pageProcessed) next = followingSearchUrl(url)
+              else {
+                report.pages.pop()
+                visited.delete(url)
+                next = url
+              }
+              openNext = undefined
+            }
+            throw error
           } finally {
             await saveEvidence(page, prefix)
             await saveReport()
@@ -356,9 +376,19 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
               ? 'page_limit'
               : 'no_next_page'
       },
-      async (profileId) => {
-        report.profile_id = profileId
-        await saveReport()
+      {
+        onProfile: async (profileId) => {
+          report.profile_id = profileId
+          await saveReport()
+        },
+        onCrash: async (error, relaunch) => {
+          const message = error instanceof Error ? error.message : String(error)
+          report.relaunches = relaunch
+          report.relaunch_errors.push(message)
+          await saveReport()
+          console.warn(`The browser crashed (${message}); relaunching it (${relaunch}/${MAX_BROWSER_RELAUNCHES}).`)
+          await pauseBetweenRequests(options.delayMs, delayJitterMs)
+        }
       }
     )
     report.status = 'success'

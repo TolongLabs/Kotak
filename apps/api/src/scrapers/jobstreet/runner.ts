@@ -253,10 +253,12 @@ async function runQueued(input: unknown) {
     return
   }
 
+  // Listings without a description, admin-approved ones first (the job-ad market reads their descriptions), then the
+  // most recently seen. approved_at is the admin route's copy of the approvals; this role cannot read the reviews.
   const stored = (await sql.query(
     `SELECT job_id, career_slug, latest_payload FROM jobstreet_listings
      WHERE career_slug = $1 AND latest_detail IS NULL
-     ORDER BY latest_seen_at DESC LIMIT 1000`,
+     ORDER BY approved_at IS NULL, latest_seen_at DESC LIMIT 1000`,
     [career.slug]
   )) as Array<{ job_id: string; career_slug: string; latest_payload: Record<string, unknown> }>
   if (!stored.length) {

@@ -17,6 +17,7 @@ import { readListingRows, resolveInputs } from './inputs'
 import { withBrowserProfile } from './browser-profile'
 import { jobUrl, parseListing, preferObservation, utcTimestamp } from './records'
 import type { JobListing } from './records'
+import { isBrowserCrash, MAX_BROWSER_RELAUNCHES, withRelaunches, type OpenBrowser } from './relaunch'
 
 export interface DepthOptions {
   inputs: string[]
@@ -32,6 +33,8 @@ export interface DepthOptions {
   headless?: boolean
   discoverLocalCache?: boolean
   onProgress?: (report: Record<string, unknown>) => void | Promise<void>
+  // Opens the browser for each launch; tests pass a fake. Defaults to the Clearcote profile.
+  openBrowser?: OpenBrowser
 }
 
 type Outcome = 'fetched' | 'unavailable' | 'failed'
@@ -301,6 +304,8 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
     jobs_unavailable: 0,
     jobs_failed: 0,
     profile_id: null as string | null,
+    relaunches: 0,
+    relaunch_errors: [] as string[],
     jobs: [] as DetailAttempt[],
     stop_reason: null as 'completed' | 'job_limit' | 'blocked' | 'verification_timeout' | 'error' | null,
     error: null as string | null
@@ -366,11 +371,17 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
       return false
     })
     await save()
+    // The next pending job, kept across browser relaunches: a relaunched browser goes on with the job after the one
+    // the crash interrupted, which stays a failed attempt.
+    let cursor = 0
     if (pending.length)
-      await withBrowserProfile(
+      await withRelaunches(
+        options.openBrowser ?? withBrowserProfile,
         { profileId: options.profileId, headless: options.headless ?? false },
         async (page) => {
-          for (const [index, breadth] of pending.entries()) {
+          while (cursor < pending.length) {
+            const index = cursor++
+            const breadth = pending[index]
             const entry: DetailAttempt = {
               job_id: breadth.job_id,
               url: breadth.url,
@@ -404,6 +415,7 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
               error: null
             }
             let blocked = false
+            let crash: unknown = null
             console.info(`Enriching ${breadth.url}`)
             try {
               const response = await navigate(page, entry, retries, options.delayMs, save, {
@@ -454,7 +466,8 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
                 }
               }
             } catch (error) {
-              if (error instanceof VerificationTimeoutError) {
+              if (isBrowserCrash(error)) crash = error
+              else if (error instanceof VerificationTimeoutError) {
                 blocked = true
                 report.stop_reason = 'verification_timeout'
               } else if (entry.verification?.status === 'interrupted') {
@@ -478,6 +491,8 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
               await save()
               await options.onProgress?.(report)
             }
+            // Relaunch the browser for the remaining jobs; after the last job there is nothing to resume.
+            if (crash && cursor < pending.length) throw crash
             if (blocked) {
               report.stop_reason ??= 'blocked'
               throw new Error(observation.error!)
@@ -485,9 +500,19 @@ export async function scrapeJobstreetDepth(options: DepthOptions) {
             if (index < pending.length - 1) await pauseBetweenRequests(options.delayMs, delayJitterMs)
           }
         },
-        async (profileId) => {
-          report.profile_id = profileId
-          await save()
+        {
+          onProfile: async (profileId) => {
+            report.profile_id = profileId
+            await save()
+          },
+          onCrash: async (error, relaunch) => {
+            const message = error instanceof Error ? error.message : String(error)
+            report.relaunches = relaunch
+            report.relaunch_errors.push(message)
+            await save()
+            console.warn(`The browser crashed (${message}); relaunching it (${relaunch}/${MAX_BROWSER_RELAUNCHES}).`)
+            await pauseBetweenRequests(options.delayMs, delayJitterMs)
+          }
         }
       )
     report.stop_reason = selected.length < targets.size ? 'job_limit' : 'completed'
