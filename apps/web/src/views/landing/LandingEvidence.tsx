@@ -57,7 +57,7 @@ const sourcesData = [
   {
     title: 'MyCOL',
     description: 'Skills Malaysia is short of',
-    note: '2025 edition'
+    note: 'Context only'
   },
   {
     title: 'Epoch AI',
