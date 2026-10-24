@@ -14,7 +14,7 @@ Contents:
 
 ## Example deck
 
-[`example-pitch-deck.html`](example-pitch-deck.html) is a finished 11-slide deck from an earlier hackathon of ours, with its names replaced by placeholders. Use it as the reference for layout and visual assets. Our deck, [`deck/pitch-deck.html`](deck/pitch-deck.html), exports to PPTX and PDF in Kotak's colours and type ([design system](/docs/DESIGN.md)). Open the example in Chrome or Edge, and move between slides with the arrow keys or the controls that show when you move the mouse. Press N for its presenter notes.
+[`example-pitch-deck.html`](example-pitch-deck.html) is a finished 11-slide deck from an earlier hackathon of ours, with its names replaced by placeholders. Use it as the reference for layout and visual assets. Our deck, [`deck/kotak-pitch-deck.html`](deck/kotak-pitch-deck.html), exports to PPTX and PDF in Kotak's colours and type ([design system](/docs/DESIGN.md)). Open the example in Chrome or Edge, and move between slides with the arrow keys or the controls that show when you move the mouse. Press N for its presenter notes.
 
 Copy these from it:
 
