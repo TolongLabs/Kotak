@@ -55,7 +55,7 @@ Contents:
 | [SDK](/packages/sdk/README.md)           | `@kotak/sdk`: Kotak's check-up from code, in the browser, Bun or a Worker                      |
 | [Agent layer](/packages/agent/README.md) | `@kotak/agent`: Kotak's tools for AI assistants over MCP, the kotak-checkup skill and Ask Kopi |
 
-The [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) supports local breadth collection and depth description enrichment, plus production persistence through Neon Postgres. The production admin panel queues runs for four seeded search titles; a separate Bun runner launches the browser, and a Cloudflare cron queues daily breadth refreshes. Initial Neon credentials and local-capture import still need to be configured by an operator.
+The [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) supports local breadth collection and depth description enrichment, plus production persistence through Neon Postgres. The production admin panel adds search titles, each under one O\*NET occupation (31 on 24 October 2026), and queues their runs; a separate Bun runner launches the browser, and a Cloudflare cron queues daily breadth refreshes for the titles set to refresh. Admins approve each batch's ads, and only approved ads reach the job-ad market.
 
 ## Ideas we compared
 

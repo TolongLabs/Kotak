@@ -35,7 +35,15 @@ export function toolDepsFor(context: Context<{ Bindings: KotakBindings }>): Omit
       kotak,
       searchTitles,
       nationalView: (filter) => nationalViewSummary(context, filter),
-      jobMarket: (codes) => jobMarketsFor(context, codes)
+      // GET /api/market refuses a code Kotak doesn't know; the tool says so too, rather than "no job-ad data".
+      jobMarket: async (codes) => {
+        const unknown = codes.filter((code) => onetOccupationIndex.getOccupation(code) === null)
+        if (unknown.length)
+          throw new Error(
+            `Kotak has no role ${unknown.join(', ')}. Look the job up with find_role and use a code it returns.`
+          )
+        return jobMarketsFor(context, codes)
+      }
     }
   )
 }

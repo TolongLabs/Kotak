@@ -325,7 +325,7 @@ bun run typecheck
 bun test
 ```
 
-`bun test` skips the 15 browser integration tests of the JobStreet scraper unless `BROWSER_INTEGRATION=1` is set, because they launch its Chromium build ([scraper guide](/apps/api/src/scrapers/jobstreet/README.md#verification)). It also skips the intake pathway tests until `bun run build` has written the data bundle.
+`bun test` skips the 26 browser integration tests of the JobStreet scraper unless `BROWSER_INTEGRATION=1` is set, because they launch its Chromium build ([scraper guide](/apps/api/src/scrapers/jobstreet/README.md#verification)). It also skips the intake pathway tests until `bun run build` has written the data bundle.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

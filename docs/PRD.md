@@ -117,6 +117,9 @@ flowchart LR
   API <--> TTS["ElevenLabs TTS"]
   API <--> AGENT["Agent tools: Ask Kopi and MCP"]
   AGENT <--> PG[("Neon Postgres")]
+  JOBS["JobStreet Malaysia ads"] --> SCRAPER["Local scraper runner, admin review"]
+  SCRAPER --> PG
+  API <--> PG
   DEPLOY["GitHub Actions deploy"] --> HOST["Cloudflare Workers and Replit"]
   HOST --- WEB
   HOST --- API
@@ -176,18 +179,19 @@ No. Kotak's code, design and research are new work by the team during the hackat
 
 Yes. Kotak cites restricted sources by figure and date, and does not redistribute their files.
 
-| Name                                       | Type           | License                                                                                   |
-| ------------------------------------------ | -------------- | ----------------------------------------------------------------------------------------- |
-| O\*NET 30.1 Database                       | dataset        | CC BY 4.0, with O\*NET's fixed credit line and a modification notice [trend]              |
-| Anthropic Economic Index                   | dataset        | Data CC BY, version not stated; code MIT [trend]                                          |
-| DOSM Job Market Insights                   | dataset        | DOSM data terms: reuse with "Data source: Department of Statistics Malaysia" [dosm-terms] |
-| OpenDOSM skill-related underemployment     | dataset        | CC BY 4.0; one figure cited [trend]                                                       |
-| TalentCorp MyCOL and Epoch AI              | dataset        | Cited as context only, not loaded [dosm-terms]                                            |
-| Qwen3.8-27B-FP8, run on RunPod             | model          | Apache 2.0                                                                                |
-| Claude Haiku 5.5, through the Claude API   | model          | Proprietary API service from Anthropic                                                    |
-| ElevenLabs text to speech                  | model          | Proprietary API; users keep the rights to the output [tts]                                |
-| Live2D Hijiki sample model and Cubism Core | model (2D art) | [Live2D Free Material License Agreement][l2d]; Cubism Core under Live2D's own licence     |
-| Lucide icons                               | code           | ISC                                                                                       |
+| Name                                       | Type           | License                                                                                                     |
+| ------------------------------------------ | -------------- | ----------------------------------------------------------------------------------------------------------- |
+| O\*NET 30.1 Database                       | dataset        | CC BY 4.0, with O\*NET's fixed credit line and a modification notice [trend]                                |
+| Anthropic Economic Index                   | dataset        | Data CC BY, version not stated; code MIT [trend]                                                            |
+| DOSM Job Market Insights                   | dataset        | DOSM data terms: reuse with "Data source: Department of Statistics Malaysia" [dosm-terms]                   |
+| OpenDOSM skill-related underemployment     | dataset        | CC BY 4.0; one figure cited [trend]                                                                         |
+| TalentCorp MyCOL and Epoch AI              | dataset        | Cited as context only, not loaded [dosm-terms]                                                              |
+| JobStreet Malaysia job ads, self-collected | dataset        | JobStreet's terms apply and forbid scraping; Kotak publishes only totals from ads an admin approved [trend] |
+| Qwen3.8-27B-FP8, run on RunPod             | model          | Apache 2.0                                                                                                  |
+| Claude Haiku 5.5, through the Claude API   | model          | Proprietary API service from Anthropic                                                                      |
+| ElevenLabs text to speech                  | model          | Proprietary API; users keep the rights to the output [tts]                                                  |
+| Live2D Hijiki sample model and Cubism Core | model (2D art) | [Live2D Free Material License Agreement][l2d]; Cubism Core under Live2D's own licence                       |
+| Lucide icons                               | code           | ISC                                                                                                         |
 
 The Live2D licence says "the Customer may not Redistribute all or part of the Material to third party" (clause 4.1.1). The team keeps the model in the repository and credits Live2D, a risk it accepted on 22 October 2026 ([mascot decision][idea-mascot]).
 
