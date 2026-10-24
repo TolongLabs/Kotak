@@ -1,5 +1,5 @@
 import { accessFor } from '@kotak/sdk'
-import { DEFAULT_SCENARIO, needsQualification } from '@kotak/shared'
+import { DEFAULT_SCENARIO, jobMarketLevelForYears, needsQualification, yearsOfWork } from '@kotak/shared'
 import { Info } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
@@ -364,7 +364,12 @@ export function RadarView() {
           </section>
 
           {jobMarket && jobMarketSource && (
-            <JobMarketCard market={jobMarket} roleTitle={role.title} sourceNumber={jobMarketSource.n} />
+            <JobMarketCard
+              market={jobMarket}
+              roleTitle={role.title}
+              sourceNumber={jobMarketSource.n}
+              level={jobMarketLevelForYears(yearsOfWork(session.profile))}
+            />
           )}
 
           {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} />}

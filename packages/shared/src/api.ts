@@ -184,6 +184,23 @@ export const JOB_MARKET_MAX_CODES = 10
 export const JOB_MARKET_MIN_PAY_ADS = 5
 export const JOB_MARKET_MIN_SKILL_ADS = 10
 
+/**
+ * The level an ad asks for: junior under 2 years' experience or open to new graduates, mid 2 to 4 years, senior 5 or
+ * more. An ad that states no experience takes the level its title names, if any.
+ */
+export const JobMarketLevelSchema = z.enum(['junior', 'mid', 'senior'])
+export type JobMarketLevel = z.infer<typeof JobMarketLevelSchema>
+
+/**
+ * The level whose pay fits someone with these years of work, as the ads count them: under 2 is junior, 2 to 4 mid,
+ * 5 or more senior. The intake's bands store their lower bound, so its "4 to 5 years" (4) is mid and "6 to 9" senior.
+ * Unknown years give null.
+ */
+export function jobMarketLevelForYears(years: number | null): JobMarketLevel | null {
+  if (years === null) return null
+  return years < 2 ? 'junior' : years < 5 ? 'mid' : 'senior'
+}
+
 const AdCountSchema = z.number().int().min(0)
 const NamedCountSchema = z.object({ name: z.string().min(1), ads: AdCountSchema }).strict()
 const SkillCountSchema = z.object({ key: z.string().min(1), label: z.string().min(1), ads: AdCountSchema }).strict()
@@ -227,6 +244,27 @@ export const JobMarketSchema = z
       })
       .strict()
       .nullable(),
+    // Active ads by the level they ask for, and pay for each level with 5 or more ads that state it, junior first.
+    // Optional, like popularity, for answers cached before it.
+    levels: z
+      .object({
+        ads: z
+          .object({ junior: AdCountSchema, mid: AdCountSchema, senior: AdCountSchema, not_stated: AdCountSchema })
+          .strict(),
+        pay: z.array(
+          z
+            .object({
+              level: JobMarketLevelSchema,
+              ads_with_pay: AdCountSchema,
+              median: z.number().int().min(0),
+              p25: z.number().int().min(0),
+              p75: z.number().int().min(0)
+            })
+            .strict()
+        )
+      })
+      .strict()
+      .optional(),
     // The 5 states or federal territories with the most active ads, most first.
     regions: z.array(NamedCountSchema),
     without_state: AdCountSchema, // active ads whose location names no state, such as "Malaysia"
