@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { DEFAULT_SCENARIO, jobMarketLevelForYears, yearsOfWork } from '@kotak/shared'
 import { AccessChip, AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
@@ -30,6 +31,88 @@ import {
 import { estimatedCorners, formatFitPercent, formatLevel } from './roles/fit'
 import type { SourceRef } from '../demo/types'
 import { startAgain } from './checkup/startAgain'
+
+interface FitRow {
+  name: string
+  you: string
+  needed: string
+  counts: string
+  estimated: boolean
+  youLevel: number
+  neededLevel: number
+}
+
+function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated: boolean; title: string }) {
+  const skillLabel = (row: FitRow) => (row.estimated && !allEstimated ? `${row.name} (est.)` : row.name)
+  const data = rows.map((row) => ({
+    skill: skillLabel(row),
+    You: row.youLevel,
+    Needed: row.neededLevel
+  }))
+  return (
+    <div>
+      <div
+        role="img"
+        aria-label={`${title}: your level against the level needed, per skill`}
+        style={{ height: rows.length * 64 + 56 }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ top: 0, right: 12, bottom: 0, left: 0 }} barGap={2}>
+            <CartesianGrid horizontal={false} stroke="var(--color-border-subtle)" />
+            <XAxis
+              type="number"
+              domain={[0, 3]}
+              ticks={[0, 1, 2, 3]}
+              allowDecimals={false}
+              tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }}
+            />
+            <YAxis
+              type="category"
+              dataKey="skill"
+              width={112}
+              tick={{ fill: 'var(--color-text-primary)', fontSize: 12 }}
+            />
+            {/* Recharts lists Needed first for this layout, and tints the You label yellow on white: draw the legend by hand. */}
+            <Legend
+              content={() => (
+                <ul className="flex justify-center gap-4 text-label-m text-text-primary">
+                  {[
+                    { label: 'You', color: 'var(--color-radar-you)' },
+                    { label: 'Needed', color: 'var(--color-text-primary)' }
+                  ].map(({ label, color }) => (
+                    <li key={label} className="flex items-center gap-1.5">
+                      <span
+                        aria-hidden="true"
+                        className="h-3 w-3 border border-text-primary"
+                        style={{ background: color }}
+                      />
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            />
+            <Bar
+              dataKey="You"
+              fill="var(--color-radar-you)"
+              stroke="var(--color-text-primary)"
+              strokeWidth={1.5}
+              isAnimationActive={false}
+            />
+            <Bar dataKey="Needed" fill="var(--color-text-primary)" isAnimationActive={false} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <ul className="sr-only">
+        {rows.map((row) => (
+          <li key={row.name}>
+            {skillLabel(row)}: you {row.you}, needed {row.needed}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 export function RolesView() {
   const session = useGuestSession()
@@ -140,16 +223,66 @@ export function RolesView() {
         you: formatLevel(term.user_level),
         needed: formatLevel(term.target_level),
         counts: formatLevel(term.term),
-        estimated: carryOver.has(term.corner_id)
+        estimated: carryOver.has(term.corner_id),
+        youLevel: term.user_level,
+        neededLevel: term.target_level
       }))
     : []
   // When every level is carried over, one caption replaces a badge on every row.
   const allEstimated = fitRows.length > 0 && fitRows.every((fitRow) => fitRow.estimated)
-  const mathsAnswer = detailCheckupRole
+  const mathsFormula = detailCheckupRole
     ? `Fit = sum of min(your level, needed level) ÷ sum of needed levels; here ${formatLevel(
         detailCheckupRole.fit.numerator
       )} / ${formatLevel(detailCheckupRole.fit.denominator)} gives ${formatFitPercent(detailCheckupRole.fit.score)}.`
     : ''
+  const mathsAnswer = (
+    <>
+      <p className="pb-3">{mathsFormula}</p>
+      <div role="region" tabIndex={0} aria-label="Fit by skill" className="overflow-x-auto">
+        <table className="w-full text-body-s text-text-primary">
+          <caption className="sr-only">Your level, needed level and counted level per skill</caption>
+          <thead>
+            <tr className="bg-bg-panel text-left text-label-m">
+              <th scope="col" className="px-2 py-1.5">
+                Skill
+              </th>
+              <th scope="col" className="px-2 py-1.5 text-right">
+                You
+              </th>
+              <th scope="col" className="px-2 py-1.5 text-right">
+                Needed
+              </th>
+              <th scope="col" className="px-2 py-1.5 text-right">
+                Counts
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {fitRows.map((fitRow) => (
+              <tr key={fitRow.name} className="border-t border-border-subtle">
+                <th scope="row" className="px-2 py-1.5 text-left font-normal">
+                  {fitRow.name}
+                </th>
+                <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
+                  {/* On phones the badge drops under the level, so all four columns fit. */}
+                  <span className="inline-flex flex-col items-end gap-1 sm:flex-row sm:items-center">
+                    {fitRow.you}
+                    {fitRow.estimated && !allEstimated && (
+                      <span className="rounded-full border border-border-control px-1.5 py-0.5 font-sans text-label-s text-text-muted">
+                        Estimated
+                      </span>
+                    )}
+                  </span>
+                </td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">{fitRow.needed}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">{fitRow.counts}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )
   function pick() {
     updateGuestSession({
       plan_role_code: selected ? selected.id : null
@@ -246,63 +379,13 @@ export function RolesView() {
                   )} needed levels for ${selected.title}, so fit is ${formatFitPercent(detailCheckupRole.fit.score)}.`
                 : `Fit for ${selected.title} is not ready yet.`}
             </p>
-            {fitRows.length > 0 && (
-              <div role="region" tabIndex={0} aria-label="Fit by skill" className="overflow-x-auto">
-                <table className="w-full text-body-s">
-                  <caption className="sr-only">
-                    {selected.title}: your level, needed level and counted level per skill
-                  </caption>
-                  <thead>
-                    <tr className="bg-bg-panel text-left text-label-m">
-                      <th scope="col" className="px-2 py-1.5">
-                        Skill
-                      </th>
-                      <th scope="col" className="px-2 py-1.5 text-right">
-                        You
-                      </th>
-                      <th scope="col" className="px-2 py-1.5 text-right">
-                        Needed
-                      </th>
-                      <th scope="col" className="px-2 py-1.5 text-right">
-                        Counts
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fitRows.map((fitRow) => (
-                      <tr key={fitRow.name} className="border-t border-border-subtle">
-                        <th scope="row" className="px-2 py-1.5 text-left font-normal">
-                          {fitRow.name}
-                        </th>
-                        <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
-                          {/* On phones the badge drops under the level, so all four columns fit. */}
-                          <span className="inline-flex flex-col items-end gap-1 sm:flex-row sm:items-center">
-                            {fitRow.you}
-                            {fitRow.estimated && !allEstimated && (
-                              <span className="rounded-full border border-border-control px-1.5 py-0.5 font-sans text-label-s text-text-muted">
-                                Estimated
-                              </span>
-                            )}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
-                          {fitRow.needed}
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-1.5 text-right font-mono text-mono-m">
-                          {fitRow.counts}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            {fitRows.length > 0 && <FitChart rows={fitRows} allEstimated={allEstimated} title={selected.title} />}
             {allEstimated && (
               <p className="text-body-s text-text-muted">
                 Your levels here are estimated from your {role.title} answers.
               </p>
             )}
-            {detailCheckupRole && mathsAnswer && (
+            {detailCheckupRole && mathsFormula && (
               <Accordion items={[{ id: 'fit-maths', question: 'See the Maths', answer: mathsAnswer }]} />
             )}
           </section>
