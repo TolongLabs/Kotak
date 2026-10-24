@@ -106,8 +106,6 @@ The data sources in section 4.2 are downloaded files, not live APIs: the app nev
 | Claude Haiku 5.5 (`claude-haiku-5-5`)                      | Anthropic, Claude API         | Pre-trained | Anthropic Commercial Terms of Service |
 | ElevenLabs `eleven_v4` and `eleven_v4_turbo`, voice Johari | ElevenLabs                    | Pre-trained | ElevenLabs Terms of Service           |
 | Qwen3.8-27B-FP8                                            | Qwen, run on RunPod with vLLM | Pre-trained | Apache 2.0                            |
-| Gemini Pro and Flash models, through Antigravity CLI       | Google                        | Pre-trained | Google Antigravity terms of service   |
-| DeepSeek V4.1 Flash                                        | DeepSeek, run on River        | Pre-trained | River terms of service                |
 
 No model is fine-tuned or self-trained.
 
