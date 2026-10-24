@@ -22,8 +22,9 @@ export { cornerReasoning, isEstimatedLevel, roleOutlook } from '@kotak/sdk'
 
 export const verdictId = (status: CornerVerdict['status']) => status.toLowerCase() as VerdictId
 
-// Targets are estimates between 1 and 3; the meters show whole levels, the radar line plots the same rounding.
-const neededLevel = (target: number) => Math.min(3, Math.max(1, Math.round(target))) as 1 | 2 | 3
+// Targets are estimates between 1 and 3; the meters and the radar line show them rounded up to a half step, so a
+// corner reads as a gap exactly when the engine sees one (you < target) and the roadmap has a milestone for it.
+const neededLevel = (target: number) => Math.min(3, Math.max(1, Math.ceil(target * 2) / 2))
 
 const monthLabel = (date: string) =>
   new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })

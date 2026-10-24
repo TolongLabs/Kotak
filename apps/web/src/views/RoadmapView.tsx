@@ -30,7 +30,7 @@ import {
 } from '../engine/roadmapModel'
 import { cornerReasoning, isEstimatedLevel } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
-import { updateGuestSession, useGuestSession } from '../session/store'
+import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
 import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
@@ -231,7 +231,7 @@ export function RoadmapView() {
     return { proposed, readyWeek }
   }, [checkup, bundle, session.answers, session.custom_weekly_hours, startDate])
 
-  if (!assessedRoleCode(session)) {
+  if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <Stepper step={5} labels={checkUpSteps} />

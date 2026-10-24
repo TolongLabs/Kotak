@@ -10,7 +10,7 @@ import { routes } from '../app/routes'
 import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { sourceRefs, toCorners } from '../engine/viewModel'
-import { useGuestSession } from '../session/store'
+import { hasAnswers, useGuestSession } from '../session/store'
 import { useActiveSnapshot } from '../session/snapshot'
 import { whatChangedItems } from './changes/whatMoved'
 import { WhatChangedRadar } from './changes/WhatChangedRadar'
@@ -59,7 +59,7 @@ export function WhatChangedView() {
   const beforeLabel = snapshotMonthLabel(beforeSnapshot)
   const afterLabel = snapshotMonthLabel(afterSnapshot)
 
-  if (!assessedRoleCode(session)) {
+  if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>

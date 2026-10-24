@@ -33,12 +33,20 @@ function parseJson(raw: string): unknown {
   }
 }
 
-// Sessions saved before the 1 to 4 scale hold yes/no answers: keep everything else and start the answers blank.
+// Sessions saved before the 1 to 4 scale hold yes/no answers: keep the profile and settings, start over on the rest.
 function withoutOldAnswers(saved: unknown): unknown {
   if (typeof saved !== 'object' || saved === null || !('answers' in saved) || !Array.isArray(saved.answers))
     return saved
   if (!saved.answers.some((answer) => typeof answer === 'boolean')) return saved
-  return { ...saved, answers: Array(12).fill(null) }
+  // The old role, plan and ticks belong to the old answers: dropping the role sends the results pages to the retake prompt.
+  return {
+    ...saved,
+    answers: Array(12).fill(null),
+    role_code: null,
+    target_role_code: null,
+    plan_role_code: null,
+    ticked_milestones: []
+  }
 }
 
 function load(): GuestSession {
@@ -100,3 +108,6 @@ function subscribe(listener: () => void) {
 export function useGuestSession(): GuestSession {
   return useSyncExternalStore(subscribe, getGuestSession)
 }
+
+/** True once the check-up has been answered; a role with blank answers would show a false 0% fit. */
+export const hasAnswers = (session: Pick<GuestSession, 'answers'>) => session.answers.some((answer) => answer !== null)

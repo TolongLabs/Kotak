@@ -126,13 +126,18 @@ export function QuestionsView() {
 
   const onAnswer = (rating: Rating) => {
     if (chosen !== null) return
+    const advance = () => {
+      const next = [...asked, reversedText ? reversedRating(rating) : rating]
+      if (next.length === totalQuestions) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
+      setAsked(next)
+    }
+    // Reduced motion: no pause, answer at once.
+    if (reduced) return advance()
     setChosen(rating)
     thinkingTimer.current = window.setTimeout(() => {
       thinkingTimer.current = null
       setChosen(null)
-      const next = [...asked, reversedText ? reversedRating(rating) : rating]
-      if (next.length === totalQuestions) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
-      setAsked(next)
+      advance()
     }, 300)
   }
 

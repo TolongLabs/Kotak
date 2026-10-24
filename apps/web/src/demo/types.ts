@@ -4,6 +4,9 @@ export type VerdictId = 'rising' | 'steady' | 'declining' | 'split' | 'unknown'
 
 export type Level = 0 | 1 | 2 | 3
 
+// A target level, rounded up to the next half step (1 to 3).
+export type NeededLevel = number
+
 export type Scenario = 'slow' | 'fast'
 
 export type SourceRef = {
@@ -18,8 +21,8 @@ export type Corner = {
   name: string
   verdict: VerdictId
   you: number // 0 to 3, in steps of 0.5 for a rated corner
-  neededSlow: 1 | 2 | 3
-  neededFast: 1 | 2 | 3
+  neededSlow: NeededLevel
+  neededFast: NeededLevel
   reasoning?: string
   sources?: number[]
 }
