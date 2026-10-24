@@ -27,7 +27,7 @@ Contents:
 
 **The argument, in one breath.** Malaysia is losing office jobs, not factory jobs, and the jobs most exposed to AI are losing the most. Workers use AI but aren't trained for it, and nobody tells them which skill to learn first. Kotak does: a three-minute check-up for your job gives a dated plan, with the skill to start on, the hours, a free step for each skill and the employer's funding route. The plan moves when the data moves, because data decides and AI only explains. It is the only tool we found that does all of that, workers use it free, employers pay a fraction of the training levy they already pay, and the rules run the same in the browser, in the app and in any AI assistant.
 
-- **Runtime:** 6:29, inside the 5:30 to 6:30 target and the 7:00 limit. The live demo runs 3:00.
+- **Runtime:** 6:46: 16 seconds over our 6:30 target and 14 seconds under the 7:00 limit. The live demo runs 3:00. If the narration reads slower than 150 words a minute, use the [trim list](#recording-the-voiceover).
 - **Rubric weight:** the hook, the user and the solution carry Problem-Solution Fit (25%); innovation, the demo's What Changed moment and the MCP line carry Innovation (30%); the demo and the technical approach carry Feasibility (25%); one argument with clear links carries Clarity (20%).
 - **One narrator** reads everything. Kopi, Kotak's guide, is heard once, in the What Changed shot, as the app's own sound.
 - **Every segment links to the one before** ("Here's why", "So we start with", "A course list can't answer that", "How does it work?", "Let's open the box", "So what's new?", "For a worker", "So who pays?", "And under the hood"). Keep the links when you trim.
@@ -41,25 +41,25 @@ Contents:
 | Seg | Time      | Picture                      | Purpose                                             | Words |   Read | Played |
 | --- | --------- | ---------------------------- | --------------------------------------------------- | ----: | -----: | -----: |
 | V1  | 0:00–0:13 | Deck 1                       | Who we are, the domain, what we built               |    36 | 14.7 s | 12.2 s |
-| V2  | 0:13–0:48 | Deck 2                       | The hook: real losses, real numbers, the honest gap |    97 | 40.6 s | 33.8 s |
-| V3  | 0:48–1:04 | Deck 3                       | Who Kotak is for, and her manager's question        |    43 | 17.5 s | 14.6 s |
-| V4  | 1:04–1:27 | Deck 4, then shot H1         | What she gets; all six must-haves                   |    62 | 25.4 s | 21.2 s |
-| V5  | 1:27–1:36 | Deck 5                       | Data decides. AI explains.                          |    23 |  9.9 s |  8.2 s |
-| D1  | 1:36–1:50 | Shot D1, intake              | Who she is, and what she wants                      |    25 | 10.3 s | 10.3 s |
-| D2  | 1:50–2:08 | Shot D2, questions           | Twelve can-do questions                             |    35 | 14.6 s | 14.6 s |
-| D3  | 2:08–2:42 | Shot D3, radar and job ads   | Six skills, dated verdicts, real job ads            |    74 | 30.3 s | 30.3 s |
-| D4  | 2:42–2:58 | Shot D4, roles               | Ranked roles with the maths open                    |    29 | 12.2 s | 12.2 s |
-| D5  | 2:58–3:26 | Shot D5, roadmap             | The plan to 80% fit                                 |    60 | 24.6 s | 24.6 s |
-| D6  | 3:26–4:06 | Shot D6, What Changed        | The data moves; the plan moves; Kopi says why       |    71 | 29.3 s | 29.3 s |
-| D7  | 4:06–4:18 | Shot D7, Ask Kopi            | Questions, answered from labelled data              |    23 |  9.2 s |  9.2 s |
-| M1  | 4:18–4:36 | Shot M1, an AI assistant     | The tool a chatbot calls                            |    37 | 15.4 s | 15.4 s |
-| V6  | 4:36–4:58 | Deck 6                       | What exists, and what only Kotak does               |    61 | 25.3 s | 21.1 s |
-| V7  | 4:58–5:16 | Deck 7                       | What a worker gains; SDG 4.4                        |    48 | 19.8 s | 16.5 s |
-| V8  | 5:16–5:42 | Deck 8                       | Free for workers; employers pay under a tenth       |    72 | 29.4 s | 24.5 s |
-| V9  | 5:42–6:13 | Deck 9                       | Two halves, one rulebook, live and tested           |    89 | 36.1 s | 30.1 s |
-| V10 | 6:13–6:29 | Deck 10, then 3 s of silence | The echo, the name, the line                        |    37 | 15.5 s | 12.9 s |
+| V2  | 0:13–0:50 | Deck 2                       | The hook: real losses, real numbers, the honest gap |   103 | 43.0 s | 35.8 s |
+| V3  | 0:50–1:08 | Deck 3                       | Who Kotak is for, and her manager's question        |    48 | 19.5 s | 16.2 s |
+| V4  | 1:08–1:37 | Deck 4, then shot H1         | What she gets; all six must-haves                   |    83 | 33.8 s | 28.2 s |
+| V5  | 1:37–1:47 | Deck 5                       | Data decides. AI explains.                          |    23 |  9.9 s |  8.2 s |
+| D1  | 1:47–2:01 | Shot D1, intake              | Who she is, and what she wants                      |    25 | 10.3 s | 10.3 s |
+| D2  | 2:01–2:19 | Shot D2, questions           | Twelve can-do questions                             |    35 | 14.6 s | 14.6 s |
+| D3  | 2:19–2:53 | Shot D3, radar and job ads   | Six skills, dated verdicts, real job ads            |    74 | 30.3 s | 30.3 s |
+| D4  | 2:53–3:09 | Shot D4, roles               | Ranked roles with the maths open                    |    29 | 12.2 s | 12.2 s |
+| D5  | 3:09–3:37 | Shot D5, roadmap             | The plan to 80% fit                                 |    60 | 24.6 s | 24.6 s |
+| D6  | 3:37–4:17 | Shot D6, What Changed        | The data moves; the plan moves; Kopi says why       |    71 | 29.3 s | 29.3 s |
+| D7  | 4:17–4:29 | Shot D7, Ask Kopi            | Questions, answered from labelled data              |    23 |  9.2 s |  9.2 s |
+| M1  | 4:29–4:47 | Shot M1, an AI assistant     | The tool a chatbot calls                            |    37 | 15.4 s | 15.4 s |
+| V6  | 4:47–5:14 | Deck 6                       | What exists, and what only Kotak does               |    77 | 31.7 s | 26.4 s |
+| V7  | 5:14–5:33 | Deck 7                       | What a worker gains; SDG 4.4                        |    50 | 20.6 s | 17.2 s |
+| V8  | 5:33–5:58 | Deck 8                       | Free for workers; employers pay under a tenth       |    72 | 29.4 s | 24.5 s |
+| V9  | 5:58–6:30 | Deck 9                       | Two halves, one rulebook, live and tested           |    89 | 36.1 s | 30.1 s |
+| V10 | 6:30–6:46 | Deck 10, then 3 s of silence | The echo, the name, the line                        |    38 | 15.9 s | 13.2 s |
 
-Total: 6:29, with 3:00 of live demo (1:36 to 4:36). D6's slot includes about 8 seconds of Kopi's own voice. Without the 1.2× speed-up the cut runs about 7:10, over the limit: then read the [trim list](#recording-the-voiceover). Check the totals again after any rewrite.
+Total: 6:46, with 3:00 of live demo (1:47 to 4:47). D6's slot includes about 8 seconds of Kopi's own voice. Without the 1.2× speed-up the cut runs about 7:28, over the limit: then read the [trim list](#recording-the-voiceover). Check the totals again after any rewrite.
 
 ## Director transcript
 
@@ -79,7 +79,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V2: The problem
 
-**TIME:** `0:13–0:48` · **PURPOSE:** the hook: real losses, real numbers, and the honest gap.
+**TIME:** `0:13–0:50` · **PURPOSE:** the hook: real losses, real numbers, and the honest gap.
 
 **ON SCREEN:** Deck 2, "This Time, It's the Office.": the wall of dated clippings. Push in on each card as it is spoken: the 52,607 card, then "1 in 2" with the 1998 / 2009 / 2026 strip, then the 69% card, then the 56% / 26% line. The footnote "The minister says AI is not yet a main cause" stays readable while that sentence is spoken.
 
@@ -93,7 +93,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V3: The user
 
-**TIME:** `0:48–1:04` · **PURPOSE:** who Kotak is for, and the question it answers.
+**TIME:** `0:50–1:08` · **PURPOSE:** who Kotak is for, and the question it answers.
 
 **ON SCREEN:** Deck 3, "Digital Workers Whose Jobs AI Is Changing Now.": the rows Who Uses It, The Moment, Who Pays and Also For, and Aina's bubble, labelled "Sample persona". Push in on Who Uses It on the first sentence, then on the bubble as the manager's question is spoken.
 
@@ -107,7 +107,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V4: The solution
 
-**TIME:** `1:04–1:27` · **PURPOSE:** what she leaves with: direct and convincing.
+**TIME:** `1:08–1:37` · **PURPOSE:** what she leaves with: direct and convincing.
 
 **ON SCREEN:** Deck 4, "Every Must-Have, Not Just a Plan.", for the first sentence; cut to shot H1, Aina's finished roadmap ("Your 35-Week Roadmap", "80% Fit by Week 35"), on "She leaves with a dated plan"; cut back to Deck 4's must-have table on "And it covers".
 
@@ -121,7 +121,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V5: How it works
 
-**TIME:** `1:27–1:36` · **PURPOSE:** the one rule, then the hand-off into the demo.
+**TIME:** `1:37–1:47` · **PURPOSE:** the one rule, then the hand-off into the demo.
 
 **ON SCREEN:** Deck 5, the three-step flow. Dissolve into shot D1 on "Let's open the box."
 
@@ -133,7 +133,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### Live demo
 
-**TIME:** `1:36–4:36` · three minutes of the live app, recorded in OBS from the live demo link ([shot list](/docs/demo/video.md#shot-list)).
+**TIME:** `1:47–4:47` · three minutes of the live app, recorded in OBS from the live demo link ([shot list](/docs/demo/video.md#shot-list)).
 
 **ON SCREEN:** the app fills the frame. One chip top left names the step (Intake, Questions, Radar, Roles, Roadmap, What Changed, Ask Kopi, Your AI), and at most one short callout at a time. The tag "Sample persona · demo answers" stays on throughout. Cut on the narration, not on the clicks.
 
@@ -141,7 +141,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D1: Intake
 
-**TIME:** `1:36–1:50` · **CHIP:** Intake
+**TIME:** `1:47–2:01` · **CHIP:** Intake
 
 **ON SCREEN:** Check-Up start: Working, "web developer" typed and Web Developers picked, then the goal Stay Strong in My Job.
 
@@ -153,7 +153,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D2: Questions
 
-**TIME:** `1:50–2:08` · **CHIP:** Questions
+**TIME:** `2:01–2:19` · **CHIP:** Questions
 
 **ON SCREEN:** Kopi asks the first two or three can-do questions, and each is answered. Callout: "12 questions · about 3 minutes".
 
@@ -165,7 +165,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D3: Radar and job ads
 
-**TIME:** `2:08–2:42` · **CHIP:** Radar
+**TIME:** `2:19–2:53` · **CHIP:** Radar
 
 **ON SCREEN:** the radar with its "self-reported" label, the verdict chips and the dated sources, the dashed "Needed by" line; then a scroll to the Job Ads in Malaysia card. Callout on the card: "JobStreet ads · as of <recording date>".
 
@@ -177,7 +177,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D4: Roles
 
-**TIME:** `2:42–2:58` · **CHIP:** Roles
+**TIME:** `2:53–3:09` · **CHIP:** Roles
 
 **ON SCREEN:** Roles That Fit: three roles with their fit scores and reasons; the highlighted card's bold reason; then See the Maths open.
 
@@ -187,7 +187,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D5: Roadmap
 
-**TIME:** `2:58–3:26` · **CHIP:** Roadmap
+**TIME:** `3:09–3:37` · **CHIP:** Roadmap
 
 **ON SCREEN:** the roadmap at 10 hours a week: "Your 35-Week Roadmap", "80% Fit by Week 35", the first step's hours and its free search link; tick the first step and watch its skill level rise; end on the funding card. Callout: "80% fit by week 35 · 10 h/week".
 
@@ -199,7 +199,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D6: What Changed
 
-**TIME:** `3:26–4:06` · **CHIP:** What Changed
+**TIME:** `3:37–4:17` · **CHIP:** What Changed
 
 **ON SCREEN:** What Changed, starting on April 2026: load May 2026; the radar's line moves, six verdicts flip ("New data landed. Six skills changed, and your roadmap moved with them."), the ranking reorders, and Web site building, now Declining, moves from step 4 to step 6, the last. Kopi speaks its line in its speech bubble. Callout: "Same answers. New month."
 
@@ -213,7 +213,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### D7: Ask Kopi
 
-**TIME:** `4:06–4:18` · **CHIP:** Ask Kopi
+**TIME:** `4:17–4:29` · **CHIP:** Ask Kopi
 
 **ON SCREEN:** Ask Kopi: "Which rising skills do web developers lack most?" Kopi checks the national skill gaps and calls the rows sample data. Keep the words "sample data" readable.
 
@@ -225,7 +225,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 #### M1: Your AI
 
-**TIME:** `4:18–4:36` · **CHIP:** Your AI
+**TIME:** `4:29–4:47` · **CHIP:** Your AI
 
 **ON SCREEN:** about 3 seconds of the app's Connect Your AI page with the MCP address, then an AI assistant with Kotak connected answers a question about web developers from Kotak's tools; its answer shows the same verdicts as the radar. Callout: "Same rules, over MCP".
 
@@ -237,7 +237,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V6: Innovation
 
-**TIME:** `4:36–4:58` · **PURPOSE:** what exists, and the five things only Kotak does together.
+**TIME:** `4:47–5:14` · **PURPOSE:** what exists, and the five things only Kotak does together.
 
 **ON SCREEN:** Deck 6, "Others List Courses. Kotak Says What to Learn First.", the competitor grid. Push in on the rows as they are named, then light the Kotak column on "Kotak is the only one we found".
 
@@ -251,7 +251,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V7: Impact
 
-**TIME:** `4:58–5:16` · **PURPOSE:** the stakes, the money already in the system, and SDG 4.4.
+**TIME:** `5:14–5:33` · **PURPOSE:** the stakes, the money already in the system, and SDG 4.4.
 
 **ON SCREEN:** Deck 7, "Impact": the cards 3 Min, Week 35, 923 jobs and RM0 for workers, then the mission strip and "For Malaysia: levy-funded training aimed at the rising skills, toward SDG 4.4". Push in on each card as it is spoken.
 
@@ -265,7 +265,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V8: Who pays
 
-**TIME:** `5:16–5:42` · **PURPOSE:** the business model and the price, honestly labelled.
+**TIME:** `5:33–5:58` · **PURPOSE:** the business model and the price, honestly labelled.
 
 **ON SCREEN:** Deck 8, three tiers. Push in on "Kotak Team · RM5 per worker per month" as it is spoken, then on the levy anchor, then on "Prices to test, not contracts".
 
@@ -279,7 +279,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V9: Technical approach
 
-**TIME:** `5:42–6:13` · **PURPOSE:** prove it is built: two halves, one rulebook.
+**TIME:** `5:58–6:30` · **PURPOSE:** prove it is built: two halves, one rulebook.
 
 **ON SCREEN:** Deck 9, "Technical Architecture": push in on the data half and its job-ad row (Job-Ad Collector → Ad Review → Neon Postgres), then the product half, then the lock on "verdict".
 
@@ -293,7 +293,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### V10: Close
 
-**TIME:** `6:13–6:29`, ending on 3 seconds of silence.
+**TIME:** `6:30–6:46`, ending on 3 seconds of silence.
 
 **ON SCREEN:** Deck 10, "Open the box on your job.", with both QR codes readable for the whole segment and the hold.
 
@@ -309,7 +309,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 - **The room:** small and soft, with curtains, a sofa or a wardrobe of clothes nearby. Phone or laptop mic about 20 cm away, a little off to the side. No fan or air-conditioner noise.
 - **Files:** one per segment, named by the segment (`V01` to `V10`, `D1` to `D7`, `M1`), two takes each. Record 10 seconds of silence in the same room for the edit.
 - **Check the length:** if a segment runs more than 2 seconds over its "Read" time, read it again at a calm pace and cut a pause in the edit instead. Speed only the slide segments, to at most 1.2× (Premiere: Speed/Duration, Maintain Audio Pitch).
-- **Trim list,** if the cut still runs past 6:30, in this order: V9 "It's live on Replit, and over a hundred and twenty automated tests pass on every change." (Deck 9 shows it); V2 "That's about two hundred and seventy people a day."; V6 "A chatbot can't say where its plan came from." Together they save about 12 seconds at 1.2×. The 1.2× speed-up itself is not optional: without it the cut runs about 7:10.
+- **Trim list,** if the cut still runs past 6:30, in this order: V9 "It's live on Replit, and over a hundred and twenty automated tests pass on every change." (Deck 9 shows it); V2 "That's about two hundred and seventy people a day."; V6 "A chatbot can't say where its plan came from." Together they save about 12 seconds at 1.2×. The 1.2× speed-up itself is not optional: without it the cut runs about 7:28.
 - **Pickup lines** for the figures that can change on the day:
   - D3, if the card shows a different count or median: "about <count> JobStreet ads in Malaysia match her job, at a median of <median> ringgit a month."
   - V8, if the median changed: "For a developer on the median advertised pay, the levy is <1% of the median> ringgit a month."
