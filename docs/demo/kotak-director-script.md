@@ -87,7 +87,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> Here's why. [pause 0.4s] By mid-July this year, fifty-two thousand, six hundred and seven Malaysians had lost their jobs. That's about two hundred and seventy people a day. [pause 0.3s] Half were professionals, managers, executives or technicians. In 1998 and 2009, production workers were hit hardest. [pause 0.3s] This time, it's the office. [pause 0.5s] The minister says AI isn't a main cause yet. But a study at ISIS Malaysia found the jobs most exposed to AI see sixty-nine per cent more job losses than average. [pause 0.3s] And while fifty-six per cent of Malaysian professionals use AI at work, only twenty-six per cent have been trained.
+> Here's why. [pause 0.4s] In mid-July this year, fifty-two thousand, six hundred and seven Malaysians had lost their jobs. That's about two hundred and seventy people a day. [pause 0.3s] Half were professionals, managers, executives or technicians. In 1998 and 2009, production workers were hit hardest. [pause 0.3s] This time, it's the office. [pause 0.5s] The minister says AI isn't a main cause yet. But a study at Institute Of Strategic & International Studies (ISIS) Malaysia found the jobs most exposed to AI see sixty-nine per cent more job losses than average. [pause 0.3s] And while fifty-six per cent of Malaysian professionals use AI at work, only twenty-six per cent have been trained.
 
 **NOTES:** Never say AI caused these job losses. The minister names closures, voluntary separation schemes and rationalisation as the main causes; the ISIS finding is a link in PERKESO data, not proof of replacement. "This time, it's the office" rests on BusinessToday's comparison with 1998 and 2009.
 
@@ -101,7 +101,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> So we start with the people closest to the change: developers, testers and designers. [pause 0.3s] Meet Aina, our sample persona, a front-end developer in Kuala Lumpur. Her company just rolled out AI coding tools. Her manager asks: which training do we fund this year?
+> So we start with the people closest to the change: developers, testers and designers. [pause 0.3s] Meet Aina, our sample persona, a front-end developer in Kuala Lumpur. She works at a tech company that just rolled out AI coding tools. Her manager asks: which training do we fund this year?
 
 **NOTES:** Aina is invented for this pitch; "sample persona" says so. Never call her a user, a tester or a case. The engine covers 923 jobs; the slide says so, and the narration doesn't need to.
 
@@ -115,7 +115,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> A course list can't answer that. Kotak can, in a three-minute check-up for her job. [pause 0.3s] Twelve questions, no CV. She leaves with a dated plan: which skill first, the hours each week, a free step for each skill, and her employer's funding route. [pause 0.3s] And it covers all six must-haves in the Domain 1 brief, from a dated trend layer to SDG tags.
+> Now, a course list can't answer that. Kotak can, in a three-minute check-up for her job. [pause 0.3s] Twelve questions and no CV needed. She leaves with a dated plan: a week-by-week reskilling calendar, from her start date to eighty per cent fit for her job. It shows which skill first, the hours each week, a free step for each skill, and her employer's funding route. [pause 0.3s] And it covers all six must-haves in the Domain 1 brief, from a dated trend layer to SDG tags.
 
 **NOTES:** Never say "AI check-up". The free steps are web searches marked "Search suggestion, not checked"; the narration says "a free step", never "a free course".
 
@@ -129,7 +129,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> How does it work? [pause 0.2s] Data decides. AI explains. [pause 0.3s] Fixed rules over dated public data set every verdict and step. [pause 0.2s] Let's open the box.
+> So, how does it work? [pause 0.2s] Data decides. AI explains. [pause 0.3s] Fixed rules over dated public data set every verdict and step. [pause 0.2s] Marilah buka kotak-mu.
 
 ### Live demo
 
@@ -239,13 +239,13 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **TIME:** `4:36–4:58` · **PURPOSE:** what exists, and the five things only Kotak does together.
 
-**ON SCREEN:** Deck 6, the competitor grid. Push in on the rows as they are named, then light the Kotak column on "Kotak is the only one we found".
+**ON SCREEN:** Deck 6, "Others List Courses. Kotak Says What to Learn First.", the competitor grid. Push in on the rows as they are named, then light the Kotak column on "Kotak is the only one we found".
 
 **DELIVERY:** Name the others with respect: they are good at what they do. "Kotak is the only one we found" is confident and exact; "we found" stays in. The last two sentences fall slowly; they are the slide's headline.
 
 **VOICEOVER:**
 
-> So what's new? [pause 0.3s] MyMahir and LinkedIn map skills. MasterClass, ReSkills and e-LATiH offer courses. A chatbot can't say where its plan came from. [pause 0.3s] Kotak is the only one we found that dates each skill's AI trend, shows its maths, times the plan, points to funding, and lets any AI call the same rules. [pause 0.3s] Courses are the supply. Kotak sets the priority.
+> Now, what's so special with Kotak? [pause 0.3s] As you can see, MyMahir and LinkedIn map skills. MasterClass, ReSkills and e-LATiH offer courses. A chatbot can't say where its plan came from. [pause 0.3s] Kotak is the only one we found that dates each skill's AI trend, shows its maths, times the plan, points to funding, and lets any AI call the same rules. [pause 0.3s] Course sites tell you what you could learn. Kotak tells you what to learn first, and why.
 
 **NOTES:** "The only one we found" rests on the team's public-tool review in October 2026; never drop "we found". Never call a course HRD Corp-claimable.
 
@@ -259,7 +259,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> For a worker, the gain is plain: three minutes, a plan to eighty per cent fit, and nothing to pay, across nine hundred and twenty-three jobs. [pause 0.3s] For Malaysia, the levy already funds training; Kotak helps aim it at the rising skills. [pause 0.3s] That's SDG 4.4: skills for decent work.
+> For a worker, the gain is plain: three minutes, a plan to eighty per cent skill fit threshold, and nothing to pay, across nine hundred and twenty-three jobs. [pause 0.3s] For Malaysia, the levy already funds training; Kotak helps aim it at the rising skills. [pause 0.3s] That's SDG 4.4: skills for decent work.
 
 **NOTES:** "A plan to eighty per cent fit" is Aina's demo plan at 10 hours a week, and fit is an estimate. "Kotak helps aim it" says what Kotak is for; we claim no jobs saved and no levy moved yet.
 
@@ -287,7 +287,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> And under the hood, two halves share one rulebook. Every week, dated public data becomes a snapshot; every day, new JobStreet ads come in, Claude sorts them and a person checks them. RunPod drafted the skills and questions for nine hundred and twenty-three jobs in thirteen minutes. In the app, the rules run in your browser: same answers, same result. [pause 0.2s] Claude Haiku explains, and a check rejects any explanation that changes a verdict. [pause 0.3s] It's live on Replit, and over a hundred and twenty automated tests pass on every change.
+> And under the hood, two halves share one rulebook. Every week, dated public data becomes a snapshot; every day, new JobStreet ads come in, Claude sorts them and a moderator checks them. RunPod drafted the skills and questions for nine hundred and twenty-three jobs in thirteen minutes. In the app, the rules run in your browser: same answers, same result. [pause 0.2s] Claude Haiku explains, and a check rejects any explanation that changes a verdict. [pause 0.3s] It's live on Replit, and over a hundred and twenty automated tests pass on every change.
 
 **NOTES:** Live2D and ElevenLabs are named on Deck 9 only, and not in any other narration. Replit hosts the live demo (Deck 9 and Deck 10).
 
@@ -301,7 +301,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 **VOICEOVER:**
 
-> Aina doesn't need another course list. She needs to know where to start. [pause 0.4s] Kotak is Malay for box. We built it to open the box on your job. [pause 0.3s] Data decides. AI explains. We're Team T010NG. Thank you.
+> Ultimately, Aina doesn't need another course list. She needs to know where to start. [pause 0.4s] Kotak is Malay for box. We built it to open the box on your job. [pause 0.3s] Data decides. AI explains. We're Team T010NG. Thank you.
 
 ## Recording the voiceover
 
