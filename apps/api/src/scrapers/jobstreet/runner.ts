@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { careerFromRow } from './careers'
 import { jobstreetDatabase } from './database'
-import { parseQueuedJobstreetRun, queuedDepthListing } from './tasks'
+import { CLAIM_NEXT_RUN, parseQueuedJobstreetRun, queuedDepthListing } from './tasks'
 import { scrapeJobstreet } from './pipeline'
 import { scrapeJobstreetDepth } from './depth'
 import { persistRunOutput } from './store'
@@ -159,20 +159,7 @@ async function claimNext() {
        OR (heartbeat_at IS NULL AND started_at < now() - interval '12 hours')
      )`
   )
-  // The Neon driver parses a date column into a JavaScript Date, which the queue check rejects as an invalid schedule
-  // date, so the nightly runs failed before scraping. The date goes out as YYYY-MM-DD text instead.
-  const rows = await sql.query(
-    `UPDATE jobstreet_scrape_runs
-     SET status = 'running', started_at = now(), heartbeat_at = now(), error = NULL
-     WHERE id = (
-       SELECT id FROM jobstreet_scrape_runs
-       WHERE status = 'queued'
-       ORDER BY created_at
-       LIMIT 1
-       FOR UPDATE SKIP LOCKED
-     )
-     RETURNING id, career_slug, mode, source, scheduled_for::text AS scheduled_for`
-  )
+  const rows = await sql.query(CLAIM_NEXT_RUN)
   return rows[0] as
     | {
         id: string

@@ -108,11 +108,13 @@ const STANDING_DECISIONS = `(SELECT count(*) FILTER (WHERE decision.approved)::i
 // listings that reference it (their foreign-key checks take KEY SHARE locks, which this lock allows).
 const LOCK_CAREER = 'SELECT slug FROM jobstreet_careers WHERE slug = $1 FOR NO KEY UPDATE'
 
-// The first statement of every transaction that runs SYNC_APPROVED_AT, which writes jobstreet_listings last. Every
-// deploy reruns the migrations, and CREATE INDEX IF NOT EXISTS takes a SHARE lock on its table even when the index
-// exists: jobstreet_listings in 0002, then jobstreet_listing_reviews in 0006. A transaction that wrote the reviews and
-// only then the listings would take them in the other order and could deadlock with a deploy. ROW EXCLUSIVE is the
-// lock the sync takes anyway; it doesn't conflict with the runner's saves or other writes, only with those SHARE locks.
+// The first statement of every transaction that runs SYNC_APPROVED_AT, which writes jobstreet_listings last. Since
+// #293 the migrations create an index only when the catalog lacks it, so a deploy that reruns them takes no SHARE
+// lock. The first deploy of a future migration that indexes these tables will: CREATE INDEX holds a SHARE lock on its
+// table until the deploy commits, and the migrations index jobstreet_listings (0002) before jobstreet_listing_reviews
+// (0006). A transaction that wrote the reviews and only then the listings would take them in the other order and could
+// deadlock with that deploy. ROW EXCLUSIVE is the lock the sync takes anyway, and the runner's saves and other writes
+// take it too, so it conflicts with nothing else.
 const LOCK_LISTINGS = 'LOCK TABLE jobstreet_listings IN ROW EXCLUSIVE MODE'
 
 async function loadBatch(sql: Sql, runId: string): Promise<Batch | undefined> {
