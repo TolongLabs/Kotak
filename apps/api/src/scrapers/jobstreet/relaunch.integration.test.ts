@@ -75,6 +75,10 @@ interface Launch {
 }
 interface Site {
   plan: (launch: number, moment: Moment) => Action | undefined
+  // Serve this document as a Cloudflare challenge that never clears.
+  challenge?: (launch: number, url: string) => boolean
+  // How long after serving a document its disruption fires; 200 ms unless set.
+  disruptAfterMs?: number
   launches: Launch[]
   served: Array<{ launch: number; url: string; how: 'fulfilled' | 'aborted'; cookie: string | null }>
   seen: string[]
@@ -83,8 +87,9 @@ interface Site {
   sockets: string[]
   problems: string[]
 }
-const site = (plan: Site['plan'] = () => undefined): Site => ({
+const site = (plan: Site['plan'] = () => undefined, extra: Pick<Site, 'challenge' | 'disruptAfterMs'> = {}): Site => ({
   plan,
+  ...extra,
   launches: [],
   served: [],
   seen: [],
@@ -213,13 +218,16 @@ async function serve(state: Site, launch: Launch, page: Page, route: Route) {
     how: 'fulfilled',
     cookie: await request.headerValue('cookie')
   })
-  await route.fulfill({
-    status: job || search ? 200 : 404,
-    contentType: 'text/html',
-    headers: { 'set-cookie': `kotak_fixture=launch-${launch.number}; Path=/; Max-Age=86400; Secure` },
-    body
-  })
-  if (action) setTimeout(() => void disrupt(state, launch, page, action), 200)
+  const cookie = { 'set-cookie': `kotak_fixture=launch-${launch.number}; Path=/; Max-Age=86400; Secure` }
+  if (state.challenge?.(launch.number, request.url()))
+    await route.fulfill({
+      status: 403,
+      contentType: 'text/html',
+      headers: { ...cookie, 'cf-mitigated': 'challenge', 'cf-ray': 'fixture-ray' },
+      body: `<!doctype html><html>${head('Just a moment...')}<body>Performing security verification</body></html>`
+    })
+  else await route.fulfill({ status: job || search ? 200 : 404, contentType: 'text/html', headers: cookie, body })
+  if (action) setTimeout(() => void disrupt(state, launch, page, action), state.disruptAfterMs ?? 200)
 }
 
 // The scraper reads both Next-link groups with locator(...).count() right after it saves a page's listings.
@@ -460,6 +468,35 @@ browserTest(
   },
   180_000
 )
+
+for (const action of ['crash', 'kill'] as const)
+  browserTest(
+    `${action === 'crash' ? 'a renderer crash' : 'killing the browser'} while waiting for verification on search page 2 relaunches and resumes at page 2`,
+    async () => {
+      const { ids } = await cleanBaseline()
+      // The first launch serves page 2 as a challenge that never clears; the disruption lands 3 s into the wait.
+      const state = site(
+        (launch, moment) =>
+          launch === 1 && moment.kind === 'document' && pageOf(moment.url) === 2 ? action : undefined,
+        { challenge: (launch, url) => launch === 1 && pageOf(url) === 2, disruptAfterMs: 3_000 }
+      )
+      const run = await breadth(`verification-${action}`, state, { verificationTimeoutMs: 60_000 })
+      summary(`${action} during the verification wait on page 2`, state, run)
+      expect(run.error).toBeNull()
+      expect([run.report.status, run.report.stop_reason, run.report.relaunches]).toEqual(['success', 'no_next_page', 1])
+      expect(run.report.relaunch_errors).toEqual([
+        action === 'crash'
+          ? 'Page crashed while waiting for verification'
+          : 'Browser disconnected while waiting for verification'
+      ])
+      expect(run.log.some((line) => line.includes(`Verification required at ${searchPage(2)}`))).toBe(true)
+      expect(documents(state)).toEqual(['1 p1', '1 p2', '2 p2', '2 p3', '2 p4'])
+      expect(run.report.pages.map((entry: { url: string }) => entry.url)).toEqual([1, 2, 3, 4].map(searchPage))
+      expect(run.ids).toEqual(ids)
+      expectHealthy(state, run)
+    },
+    180_000
+  )
 
 browserTest(
   'a crash right after the last page is saved ends the run normally at the page past the end',

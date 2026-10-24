@@ -23,6 +23,11 @@ export interface NavigationState {
 
 export class VerificationTimeoutError extends Error {}
 
+// How long after its page closes a browser that went down with it is reported disconnected. A killed or crashed
+// browser closes the page and disconnects at once. A window closed by hand closes the page while the browser stays
+// connected for about 70 ms more, until it has shut down.
+const CLOSE_SETTLE_MS = 10
+
 export function verificationTimeout(value = 120_000): number {
   if (!Number.isInteger(value) || value < 0 || value > 600_000)
     throw new Error('--verification-timeout-ms must be an integer from 0 to 600000')
@@ -75,6 +80,25 @@ async function waitForVerification(
     ray_id: (await initial?.headerValue('cf-ray')) ?? null
   }
   entry.verification = state
+  // A crash ends the wait at once, with an error relaunch.ts treats as a crash: the renderer's crash event leaves the
+  // page open, and a dead browser takes the page with it. A page closed while its browser runs on, as when the
+  // operator closes the window, still ends the run.
+  const lost: { error: Error | null } = { error: null }
+  const browser = page.context().browser()
+  const onCrash = () => {
+    lost.error ??= new Error('Page crashed while waiting for verification')
+  }
+  const onClose = () =>
+    setTimeout(() => {
+      lost.error ??= new Error(
+        browser && !browser.isConnected()
+          ? 'Browser disconnected while waiting for verification'
+          : 'Browser page closed while waiting for verification'
+      )
+    }, CLOSE_SETTLE_MS)
+  page.on('crash', onCrash)
+  page.on('close', onClose)
+  if (page.isClosed()) onClose()
   try {
     await save()
     console.warn(
@@ -86,7 +110,7 @@ async function waitForVerification(
     if (options.evidencePrefix) await saveEvidence(page, options.evidencePrefix, { screenshot: false })
     let nextNotice = started + 15_000
     while (true) {
-      if (page.isClosed()) throw new Error('Browser page closed while waiting for verification')
+      if (lost.error) throw lost.error
       const response = latestResponse()
       // Clearance must lead to a new top-level document response. Removing a banner alone is insufficient.
       if (response && response !== initial) {
@@ -120,6 +144,8 @@ async function waitForVerification(
       'Verification did not clear before the wait ended; partial results are preserved'
     )
   } finally {
+    page.off('crash', onCrash)
+    page.off('close', onClose)
     if (state.status === 'waiting') {
       state.status = 'interrupted'
       state.finished_at = new Date().toISOString()

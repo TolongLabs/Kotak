@@ -120,6 +120,19 @@ afterAll(async () => {
     await rm(workspace, { recursive: true, force: true })
 })
 
+// The message of a run that must fail. A plain await settles it: bun:test waits for expect(run).rejects in a nested
+// event loop that can skip the microtask checkpoint after each setImmediate callback (oven-sh/bun#45020). Playwright
+// handles each DevTools message in one, so a browser launched in there can miss its page's load event and hang until
+// Playwright's 180-second launch timeout.
+async function failure(run: Promise<unknown>): Promise<string> {
+  try {
+    await run
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error)
+  }
+  throw new Error('Expected the run to fail')
+}
+
 const options = (name: string) => ({
   url: 'https://my.jobstreet.com/fixture-jobs',
   profileId: Bun.env.BROWSER_PROFILE_ID,
@@ -191,7 +204,7 @@ for (const status of [403, 429])
       scenario = status === 403 ? 'denied' : 'rate-limited'
       requests = 0
       const config = options(`denied-${status}`)
-      await expect(breadth(config)).rejects.toThrow(`HTTP ${status}`)
+      expect(await failure(breadth(config))).toContain(`HTTP ${status}`)
       const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
       expect([report.stop_reason, requests, report.pages[0].verification]).toEqual(['error', 1, undefined])
     },
@@ -253,7 +266,7 @@ browserTest(
   async () => {
     scenario = 'invalid-pagination'
     const config = { ...options('invalid-pagination'), maxPages: 2, maxJobs: 2 }
-    await expect(breadth(config)).rejects.toThrow('change the search query')
+    expect(await failure(breadth(config))).toContain('change the search query')
     const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
     expect([report.jobs_saved, report.pages.length]).toEqual([1, 1])
   },
@@ -267,7 +280,7 @@ browserTest(
     requests = 0
     frameRequests = 0
     const config = { ...options('timed-out'), verificationTimeoutMs: 1500 }
-    await expect(breadth(config)).rejects.toThrow('Verification did not clear')
+    expect(await failure(breadth(config))).toContain('Verification did not clear')
     const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
     expect([report.stop_reason, report.jobs_saved, requests, frameRequests]).toEqual(['verification_timeout', 0, 1, 1])
     expect([report.pages[0].http_status, report.pages[0].verification.status]).toEqual([403, 'timed_out'])
