@@ -1143,10 +1143,10 @@
     <style>
       h1.title { line-height: 1.2; }
       .chrome { position: relative; z-index: 3; }
-      .orgs { display: flex; align-items: center; gap: 14px; }
-      .orgs img { height: 52px; width: auto; display: block; }
+      .orgs { display: flex; align-items: center; gap: 18px; }
+      .orgs img { height: 78px; width: auto; display: block; }
       .orgs img.sdg { border-radius: 4px; }
-      .orgs i { width: 1px; height: 40px; background: var(--line); }
+      .orgs i { width: 2px; height: 60px; background: var(--line); }
       .art img, .hero img.box, .dev img { mix-blend-mode: multiply; }
       .art { display: flex; align-items: center; justify-content: center; min-height: 0; }
       .art img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
@@ -1251,7 +1251,13 @@
       /* 8 · business model */
       .s8 h1.title { font-size: 66px; }
       .s8 .bm8 { display: grid; grid-template-columns: 1110px minmax(0, 1fr); gap: 30px; margin-top: 22px; align-items: start; }
-      .s8 img.bm { width: 100%; height: auto; display: block; }
+      .s8 svg.bmd { width: 100%; height: auto; display: block; }
+      .bmd .tag rect { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
+      .bmd .tag.dark rect { fill: var(--ink); }
+      .bmd .tag text { font: 700 12px/1 var(--mono); letter-spacing: 0.06em; fill: var(--ink); }
+      .bmd .tag.dark text { fill: var(--yellow); }
+      .bmd .glyph { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .bmd .lg text { font: 600 14px/1 var(--mono); fill: var(--ink-2); }
       .tiers { display: flex; flex-direction: column; gap: 14px; }
       .tier { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; align-items: center; padding: 14px 22px; border: 3px solid var(--ink); border-radius: 16px; }
       .tier.y { background: var(--yellow); }
@@ -1374,7 +1380,7 @@
             <div>
               <div class="defs">
                 <div><b>Who Uses It</b><p>Working adults in AI-exposed digital jobs: <strong>developers, QA testers, UI/UX designers</strong>.</p></div>
-                <div><b>The Moment</b><p>The week their company rolls out AI tools, and nobody says <strong>which skill to build next</strong>.</p></div>
+                <div><b>The Moment</b><p>The week tech companies roll out <strong>AI coding tools</strong>, and nobody says <strong>which skill to build next</strong>.</p></div>
                 <div><b>Who Pays</b><p>HR and L&amp;D managers at <strong>HRD Corp levy-paying employers</strong>, choosing what to fund.</p></div>
                 <div><b>Also For</b><p>Career switchers and fresh graduates picking their next role.</p></div>
               </div>
@@ -1515,7 +1521,48 @@
           <p class="eyebrow">Prices to Test, Not Contracts</p>
           <h1 class="title">Workers Free. Employers Pay. <span class="hl">Agencies License.</span></h1>
           <div class="bm8">
-            <img class="bm" src="assets/diagrams/business-model.webp" alt="Business model: workers use Kotak free; employers pay RM5 per worker a month for team skill gaps; agencies license anonymous totals; employers pay the 1% HRD Corp levy, which funds approved training, not Kotak" />
+            <svg class="tarch bmd" viewBox="0 0 1102 500" role="img" aria-label="Business model: workers use Kotak free; employers pay for team skill gaps; agencies license anonymous totals; employers pay the 1% HRD Corp levy, which funds approved training, never Kotak">
+              <defs><marker id="bm-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 z" fill="var(--ink)" /></marker><marker id="bm-arrow-m" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 z" fill="var(--control)" /></marker></defs>
+              <text class="zl" x="0" y="20">01 · USERS</text>
+              <text class="zl" x="296" y="20">02 · KOTAK</text>
+              <text class="zl" x="592" y="20">03 · BUYERS</text>
+              <text class="zl" x="892" y="20">04 · TRAINING</text>
+              <rect class="box " x="0" y="200" width="210" height="112" rx="12" />
+              <g class="glyph" transform="translate(16 215) scale(1.2)"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></g>
+              <text class="t1" x="16" y="276">Workers</text>
+              <text class="t2" x="16" y="297">free check-up and plan</text>
+              <rect class="box y" x="296" y="200" width="210" height="112" rx="12" />
+              <image href="assets/brand/kotak-mark.svg" x="312" y="214" width="30" height="30" />
+              <text class="t1" x="312" y="276">Kotak</text>
+              <text class="t2 dark" x="312" y="297">fixed rules, dated data</text>
+              <rect class="box " x="592" y="50" width="210" height="112" rx="12" />
+              <g class="glyph" transform="translate(608 65) scale(1.2)"><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18" /></g>
+              <text class="t1" x="608" y="126">Employers</text>
+              <text class="t2" x="608" y="147">levy-paying companies</text>
+              <rect class="box " x="592" y="350" width="210" height="112" rx="12" />
+              <g class="glyph" transform="translate(608 365) scale(1.2)"><path d="M3 21h18M5 21V10M19 21V10M9.5 21V10M14.5 21V10M2 10l10-6 10 6z" /></g>
+              <text class="t1" x="608" y="426">Agencies</text>
+              <text class="t2" x="608" y="447">TalentCorp, HRD Corp</text>
+              <rect class="box " x="892" y="50" width="210" height="112" rx="12" />
+              <g class="glyph" transform="translate(908 65) scale(1.2)"><circle cx="9" cy="9" r="6" /><path d="M18.1 10.4a6 6 0 1 1-7.7 7.7M7 7h3v4" /></g>
+              <text class="t1" x="908" y="126">HRD Corp Levy</text>
+              <text class="t2" x="908" y="147">1% of wages</text>
+              <rect class="box " x="892" y="350" width="210" height="112" rx="12" />
+              <g class="glyph" transform="translate(908 365) scale(1.2)"><path d="M22 10 12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5" /></g>
+              <text class="t1" x="908" y="426">Course Providers</text>
+              <text class="t2" x="908" y="447">approved training</text>
+              <path class="e" d="M210 256 H292" marker-end="url(#bm-arrow)" />
+              <g class="el"><rect x="206" y="222" width="90" height="22" rx="4" /><text x="251" y="237" text-anchor="middle">12 answers</text></g>
+              <path class="e" d="M401 200 V106 H588" marker-end="url(#bm-arrow)" />
+              <g class="el"><rect x="430" y="95" width="134" height="22" rx="4" /><text x="497" y="110" text-anchor="middle">team skill gaps</text></g>
+              <path class="e" d="M401 312 V406 H588" marker-end="url(#bm-arrow)" />
+              <g class="el"><rect x="426" y="395" width="142" height="22" rx="4" /><text x="497" y="410" text-anchor="middle">anonymous totals</text></g>
+              <path class="e d" d="M802 106 H888" marker-end="url(#bm-arrow-m)" />
+              <g class="el"><rect x="811" y="72" width="70" height="22" rx="4" /><text x="846" y="87" text-anchor="middle">1% levy</text></g>
+              <path class="e d" d="M997 162 V346" marker-end="url(#bm-arrow-m)" />
+              <g class="el"><rect x="899" y="243" width="196" height="22" rx="4" /><text x="997" y="258" text-anchor="middle">funds approved training</text></g>
+              <g class="lg"><path class="e" d="M0 486 H40" /><text x="50" y="491">data from Kotak</text><path class="e d" d="M230 486 H270" /><text x="280" y="491">levy money, never Kotak’s</text></g>
+            </svg>
             <div class="tiers">
               <div class="tier"><span class="who">Workers</span><span class="tag2 live">LIVE</span><b>Free</b><p>Check-up, radar, roles, dated plan.</p></div>
               <div class="tier y"><span class="who">Kotak Team</span><span class="tag2">NEXT</span><b>RM5 <small>/ Worker / Month</small></b><p>Billed yearly. Team gaps, who to train first.</p></div>
@@ -1527,7 +1574,7 @@
             <div><small>Priced Below</small><p>Coursera for Teams lists US$399 a seat a year.</p><p class="src">coursera.org list price</p></div>
             <div><small>Trust Rule</small><p>No paid placement. A course never buys its way into a plan.</p><p class="src">Plans rank by data only</p></div>
           </div>
-          <div class="foot"><span>08 / 10 · Business Model</span><span>Diagram: Archify · prices to test, not contracts · team view: our next build</span></div>
+          <div class="foot"><span>08 / 10 · Business Model</span><span>Prices to test, not contracts · team view: our next build</span></div>
         </div>
       </section>
 
