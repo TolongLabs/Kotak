@@ -1,5 +1,6 @@
 import { EngineSnapshotSchema, sampleSnapshot } from '@kotak/shared'
 import type { ComponentType } from 'react'
+import { useRoleIndex } from './engine/bundle'
 import { usePath } from './app/router'
 import { routes } from './app/routes'
 import { AppShell } from './app/shell/AppShell'
@@ -12,6 +13,7 @@ import { DashboardView } from './views/DashboardView'
 import { LandingView } from './views/LandingView'
 import { NotFoundView } from './views/NotFoundView'
 import { QuestionsView } from './views/QuestionsView'
+import { JobView } from './views/JobView'
 import { RadarView } from './views/RadarView'
 import { RoadmapView } from './views/RoadmapView'
 import { RolesView } from './views/RolesView'
@@ -37,11 +39,25 @@ const appViews: Record<string, ComponentType> = {
   [routes.settings]: SettingsView
 }
 
+// An unknown job code gets the same bare 404 page as any unknown path, once the role index says so.
+function JobScreen({ code, path, dataLabel }: { code: string; path: string; dataLabel: string }) {
+  const index = useRoleIndex()
+  if (index.status === 'ready' && !index.data.roles.some((role) => role.onet_code === code)) return <NotFoundView />
+  return (
+    <AppShell path={path} dataLabel={dataLabel}>
+      <JobView code={code} />
+    </AppShell>
+  )
+}
+
 function Screen({ path, dataLabel }: { path: string; dataLabel: string }) {
   if (path === routes.adminSignIn) return <AdminSignInView />
   if (path === routes.adminScraping) return <AdminScrapingView />
   if (path === routes.landing) return <LandingView />
   if (path === routes.signIn) return <SignInView />
+
+  const jobCode = path.startsWith(`${routes.jobs}/`) ? decodeURIComponent(path.slice(routes.jobs.length + 1)) : null
+  if (jobCode) return <JobScreen code={jobCode} path={path} dataLabel={dataLabel} />
 
   const View = appViews[path]
   if (!View) return <NotFoundView />

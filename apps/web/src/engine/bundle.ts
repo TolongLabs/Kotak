@@ -21,7 +21,7 @@ const bundle = createBundle(fetchSource({ baseUrl: window.location.origin, fetch
 export const loadManifest = () => bundle.manifest()
 export const loadRoleIndex = () => bundle.roleIndex()
 export const loadRole = (onetCode: string) => bundle.role(onetCode)
-export const loadRoleBundle = (onetCode: string) => bundle.roleBundle(onetCode)
+export const loadRoleBundle = (onetCode: string, extra?: string[]) => bundle.roleBundle(onetCode, extra)
 export const loadPathways = () => bundle.pathways()
 
 /** The session's check-up inputs as a key: the same key loads the same roles. */
