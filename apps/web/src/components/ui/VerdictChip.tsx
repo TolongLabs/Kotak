@@ -13,7 +13,8 @@ const verdictConfig = {
   rising: {
     label: 'Rising',
     icon: TrendingUp,
-    borderStyle: 'border-solid'
+    borderStyle: 'border-solid',
+    tone: 'border-state-success text-state-success bg-[color-mix(in_srgb,var(--color-state-success)_6%,var(--color-bg-default))]'
   },
   steady: {
     label: 'Steady',
@@ -23,7 +24,8 @@ const verdictConfig = {
   declining: {
     label: 'Declining',
     icon: TrendingDown,
-    borderStyle: 'border-solid'
+    borderStyle: 'border-solid',
+    tone: 'border-state-error text-state-error bg-[color-mix(in_srgb,var(--color-state-error)_6%,var(--color-bg-default))]'
   },
   split: {
     label: 'Split',
@@ -58,7 +60,8 @@ export const VerdictChip = forwardRef<HTMLSpanElement, VerdictChipProps>(functio
     <span
       ref={ref}
       className={cn(
-        'inline-flex shrink-0 items-center rounded-full bg-bg-default font-sans font-semibold text-text-primary border-[1.5px] border-text-primary',
+        'inline-flex shrink-0 items-center rounded-full font-sans font-semibold border-[1.5px]',
+        'tone' in config ? config.tone : 'bg-bg-default text-text-primary border-text-primary',
         config.borderStyle,
         sizeClasses[size],
         className

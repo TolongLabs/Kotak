@@ -15,6 +15,9 @@
   --color-radar-role: var(--k-color-radar-role);
   --color-radar-you: var(--k-color-radar-you);
   --color-radar-you-fill: var(--k-color-radar-you-fill);
+  --color-swot-weak: var(--k-color-swot-weak);
+  --color-swot-opp: var(--k-color-swot-opp);
+  --color-swot-threat: var(--k-color-swot-threat);
   --color-surface-glass: var(--k-color-surface-glass);
 
   --color-sdg-1: var(--k-color-sdg-1);

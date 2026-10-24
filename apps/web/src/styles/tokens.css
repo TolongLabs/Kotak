@@ -17,6 +17,9 @@
   --k-color-radar-role: #191812;
   --k-color-radar-you: #f6d732;
   --k-color-radar-you-fill: #fae784;
+  --k-color-swot-weak: #fbe4e1;
+  --k-color-swot-opp: #e0ebfa;
+  --k-color-swot-threat: #ebe2f7;
   --k-color-surface-glass: rgb(255 255 255 / 72%);
 
   /* SDG colours */
@@ -97,6 +100,9 @@
   --k-color-radar-role: #f3f2ed;
   --k-color-radar-you: #efd127;
   --k-color-radar-you-fill: #96841c;
+  --k-color-swot-weak: #3a1f1c;
+  --k-color-swot-opp: #182a40;
+  --k-color-swot-threat: #2b2040;
   --k-color-surface-glass: rgb(16 16 11 / 72%);
 }
 
@@ -118,6 +124,9 @@
     --k-color-radar-role: #f3f2ed;
     --k-color-radar-you: #efd127;
     --k-color-radar-you-fill: #96841c;
+    --k-color-swot-weak: #3a1f1c;
+    --k-color-swot-opp: #182a40;
+    --k-color-swot-threat: #2b2040;
     --k-color-surface-glass: rgb(16 16 11 / 72%);
   }
 }

@@ -25,6 +25,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
     items: SwotItem[]
     icon: typeof CircleCheck
     className: string
+    focus?: boolean
   }> = [
     {
       title: 'Strengths',
@@ -38,21 +39,22 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
       hint: 'Close These Next',
       items: swot.weaknesses,
       icon: Target,
-      className: 'border-[1.5px] border-text-primary bg-bg-default'
+      className: 'border-[1.5px] border-text-primary bg-swot-weak',
+      focus: true
     },
     {
       title: 'Opportunities',
       hint: 'Roles Within Reach',
       items: swot.opportunities,
       icon: Briefcase,
-      className: 'border border-border-subtle bg-bg-default'
+      className: 'border-[1.5px] border-text-primary bg-swot-opp'
     },
     {
       title: 'Threats',
       hint: 'Let AI Draft These',
       items: swot.threats,
       icon: TriangleAlert,
-      className: 'border-[1.5px] border-text-primary bg-bg-panel'
+      className: 'border-[1.5px] border-text-primary bg-swot-threat'
     }
   ]
 
@@ -82,7 +84,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
 
       {/* Columns follow the card's own width: one on phones, 2x2 in a half column, one row of four at full width. */}
       <div className="grid grid-cols-1 gap-3 @md:grid-cols-2 @3xl:grid-cols-4">
-        {quadrants.map(({ title, hint, items, icon: Icon, className }) => {
+        {quadrants.map(({ title, hint, items, icon: Icon, className, focus }) => {
           const open = expanded.includes(title)
           const shown = open ? items : items.slice(0, QUADRANT_PREVIEW)
           const hiddenCount = items.length - shown.length
@@ -96,11 +98,16 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
                 className
               )}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Icon className="h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
                 <h3 className={cn('text-text-primary', phone ? 'text-label-m' : 'text-label-m lg:text-label-l')}>
                   {title}
                 </h3>
+                {focus && items.length > 0 && (
+                  <span className="rounded-full border border-text-primary px-2 py-0.5 text-label-s font-semibold text-text-primary">
+                    Focus here
+                  </span>
+                )}
               </div>
               <p className="text-body-s text-text-muted">{hint}</p>
               {shown.length > 0 ? (
