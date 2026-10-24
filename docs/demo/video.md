@@ -1,6 +1,6 @@
 # Demo video
 
-How the team makes the pitching video: a narrated deck with a three-minute live demo of Kotak in the middle. A Playwright harness films the live app, the team records the narration, and Remotion assembles the slides, the footage, the narration and the [demo graphics](demo-graphics.md) into one file. This is the pipeline from our earlier project; the Remotion project lives outside this repository. [`kotak-director-script.md`](kotak-director-script.md) holds the words, the timing and what each segment shows.
+How the team makes the pitching video: a narrated deck with a three-minute live demo of Kotak in the middle. A Playwright harness films the live app, Remotion assembles the three-minute demo segment with its narration and the [demo graphics](demo-graphics.md), and the team edits the slides, the slide narration and the finished demo segment together in Adobe Premiere Pro. The Remotion project lives outside this repository. [`kotak-director-script.md`](kotak-director-script.md) holds the words, the timing and what each segment shows.
 
 Contents:
 
@@ -18,11 +18,11 @@ Contents:
 
 - **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:40; keep the cut under 6:50 so a slow read can't cross 7:00.
 - **The live demo runs 3:00,** in three acts: Problem (D1 to D3), Solution (D4 and D5) and Outcome (D6 to M1). It shows the most important feature live: the trend data feeding the role matching and the plan.
-- **Our own voices.** A team member narrates. The voice staging speeds the slide segments (V1 to V10) to 1.2× with the pitch kept; the demo segments (D1 to M1) stay at 1.0×. No generated narration. Kopi's voice is heard only as the app's own sound in shot D6.
+- **Our own voices.** A team member narrates. In Premiere, the slide segments (V1 to V10) play at 1.2× with the pitch kept; the demo segments (D1 to M1) stay at 1.0×. No generated narration. Kopi's voice is heard only as the app's own sound in shot D6.
 - **The team first, then the hook.** The first 13 seconds say who we are, the domain and what we built.
 - **Sample means labelled.** Aina is a sample persona and the answers are demo answers. The edit tags every app shot, and the app's own "self-reported" and "sample data" labels stay readable ([content rules](/docs/DESIGN.md#content-rules)).
 - **Every number has a source** in the script's [claims ledger](/docs/demo/kotak-director-script.md#claims-ledger).
-- **Declared tools:** Playwright films the takes, Remotion edits, and OpenAI Whisper (`whisper-1`) times the narration's words for the cuts and captions. All three are in [`TECH-DECLARATION.md`](/docs/TECH-DECLARATION.md); a fallback tool joins them only if it is used.
+- **Declared tools:** Playwright films the takes, Remotion renders the demo segment, ffmpeg encodes it, OpenAI Whisper (`whisper-1`) times the demo narration's words, and Adobe Premiere Pro edits the whole video. All are in [`TECH-DECLARATION.md`](/docs/TECH-DECLARATION.md); a fallback tool joins them only if it is used.
 
 ## Shot list
 
@@ -68,10 +68,16 @@ Done when the roadmap, at 10 hours a week, reads "Your 35-Week Roadmap" and "80%
 1.  **Preflight.** The harness runs every shot's actions and checks every cue without recording. Done when every shot passes.
 1.  **Narration (team).** Record the takes as in [Record the narration](#record-the-narration). This can run at the same time as step 1.
 1.  **Record (on the team's go).** The harness records every shot. Each run gets its own folder with the raw takes, Kopi's D6 audio and a manifest of cue times. Re-record one shot without redoing the rest.
-1.  **Stage the voice.** Each take is trimmed and levelled to −17 LUFS. The slide takes are sped to 1.2× with ffmpeg's pitch-keeping `atempo`, and Whisper times every word.
+1.  **Stage the demo voice.** The demo takes (D1 to M1) are trimmed and levelled to −17 LUFS at 1.0×, and Whisper times every word.
 1.  **Ingest.** Each take becomes constant 30 fps H.264 with its cues; the newest good take of each shot wins.
-1.  **Edit.** Remotion lays the slides, H1 and the demo takes on the narration. Every cut, callout, ring and result card lands on a spoken word or a recorded cue, following the [cue sheet](demo-graphics.md#cue-sheet), and the "Sample persona · demo answers" tag sits on every app shot.
-1.  **Finish.** Render 1920 × 1080 at 30 fps, normalise to −14 LUFS and −1 dBTP, write the English SRT from the script's words and the Whisper timings, and run the [quality checks](#quality-checks).
+1.  **Demo segment.** Remotion lays the demo takes on the demo narration. Every cut, callout, ring and result card lands on a spoken word or a recorded cue, following the [cue sheet](demo-graphics.md#cue-sheet), and the "Sample persona · demo answers" tag sits on every app shot. It renders one 3:00 MP4, normalised to −14 LUFS, and its demo-part SRT.
+1.  **Edit in Premiere.** In a 1920 × 1080, 30 fps sequence:
+    - Lay the slide stills S01 to S10 under the V1 to V10 narration, with clip Speed/Duration at 120% and Maintain Audio Pitch on.
+    - Cut H1 into V4 from "She leaves with a dated plan" to "And it covers".
+    - Drop the demo segment in between V5 and V6.
+    - Give each still a slow 100% to 106% push-in, and use 8-frame cross dissolves.
+    - Put the sample tag on H1.
+    - Export H.264 at 1920 × 1080, 30 fps, with Loudness Normalization at −14 LUFS and −1 dBTP, then run the [quality checks](#quality-checks).
 
 ## Record the narration
 
@@ -79,12 +85,12 @@ Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#record
 
 1.  One narrator, in a small, soft room, with the mic about 20 cm away.
 1.  One file per segment, named `V01` to `V10`, `D1` to `D7` and `M1`, two takes each, plus 10 seconds of room silence.
-1.  Read at about 150 words a minute, at a calm pace. The staging does the 1.2× for the slide segments; never speed the reading up.
+1.  Read at about 150 words a minute, at a calm pace. Premiere does the 1.2× for the slide segments; never speed the reading up.
 1.  Read D3's figures from the card on the recording day.
 
 ## Captions and upload
 
-1.  **Captions:** the SRT uses the script's spelling (Kotak, Kopi, T010NG, Aina, HRD Corp, JobStreet, MasterClass, ReSkills, e-LATiH, SDG 4.4, MCP, Claude Haiku, RunPod, Live2D, ElevenLabs, Replit, kotakmu). Check it once against the script.
+1.  **Captions:** Premiere's Transcribe sequence (English), then Create captions and export an SRT; the demo-part SRT from Remotion can be imported instead for 1:47 to 4:47. Use the script's spelling (Kotak, Kopi, T010NG, Aina, HRD Corp, JobStreet, MasterClass, ReSkills, e-LATiH, SDG 4.4, MCP, Claude Haiku, RunPod, Live2D, ElevenLabs, Replit, kotakmu). Check it once against the script.
 1.  **YouTube:** upload the final MP4. Title: "Kotak · SDC Hackathon 2026 · Domain 1 · Team T010NG". Description: one line on Kotak, then the live demo, the repository and the deck links. Audience: "No, it's not made for kids". Add the SRT under Subtitles.
 1.  **Visibility: Public**, never Unlisted or Private.
 1.  **Check signed out:** open the link in an Incognito window. It plays, the captions show, and the runtime is under 7:00.
@@ -92,9 +98,9 @@ Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#record
 
 ## Quality checks
 
-Automated, after the render:
+Automated, on the demo segment render:
 
-- [ ] Runtime 6:00 to 6:50, and the demo at least 2:59.
+- [ ] The demo segment runs 2:59 to 3:01; the final Premiere export runs 6:00 to 6:50 (check by hand).
 - [ ] Loudness within 0.7 LU of −14 LUFS; true peak at most −1 dBTP.
 - [ ] No banned phrase in the narration or the captions: "AI check-up", "12-week", "chance of", "guarantee", "AI decides", "will replace you", "certified", "real user".
 
