@@ -285,7 +285,7 @@ The app runs without keys too: exact job titles still match, explanations fall b
 
 #### Option 1 — Run on Replit (Recommended)
 
-1. Open the [Replit Project](https://replit.com/@alaskxntxna/Kotak), or import this repository via **Create Repl → Import from GitHub**.
+1. In Replit, import this repository via **Create Repl → Import from GitHub**.
 2. Open the **Secrets** tab (🔒) and add the variables listed in `.env.example`.
 3. Click **Run**. Replit uses the `.replit` file to install, build and start the server on port 5000.
 
