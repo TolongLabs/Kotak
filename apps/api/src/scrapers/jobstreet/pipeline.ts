@@ -210,9 +210,11 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
               throw new Error(`JobStreet returned HTTP ${entry.http_status}`)
             if (searchUrl(page.url()) !== url) throw new Error('Navigation did not reach the expected search URL')
             if (!response && previousRawSignature) {
+              // document.body is null while a page swaps documents (after a verification page, say); a predicate that
+              // throws ends the wait at once, so it reads as empty text and the wait goes on.
               await page.waitForFunction(
                 (previous) => {
-                  if (/\bno matching search results\b/i.test(document.body.innerText)) return true
+                  if (/\bno matching search results\b/i.test(document.body?.innerText ?? '')) return true
                   const ids = [...document.querySelectorAll('article[data-job-id], article[data-testid="job-card"]')]
                     .map(
                       (card) =>
@@ -232,7 +234,7 @@ export async function scrapeJobstreet(options: ScrapeOptions) {
             await page.waitForFunction(
               () =>
                 Boolean(document.querySelector('article[data-job-id], article[data-testid="job-card"]')) ||
-                /\bno matching search results\b/i.test(document.body.innerText),
+                /\bno matching search results\b/i.test(document.body?.innerText ?? ''),
               undefined,
               { timeout: 30_000 }
             )
