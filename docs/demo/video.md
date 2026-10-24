@@ -19,7 +19,7 @@ Contents:
 
 ## Rules for the video
 
-- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:46; keep the cut under 6:50 so a slow read can't cross 7:00, and use the script's trim list if it does.
+- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:40; keep the cut under 6:50 so a slow read can't cross 7:00, and use the script's trim list if it does.
 - **The live demo runs 3:00.** It is the most important feature live: the trend data feeding the role matching and the plan.
 - **Our own voices.** A team member narrates. The slide segments (V1 to V10) may play at up to 1.2× with the pitch kept; the demo segments (D1 to M1) play at 1.0×. No generated narration. Kopi's voice is heard only as the app's own sound in shot D6.
 - **The team first, then the hook.** The first 13 seconds say who we are, the domain and what we built; the real job-loss numbers follow.
@@ -97,10 +97,8 @@ Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#record
 1.  **Speed the slide narration.** Select the V1 to V10 narration clips, Clip → Speed/Duration → 120%, with Maintain Audio Pitch ticked. Leave D1 to M1 at 100%.
 1.  **Trim to the narration.** Each slot runs from its first word to a beat after its last. Cut the waits out of the takes; keep the actions.
 1.  **Move gently.** On each deck still, scale from 100% to about 106% over the segment. Where the script names a push-in, move toward that card instead. Cross Dissolve of 8 frames between segments.
-1.  **Text on screen** (Essential Graphics, Atkinson Hyperlegible Next, or a plain sans if it isn't installed):
-    - A chip top left on each demo shot, at least 54 px: Intake, Questions, Radar, Roles, Roadmap, What Changed, Ask Kopi, Your AI.
-    - The script's callout for the shot, at least 54 px, one at a time, never over an app label.
-    - "Sample persona · demo answers", at least 36 px, bottom left, on every app shot, H1 included.
+1.  **Demo graphics:** lay the pack in [`graphics/png`](graphics/png) over the demo as the [cue sheet](demo-graphics.md#cue-sheet) says: an act banner at the start of each act (Problem, Solution, Outcome), the HUD for each step, one callout or result card at a time on its narration words, and rings and arrows on the elements named. Each shot's GRAPHICS line in the script names the same cues.
+1.  **Sample tag:** "Sample persona · demo answers" (Essential Graphics, Atkinson Hyperlegible Next, at least 36 px) on every app shot, H1 included, where it covers no app label or graphic.
 1.  **Sound:** keep the narration level steady; let Kopi's line in D6 play clear, with no narration over it. No music.
 
 ## Captions and export
