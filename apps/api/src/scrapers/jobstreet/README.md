@@ -69,7 +69,7 @@ Runner artifacts retain `database_run_id` alongside the browser pipeline's `run_
 
 On a Windows host with Clearcote available, install the repository dependencies. From a trusted checkout, set the owner `DATABASE_URL` only while running `bun run scraper:setup`. The setup creates the unprivileged SQL role `kotak_jobstreet_runner`, grants it access only to the JobStreet queue and data tables plus their two identity sequences, and saves its connection URL to the Git-ignored `.local/jobstreet-runner.json`. It does not grant deletion, schema changes, admin-session access or access to national-view tables.
 
-Start `bun run scraper:worker` as a long-running process. The fixed launcher reads the private runner URL, starts only the JobStreet runner, disables child `.env` loading and passes an explicit environment allowlist. The child receives `JOBSTREET_RUNNER_DATABASE_URL`; it does not receive `DATABASE_URL`, admin credentials, AI keys or cloud API keys. The runner writes only under `data/jobstreet/production`, and browser profiles stay under `.local/browser-profiles`. `BROWSER_PROFILE_ID` is optional and must be a UUID. `JOBSTREET_DELAY_MS` and `JOBSTREET_DELAY_JITTER_MS` default to 30,000 ms each.
+Start `bun run scraper:worker` as a long-running process. The fixed launcher reads the private runner URL, starts only the JobStreet runner, disables child `.env` loading and passes an explicit environment allowlist. The child receives `JOBSTREET_RUNNER_DATABASE_URL`; it does not receive `DATABASE_URL`, admin credentials, AI keys or cloud API keys. The runner writes only under `data/jobstreet/production`, and browser profiles stay under `.local/browser-profiles`. `BROWSER_PROFILE_ID` is optional and must be a UUID. `JOBSTREET_DELAY_MS` and `JOBSTREET_DELAY_JITTER_MS` default to 30,000 ms each. `JOBSTREET_MAX_PAGES`, 1 to 200 and 200 by default, caps the search pages of each breadth run, newest ads first: a broad search then gives a sample of its newest ads, and its report still keeps JobStreet's count of every ad the search finds.
 
 The scraper remains headed by default to match local operation. Set `BROWSER_HEADLESS=true` only when the production host cannot keep a desktop session open. Headless mode is configurable, but a verification page still requires completion in a visible browser; the unattended runner waits for the configured timeout and records a failed run rather than trying to bypass it.
 
@@ -288,14 +288,16 @@ The admin API queues and reviews work; the standalone Bun runner owns browser la
 Approved listings show what Malaysian employers advertise for a role ([#271](https://github.com/TolongLabs/Kotak/issues/271)). `GET /api/market?codes=…` gives, per O\*NET occupation:
 
 - active ads (seen in the 14 days before the latest scrape) and employers;
+- an estimate of how many JobStreet ads match the occupation (JobStreet's count for a search title's search, times the share of the run's listings an admin approved), and its rank among the occupations with one;
 - the median and quartiles of advertised monthly pay in ringgit;
 - the top five states, how many ads name none, remote and hybrid counts, and work types;
 - the tools, languages and AI skills the ads mention;
+- the benefits employers name in the selling points on the ads' cards;
 - weekly counts.
 
 The Future Skills Radar page and Roles That Fit show them, and Kopi's `job_market` tool answers from them. Only ads approved under the occupation count, and only from search titles that aren't hidden.
 
-`market/stats.ts` parses pay and states in Postgres. `market/skills.ts` holds the skill vocabulary: Postgres matches each listing's title, summary, card text without the employer's name, and description against it and keeps the result in `jobstreet_listing_skills`. Matching runs when an admin approves a batch and every night after the queue is set. Bump `SKILL_VOCABULARY_VERSION` after changing a pattern, so every listing is matched again; until then, the older matches still count. Most ads show only a summary until a depth run fetches the description, so skill shares count mentions, not requirements. Depth runs fetch approved ads' descriptions first ([#276](https://github.com/TolongLabs/Kotak/issues/276)).
+`market/stats.ts` parses pay and states in Postgres. `market/skills.ts` holds the skill and benefit vocabulary: Postgres matches each listing's title, summary, card text without the employer's name, and description against it and keeps the result in `jobstreet_listing_skills`. Benefits are matched only in the card's selling points, the text between its location, work arrangement and pay, and its summary (`cardHighlights`). Matching runs when an admin approves a batch and every night after the queue is set. Bump `SKILL_VOCABULARY_VERSION` after changing a pattern, so every listing is matched again; until then, the older matches still count. Most ads show only a summary until a depth run fetches the description, so skill shares count mentions, not requirements. Depth runs fetch approved ads' descriptions first ([#276](https://github.com/TolongLabs/Kotak/issues/276)).
 
 ## References
 
