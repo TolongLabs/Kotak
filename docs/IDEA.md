@@ -68,5 +68,5 @@ The [JobStreet research scraper](/apps/api/src/scrapers/jobstreet/README.md) sup
 ## See also
 
 - [Open issues][issues], where pending work and open questions live
-- [Issue #24](https://github.com/TolongLabs/Kotak/issues/24), choosing a product from the ranking
+- Issue #24, choosing a product from the ranking
 - [Domain 1 problem statement](/docs/sources/drive.google.com/domain-1-aiversecity.md)

@@ -199,7 +199,7 @@ The official winners page now redirects to `/community`, so the archived copies 
 
 ## Open questions
 
-The CareerSphere and Hunar placings were checked at their organisers' results pages in [issue 20](https://github.com/TolongLabs/Kotak/issues/20); see their entries above.
+The CareerSphere and Hunar placings were checked at their organisers' results pages in issue 20; see their entries above.
 
 - The detailed PyCon SG weights, which are only in the submission forms.
 - Google Solution Challenge 2025 and 2026 global winners. The format appears to have moved to regional finals (for example APAC at ADB Manila), and no official list was found.

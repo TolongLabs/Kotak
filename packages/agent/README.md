@@ -105,4 +105,4 @@ Kopi's chat needs `ANTHROPIC_API_KEY` in `.env`; without it, `POST /api/agent/ch
 - [TRD: agent layer](/docs/TRD.md#agent-layer), with the MCP and chat routes, the Worker CPU budget and privacy.
 - [`@kotak/sdk` README](/packages/sdk/README.md), the engine the tools run on.
 - [`plugins/kotak`](/plugins/kotak/skills/kotak-checkup/SKILL.md): the kotak-checkup skill.
-- [Issue #184](https://github.com/TolongLabs/Kotak/issues/184): the SDK and agent layer spec.
+- Issue #184: the SDK and agent layer spec.

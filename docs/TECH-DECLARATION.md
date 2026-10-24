@@ -31,9 +31,7 @@ Contents:
 - **Team leader**: Hee Zi Jie (AlaskanTuna). The leader's email and phone go only in the exported PDF.
 - **University affiliations**: Asia Pacific University of Technology & Innovation (APU), University of Reading and University of Sheffield.
 - **Live prototype URL**: <https://kotak-alaskxntxna.replit.app>, published on Replit. A mirror runs at <https://kotak.tp073654.workers.dev>.
-- **Code repository URL**: the team's public submission repository ([#45]).
-
-[#45]: https://github.com/TolongLabs/Kotak/issues/45
+- **Code repository URL**: the team's public submission repository (#45).
 
 ## 2. Architecture & technology stack
 
@@ -135,13 +133,13 @@ Yes, the team used generative-AI tools.
 
 | Tool & Version                                                                     | Used For                                                  | Extent of Use |
 | ---------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------- |
-| Claude Code, with Claude models                                                    | Code, reviews, research, documentation and pull requests  | Major         |
+| Claude Code, with Claude models                                                    | Code, reviews, research and documentation                 | Major         |
 | Codex CLI, OpenCode and Antigravity CLI, with GPT, DeepSeek, GLM and Gemini models | Parallel code changes from written briefs                 | Moderate      |
 | Claude, GPT and Gemini chat models                                                 | The field simulation and design review in `docs/research` | Minor         |
 
 How the team reviewed, tested and took responsibility for AI-generated output (100 words max):
 
-Every change went through a pull request that ran type-checks and a build in CI before a member merged it. The team checked each feature by running the app in a browser at phone and desktop widths, not by trusting the tool's report. Facts in the app and in these documents link a dated public source. AI-drafted skills carry a visible label in the app until a person reviews them. The team owns every merged line and corrected tool mistakes before merging.
+Every change ran type-checks and a build in CI, and a team member reviewed it before it reached the main branch. The team checked each feature by running the app in a browser at phone and desktop widths, not by trusting the tool's report. Facts in the app and in these documents link a dated public source. AI-drafted skills carry a visible label in the app until a person reviews them. The team owns every merged line and corrected tool mistakes before merging.
 
 ## 5. Sponsor-provided resources
 
@@ -151,13 +149,11 @@ Yes, Kotak uses official SDC sponsor resources.
 | ------------------------- | -------------- | -------------------------------------------------------------------------------------- |
 | Replit                    | Platform, Core | Hosts the live demo, published from `main` on the team's own account                   |
 | RunPod                    | Credits        | A serverless H100 ran the batch: 923 jobs, 783 seconds for the full run, about US$1.25 |
-| SDC mentors (KrackedDevs) | Mentoring      | One mentor session on 23 October 2026; feedback recorded in [#98]                      |
+| SDC mentors (KrackedDevs) | Mentoring      | One mentor session on 23 October 2026                                                  |
 
 Was the sponsor resource essential to the core functionality, or could it be replaced? (100 words max)
 
 RunPod was essential to build Kotak's data: it turned O\*NET's tasks into 6 skills and 18 questions for each of 923 jobs, which no person could write by the deadline. The batch runs once, so the live app does not depend on RunPod, and the Claude Message Batches API could replace it. Replit hosts the submitted live demo; the same build also runs on Cloudflare Workers, so the hosting is replaceable.
-
-[#98]: https://github.com/TolongLabs/Kotak/issues/98
 
 ## 6. Security, privacy & responsible use
 
