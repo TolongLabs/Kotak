@@ -1488,6 +1488,7 @@
     <svg width="0" height="0" style="position: absolute" aria-hidden="true">
       <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
       <symbol id="i-up" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 7-7" /><path d="M14 8h6v6" /></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M3 7l6 6 4-4 7 7" /><path d="M14 16h6v-6" /></symbol>
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></symbol>
       <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" /></symbol>
       <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
@@ -1536,10 +1537,10 @@
                 <figcaption class="shot-bar"><i></i>Open the Box on Your Job. · live build</figcaption>
                 <img
                   src="assets/screens/landing.png"
-                  alt="Kotak landing page: Open the Box on Your Job, with a sample radar and Kopi the cat"
+                  alt="Kotak landing page: Open the Box on Your Job, with an example radar for Web Developers and Kopi the cat"
                 />
               </figure>
-              <p class="s1-caption">Sample data · phone and desktop · every verdict cites its source</p>
+              <p class="s1-caption">Example answers · phone and desktop · every verdict cites its source</p>
             </div>
           </div>
           <div class="s1-proof">
@@ -1586,7 +1587,7 @@
               </div>
             </div>
           </div>
-          <div class="foot"><span>01 / 12 · Team Information</span><span>PRD §2 · sample profile · team roster</span></div>
+          <div class="foot"><span>01 / 12 · Team Information</span><span>PRD §2 · landing example · team roster</span></div>
         </div>
       </section>
 
@@ -1714,7 +1715,7 @@
           <div class="head">
             <p class="eyebrow"><span class="box"></span>3. The Solution</p>
             <h1 class="title">Leave with a plan.<br /><span class="hl">Start this week.</span></h1>
-            <p class="lead">A dated plan, weekly hours, a finish date, step costs and an employer funding route.</p>
+            <p class="lead">A dated plan, weekly hours, a free link for each step and an employer funding route.</p>
           </div>
           <div class="s4-main">
             <div>
@@ -1722,22 +1723,21 @@
                 <span class="snum">01</span>
                 <div>
                   <h3>A Dated Plan You Can Follow</h3>
-                  <p>Sample: 2 Nov 2026–24 Jan 2027 · 12 weeks. Code review: 3 h/week. Accessibility and practice: 4 h/week.</p>
+                  <p>Demo answers, Web Developers: 2 Nov 2026–24 Jan 2027 · 12 weeks at 4 h/week. Rising skill first: Technical documentation. About 622 h remain after week 12.</p>
                 </div>
               </div>
               <div class="step">
                 <span class="snum">02</span>
                 <div>
-                  <h3>Free Steps First</h3>
-                  <p>GitHub Skills · Free. W3C WAI · Free. MDN ARIA · Free. freeCodeCamp QA · Free; fast uptake adds 2 h/week.</p>
-                  <p>Other roles: “Search suggestion, not checked”.</p>
+                  <h3>A Free Link for Each Step</h3>
+                  <p>Each step links a free web search, marked “Search suggestion, not checked”. Kotak names no course it has not checked.</p>
                 </div>
               </div>
               <div class="card flat">
                 <h3 class="k">Employer Funding Route</h3>
                 <p class="src">A levy-paying employer applies before training, then claims approved costs. Check the scheme before booking.</p>
               </div>
-              <p class="src">Sample plan: apps/web/src/demo/data.ts · dates from start + 12 weeks. Funding: HRD Corp FAQ · 23 Oct 2026.</p>
+              <p class="src">Plan: @kotak/sdk on the May 2026 snapshot · demo answers, start 2 Nov 2026. Funding: HRD Corp FAQ · 23 Oct 2026.</p>
               <div class="musts">
                 <span>Profile</span>
                 <span>Dated trends</span>
@@ -1748,11 +1748,14 @@
               </div>
             </div>
             <figure class="shot s4-shot">
-              <figcaption class="shot-bar"><i></i>Roadmap · Front-End Developer · sample profile</figcaption>
-              <img src="assets/screens/roadmap.png" alt="Existing sample roadmap screenshot with start date, weekly hours and readiness graph" />
+              <figcaption class="shot-bar"><i></i>Roadmap · Web Developers · demo answers</figcaption>
+              <img
+                src="assets/screens/roadmap-plan.png"
+                alt="Kotak roadmap for Web Developers: Technical documentation in weeks 1–12 at 4 hours a week from 2 Nov 2026, a search link marked not checked, and the HRD Corp funding card"
+              />
             </figure>
           </div>
-          <div class="foot"><span>04 / 12 · The Solution</span><span>PRD §2 · sample data · funding rules: hrdcorp.gov.my/faq</span></div>
+          <div class="foot"><span>04 / 12 · The Solution</span><span>PRD §2 · demo answers · funding rules: hrdcorp.gov.my/faq</span></div>
         </div>
       </section>
 
@@ -1825,7 +1828,7 @@
               <p class="footer">Split and Unknown are valid answers. The app says so instead of guessing.</p>
             </div>
           </div>
-          <div class="foot"><span>05 / 12 · How It Works</span><span>PRD §2 · apps/web/src/demo/data.ts · dated source snapshots</span></div>
+          <div class="foot"><span>05 / 12 · How It Works</span><span>PRD §2 · packages/shared/src/rules · dated source snapshots</span></div>
         </div>
       </section>
 
@@ -1852,38 +1855,50 @@
               </div>
               <div class="changes">
                 <div class="change">
-                  <b>Testing</b>
+                  <b>Technical documentation</b>
                   <span class="verdicts">
-                    <span class="verdict">Split</span>
+                    <span class="verdict">Unknown</span>
                     <svg class="ic" style="width: 14px; height: 14px"><use href="#i-arrow" /></svg>
                     <span class="verdict rising"><svg class="ic" style="width: 13px; height: 13px"><use href="#i-up" /></svg>Rising</span>
                   </span>
                 </div>
                 <div class="change">
-                  <b>Design Systems</b>
+                  <b>Web specifications and standards</b>
                   <span class="verdicts">
+                    <span class="verdict">Unknown</span>
+                    <svg class="ic" style="width: 14px; height: 14px"><use href="#i-arrow" /></svg>
+                    <span class="verdict rising"><svg class="ic" style="width: 13px; height: 13px"><use href="#i-up" /></svg>Rising</span>
+                  </span>
+                </div>
+                <div class="change">
+                  <b>Web site building</b>
+                  <span class="verdicts">
+                    <span class="verdict">Unknown</span>
+                    <svg class="ic" style="width: 14px; height: 14px"><use href="#i-arrow" /></svg>
+                    <span class="verdict"><svg class="ic" style="width: 13px; height: 13px"><use href="#i-down" /></svg>Declining</span>
+                  </span>
+                </div>
+                <div class="change">
+                  <b>Three more skills</b>
+                  <span class="verdicts">
+                    <span class="verdict">Unknown</span>
+                    <svg class="ic" style="width: 14px; height: 14px"><use href="#i-arrow" /></svg>
                     <span class="verdict">Steady</span>
-                    <svg class="ic" style="width: 14px; height: 14px"><use href="#i-arrow" /></svg>
-                    <span class="verdict rising"><svg class="ic" style="width: 13px; height: 13px"><use href="#i-up" /></svg>Rising</span>
                   </span>
-                </div>
-                <div class="change">
-                  <b>Top match</b>
-                  <span class="verdicts"><span class="verdict rising">Design Systems Developer · 74%</span></span>
                 </div>
               </div>
-              <p class="roadmap-line">Roadmap: “Write Tests for AI-Written Code” joins weeks 9–12.</p>
+              <p class="roadmap-line">April has one month of AI-use data, too few points for a trend, so every skill is Unknown. In May, Technical documentation moves from roadmap step 3 to step 1.</p>
               <p class="s6-takeaway">Same profile. Same 12 answers. Only the snapshot changes.</p>
             </div>
             <figure class="shot s6-shot">
-              <figcaption class="shot-bar"><i></i>What Changed · May 2026 · sample profile</figcaption>
+              <figcaption class="shot-bar"><i></i>What Changed · May 2026 · Web Developers, demo answers</figcaption>
               <img
-                src="assets/screens/changes-main.png"
-                alt="Kotak What Changed screen for May 2026: Testing moves from Split to Rising, Design Systems from Steady to Rising, and the roadmap updates"
+                src="assets/screens/what-changed.png"
+                alt="Kotak What Changed screen for May 2026: six skills changed; Web site building moves from Unknown to Declining, and the radar's needed line moves"
               />
             </figure>
           </div>
-          <div class="foot"><span>06 / 12 · Live Demo</span><span>Sample profile: apps/web/src/demo/data.ts · Apr/May 2026 snapshots</span></div>
+          <div class="foot"><span>06 / 12 · Live Demo</span><span>data/demo-roles.json · diffSnapshots in @kotak/shared · Apr/May 2026 snapshots</span></div>
         </div>
       </section>
 
@@ -1903,36 +1918,36 @@
           <div class="s7-grid">
             <figure class="shot">
               <figcaption class="shot-bar"><i></i>Check-Up · who you are, then 12 questions</figcaption>
-              <img src="assets/screens/checkup.png" alt="Kotak Check-Up start screen asking the user's situation, study and years of work" />
+              <img src="assets/screens/checkup.png" alt="Kotak Check-Up start screen asking the user's situation, study and years of work, and saying the answers stay in the browser unless sent with a question to Kopi" />
             </figure>
             <figure class="shot">
               <figcaption class="shot-bar"><i></i>Radar + Gaps · dated verdicts</figcaption>
-              <img src="assets/screens/radar.png" alt="Kotak radar with six skills, verdict chips and source lines" />
+              <img src="assets/screens/radar.png" alt="Kotak radar for Web Developers with six skills, the needed-by line and the skills SWOT" />
             </figure>
             <figure class="shot">
               <figcaption class="shot-bar"><i></i>Matched Roles · fit, maths and why</figcaption>
-              <img src="assets/screens/roles.png" alt="Kotak Matched Roles screen with six roles, fit scores and why Kopi highlights one" />
+              <img src="assets/screens/roles.png" alt="Kotak Roles screen for Web Developers with three roles, fit scores, the fit maths and why Kopi picked one" />
             </figure>
             <figure class="shot">
-              <figcaption class="shot-bar"><i></i>Roadmap · free steps and dates</figcaption>
-              <img src="assets/screens/roadmap.png" alt="Kotak 12-week roadmap with milestones, times and a finish date" />
+              <figcaption class="shot-bar"><i></i>Roadmap · hours, start date, readiness</figcaption>
+              <img src="assets/screens/roadmap.png" alt="Kotak 12-week roadmap for Web Developers with weekly hours, the start date and a readiness graph" />
             </figure>
             <figure class="shot">
-              <figcaption class="shot-bar"><i></i>National View · k ≥ 10 only</figcaption>
-              <img src="assets/screens/national.png" alt="Kotak National View showing rising skills and the 10-person privacy threshold" />
+              <figcaption class="shot-bar"><i></i>Connect Your AI · same rules over MCP</figcaption>
+              <img src="assets/screens/connect.png" alt="Kotak Connect Your AI page with the MCP URL and the setup steps for Claude" />
             </figure>
             <div class="card dark s7-card">
               <div>
-                <p class="big">13 views<span>phone + desktop</span></p>
+                <p class="big">12 views<span>phone + desktop</span></p>
                 <p class="src" style="margin-top: 10px">Same content at 390 px and 1440 px.</p>
               </div>
               <div>
                 <p>WCAG 2.2 AA. Reduced motion. Guest session on this device.</p>
-                <p class="src" style="margin-top: 8px">Screens with sample data carry the Sample Data label.</p>
+                <p class="src" style="margin-top: 8px">Every verdict cites its dated sources.</p>
               </div>
             </div>
           </div>
-          <div class="foot"><span>07 / 12 · The Prototype</span><span>DESIGN.md · demo/data.ts · national-view privacy rule</span></div>
+          <div class="foot"><span>07 / 12 · The Prototype</span><span>DESIGN.md · TRD.md screens · screenshots from the build</span></div>
         </div>
       </section>
 
@@ -1996,14 +2011,14 @@
               <div class="add-row">
                 <svg class="ic lg"><use href="#i-globe" /></svg>
                 <div>
-                  <b>A public view</b>
-                  <p>Anonymous skills totals for agencies; small groups stay hidden.</p>
+                  <b>Totals for agencies</b>
+                  <p>Anonymous skill-gap totals through Kotak's API and tools; groups under 10 stay hidden. Sample rows for now.</p>
                 </div>
               </div>
               <p class="claim">Our claim is the mechanism, not the model.</p>
             </div>
           </div>
-          <div class="foot"><span>08 / 12 · Innovation</span><span>Public-tool review · Oct 2026 · demo/data.ts</span></div>
+          <div class="foot"><span>08 / 12 · Innovation</span><span>Public-tool review · Oct 2026 · packages/shared/src/rules</span></div>
         </div>
       </section>
 
@@ -2056,7 +2071,7 @@
               <p class="src">PRD §4 · issue #28</p>
             </div>
             <div class="card">
-              <p class="k">Phase 2 test</p>
+              <p class="k">Phase 2 target</p>
               <div class="baseline" style="grid-template-columns: 1fr 1fr; margin-top: 10px">
                 <div>
                   <span class="num">20</span>
@@ -2069,9 +2084,9 @@
               </div>
               <ul class="kpi-list" style="margin-top: 6px">
                 <li><svg class="ic"><use href="#i-check" /></svg><span>0 uncited recommendations.</span></li>
-                <li><svg class="ic"><use href="#i-refresh" /></svg><span>100% of hand-checked demo roles flip at least one verdict on Apr → May.</span></li>
+                <li><svg class="ic"><use href="#i-refresh" /></svg><span>Met now: all 3 demo roles flip verdicts on Apr → May; the build checks it.</span></li>
               </ul>
-              <p class="src">PRD §4 · issues #28, #37</p>
+              <p class="src">PRD §4 · issues #28, #37 · scripts/build-data.ts</p>
             </div>
             <div class="card dark honesty">
               <div>
@@ -2111,8 +2126,8 @@
                 <p>Pay for a team view of skill gaps and where to spend their training levy. Not built yet.</p>
               </div>
               <div class="exist-row">
-                <b>Agencies · Built</b>
-                <p>TalentCorp and HRD Corp get the anonymous national view. Totals only for groups of 10 or more.</p>
+                <b>Agencies · API</b>
+                <p>Anonymous skill-gap totals through Kotak's API and tools, for groups of 10 or more. Sample rows until real check-ups arrive.</p>
               </div>
               <p class="src">National-view rule: apps/api/src/routes/national-view.ts · issue #279. Team view: next step.</p>
             </div>
@@ -2163,7 +2178,7 @@
               </div>
               <div class="build-row">
                 <b>Neon Postgres 18</b>
-                <span>National view, k ≥ 10</span>
+                <span>Job ads · admins · sample rows</span>
               </div>
               <div class="build-row">
                 <b>Claude Haiku 5.5</b>
@@ -2184,16 +2199,10 @@
               <p class="src">Sources: apps/api/src/ai/claude.ts · TECH-DECLARATION.md · TRD.md · role-corners.json.</p>
             </div>
             <figure class="s10-fig">
-              <div style="position: relative; width: 1120px">
               <img
                 src="assets/arch/kotak-architecture.png"
-                alt="Kotak architecture: dated evidence feeds a refresh job and snapshots; a Cloudflare Worker serves the React app; the browser runs the rule engine; the API calls Claude and ElevenLabs, caches answers and writes the anonymous national view"
+                alt="Kotak architecture: dated evidence feeds a refresh job and snapshots; a Cloudflare Worker serves the React app; the browser runs the rule engine; the API calls Claude Haiku 5.5 and ElevenLabs, caches answers, and queries Neon Postgres for job ads, admin accounts and the national view's sample rows"
               />
-              <svg viewBox="0 0 3300 2040" style="position: absolute; inset: 0; width: 100%; height: 100%" role="img" aria-label="Corrected model label: Claude Haiku 5.5">
-                <rect x="2685" y="882" width="440" height="56" fill="#ffffff" />
-                <text x="2905" y="925" text-anchor="middle" fill="#191812" font-family="Atkinson Hyperlegible Next, sans-serif" font-size="36" font-weight="700">Claude Haiku 5.5</text>
-              </svg>
-              </div>
               <figcaption>11 components · dated snapshots · rule engine in the browser</figcaption>
             </figure>
           </div>
@@ -2218,7 +2227,7 @@
             <h1 class="title" style="font-size: 78px">
               A plan for your job.<br /><span class="hl">Try Kotak.</span>
             </h1>
-            <p class="lead">Start with the sample profile. See the plan. Connect your own AI assistant.</p>
+            <p class="lead">Take the check-up for your job. See the plan. Connect your own AI assistant.</p>
           </div>
           <div class="s11-main">
             <div>
@@ -2226,7 +2235,7 @@
                 <span class="qnum">01</span>
                 <div>
                   <b>Open the Live Demo</b>
-                  <p>Scan the demo QR. Follow the sample developer from check-up to dated plan.</p>
+                  <p>Scan the demo QR. Go from the check-up to a dated plan for your own job.</p>
                 </div>
               </div>
               <div class="question">
@@ -2272,15 +2281,15 @@
   "Kotak is for software and digital workers in Malaysia. We focus on developers, testers and designers at employers that pay the HRD Corp levy. They get a plan for what to learn next. We are Team T010NG. The build is live on Replit.",
   "These are national figures, not figures for software workers alone. Hays reports 56 percent use AI and 26 percent have formal training. TalentCorp projects 620,000 workers affected in the sectors studied. World Bank and ISIS Malaysia report 28 percent highly exposed. Our moment is a manager deciding what training to fund as AI coding tools arrive.",
   "Aina is a sample persona. We invented her for this pitch. She is a front-end developer in Kuala Lumpur. Her employer pays the HRD Corp levy. The company rolls out AI coding tools. Her manager asks what training to fund this year. She needs a plan she can show him. The engine covers 923 jobs. Our first group is software and digital workers.",
-  "Aina leaves with a dated plan. This sample starts on 2 November 2026 and ends on 24 January 2027. Code review takes three hours a week. Accessibility and practice take four. The fast scenario adds two hours for testing. GitHub Skills, W3C WAI, MDN and freeCodeCamp are free. Other roles show unchecked search suggestions. The funding card tells a levy-paying employer to apply before training and claim only approved costs. The screenshot is the existing sample build. These cost and funding labels are part of the sample-plan update.",
+  "Aina leaves with a dated plan. On screen is the plan for her job, Web Developers, with the demo answers. It starts on 2 November 2026 and runs 12 weeks to 24 January 2027, at four hours a week. The Rising skill comes first: Technical documentation fills all 12 weeks, and about 622 hours of the full path remain after that. Each step links a free web search, labelled as a suggestion Kotak has not checked. The funding card tells a levy-paying employer to apply before training and claim only approved costs.",
   "Dated snapshots feed fixed rules. The browser sets verdicts, scores and plan order. RunPod drafts skills and questions offline. Claude explains the cited rows. Kopi reads its lines aloud. Text and mute stay available. AI never sets a verdict. If it fails, a fixed template answers. Split and Unknown are valid results.",
-  "This is the sample-data demo. Keep the same profile and answers. Change April to May. Testing moves from Split to Rising. Design Systems moves from Steady to Rising. The sample top match is Design Systems Developer at 74 percent. The roadmap adds testing. The sample shows how a new snapshot changes the plan.",
-  "These are screens from the prototype. The check-up starts with who the worker is: their situation, study, job and goal. Then the radar, roles and roadmap form the loop. Each role says why it is there, and the highlighted one says why Kopi picked it. The national view is built too. It hides groups smaller than ten. The app has phone and desktop layouts. Screens with sample data carry the Sample Data label.",
+  "This is the live demo, on the real snapshots. Keep the same profile and the same 12 answers: Web Developers, level 1 on every skill. In April, Kotak has one month of AI-use data, too few points for a trend, so every skill reads Unknown. Change April to May. Technical documentation and Web specifications and standards turn Rising. Web site building turns Declining. The other three turn Steady. Technical documentation moves from roadmap step 3 to step 1. Only the snapshot changed.",
+  "These are screens from the prototype. The check-up starts with who the worker is: their situation, study, job and goal. Then the radar, roles and roadmap form the loop. Each role says why it is there, and the highlighted one says why Kopi picked it. Connect Your AI gives any assistant the same read-only tools over MCP. The app has phone and desktop layouts, and every verdict cites its dated sources.",
   "MyMahir maps roles and skills. LinkedIn compares skills across roles. MasterClass offers expert video courses by subscription. ReSkills is a Malaysian subscription platform for live online classes. Its provider claim is attributed to NST in 2021. e-LATiH offers free and premium courses. They offer courses. Kotak tells you which skill to learn first and why now, then points you to them. The dated rules and timed plan are our contribution.",
-  "SDG target 4.4 concerns skills for work. DOSM provides the Malaysia baseline through the UN SDG API. Our target is a sourced roadmap in under three minutes, with no uncited recommendations. The seeded-profile checks are technical tests. They are not user research or proof of job placements. We measure whether a worker gets a dated plan they can start.",
-  "Workers use Kotak free. Employers are the payer. Next, they pay Kotak for a team view that helps them decide where to spend their training levy. That view is not built yet. The levy is separate from payment for Kotak. Registered employers pay one percent of wages plus fixed allowances each month, or half a percent in the optional category. They apply before training and claim approved costs. The HRD Corp FAQ is the source. Agencies get the built anonymous national view, for groups of ten or more. An employer's own HR assistant can call the same rules through MCP. Grants are a route to explore.",
-  "The browser runs the rules over committed snapshots. A Cloudflare Worker serves the app and API. Neon stores anonymous national totals. Claude Haiku 5.5 explains the results; this matches the code. Live2D animates Kopi. ElevenLabs supplies cached voice. RunPod supports the batch build. Replit hosts the live demo. Cached answers and fixed text keep the verdict unchanged when Claude fails.",
-  "Try the live demo with the sample profile. The demo QR opens the app. The code QR opens the Kotak repository. Connect Your AI is at slash app slash connect. Copy the MCP setup there. Your assistant calls the same rules as the web app. Data decides. AI explains."
+  "SDG target 4.4 concerns skills for work. DOSM provides the Malaysia baseline through the UN SDG API. Our target is a sourced roadmap in under three minutes, with no uncited recommendations. The 20 seeded profiles are a Phase 2 technical test, a target and not yet a result. They are not user research or proof of job placements. One check is met now: the build fails unless all three demo roles flip a verdict from April to May. We measure whether a worker gets a dated plan they can start.",
+  "Workers use Kotak free. Employers are the payer. Next, they pay Kotak for a team view that helps them decide where to spend their training levy. That view is not built yet. The levy is separate from payment for Kotak. Registered employers pay one percent of wages plus fixed allowances each month, or half a percent in the optional category. They apply before training and claim approved costs. The HRD Corp FAQ is the source. Agencies can read anonymous skill-gap totals through Kotak's summary API and its AI tools, for groups of ten or more. Until real check-ups are collected, those totals are labelled sample rows. An employer's own HR assistant can call the same rules through MCP. Grants are a route to explore.",
+  "The browser runs the rules over committed snapshots. A Cloudflare Worker serves the app and API. Neon stores the JobStreet listings and reviews, the admin accounts and the national view's sample rows. Claude Haiku 5.5 explains the results; this matches the code. Live2D animates Kopi. ElevenLabs supplies cached voice. RunPod supports the batch build. Replit hosts the live demo. Cached answers and fixed text keep the verdict unchanged when Claude fails.",
+  "Try the live demo with your own job. The demo QR opens the app. The code QR opens the Kotak repository. Connect Your AI is at slash app slash connect. Copy the MCP setup there. Your assistant calls the same rules as the web app. Data decides. AI explains."
 ]
     </script>
   </body>
