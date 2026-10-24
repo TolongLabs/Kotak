@@ -6,13 +6,15 @@ export type ChatSpan = { kind: 'text' | 'strong' | 'em' | 'code'; text: string }
 export type ChatBlock =
   | { kind: 'paragraph'; lines: ChatSpan[][] }
   | { kind: 'heading'; spans: ChatSpan[] }
-  | { kind: 'list'; ordered: boolean; items: ChatSpan[][] }
+  | { kind: 'list'; ordered: boolean; start: number; items: ChatSpan[][] }
 
 const BULLET = /^\s*[-*•]\s+(.*)$/
-const NUMBERED = /^\s*\d+[.)]\s+(.*)$/
+const NUMBERED = /^\s*(\d+)[.)]\s+(.*)$/
 const HEADING = /^\s*#{1,6}\s+(.*?)\s*#*\s*$/
-// Bold first, so "**x**" isn't read as two italics; italics only with asterisks, since tool names use underscores.
-const INLINE = /(\*\*[^*\n]+?\*\*|__[^_\n]+?__|`[^`\n]+`|\*[^*\s][^*\n]*?\*)/g
+// Bold first, so "**x**" isn't read as two italics, and bold may hold a lone asterisk ("**O*NET 30.1**"). Italics take
+// asterisks only, since tool names use underscores, and never one inside a word, so "O*NET" stays as written.
+const INLINE =
+  /(\*\*(?:[^*\n]|\*(?!\*))+?\*\*|__[^_\n]+?__|`[^`\n]+`|(?<![\w*])\*(?![\s*])[^*\n]*?[^*\s]\*(?![\w*])|(?<![\w*])\*[^*\s]\*(?![\w*]))/g
 
 /** One line's bold, italic and code spans; unmatched markers stay as plain text. */
 export function parseInline(line: string): ChatSpan[] {
@@ -48,7 +50,7 @@ export function plainChatText(text: string): string {
 export function parseChatText(text: string): ChatBlock[] {
   const blocks: ChatBlock[] = []
   let paragraph: ChatSpan[][] = []
-  let list: { ordered: boolean; items: ChatSpan[][] } | null = null
+  let list: { ordered: boolean; start: number; items: ChatSpan[][] } | null = null
   const flush = () => {
     if (paragraph.length) blocks.push({ kind: 'paragraph', lines: paragraph })
     if (list) blocks.push({ kind: 'list', ...list })
@@ -69,8 +71,9 @@ export function parseChatText(text: string): ChatBlock[] {
     } else if (bullet || numbered) {
       const ordered = !!numbered
       if (paragraph.length || (list && list.ordered !== ordered)) flush()
-      list ??= { ordered, items: [] }
-      list.items.push(parseInline((bullet ?? numbered)![1]!))
+      // A numbered list split by blank lines or sub-bullets keeps its numbers: each part starts where it left off.
+      list ??= { ordered, start: numbered ? Number(numbered[1]) : 1, items: [] }
+      list.items.push(parseInline(bullet ? bullet[1]! : numbered![2]!))
     } else {
       if (list) flush()
       paragraph.push(parseInline(raw.trim()))

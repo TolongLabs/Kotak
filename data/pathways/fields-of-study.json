@@ -27,7 +27,7 @@
       "id": "software-engineering",
       "label": "Software Engineering",
       "group": "Computing",
-      "cip_prefixes": ["14.0903", "11.02"]
+      "cip_prefixes": ["11.02", "11.07"]
     },
     {
       "id": "cybersecurity",
@@ -120,7 +120,13 @@
       "id": "physiotherapy",
       "label": "Physiotherapy and Rehabilitation",
       "group": "Health",
-      "cip_prefixes": ["51.2306", "51.2308", "51.2314", "51.0803", "51.0806", "51.2605"]
+      "cip_prefixes": ["51.2308", "51.2314", "51.0806", "51.2605"]
+    },
+    {
+      "id": "occupational-therapy",
+      "label": "Occupational Therapy",
+      "group": "Health",
+      "cip_prefixes": ["51.2306", "51.0803"]
     },
     {
       "id": "occupational-safety-health",
