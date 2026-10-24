@@ -70,7 +70,7 @@ Lead with what matters to their question, then the evidence. When `roadmap.acces
 - **Corners**, Rising first: the name, the `verdict_label` and the `reason`, then the level (0 to 3) with its `level_label` and the `target_level`, an estimate.
 - **Uncertainty**: a level is "self-reported" or "estimated from your other answers", as `level_label` says. For a Split verdict, give each of `futures`: slow is Malaysia's current AI pace, fast is if AI uptake speeds up. For Unknown, say which data is missing, from the `reason`.
 - **Sources**: cite each source once, with its `source_name`, `vintage_date` and link, and name the snapshot (`2026-05` is May 2026, `2026-04` is April 2026).
-- **Roles**: the top three of `roles`, with `fit_percent` (say "estimated" when `fit_estimated` is true), the `outlook` and the two `gaps`.
+- **Roles**: the top three of `roles` by fit (the app's Roles page orders its cards by the user's own choices first, so it can differ), with `fit_percent` (say "estimated" when `fit_estimated` is true), the `outlook` and the two `gaps`.
 - **Roadmap**: the steps in order, each with its weeks, dates, the `statement` to reach and its `resource` (a resource with `verified` false is a search link: say so); then `weekly_hours` and where they came from, `total_hours` and `finish_date`.
 - **AI dividend**: `roadmap.dividend.weekly_hours_saved` is the hours a week AI could save in this job, and `default_weekly_hours` is the share of it Kotak suggests spending on learning. Offer it as their weekly hours.
 

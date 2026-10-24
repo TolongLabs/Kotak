@@ -1,7 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { interestPicks, type BundlePathways, type ProfileInput } from '@kotak/shared'
+import {
+  interestPicks,
+  lacksExperience,
+  ProfileSchema,
+  roleAccess,
+  type BundlePathways,
+  type ProfileInput
+} from '@kotak/shared'
 import { createKotak } from './kotak'
 
 // The four situations behind #284, run through the SDK on the built bundle (bun run build:data). Each states what
@@ -173,5 +180,54 @@ describe.skipIf(!built)('not sure, with no field or area', () => {
       ])
     })
     expect(roles).toEqual([])
+  })
+})
+
+describe.skipIf(!built)('access to regulated roles', () => {
+  const pathways = async () => (await Bun.file(join(PUBLIC, 'data/pathways.json')).json()) as BundlePathways
+  const profileOf = (input: ProfileInput) => ProfileSchema.parse(input)
+
+  test('a working nurse has open access to the other nursing jobs', async () => {
+    const bundle = await pathways()
+    const nursing = bundle.professions.find((profession) => profession.onet_codes.includes('29-1141.00'))!
+    const nurse = profileOf({ situation: 'working', education_level: 'diploma', field_of_study: 'nursing' })
+    for (const code of nursing.onet_codes) expect(roleAccess(code, nurse, bundle, '29-1141.00').status).toBe('open')
+    // A student nurse doesn't hold the registration yet.
+    const student = profileOf({ situation: 'studying', education_level: 'diploma', field_of_study: 'nursing' })
+    expect(roleAccess('29-1171.00', student, bundle, '29-1141.00').status).not.toBe('open')
+  })
+
+  test('software engineering is not a qualifying field for professional engineers', async () => {
+    const bundle = await pathways()
+    const graduate = profileOf({
+      situation: 'graduated',
+      education_level: 'bachelor',
+      field_of_study: 'software-engineering'
+    })
+    expect(roleAccess('17-2051.00', graduate, bundle, null).status).toBe('qualify')
+  })
+
+  test('physiotherapy and occupational therapy each qualify only for their own profession', async () => {
+    const bundle = await pathways()
+    const physio = profileOf({ situation: 'graduated', education_level: 'bachelor', field_of_study: 'physiotherapy' })
+    const ot = profileOf({
+      situation: 'graduated',
+      education_level: 'bachelor',
+      field_of_study: 'occupational-therapy'
+    })
+    expect(roleAccess('29-1122.00', physio, bundle, null).status).toBe('qualify')
+    expect(roleAccess('29-1122.00', ot, bundle, null).status).toBe('register')
+    expect(roleAccess('29-1123.00', physio, bundle, null).status).toBe('register')
+  })
+
+  test('a regulated role that leads others still counts the years a student lacks', async () => {
+    const bundle = await pathways()
+    const student = profileOf({
+      situation: 'studying',
+      education_level: 'diploma',
+      field_of_study: 'business-administration'
+    })
+    expect(lacksExperience('11-9141.00', student, bundle, null)).toBe(true)
+    expect(roleAccess('11-9141.00', student, bundle, null).summary).toContain('leads others')
   })
 })

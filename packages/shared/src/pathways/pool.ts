@@ -1,4 +1,4 @@
-import { roleAccess } from './access'
+import { lacksExperience, roleAccess } from './access'
 import { activityAreas } from './interests'
 import type { BundlePathways, CandidateReason, EducationLevel, InterestPicks, Profile, RoleAccess } from './schemas'
 
@@ -162,7 +162,9 @@ export function candidateRoles(profile: Profile, pathways: BundlePathways, optio
         (set.has('area') && set.has('field') ? BRIDGE_BONUS : 0) +
         (core.get(code) ?? 0) +
         (match ?? 0) * INTEREST_WEIGHT -
-        ACCESS_PENALTY[access.status] -
+        (access.status === 'experience' || lacksExperience(code, profile, pathways, options.currentCode)
+          ? ACCESS_PENALTY.experience
+          : ACCESS_PENALTY[access.status]) -
         zonePenalty(occupation.job_zone, profile.education_level)
       return {
         onet_code: code,
@@ -196,7 +198,7 @@ export function describeReasons(
   const field = pathways.fields.find((item) => item.id === profile.field_of_study)
   const areas = candidate.area_ids.flatMap((id) => pathways.areas.find((area) => area.id === id)?.label ?? [])
   const text: Record<CandidateReason, string | null> = {
-    target: 'You named this role',
+    target: 'You chose this role',
     area: areas.length ? `In ${areas.join(' and ')}` : null,
     field: field && field.onet_codes.length ? `Your ${field.label} study leads here` : null,
     interests: 'Matches what you enjoy',

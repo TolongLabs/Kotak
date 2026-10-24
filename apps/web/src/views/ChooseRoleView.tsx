@@ -165,7 +165,8 @@ export function ChooseRoleView() {
   const askInterests = new URLSearchParams(window.location.search).get('step') === 'interests'
   const [interestsDone, setInterestsDone] = useState(!askInterests)
   const profile = session.profile
-  const suggestions = useSuggestions(interestsDone ? profile : null, session.role_code)
+  // An earlier pick from this screen is in target_role_codes; leave it out, so it doesn't rank as a named target.
+  const suggestions = useSuggestions(interestsDone ? { ...profile, target_role_codes: [] } : null, session.role_code)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
 

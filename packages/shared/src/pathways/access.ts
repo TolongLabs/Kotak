@@ -54,6 +54,17 @@ export function yearsOfWork(profile: Profile): number | null {
 const holdsJob = (code: string, profile: Profile, currentCode: string | null) =>
   currentCode === code && profile.situation !== 'studying' && profile.situation !== 'graduated'
 
+/**
+ * True when a role leads others and the user hasn't the years it needs. It ranks such roles lower in suggestions, for
+ * regulated professions too; an unknown number of years is never flagged.
+ */
+export function lacksExperience(code: string, profile: Profile, pathways: Pathways, currentCode: string | null) {
+  const prep = pathways.occupations[code]
+  if (!prep || holdsJob(code, profile, currentCode) || !leadsOthers(code, prep.title)) return false
+  const years = yearsOfWork(profile)
+  return years !== null && years < Math.max(LEAD_MIN_YEARS, prep.experience_years ?? 0)
+}
+
 /** The fixed access rule for one role. `currentCode` is the user's current job, if any. */
 export function roleAccess(code: string, profile: Profile, pathways: Pathways, currentCode: string | null): RoleAccess {
   const prep = pathways.occupations[code]
@@ -78,12 +89,25 @@ export function roleAccess(code: string, profile: Profile, pathways: Pathways, c
       sources: profession.sources.map(({ url, title }) => ({ url, title }))
     }
     const law = profession.law ? ` under the ${profession.law}` : ''
-    if (holdsJob(code, profile, currentCode))
+    // Someone already in the profession, in this job or another of its jobs, holds its licence or registration.
+    const inProfession =
+      currentCode !== null &&
+      profession.onet_codes.includes(currentCode) &&
+      profile.situation !== 'studying' &&
+      profile.situation !== 'graduated'
+    if (holdsJob(code, profile, currentCode) || inProfession)
       return {
         ...open,
         profession: known,
-        summary: `You already work in this profession, which Malaysian law regulates${law}.`
+        summary: holdsJob(code, profile, currentCode)
+          ? `You already work in this profession, which Malaysian law regulates${law}.`
+          : `You already work in this profession, which Malaysian law regulates${law}. A specialism can still need its own step in the route below.`
       }
+    const leads = lacksExperience(code, profile, pathways, currentCode)
+      ? ` It also leads others, which needs years in the field first${
+          experienceYears ? `: US workers say over ${experienceYears} years (O*NET)` : ''
+        }.`
+      : ''
     // Entry by licence or examination, or by a degree none of Kotak's fields of study covers: Kotak can't judge it.
     if (!profession.qualifying_field_ids.length)
       return {
@@ -91,7 +115,7 @@ export function roleAccess(code: string, profile: Profile, pathways: Pathways, c
         profession: known,
         status: 'check_licence',
         label: ACCESS_LABELS.check_licence,
-        summary: `${profession.name} is regulated in Malaysia${law}: working in it needs the licence or registration in the route below. Your answers show how well the work suits you.`
+        summary: `${profession.name} is regulated in Malaysia${law}: working in it needs the licence or registration in the route below.${leads} Your answers show how well the work suits you.`
       }
     if (profile.field_of_study === null || profile.education_level === null)
       return {
@@ -99,7 +123,7 @@ export function roleAccess(code: string, profile: Profile, pathways: Pathways, c
         profession: known,
         status: 'check_licence',
         label: ACCESS_LABELS.check_licence,
-        summary: `${profession.name} is regulated in Malaysia${law}: only people who complete the route below may work in it. Tell Kopi your study to see where you stand; your answers show how well the work suits you.`
+        summary: `${profession.name} is regulated in Malaysia${law}: only people who complete the route below may work in it.${leads} Tell Kopi your study to see where you stand; your answers show how well the work suits you.`
       }
     const fieldQualifies = profession.qualifying_field_ids.includes(profile.field_of_study)
     const levelQualifies =
@@ -110,7 +134,7 @@ export function roleAccess(code: string, profile: Profile, pathways: Pathways, c
         profession: known,
         status: 'register',
         label: ACCESS_LABELS.register,
-        summary: `Your study can qualify you for this profession${law}, but the other steps in the route below still come before you work in it.`
+        summary: `Your study can qualify you for this profession${law}, but the other steps in the route below still come before you work in it.${leads}`
       }
     return {
       ...base,
@@ -119,7 +143,7 @@ export function roleAccess(code: string, profile: Profile, pathways: Pathways, c
       label: ACCESS_LABELS.qualify,
       summary: `${profession.name} is regulated in Malaysia${law}. Working in it needs a qualifying ${
         profession.minimum_level ? EDUCATION_LABELS[profession.minimum_level] : 'qualification'
-      } and the other steps in the route below; skills alone don't get you there. Your answers show how well the work suits you, to help you decide whether that's worth pursuing.`
+      } and the other steps in the route below; skills alone don't get you there.${leads} Your answers show how well the work suits you, to help you decide whether that's worth pursuing.`
     }
   }
 
@@ -146,7 +170,7 @@ export function roleAccess(code: string, profile: Profile, pathways: Pathways, c
     return {
       ...base,
       status: 'degree',
-      label: ACCESS_LABELS.degree,
+      label: education === 'diploma' ? 'Diploma Usually Needed' : ACCESS_LABELS.degree,
       summary: `US workers in this job say it usually needs a ${EDUCATION_LABELS[education]} (O*NET).`
     }
   return open

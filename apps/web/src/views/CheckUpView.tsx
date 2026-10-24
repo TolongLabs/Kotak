@@ -281,7 +281,7 @@ export function CheckUpView() {
         </h1>
         <p className="text-body-s text-text-muted">
           Your study and situation decide which roles Kopi shows, and tell you when a role needs a qualification. It
-          stays in this browser.
+          stays in this browser, unless you ask Kopi a question, which sends it with your check-up.
         </p>
       </section>
 

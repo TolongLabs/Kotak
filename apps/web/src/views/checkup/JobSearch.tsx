@@ -68,19 +68,18 @@ export function JobSearch({
     remote?.status === 'available' && !remote.data.fallback_reason && remote.data.match_source !== 'none'
       ? remote.data.occupation
       : null
-  const waiting = ready && key.length > 0 && !exact && !accepted && !situation && current?.status !== 'settled'
+  const waiting = ready && key.length > 0 && !exact && !accepted && current?.status !== 'settled'
   const noMatch =
     ready &&
     key.length > 0 &&
     !accepted &&
-    !situation &&
     !(exact && suggestions.length > 0) &&
     ((current?.status === 'settled' && !remoteRole) || (suggestions.length === 0 && !waiting && !remoteRole))
   const picks = noMatch ? (closestRoles(roles, key).length ? closestRoles(roles, key) : getSuggestedRoles(roles)) : []
   const listOpen = open && !accepted && (suggestions.length > 0 || waiting || remoteRole !== null || noMatch)
 
   useEffect(() => {
-    if (!ready || !key || exact || accepted || situation) return
+    if (!ready || !key || exact || accepted) return
     let live = true
     const timer = window.setTimeout(
       () => {
@@ -127,8 +126,8 @@ export function JobSearch({
       />
       {situation && !accepted && (
         <p className="text-body-s text-text-muted" role="status">
-          That sounds like where you are, not a job. Pick it under Right Now, I’m, and type a job here only if you’ve
-          had one.
+          That sounds like where you are as well as a job. Pick it under Right Now, I’m, and choose the closest job
+          below if you’ve had one.
         </p>
       )}
       {listOpen && (
