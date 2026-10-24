@@ -178,7 +178,8 @@ export const NationalViewSummaryResponseSchema = z
 // What Malaysian job ads say about a role (#271): JobStreet ads that an admin approved under the role's O*NET
 // occupation, summed in Postgres. Context beside the verdicts; it sets none (#275). Counts are whole ads. "Active"
 // ads were seen in the 14 days before the role's latest scrape. Pay is advertised monthly ringgit, the midpoint of
-// each ad's range, rounded to RM 100; null under 5 ads that state pay. Skills are null under 10 checked ads.
+// each ad's range, rounded to RM 100; null under 5 ads that state pay. Skills are null under 10 checked ads, and
+// benefits under 10 checked ads whose cards list selling points.
 export const JOB_MARKET_MAX_CODES = 10
 export const JOB_MARKET_MIN_PAY_ADS = 5
 export const JOB_MARKET_MIN_SKILL_ADS = 10
@@ -199,6 +200,24 @@ export const JobMarketSchema = z
         employers: AdCountSchema // distinct employers among active ads
       })
       .strict(),
+    // How many of JobStreet's ads match the role: JobStreet's count of every ad a search title's search finds
+    // (search_ads), times the share of the run's listings Kotak reviewed that an admin approved, rounded to 10 from 100
+    // up. Roles are ranked by it among every role with an estimate: 1 has the most, and a tie shares a rank. null until
+    // a run has 20 reviewed listings and one approved. popularity and benefits came later than the other fields, so
+    // they may be missing from an answer a browser cached before them.
+    popularity: z
+      .object({
+        estimated_ads: AdCountSchema,
+        rank: z.number().int().min(1),
+        roles: z.number().int().min(1),
+        search_title: z.string().min(1),
+        search_ads: AdCountSchema,
+        sample_reviewed: AdCountSchema,
+        sample_approved: AdCountSchema
+      })
+      .strict()
+      .nullable()
+      .optional(),
     pay: z
       .object({
         ads_with_pay: AdCountSchema,
@@ -224,6 +243,16 @@ export const JobMarketSchema = z
       })
       .strict()
       .nullable(),
+    // The benefits and perks employers name in the selling points on the ads' cards, such as medical cover or a bonus,
+    // most named first.
+    benefits: z
+      .object({
+        ads_checked: AdCountSchema, // checked active ads whose cards list selling points
+        items: z.array(SkillCountSchema)
+      })
+      .strict()
+      .nullable()
+      .optional(),
     // Distinct approved ads seen each week (weeks start on Monday, Malaysia time), oldest first: this week and the 11
     // before it.
     weekly: z.array(z.object({ week: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), ads: AdCountSchema }).strict()),

@@ -21,6 +21,24 @@ const dateLabel = (date: string) =>
   })
 const plural = (count: number, one: string, many: string) =>
   `${count.toLocaleString('en-MY')} ${count === 1 ? one : many}`
+const ordinal = (n: number) => {
+  const tens = n % 100
+  const suffix = tens >= 11 && tens <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[n % 10]
+  return `${n.toLocaleString('en-MY')}${suffix ?? 'th'}`
+}
+
+// Where the role ranks by its estimated JobStreet ads among the roles Kotak has an estimate for: "the 3rd most of the
+// 24 roles Kotak tracks", or null when it is the only one.
+const rankLabel = ({ rank, roles }: NonNullable<JobMarket['popularity']>) =>
+  roles < 2 ? null : `the ${rank === 1 ? '' : `${ordinal(rank)} `}most of the ${roles} roles Kotak tracks`
+
+/** The role card's line: "about 980 on JobStreet, the 2nd most of the 24 roles Kotak tracks", or null without one. */
+export function popularityLabel(market: JobMarket) {
+  const { popularity } = market
+  if (!popularity) return null
+  const rank = rankLabel(popularity)
+  return `about ${popularity.estimated_ads.toLocaleString('en-MY')} on JobStreet${rank ? `, ${rank}` : ''}`
+}
 
 function ShareList({
   label,
@@ -69,8 +87,9 @@ export function JobMarketCard({
   roleTitle: string
   sourceNumber: number
 }) {
-  const { ads, pay, skills } = market
+  const { ads, pay, skills, benefits, popularity } = market
   const titleId = `job-ads-${market.onet_code}`
+  const rank = popularity && rankLabel(popularity)
   // regions lists the top five states, so the rest of the ads that name one are in other states.
   const otherStates =
     ads.active - market.without_state - market.regions.reduce((total, region) => total + region.ads, 0)
@@ -88,6 +107,20 @@ export function JobMarketCard({
       </p>
 
       <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {popularity && (
+          <div className="rounded-md border border-border-subtle p-3 sm:col-span-2">
+            <dt className="text-label-m text-text-muted">Ads on JobStreet</dt>
+            <dd className="text-title-m tabular-nums text-text-primary">
+              About {popularity.estimated_ads.toLocaleString('en-MY')}
+              {rank && <span className="text-body-s text-text-primary">, {rank}</span>}
+            </dd>
+            <dd className="text-body-s text-text-muted">
+              Estimated from JobStreet’s {plural(popularity.search_ads, 'ad', 'ads')} for “{popularity.search_title}”:
+              Kotak’s admins approved {shareLabel(popularity.sample_approved, popularity.sample_reviewed)} of the{' '}
+              {popularity.sample_reviewed.toLocaleString('en-MY')} they reviewed.
+            </dd>
+          </div>
+        )}
         <div className="rounded-md border border-border-subtle p-3">
           <dt className="text-label-m text-text-muted">Active Ads</dt>
           <dd className="text-title-m tabular-nums text-text-primary">{ads.active.toLocaleString('en-MY')}</dd>
@@ -160,6 +193,25 @@ export function JobMarketCard({
             : 'Too few active ads to say which tools and languages they ask for.'}
         </p>
       )}
+
+      {benefits &&
+        (benefits.items.length ? (
+          <>
+            <ShareList
+              label="Benefits the Ads Name"
+              items={benefits.items.map((benefit) => ({ name: benefit.label, ads: benefit.ads }))}
+              base={benefits.ads_checked}
+            />
+            <p className="text-body-s text-text-muted">
+              Shares are of the {plural(benefits.ads_checked, 'active ad', 'active ads')} whose JobStreet card lists the
+              employer’s selling points. Most cards list none, so a benefit can be offered without being named.
+            </p>
+          </>
+        ) : (
+          <p className="text-body-s text-text-muted">
+            None of the selling points on {plural(benefits.ads_checked, 'active ad', 'active ads')} name a benefit.
+          </p>
+        ))}
     </section>
   )
 }
