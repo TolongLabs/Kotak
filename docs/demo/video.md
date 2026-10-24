@@ -1,310 +1,135 @@
 # Demo video
 
-The pitching video is a short narrated deck with a long live demo of Kotak in the middle. Two Claude Code sessions make it: a **Director** writes and edits it, and a **Recorder** films the real app with Playwright. Remotion assembles the slides, the footage and the narration into one file. The method comes from earlier projects of ours that made their demo videos the same way.
-
-Issues: [#82][i82] (script and record) and [#84][i84] (captions and upload).
+How the team makes the pitching video: a narrated deck with a three-minute live demo of Kotak in the middle. The team records the live app with OBS Studio and edits in Adobe Premiere Pro, and uses no other tools. [`kotak-director-script.md`](/docs/demo/kotak-director-script.md) holds the words, the timing and what each segment shows; this page holds the shot list and the recording, editing and upload steps.
 
 Contents:
 
 1.  [Rules for the video](#rules-for-the-video)
-1.  [Video plan](#video-plan)
-1.  [Roles](#roles)
-1.  [Pipeline](#pipeline)
-1.  [Live-demo shot list](#live-demo-shot-list)
-1.  [Recording the prototype](#recording-the-prototype)
-    1.  [Harness](#harness)
-    1.  [Determinism](#determinism)
-    1.  [Manifest and cue sheets](#manifest-and-cue-sheets)
-1.  [Assembling in Remotion](#assembling-in-remotion)
-    1.  [Project](#project)
-    1.  [Motion design](#motion-design)
-    1.  [Sound and captions](#sound-and-captions)
+1.  [Shot list](#shot-list)
+1.  [Record the demo in OBS](#record-the-demo-in-obs)
+    1.  [Set up once](#set-up-once)
+    1.  [Answer key](#answer-key)
+    1.  [Takes, in recording order](#takes-in-recording-order)
+1.  [Record the narration](#record-the-narration)
+1.  [Edit in Premiere](#edit-in-premiere)
+1.  [Captions and export](#captions-and-export)
+1.  [Upload](#upload)
 1.  [Quality checks](#quality-checks)
-1.  [Review gates](#review-gates)
-1.  [Lessons from earlier projects](#lessons-from-earlier-projects)
-1.  [Kickoff prompts](#kickoff-prompts)
-    1.  [Director prompt](#director-prompt)
-    1.  [Recorder prompt](#recorder-prompt)
 1.  [Sources](#sources)
-
-[i82]: https://github.com/TolongLabs/Kotak/issues/82
-[i84]: https://github.com/TolongLabs/Kotak/issues/84
 
 ## Rules for the video
 
-- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables][brief-deliv]). Target 6:00; the cut stays between 5:30 and 6:30 ([#82][i82]).
-- **Mostly demo.** The organisers asked for a balance of slides and demo, with the demo first in priority ([context][ctx]).
-- **Our own voices.** Team members narrate at 1.0× speed. No AI-generated narration and no sped-up audio ([context][ctx]; [#82][i82]).
-- **Problem and user first.** The first 15 seconds say the same user, moment and reason as PRD section 2.1 and the first slide ([context][ctx]).
-- **Sample means labelled.** Demo profiles are sample data, the radar keeps its "self-reported" label, and Kopi calls the national view's sample rows sample data ([content rules][design-content]).
-- **Every number has a source.** Spoken numbers match the deck and its sources. Never state a percentage chance for a verdict ([content rules][design-content]).
+- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:16; keep the cut between 5:30 and 6:30.
+- **The live demo runs at least 3:00.** It is the most important feature live: the trend data feeding the role matching and the plan.
+- **Our own voices.** A team member narrates at 1.0× speed. No generated narration and no sped-up audio. Kopi's voice is heard only as the app's own sound in shot D6.
+- **The persona first.** The first 24 seconds show Aina, the moment and her finished plan.
+- **Sample means labelled.** Aina is a sample persona and the answers are demo answers; the edit tags every app shot, and the app's own "self-reported" and "sample data" labels stay readable ([content rules](/docs/DESIGN.md#content-rules)).
+- **Every number has a source** in the script's [claims ledger](/docs/demo/kotak-director-script.md#claims-ledger).
 
-[brief-deliv]: /docs/BRIEF.md#preliminary-deliverables
-[ctx]: /docs/CONTEXT.md#what-this-means-for-us
-[design-content]: /docs/DESIGN.md#content-rules
+## Shot list
 
-## Video plan
+Record each shot as its own OBS file. Lengths are the edit's slots; record a few seconds more at each end.
 
-The Director may move time between parts. The live demo stays at 3:00 or more, and the total stays inside 5:30 to 6:30.
+| Shot | Slot | Screen                                | On camera                                                                                                                        |
+| ---- | ---: | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| H1   | 24 s | Roadmap                               | Aina's finished plan at rest: "Your 35-Week Roadmap", "80% Fit by Week 35", the timeline, then a slow scroll to the funding card |
+| D1   | 14 s | Check-Up start                        | Working, "web developer" typed and Web Developers picked, then the goal Stay Strong in My Job                                    |
+| D2   | 18 s | Questions                             | Kopi asks questions 1 to 3, answered with the number keys from the [answer key](#answer-key)                                     |
+| D3   | 34 s | Radar and Gaps                        | The radar with its "self-reported" label, verdicts, dated sources and the "Needed by" line; then the Job Ads in Malaysia card    |
+| D4   | 16 s | Roles That Fit                        | The three roles with fit scores and reasons; the highlighted card; See the Maths open                                            |
+| D5   | 28 s | Roadmap                               | The title and readiness line, the first step's hours and free link; tick the first step and its level rises; the funding card    |
+| D6   | 40 s | What Changed                          | Starting on April 2026, load May 2026: the line moves, six verdicts flip, the ranking and steps reorder, and Kopi speaks         |
+| D7   | 12 s | Ask Kopi                              | "Which rising skills do web developers lack most?"; Kopi checks the national skill gaps and calls the rows sample data           |
+| M1   | 18 s | Connect Your AI, then an AI assistant | 3 s of the Connect Your AI page; then an assistant with Kotak connected answers about web developers with the same verdicts      |
 
-| Time      | Part                                                           | Source                                               |
-| --------- | -------------------------------------------------------------- | ---------------------------------------------------- |
-| 0:00–0:45 | Hook and problem, worded as PRD section 2.1                    | Deck                                                 |
-| 0:45–1:30 | How Kotak works: rules decide, AI explains; the six must-haves | Deck                                                 |
-| 1:30–4:45 | **Live demo**                                                  | Recorder footage ([shot list](#live-demo-shot-list)) |
-| 4:45–5:20 | Architecture, with Replit and RunPod                           | Deck                                                 |
-| 5:20–5:50 | SDG 4.4 impact                                                 | Deck                                                 |
-| 5:50–6:00 | Close                                                          | Deck                                                 |
+## Record the demo in OBS
 
-**Render the whole video in Remotion.** Export each slide of the PPTX deck ([#80](https://github.com/TolongLabs/Kotak/issues/80)) as a 1920 × 1080 PNG. Then one timeline holds the slides, the narration and the demo, with one mix and one caption file. Export the slides again whenever the deck changes.
+### Set up once
 
-## Roles
+1.  **Browser:** Chrome, a new Incognito window, so the guest session starts empty. Maximise it on a 1920 × 1080 screen, set the zoom to 100% and hide the bookmarks bar. Open the live demo: <https://kotak-alaskxntxna.replit.app>. Turn the sound on: Kopi speaks in D6.
+1.  **OBS video:** Settings → Video: base and output resolution 1920 × 1080, 30 fps.
+1.  **OBS output:** Settings → Output → Recording: format MKV, a hardware encoder if the list has one, quality "High Quality, Medium File Size". After recording, File → Remux Recordings turns the MKV files into MP4 for Premiere.
+1.  **OBS sources:** a Window Capture of the Chrome window. Desktop Audio on, so Kopi's voice is recorded; the microphone muted for every demo take.
+1.  **Pace:** move the mouse slowly and hold each state for about 1.5 seconds. If something goes wrong, keep recording, wait 2 seconds and do it again; the edit cuts it.
 
-| Role           | Who                             | Owns                                                                                                                       | Hands over                                                                      |
-| -------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Director       | Claude Code session on Opus 5.5 | The script, the shot list, the Remotion edit, the mix, the captions and the quality checks                                 | The shot list to the Recorder; stills, rough cut and final files to AlaskanTuna |
-| Recorder       | Claude Code session on Opus 5.5 | The recording harness, the takes, the manifest and cue sheets, and the motion components (callouts, push-ins, click rings) | Footage, the manifest and the components to the Director                        |
-| AlaskanTuna    | Person, owner of #82 and #84    | The review gates, the narration takes with the team, the upload and the link check                                         | Approvals and the recorded narration                                            |
-| Frontend owner | Person, owner of [#28][i28]     | Says when the frontend is frozen for final takes                                                                           | The freeze time and commit                                                      |
-| Deck owner     | Person, owner of #80            | The PPTX deck                                                                                                              | The final deck                                                                  |
+### Answer key
 
-Name the sessions `kotak-director` and `kotak-recorder`. They message each other with SendMessage; files are the contract between them. The Recorder never drives the edit, and the Director never drives the app.
+The intake is Working, the job Web Developers and the goal Stay Strong in My Job; leave the other fields as they are. Press the number keys 1 to 4; no clicking is needed. Questions 2, 4, 7, 10 and 12 are worded the other way round, so these keys give the demo answers ("Mostly" on each basic skill, "Not yet" on each advanced one).
 
-[i28]: https://github.com/TolongLabs/Kotak/issues/28
+| Q   | Skill                            | Starts with                                                      | Key |
+| --- | -------------------------------- | ---------------------------------------------------------------- | --: |
+| 1   | Technical documentation          | "I can record simple test results with guidance."                |   3 |
+| 2   | Technical documentation          | "I would struggle to document complex technical factors…"        |   4 |
+| 3   | Web specifications and standards | "I can maintain knowledge of web technologies through reading."  |   3 |
+| 4   | Web specifications and standards | "I would struggle to develop procedures for ongoing…"            |   4 |
+| 5   | Web site building                | "I can build simple web pages using authoring tools…"            |   3 |
+| 6   | Web site building                | "I can select optimal programming languages and tools…"          |   1 |
+| 7   | Web testing and updates          | "I would still need help to perform basic web site tests."       |   2 |
+| 8   | Web testing and updates          | "I can direct web site updates and establish server…"            |   1 |
+| 9   | Web design and databases         | "I can analyze user needs to list basic technical requirements." |   3 |
+| 10  | Web design and databases         | "I would find it hard to create complex web models…"             |   4 |
+| 11  | Web performance and support      | "I can respond to user email inquiries with guidance."           |   3 |
+| 12  | Web performance and support      | "I would find it hard to recommend and implement server…"        |   4 |
 
-## Pipeline
+Done when the roadmap, at 10 hours a week, reads "Your 35-Week Roadmap" and "80% Fit by Week 35". If it doesn't, start again in a new Incognito window.
 
-1.  **Brief (Director).** Write `video/BRIEF.md`: the story, the narration for every slide and shot, and a timing table inside 5:30 to 6:30. Stop at gate G1.
-1.  **Shot list (Director).** Write `video/src/data/shots.json` from the approved brief and send it to the Recorder.
-1.  **Narration (team).** Team members record the approved narration in their own voices. The Director reads its timings into `video/src/data/voice.json`.
-1.  **Harness and draft takes (Recorder).** Build the harness on the current app build and record draft takes, so the edit can start.
-1.  **Final takes (Recorder).** When the frontend owner freezes the frontend, record every shot again on that commit.
-1.  **Ingest (Director).** Convert each take to 30 fps H.264 and read its cues into `video/src/data/footage.json`.
-1.  **Edit and motion (both).** The Director builds the timeline; the Recorder builds the motion components to the Director's spec.
-1.  **Review.** Five stills at G2, a half-scale rough cut at G3.
-1.  **Finish (Director).** Render, normalise loudness, write captions, run the checks. Stop at G4.
-1.  **Upload (AlaskanTuna).** Upload as public, fix the captions by hand, then open the link from a signed-out browser before submitting ([#84][i84]).
+### Takes, in recording order
 
-## Live-demo shot list
+1.  **D1.** Start recording on the landing page. Click Start, pick Working, type "web developer" and pick Web Developers, pick Stay Strong in My Job and continue. Stop.
+1.  **D2.** Start recording on question 1. Answer questions 1 to 3 slowly from the key. Stop. Answer questions 4 to 12 off camera.
+1.  **D3.** Start recording on Radar and Gaps. Rest on the radar; hover a verdict chip; scroll slowly to the Job Ads in Malaysia card and rest there. Stop. Note the ad count and the median on the card, for the narration.
+1.  **D4.** Start recording on Roles That Fit. Rest on the three roles, then on the highlighted card, then open See the Maths. Stop.
+1.  **Off camera:** on the Roadmap, set Hours Per Week to 10 and the Plan Start Date to Monday 2 November 2026.
+1.  **D5.** Start recording at the top of the Roadmap. Rest on the title and the readiness line, then on the first step and its free link. Tick the first step and rest while its level rises. Scroll to the funding card. Stop. Untick the step.
+1.  **H1.** Start recording at the top of the Roadmap. Rest for 3 seconds, then scroll slowly through the timeline to the funding card. Stop.
+1.  **D6.** On What Changed, pick April 2026 off camera and let it settle. Start recording. Pick May 2026, and rest while the line moves and Kopi speaks to the end. Stop.
+1.  **D7.** Start recording on Ask Kopi. Type the question, send it and wait for the whole reply. Stop. Make up to 3 takes, and keep the one that says "sample data" most plainly.
+1.  **M1.** Start recording on the app's Connect Your AI page and rest for 3 seconds. Switch to an AI assistant that has Kotak's MCP address added, as that page explains. Ask "Using Kotak, which skills are rising and declining for web developers?", and rest on its tool call and its answer. Stop.
 
-The Director owns this list; the Recorder confirms each shot on the frozen build. The screens are the views in the [design system][design-screens], and the demo case is a hand-checked sample profile ([#104](https://github.com/TolongLabs/Kotak/issues/104)). Steps between shots run off camera.
+## Record the narration
 
-| Shot | Length | Screen                           | On camera                                                                                                                                                                                                                                               | Built in  |
-| ---- | -----: | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| D1   |   20 s | Desktop, Check-Up: Start         | The sample profile: a front-end developer in Kuala Lumpur picks Working, a bachelor's in Computer Science and IT and 2 to 3 years, types "web developer", then picks "Show Me Where I Could Go" with the AI and Data and Cloud and Infrastructure areas | #59, #284 |
-| D2   |   25 s | Desktop, Check-Up: Questions     | Kopi asks two or three of the 12 can-do questions, rated with the number keys 1 to 4                                                                                                                                                                    | #59, #238 |
-| D3   |   35 s | Desktop, Radar and Gaps          | The radar, its verdict chips, dated sources and the dashed "Needed by May 2027" line; open About Needed By to show the need is an estimate 12 months ahead. The slow and fast toggle has not been in the build since #167                               | #61, #167 |
-| D4   |   25 s | Desktop, Matched Roles           | Six roles, each saying why it's there; the highlighted card says in bold why Kopi picked it; open See the Maths for its fit                                                                                                                             | #64, #284 |
-| D5   |   30 s | Desktop, Roadmap                 | Milestones with time estimates, free resources and a finish date; tick one and watch the corner level rise                                                                                                                                              | #67       |
-| D6   |   40 s | Desktop, What Changed            | Load the May 2026 snapshot: the line moves, a verdict flips, the ranking and roadmap reorder, and Kopi says what changed                                                                                                                                | #69       |
-| D7   |   15 s | Desktop, Ask Kopi                | Ask which rising skills web developers lack most; Kopi runs National Skill Gaps and calls the rows sample data. The National View screen has not been in the build since #167; an MCP client can ask the same instead                                   | #190      |
-| D8   |   10 s | Phone, 390 × 844, Radar and Gaps | The same radar on a phone                                                                                                                                                                                                                               | #61       |
+Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#recording-the-voiceover): one narrator, one file per segment (`V01` to `V10`, `D1` to `D7`, `M1`), two takes each, and 10 seconds of room silence. OBS can record it: a scene with only the microphone, Desktop Audio muted. Read D3's figures from the card noted in take D3.
 
-The shots total 200 seconds before trimming. D6 is the key moment: the rubric names "the trend signal layer feeding role matching" as the feature to show ([live demo][live-demo]).
+## Edit in Premiere
 
-If the Director finds 10 spare seconds, a cut-in after D4 shows the intake's other paths ([#284](https://github.com/TolongLabs/Kotak/issues/284)): a linguistics graduate who wants law sees "Qualification Needed" on the Lawyers radar, with the route in beside their fit. Kotak informs and never blocks.
+1.  **Sequence:** 1920 × 1080, 30 fps. Import the 12 deck stills (`S01` to `S12`, 1920 × 1080 PNG, exported with the deck), the remuxed MP4 takes and the narration files.
+1.  **Lay out the timeline** in the script's [timing](/docs/demo/kotak-director-script.md#timing) order. Video track 1: H1 (V1), then the deck stills (V2 to V5), the demo takes (D1 to M1) and the deck stills again (V6 to V10). Audio track 1: the narration. Audio track 2: the footage sound, muted everywhere except Kopi's voice in D6.
+1.  **Trim to the narration.** Each slot runs from its first word to a beat after its last. Cut the waits out of the takes; keep the actions.
+1.  **Move gently.** On each deck still, scale from 100% to about 106% over the segment. Where the script names a push-in, move toward that card instead. Cross Dissolve of 8 frames between segments.
+1.  **Text on screen** (Essential Graphics, Atkinson Hyperlegible Next, or a plain sans if it isn't installed):
+    - A chip top left on each demo shot, at least 54 px: Intake, Questions, Radar, Roles, Roadmap, What Changed, Ask Kopi, Your AI.
+    - The script's callout for the shot, at least 54 px, one at a time, never over an app label.
+    - "Sample persona · demo answers", at least 36 px, bottom left, on every app shot including H1.
+1.  **Sound:** keep the narration level steady; let Kopi's line in D6 play clear, with no narration over it. No music.
 
-[design-screens]: /docs/DESIGN.md#screens
-[live-demo]: /docs/ideas/0007-kotak.md#must-haves-and-the-live-demo
+## Captions and export
 
-## Recording the prototype
+1.  **Captions:** Text panel → Transcribe sequence, English. Create captions of at most 42 characters and 2 lines. Fix every name against the script: Kotak, Kopi, T010NG, Aina, HRD Corp, JobStreet, MasterClass, ReSkills, e-LATiH, SDG 4.4, MCP, Claude Haiku, RunPod, Live2D, ElevenLabs, Replit. Export the captions as an SRT sidecar file.
+1.  **Loudness:** in Export, Effects → Loudness Normalization: ITU BS.1770-3, target −14 LUFS, maximum true peak −1 dBTP.
+1.  **Export:** H.264, 1920 × 1080, 30 fps, VBR 2 pass, target 16 Mbps; audio AAC, 48 kHz, 320 kbps. Name it `kotak-pitch-video.mp4`.
 
-### Harness
+## Upload
 
-- **Files:** `video/record/playwright.config.ts` and `video/record/takes.rec.ts`, outside any test folder, so CI never records video.
-- **Target:** the app's production build, the build the judges get. Record its commit hash in the manifest.
-- **Browser:** Chromium, headed on WSL. The Live2D canvas needs the GPU.
-- **One file per take:** set the shot up off camera, then start a screencast, act, and stop it. Playwright records with `page.screencast.start()` ([Playwright screencast][pw-screencast]); check the call against the Playwright version the harness pins:
-
-```ts
-let firstFrame: number | undefined
-await page.screencast.start({
-  path: `video/public/footage/raw/${shot}-take${take}.webm`,
-  size: { width: 1920, height: 1080 },
-  fps: 30,
-  onFrame: ({ timestamp }) => {
-    firstFrame ??= timestamp
-  }
-})
-
-// A cue is the moment the expected state is visible, not the moment of the click.
-async function cue(id: string, visible: Locator) {
-  await expect(visible).toBeVisible()
-  cues.push({ id, tMs: Date.now() - firstFrame!, box: await visible.boundingBox() })
-}
-
-// ...the shot's actions and cues...
-await page.screencast.stop()
-```
-
-- **Phone shots:** use a 390 × 844 viewport with `deviceScaleFactor: 3` and a screencast size of 1170 × 2532. Check the real frame size with `ffprobe` on the first take.
-
-### Determinism
-
-- **A fresh browser context for every take.** The guest session lives in `localStorage` ([#41](https://github.com/TolongLabs/Kotak/issues/41)), so nothing carries over.
-- **The same sample profile** starts every take.
-- **Fixed snapshot order:** the app opens on the May 2026 snapshot since [#167](https://github.com/TolongLabs/Kotak/pull/167), so each D6 take starts by selecting Before (April) on What Changed off camera. The demo switcher toggles back after D6 for repeat takes ([#69](https://github.com/TolongLabs/Kotak/issues/69)).
-- **Fixed words:** the demo roles run from the pre-warmed answer and audio caches ([#43](https://github.com/TolongLabs/Kotak/issues/43); [#46](https://github.com/TolongLabs/Kotak/issues/46)), so Kopi says the same lines in every take. Ask Kopi in D7 is the exception: its replies are live and never cached, so they differ between takes.
-- **Fix the clock:** `page.clock.setFixedTime('2026-10-24T09:00:00+08:00')`, so the roadmap's finish dates stay the same across takes.
-- **Same build for every final take.** Re-record every shot after any frontend change.
-
-### Manifest and cue sheets
-
-The Recorder writes `video/public/footage/manifest.json`. Coordinates are CSS pixels of the take's viewport.
-
-```json
-{
-  "commit": "a1b2c3d",
-  "takes": [
-    {
-      "shot": "D6",
-      "take": 2,
-      "status": "ok",
-      "file": "raw/D6-take2.webm",
-      "viewport": { "width": 1920, "height": 1080 },
-      "fps": 30,
-      "cues": [{ "id": "verdict-flip", "tMs": 6120, "box": { "x": 812, "y": 404, "width": 520, "height": 48 } }]
-    }
-  ]
-}
-```
-
-- Agree the cue ids with the Director before recording. They come from `shots.json`.
-- Mark a bad take `"failed"`. Never overwrite or delete a take; the ingest picks the newest `"ok"` take.
-
-[pw-screencast]: https://playwright.dev/docs/api/class-screencast
-
-## Assembling in Remotion
-
-### Project
-
-- **Where:** a `video/` folder at the root of this repository, with its own `package.json`, outside the app. Pin Remotion 4.0.530, the version our earlier projects used. Run `bun install` inside `video/`.
-- **Keep it out of the submission repository.** If any video code moves there, declare it as pre-existing work ([PRD section 6.1](/docs/PRD.md#61-pre-existing--prior-owned-work)).
-- **Ignore media in Git:** `video/out/`, `video/public/footage/`, `video/public/voice/` and `video/public/music/`. Commit the code, the brief, `shots.json` and the data JSON.
-- **Port from the earlier projects:** the frame and keyframe helpers, the timeline layout, the cue windows, the subtitle and SRT builders, the music envelope, and the loudness and QA scripts. Leave out their voice-generation scripts: the narration is ours.
-- **Ingest:** convert each take to constant 30 fps H.264 before the edit:
-
-```shell
-ffmpeg -i raw/D6-take2.webm -vf fps=30 -c:v libx264 -crf 16 -pix_fmt yuv420p -an D6-take2.mp4
-```
-
-- **Compositions:** `Main` (the whole video, 1920 × 1080, 30 fps), `MainNoMusic`, `Demo` (the live demo alone, for review) and one preview per shot.
-
-### Motion design
-
-- **The app is the star.** Show the app window inset on a calm background, about 0.86 scale, with room for one callout beside it. The phone shot sits in a plain phone frame.
-- **Guide the eye.** A gentle push-in, about 1.12×, toward the cue's box at each key action, and a ring at the click point.
-- **Chapter chip per shot:** Intake, Questions, Radar, Roles, Roadmap, What Changed, Ask Kopi.
-- **One callout per shot,** five words at most, for example "The data moved the line" in D6.
-- **Motion rules:** deterministic by frame, eased in and at rest; no bounce, whip-pan or smear. Cut on the narration.
-- **Look:** Atkinson Hyperlegible Next and the colour tokens in the [design system](/docs/DESIGN.md). Overlay text is at least 54 px.
-- **Never cover a label or a source:** the "self-reported" label, the sample tags and the dated source lines stay visible.
-
-### Sound and captions
-
-- **Team voices.** Team members record the narration in their own voices, at 1.0× speed.
-- **Kopi's in-app voice is product audio.** It plays inside demo shots under the narration and never replaces it.
-- **Music is optional.** If used, duck it 12 dB under the narration and also render a version without music, in case YouTube claims the track.
-- **Loudness:** −14 LUFS integrated and at most −1 dBTP true peak.
-- **Captions:** an English SRT built from the script and the narration timings, then fixed by hand before upload ([#84][i84]).
+1.  **YouTube:** upload `kotak-pitch-video.mp4`. Title: "Kotak · SDC Hackathon 2026 · Domain 1 · Team T010NG". Description: one line on Kotak, then the live demo, the repository and the deck links. Audience: "No, it's not made for kids". Add the SRT under Subtitles.
+1.  **Visibility: Public**, never Unlisted or Private.
+1.  **Check signed out:** open the link in an Incognito window. It plays, the captions show, and the runtime is under 7:00.
+1.  **Link it:** put the YouTube link in the README's Demo Video link.
 
 ## Quality checks
 
-Automated, in the QA script:
+Before upload, watch the whole export once with sound, and check:
 
-- The whole video runs 330 to 390 seconds, and the live demo at least 180 seconds.
-- Loudness is within 0.7 LU of −14 LUFS, and true peak is at most −1 dBTP.
-- The narration and captions contain no banned phrase: "chance of", "guarantee", "AI decides", "will replace you", "certified", "real user". The Director extends the list.
-- The Recorder's harness confirms the "self-reported" label on every radar cue, and that Kopi's national-view answer in D7 calls its rows sample data.
-- Overlay text is at least 54 px.
-
-By hand, before upload:
-
-- Every spoken number matches the deck and its source.
-- A team member watches the whole video once, with sound.
-
-## Review gates
-
-AlaskanTuna approves each gate. Every gate finishes before the upload in [#84][i84]; the submission deadline is 7:59:59 AM on Sunday 25 October 2026 ([deadlines](/docs/BRIEF.md#deadlines)).
-
-| Gate | AlaskanTuna approves                              |
-| ---- | ------------------------------------------------- |
-| G1   | The brief, the shot list and the narration script |
-| G2   | Five stills from the edit                         |
-| G3   | A half-scale rough cut                            |
-| G4   | The final files, after the automated checks       |
-
-- **Start the final render early.** An earlier project's renderer took about an hour for a 98-second video with layered scenes; this video is almost four times longer.
-- **Final takes need the frozen frontend.** If the freeze slips, record on the latest `main` and note the commit.
-
-## Lessons from earlier projects
-
-- **Cut on cue windows, not one long take per screen.** One first edit ran 138 seconds against a 119.5-second cap.
-- **Actions run ahead of the screen.** Taps showed on screen 0.8 to 1.7 seconds after the logged time. Log a cue when its state is visible, then check it on a still.
-- **Raw captures can drop still frames.** Convert to constant 30 fps before the edit.
-- **A UI change means new takes.**
-- **Agree the contract first:** cue ids, time base, coordinate scale and file paths, before either session builds on them.
-- **Label every render** with its version, its source takes and its review state, so notes map to a cut.
-
-## Kickoff prompts
-
-Start each session in one shared worktree, so the main checkout stays free:
-
-```shell
-git worktree add -b video/edit ../kotak-video origin/main
-```
-
-The Director owns everything in `video/` except `video/record/` and `video/src/motion/`, which the Recorder owns. Only the Director runs Git. When you start a session, add the local path of the earlier project's video folder and its brief to the prompt.
-
-### Director prompt
-
-```text
-You are kotak-director, the Director of the Kotak pitching video (issues #82 and #84).
-Read docs/demo/video.md fully. Then read docs/PRD.md section 2.1, docs/PRODUCT.md,
-docs/DESIGN.md, docs/CONTEXT.md "What this means for us", docs/ideas/0007-kotak.md
-"Must-haves and the live demo", and the slide stills exported from the PPTX deck (#80).
-
-You own the script, video/src/data/shots.json, the Remotion project in video/, the
-mix, the captions and the quality checks. The Recorder session (kotak-recorder) films
-the app; you never drive the app yourself. Team members record the narration; never
-generate a voice.
-
-Reference: the earlier project's video folder and brief at <paths>. Port its timing,
-caption, audio and QA modules; don't copy its story or look.
-
-Steps: 1) write video/BRIEF.md and stop at gate G1 for AlaskanTuna; 2) write shots.json
-and send it to the Recorder; 3) scaffold video/ and ingest the recorded narration;
-4) ingest the Recorder's takes; 5) build the edit; 6) stills (G2), rough cut (G3),
-final (G4).
-
-Rules: claim nothing the deck can't source; keep every sample view labelled; commit
-code and data only, never media; open a pull request per gate.
-```
-
-### Recorder prompt
-
-```text
-You are kotak-recorder, the Recorder and motion designer for the Kotak pitching video
-(issue #82). The Director is kotak-director; it owns the script and the edit.
-
-Read docs/demo/video.md fully, then the app's routes and screens for the shots in
-shots.json, and docs/DESIGN.md. Read the Playwright screencast docs before using the API.
-
-You own video/record/ (the harness) and video/src/motion/ (callouts, push-ins, click
-rings, chapter chips), plus the footage in video/public/footage/. Don't run Git.
-
-Steps: 1) build the harness and record draft takes of every shot in shots.json on the
-current build; 2) send the Director the manifest path and any shot you could not
-record, with the reason; 3) build the motion components to the Director's spec;
-4) when the frontend owner announces the freeze, record every shot again on that commit.
-
-Rules: never change the app to make a shot work; report the gap instead. Keep failed
-takes, marked failed. Confirm the "self-reported" label and the sample tags at every cue.
-```
+- [ ] Runtime 5:30 to 6:30, and the demo at least 3:00.
+- [ ] Every spoken number matches the script's claims ledger; D3's figures match the card on the recording day.
+- [ ] No banned phrase in the narration, the captions or the text: "AI check-up", "12-week", "chance of", "guarantee", "AI decides", "will replace you", "certified", "real user".
+- [ ] The "Sample persona · demo answers" tag is on every app shot; the "self-reported" label and Kopi's "sample data" are readable.
+- [ ] Live2D and ElevenLabs are named only in V9. No issue or pull-request numbers appear anywhere.
+- [ ] Kopi's voice is clear in D6, and the loudness normalisation ran.
+- [ ] After upload: Public, plays signed out, captions on.
 
 ## Sources
 
-- [Preliminary deliverables][brief-deliv] and [what this means for us][ctx], item 9 on the video.
-- [Design system: screens][design-screens] and [content rules][design-content].
-- [Playwright screencast][pw-screencast] and [Playwright videos](https://playwright.dev/docs/videos).
-- [Remotion documentation](https://www.remotion.dev/docs/).
+- [Director script](/docs/demo/kotak-director-script.md): the narration, the timing and the claims ledger.
+- [Pitch deck](/docs/demo/deck/pitch-deck.html) and its stills.
+- [Brief: deliverables](/docs/BRIEF.md#preliminary-deliverables) and [judging](/docs/BRIEF.md#judging).
+- [OBS Studio](https://obsproject.com/kb/) and [Adobe Premiere Pro](https://helpx.adobe.com/premiere-pro/user-guide.html) user guides.
