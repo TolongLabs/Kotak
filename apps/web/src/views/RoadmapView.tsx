@@ -22,7 +22,7 @@ import { useCheckupBundle } from '../engine/bundle'
 import { assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { toIsoDate } from '../engine/dates'
 import {
-  ROADMAP_WEEKS,
+  planWeeksFor,
   toReadinessPoints,
   toReadinessWindow,
   toRoadmapSources,
@@ -226,8 +226,7 @@ export function RoadmapView() {
       startDate,
       planRoleCode: checkup.planRoleCode
     })
-    const points = toReadinessWindow(toReadinessPoints(checkupWithHours, role))
-    const readyWeek = points.find((point) => point.plan >= 80)?.week ?? null
+    const readyWeek = toReadinessPoints(checkupWithHours, role).find((point) => point.plan >= 80)?.week ?? null
     return { proposed, readyWeek }
   }, [checkup, bundle, session.answers, session.custom_weekly_hours, startDate])
 
@@ -283,13 +282,16 @@ export function RoadmapView() {
   const role =
     [bundle.data.role, ...bundle.data.related].find((candidate) => candidate.onet_code === checkup?.planRoleCode) ??
     bundle.data.role
+  const fullReadiness = toReadinessPoints(checkup, role)
+  const planWeeks = planWeeksFor(fullReadiness, (point) => point.plan)
   const { steps, stepHours, partialIds, later, remainingHours } = toRoadmapWindow(
     checkup,
     role,
-    session.ticked_milestones
+    session.ticked_milestones,
+    planWeeks
   )
   const timelineSteps: TimelineStep[] = steps.map((step) => ({ ...step, totalHours: stepHours.get(step.id) ?? 0 }))
-  const readinessPoints = toReadinessWindow(toReadinessPoints(checkup, role))
+  const readinessPoints = toReadinessWindow(fullReadiness, planWeeks)
   const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
   const selectedImpactArea = impactAreaGoals.find((goal) => String(goal) === session.impact_area) ?? null
   const sourceRefs = toRoadmapSources(checkup)
@@ -357,9 +359,8 @@ export function RoadmapView() {
       ? 'Already at least 80% Fit'
       : `80% Fit by Week ${readyPoint.week}`
     : readinessPoints.length > 0
-      ? `Below 80% Fit Within ${ROADMAP_WEEKS} Weeks`
+      ? `Below 80% Fit Within ${planWeeks} Weeks`
       : 'No Readiness Estimate Yet'
-  const planWeeks = ROADMAP_WEEKS
   const reasonStep = steps[0]
   const reasonCorner = reasonStep && checkup.corners.find((corner) => corner.corner_id === reasonStep.id.split(':')[0])
   const reasonNumbers = reasonCorner ? (sourceRefs.cornerNumbers.get(reasonCorner.corner_id) ?? []) : []

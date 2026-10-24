@@ -464,10 +464,10 @@ gap_size  = target_level - user_level, for each corner where user_level < target
 weeks     = total_hours / weekly_hours
 ```
 
-- **Order**: rising gaps first, largest first; then Steady, Split and Unknown; Declining last, tagged "less important by 2027" ([#83]).
+- **Order**: each corner's milestones stay in level order; across corners, the next milestone is the one that adds the most fit per hour, so cheap basic steps come before costly advanced ones and the plan reaches 80% fit soonest. Declining corners come last, tagged "less important by 2027"; ties keep rising gaps first, largest first, then Steady, Split and Unknown ([#83]).
 - **Milestone**: the next can-do statement, done for real, with an AI-drafted time estimate and one free resource: a guide, a video, a community or an HRD Corp-claimable programme ([#67]). The [context notes](/docs/CONTEXT.md#what-this-means-for-us) advise never calling a course "HRD Corp-claimable", because no working public list of claimable programmes exists. [#104] curates verified resources for the demo roles.
-- **Weekly hours**: the app starts at 4 hours a week and the user can edit it, and the finish date updates at once. Without a figure, as from an MCP client, the SDK uses part of the time AI could save the user on declining tasks, the AI dividend ([#67], [#83]).
-- **Length**: the web roadmap shows the next 12 weeks at the chosen weekly hours; unfinished milestones and remaining hours are listed after Week 12. A partial milestone earns no projected level gain. The SDK keeps the full path: its finish date comes from total hours divided by weekly hours. The 80% fit threshold is separate from completing every skill target.
+- **Weekly hours**: the app starts at 4 hours a week and the user can set 1 to 20, and the finish date updates at once. Without a figure, as from an MCP client, the SDK uses part of the time AI could save the user on declining tasks, the AI dividend ([#67], [#83]).
+- **Length**: the web roadmap runs at least 12 weeks and on to the week the plan first reaches 80% fit, at the chosen weekly hours; unfinished milestones and remaining hours are listed after that week. A partial milestone earns no projected level gain. The SDK keeps the full path: its finish date comes from total hours divided by weekly hours. The 80% fit threshold is separate from completing every skill target.
 - **Practice project**: follows the user's impact area. Every corner and role has at least one SDG tag ([#67]).
 - **Ticking**: the user ticks a milestone when they can honestly say yes to it. That raises the corner's level and updates the fit score and the readiness graph ([#67]).
 
