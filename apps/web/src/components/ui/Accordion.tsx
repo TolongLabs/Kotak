@@ -1,11 +1,11 @@
-import { forwardRef, useId, useState, type ComponentPropsWithoutRef } from 'react'
+import { forwardRef, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from 'react'
 import { Minus, Plus } from 'lucide-react'
 import { cn } from './cn'
 
 export interface AccordionItem {
   id: string
   question: string
-  answer: string
+  answer: ReactNode
 }
 
 export interface AccordionProps extends ComponentPropsWithoutRef<'div'> {
@@ -52,7 +52,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
               </button>
             </h3>
             <div id={panelId} role="region" aria-labelledby={buttonId} hidden={!isOpen}>
-              <p className="pb-4 text-body-m text-text-muted">{item.answer}</p>
+              <div className="pb-4 text-body-m text-text-muted">{item.answer}</div>
             </div>
           </div>
         )

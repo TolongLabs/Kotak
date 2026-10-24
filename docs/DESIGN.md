@@ -52,6 +52,9 @@ Contents:
 | `color/radar/role`          | `#191812`        | `#F3F2ED`        | The dashed "needed by 2027" line            |
 | `color/radar/you`           | `#F6D732`        | `#EFD127`        | The user's line on the radar                |
 | `color/radar/you-fill`      | `#FAE784`        | `#96841C`        | The user's shape and the Strengths quadrant |
+| `color/swot/weak`           | `#FBE4E1`        | `#3A1F1C`        | Weaknesses quadrant tint                    |
+| `color/swot/opp`            | `#E0EBFA`        | `#182A40`        | Opportunities quadrant tint                 |
+| `color/swot/threat`         | `#EBE2F7`        | `#2B2040`        | Threats quadrant tint                       |
 | `color/surface/glass`       | `#FFFFFF` at 72% | `#10100B` at 72% | Glass islands, always with background blur  |
 
 ### SDG colours
@@ -81,7 +84,7 @@ SDG chips use the official UN colours. The text is ink (`#191812`) or white per 
 ### Colour rules
 
 - Never use yellow for text. On white, give every yellow shape an ink outline, because yellow alone is 1.4:1.
-- Verdicts use ink icons and words, never red, amber or green.
+- Verdict chips keep their icon and word. Rising uses the success green and Declining the error red (text, border and a light tint over an opaque background); Steady, Split and Unknown stay ink. Decided by the user on 23 October 2026.
 - Use the state colours for messages only: success, warning and error.
 - Every card, container and CTA has a solid or glass background. Never use a see-through or half-transparent one.
 - Use glass only for floating islands: the landing nav, the app top bars and sticky action bars. Glass always pairs the `color/surface/glass` fill with a 24 px background blur and a 1 px `color/border/subtle` line.
