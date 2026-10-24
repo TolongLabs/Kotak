@@ -19,7 +19,7 @@ Contents:
 
 ## Rules for the video
 
-- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:29; keep the cut between 5:30 and 6:30.
+- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:46; keep the cut under 6:50 so a slow read can't cross 7:00, and use the script's trim list if it does.
 - **The live demo runs 3:00.** It is the most important feature live: the trend data feeding the role matching and the plan.
 - **Our own voices.** A team member narrates. The slide segments (V1 to V10) may play at up to 1.2× with the pitch kept; the demo segments (D1 to M1) play at 1.0×. No generated narration. Kopi's voice is heard only as the app's own sound in shot D6.
 - **The team first, then the hook.** The first 13 seconds say who we are, the domain and what we built; the real job-loss numbers follow.
@@ -120,7 +120,7 @@ Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#record
 
 Before upload, watch the whole export once with sound, and check:
 
-- [ ] Runtime 5:30 to 6:30, and the demo at least 3:00.
+- [ ] Runtime 5:30 to 6:50 (never past 7:00), and the demo at least 3:00.
 - [ ] Every spoken number matches the script's claims ledger; D3's figures match the card on the recording day.
 - [ ] No banned phrase in the narration, the captions or the text: "AI check-up", "12-week", "chance of", "guarantee", "AI decides", "will replace you", "certified", "real user".
 - [ ] The "Sample persona · demo answers" tag is on every app shot; the "self-reported" label and Kopi's "sample data" are readable.
