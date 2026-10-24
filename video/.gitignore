@@ -1,0 +1,9 @@
+node_modules/
+out/
+public/footage/
+public/voice/
+public/sfx/
+public/slides/
+public/fonts/
+public/graphics/
+.env

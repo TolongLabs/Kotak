@@ -1,0 +1,14 @@
+{
+  "name": "kotak-video-record",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "KOTAK_RECORD_CHECK=1 playwright test",
+    "record": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "24",
+    "typescript": "5"
+  }
+}

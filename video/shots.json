@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "owner": "Director (sdc-hack-fe). The Recorder confirms each shot on the build and reports any difference.",
+  "build": {
+    "app_checkout": "/home/adam/CS/sdc-hack",
+    "note": "Record on a local production build of this checkout, never on a dev server."
+  },
+  "viewport": { "width": 1920, "height": 1080, "deviceScaleFactor": 1 },
+  "fps": 30,
+  "clock": "2026-11-02T09:00:00+08:00",
+  "sample_profile": {
+    "label": "Aina, a sample front-end developer in Kuala Lumpur (sample data, never a real person)",
+    "intake": "Right now: Working; job: type \"web developer\" and pick Web Developers; goal: Stay Strong in My Job; leave every other field untouched",
+    "answer_keys_in_asking_order": [3, 4, 3, 4, 3, 1, 2, 1, 3, 4, 3, 4],
+    "answer_note": "Number keys 1-4 work without clicking. Questions 2, 4, 7, 10 and 12 are reversed, so these keys give 'Mostly' on each basic skill and 'Not yet' on each advanced one.",
+    "roadmap_setup": "Hours Per Week = 10 and Plan Start Date = Monday 2 November 2026, set off camera before H1 and D5",
+    "snapshot_for_most_shots": "May 2026 (the app default)"
+  },
+  "expected_numbers": {
+    "roadmap_title": "Your 35-Week Roadmap",
+    "readiness": "80% Fit by Week 35 · 86%",
+    "fit_start": "47%",
+    "roles_cards": "3 cards: Web Developers (Your Job) 47%, Document Management Specialists 51% est., Computer Network Architects 50% est.",
+    "job_ads": "about 170 matching JobStreet ads; all-levels median RM6,300/month; may differ slightly on the day",
+    "what_changed": "6 verdicts flip from Unknown in April; 'New data landed. Six skills changed, and your roadmap moved with them.'; Web site building turns Declining and moves from step 4 to step 6 (last)"
+  },
+  "shots": [
+    { "id": "H1", "screen": "Roadmap", "target_s": 12, "setup_off_camera": "Finished check-up, 10 h/week, start 2 Nov 2026, May 2026.", "on_camera": "The finished roadmap at rest: title and readiness line, then a slow scroll through the timeline to the funding card.", "cues": ["roadmap-title", "readiness", "timeline", "funding-card"] },
+    { "id": "D1", "screen": "Check-Up: Start", "target_s": 14, "setup_off_camera": "Fresh guest session on the landing page, then Start.", "on_camera": "Pick Working; type \"web developer\" and pick Web Developers; pick Stay Strong in My Job; continue.", "cues": ["status-picked", "job-typed", "job-picked", "goal-picked", "continue"] },
+    { "id": "D2", "screen": "Check-Up: Questions", "target_s": 18, "setup_off_camera": "Continue from D1, or reach question 1 off camera.", "on_camera": "Questions 1 to 3 answered with the number keys from the key; answer 4 to 12 off camera.", "cues": ["q1-shown", "q1-answered", "q2-shown", "q2-answered", "q3-shown", "q3-answered", "q12-answered", "radar-shown"] },
+    { "id": "D3", "screen": "Radar and Gaps", "target_s": 34, "setup_off_camera": "Finished check-up, May 2026.", "on_camera": "The radar with its self-reported label, the verdict chips (Technical documentation Rising, Web site building Declining), the dated sources and the Needed by line; then a slow scroll to the Job Ads in Malaysia card.", "cues": ["radar-visible", "self-reported-label", "chip-rising", "chip-declining", "needed-by-line", "job-ads-card", "pay-row"] },
+    { "id": "D4", "screen": "Roles That Fit", "target_s": 16, "setup_off_camera": "Finished check-up, May 2026.", "on_camera": "The three role cards with fit and reasons; the highlighted card; then See the Maths open.", "cues": ["roles-list", "highlight-card", "maths-button", "maths-open"] },
+    { "id": "D5", "screen": "Roadmap", "target_s": 28, "setup_off_camera": "Finished check-up, 10 h/week, start 2 Nov 2026.", "on_camera": "Title and readiness line; the step list; the first step's hours and free link; tick the first step and its level rises; scroll to the funding card; untick off camera.", "cues": ["roadmap-title", "readiness", "step-list", "step-1", "free-link", "tick", "level-rise", "funding-card"] },
+    { "id": "D6", "screen": "What Changed", "target_s": 40, "setup_off_camera": "Finished check-up; on What Changed pick April 2026 and let it settle.", "on_camera": "Pick May 2026: the radar line moves, the 'New data landed' banner, verdicts flip, the ranking reorders, Web site building moves to step 6; Kopi speaks its line to the end.", "audio": "Save Kopi's spoken line as its own file (capture the /api/tts response or the audio element source) with start and end cues.", "cues": ["april-selector", "april-state", "may-loaded", "new-data-banner", "verdict-flip", "ranking-reorder", "step-moved", "kopi-voice-start", "kopi-voice-end"] },
+    { "id": "D7", "screen": "Ask Kopi", "target_s": 12, "setup_off_camera": "Finished check-up.", "on_camera": "Ask \"Which rising skills do web developers lack most?\"; Kopi checks the national skill gaps and calls the rows sample data. Live reply: up to 3 takes, keep all.", "cues": ["question-sent", "tool-shown", "answer-done", "sample-data-words"] },
+    { "id": "M1", "screen": "Connect Your AI, then an MCP client", "target_s": 18, "setup_off_camera": "Local server running; an MCP client that can be filmed in Chromium, preferably the MCP Inspector web UI pointed at the local /api/mcp.", "on_camera": "About 3 s on the Connect Your AI page with the MCP address; then the client lists Kotak's tools, calls the one that returns Web Developers' verdicts, and shows the same verdicts the radar shows.", "cues": ["mcp-address", "tools-listed", "tool-called", "verdicts-shown"] }
+  ],
+  "checks": [
+    "The self-reported label is visible at every radar cue.",
+    "Kopi's D7 answer calls the national rows sample data.",
+    "Report any number that differs from expected_numbers; change nothing to make it match."
+  ]
+}
