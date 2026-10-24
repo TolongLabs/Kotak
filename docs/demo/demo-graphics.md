@@ -58,12 +58,12 @@ Set every keyframe pair to Ease In and Ease Out (right-click the keyframe, then 
 
 ## Cue sheet
 
-Times are where the narration lands in the 6:46 cut. Cut each graphic on its words, not on the clock.
+Times are where the narration lands in the 6:40 cut. Cut each graphic on its words, not on the clock.
 
 | Time | Shot | Graphic                   | On the words                                   | Pointer and motion                                   |
 | ---- | ---- | ------------------------- | ---------------------------------------------- | ---------------------------------------------------- |
 | 1:47 | D1   | `act-1-problem`, `hud-1`  | Shot start                                     | Banner slides in; HUD stays on                       |
-| 1:51 | D1   | `c-d1-who`                | "who she is: working, as a web developer"      | `ring-wide` on Web Developers as it is picked        |
+| 1:52 | D1   | `c-d1-who`                | "who she is: working, as a web developer"      | `ring-wide` on Web Developers as it is picked        |
 | 2:01 | D2   | `hud-2`                   | Shot start                                     | Zoom 120% on the question card                       |
 | 2:03 | D2   | `c-d2-questions`          | "twelve can-do questions"                      | `ring-box` on the answer buttons                     |
 | 2:11 | D2   | `c-d2-reversed`           | "worded the other way round"                   | None                                                 |
@@ -72,19 +72,19 @@ Times are where the narration lands in the 6:46 cut. Cut each graphic on its wor
 | 2:35 | D3   | `c-d3-declining`          | "Web site building gets declining"             | `ring-small` on its Declining chip                   |
 | 2:43 | D3   | `c-d3-jobs`               | "tied to real hiring"                          | `ring-box` on the Job Ads in Malaysia card           |
 | 2:53 | D4   | `act-2-solution`, `hud-4` | Shot start                                     | Banner slides in                                     |
-| 2:57 | D4   | `c-d4-fit`                | "ranks the roles she fits"                     | `ring-box` on the highlighted role card              |
-| 3:03 | D4   | `c-d4-maths`              | "See the Maths"                                | `arrow-right` at See the Maths                       |
+| 2:58 | D4   | `c-d4-fit`                | "ranks the roles she fits"                     | `ring-box` on the highlighted role card              |
+| 3:04 | D4   | `c-d4-maths`              | "See the Maths"                                | `arrow-right` at See the Maths                       |
 | 3:09 | D5   | `hud-5`, `c-d5-order`     | "most fit per hour"                            | Zoom 120% on the step list                           |
 | 3:17 | D5   | `r-d5-plan`               | "eighty per cent fit by week thirty-five"      | Dim to 45%; result card 3 seconds                    |
 | 3:24 | D5   | `c-d5-free`               | "its hours and a free search link"             | `ring-wide` on the first step's hours and link       |
 | 3:32 | D5   | None                      | "the funding card"                             | `ring-box` on the funding card                       |
 | 3:37 | D6   | `act-3-outcome`, `hud-6`  | Shot start                                     | Banner slides in                                     |
-| 3:41 | D6   | `c-d6-same`               | "Same job. Same twelve answers."               | `ring-small` on the April 2026 selector              |
-| 3:49 | D6   | `c-d6-april`              | "every skill read Unknown"                     | Zoom 120% on the radar                               |
-| 3:56 | D6   | `c-d6-may`                | "six verdicts flip"                            | `ring-wide` on "New data landed. Six skills changed" |
-| 4:02 | D6   | `c-d6-step`               | "drops from step four to last"                 | `arrow-down` beside Web site building as it moves    |
-| 4:05 | D6   | None                      | Kopi speaks, about 8 seconds                   | Clear the frame; nothing over Kopi                   |
-| 4:13 | D6   | `r-d6-moved`              | "The trend data drives the plan"               | Dim to 45%; result card 3 seconds                    |
+| 3:43 | D6   | `c-d6-same`               | "Same job. Same twelve answers."               | `ring-small` on the April 2026 selector              |
+| 3:51 | D6   | `c-d6-april`              | "every skill read Unknown"                     | Zoom 120% on the radar                               |
+| 3:58 | D6   | `c-d6-may`                | "six verdicts flip"                            | `ring-wide` on "New data landed. Six skills changed" |
+| 4:04 | D6   | `c-d6-step`               | "drops from step four to last"                 | `arrow-down` beside Web site building as it moves    |
+| 4:07 | D6   | None                      | Kopi speaks, about 8 seconds                   | Clear the frame; nothing over Kopi                   |
+| 4:15 | D6   | `r-d6-moved`              | "The trend data drives the plan"               | Dim to 45%; result card 3 seconds                    |
 | 4:17 | D7   | `hud-7`, `c-d7-kopi`      | "says plainly that these rows are sample data" | `ring-wide` on the words "sample data"               |
 | 4:29 | M1   | `hud-8`                   | Shot start                                     | `ring-wide` on the MCP address                       |
 | 4:34 | M1   | `c-m1-mcp`                | "Kotak is the tool a chatbot calls"            | Hold the callout to the end of the shot              |
