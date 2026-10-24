@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, beforeEach, expect, test } from 'bun:test'
+import { jobMarketLevelForYears } from '@kotak/shared'
 import type { PGlite } from '@electric-sql/pglite'
 import { migratedDatabase, routeNeonTo, TEST_DATABASE_URL } from '../../db/test-database'
 import { jobstreetDatabase } from '../scrapers/jobstreet/database'
-import { cardHighlights, readJobMarkets, refreshAllListingSkills } from './stats'
+import { adLevel, cardHighlights, readJobMarkets, refreshAllListingSkills } from './stats'
 
 // The job-ad market's selling points, benefits and ranking, sent by the Neon driver to a Postgres built by the repo's
 // own migrations (PGlite, in memory).
@@ -108,9 +109,19 @@ async function addRun(
     excluded?: number
     createdAt?: string
     ad?: (index: number) => Ad
+    // A depth run's description for each listing, if any.
+    description?: (index: number) => string | null
   }
 ) {
-  const { id, total, approved, excluded = 0, createdAt = '2026-10-22T00:00:00Z', ad = () => ({}) } = options
+  const {
+    id,
+    total,
+    approved,
+    excluded = 0,
+    createdAt = '2026-10-22T00:00:00Z',
+    ad = () => ({}),
+    description = () => null
+  } = options
   await db.query(
     `INSERT INTO jobstreet_scrape_runs (id, career_slug, mode, status, source, created_at, report)
      VALUES ($1, $2, 'breadth', 'success', 'manual', $3, $4::jsonb)`,
@@ -119,9 +130,11 @@ async function addRun(
   for (let index = 0; index < approved + excluded; index++) {
     const jobId = `${id}-${index}`
     const value = JSON.stringify(payload(jobId, ad(index)))
+    const text = description(index)
     await db.query(
-      `INSERT INTO jobstreet_listings (job_id, career_slug, latest_payload, latest_seen_at) VALUES ($1, $2, $3::jsonb, now())`,
-      [jobId, slug, value]
+      `INSERT INTO jobstreet_listings (job_id, career_slug, latest_payload, latest_seen_at, latest_detail)
+       VALUES ($1, $2, $3::jsonb, now(), $4::jsonb)`,
+      [jobId, slug, value, text === null ? null : JSON.stringify({ description_text: text })]
     )
     await db.query(
       `INSERT INTO jobstreet_observations (job_id, career_slug, scrape_run_id, observed_at, payload)
@@ -233,4 +246,90 @@ test("a search title's latest run gives its estimate, an occupation takes its la
   const [web, ux] = await readJobMarkets(sql, ['15-1254.00', '15-1255.00'])
   expect(web.popularity).toMatchObject({ estimated_ads: 400, search_title: 'web-developer', rank: 1, roles: 2 })
   expect(ux.popularity).toMatchObject({ estimated_ads: 400, rank: 1, roles: 2 })
+})
+
+const levelOf = async (title: string, description: string | null, summary = 'Build and look after our web apps.') =>
+  (
+    await db.query<{ level: string | null }>(
+      `SELECT ad_level.level FROM (SELECT $1::jsonb AS latest_payload, $2::text AS description) listing
+       ${adLevel('listing.latest_payload', 'listing.description')}`,
+      [JSON.stringify(payload('1', { title, summary })), description]
+    )
+  ).rows[0].level
+
+test('the level an ad asks for comes from the experience it states, then its title', async () => {
+  expect(await levelOf('Developer', 'Requirements: minimum 3 years of working experience in PHP.')).toBe('mid')
+  expect(await levelOf('Developer', 'You have 5+ years experience with Java.')).toBe('senior')
+  expect(await levelOf('Developer', 'At least 1 year of relevant experience.')).toBe('junior')
+  expect(await levelOf('Developer', 'Candidates need 2-4 years’ experience in React.')).toBe('mid')
+  expect(await levelOf('Developer', 'Experience: at least 6 years in banking systems.')).toBe('senior')
+  expect(await levelOf('Developer', 'Fresh graduates are welcome to apply.')).toBe('junior')
+  // The card's summary counts too.
+  expect(await levelOf('Developer', null, 'Seeking a developer with 3+ years’ exp in Cocos Creator.')).toBe('mid')
+  // A number not about experience is no requirement.
+  expect(await levelOf('Developer', 'We have served clients for 20 years in Malaysia.')).toBeNull()
+  // Without a stated experience, the title decides; a stated experience beats the title.
+  expect(await levelOf('Senior Developer', null)).toBe('senior')
+  expect(await levelOf('Junior Developer', null)).toBe('junior')
+  expect(await levelOf('Developer', null)).toBeNull()
+  expect(await levelOf('Senior Developer', 'Minimum 2 years of experience.')).toBe('mid')
+  // A range after "experience" gives its first number, and the least named experience counts.
+  expect(await levelOf('Developer', 'Experience: 1-2 years.')).toBe('junior')
+  expect(await levelOf('Developer', 'Experience required: 1 to 3 years')).toBe('junior')
+  expect(await levelOf('Developer', 'Working experience of 3 to 5 years')).toBe('mid')
+  expect(await levelOf('Developer', 'Experience: 2 years minimum, 5 years preferred')).toBe('mid')
+  expect(await levelOf('Developer', 'You bring 10+ yrs experience in banking.')).toBe('senior')
+  // Company history is not a requirement.
+  expect(
+    await levelOf(
+      'Developer',
+      'With over 20 years of experience in the industry, Contoh is growing. Requirements: 2 years experience in PHP.'
+    )
+  ).toBe('mid')
+  // "Staff" and "lead" alone don't make a title senior.
+  expect(await levelOf('Admin Staff', null)).toBeNull()
+  expect(await levelOf('Staff Nurse', null)).toBeNull()
+  expect(await levelOf('Lead Generation Executive', null)).toBeNull()
+  expect(await levelOf('Team Lead, Payments', null)).toBe('senior')
+  expect(await levelOf('Lead Engineer', null)).toBe('senior')
+})
+
+test('pay splits by level, and a level with under 5 ads stating pay gets no figure', async () => {
+  await addCareer('web-developer', '15-1254.00')
+  // 6 junior ads at RM 4,000, 5 senior at RM 9,000, 3 mid at RM 6,000 and 2 that state no level at RM 6,500.
+  const plan = [
+    ...Array(6).fill(['Junior Web Developer', 'RM 4,000 per month', null]),
+    ...Array(5).fill(['Web Developer', 'RM 9,000 per month', 'At least 7 years of experience.']),
+    ...Array(3).fill(['Web Developer', 'RM 6,000 per month', 'Minimum 3 years experience.']),
+    ...Array(2).fill(['Web Developer', 'RM 6,500 per month', null])
+  ] as Array<[string, string, string | null]>
+  await addRun('web-developer', '15-1254.00', {
+    id: 'run-web',
+    approved: plan.length,
+    ad: (index) => ({ title: plan[index][0], salary: plan[index][1] }),
+    description: (index) => plan[index][2]
+  })
+  const [web] = await readJobMarkets(sql, ['15-1254.00'])
+  expect(web.levels).toEqual({
+    ads: { junior: 6, mid: 3, senior: 5, not_stated: 2 },
+    pay: [
+      { level: 'junior', ads_with_pay: 6, median: 4000, p25: 4000, p75: 4000 },
+      { level: 'senior', ads_with_pay: 5, median: 9000, p25: 9000, p75: 9000 }
+    ]
+  })
+  // The overall figure still covers every ad.
+  expect(web.pay?.ads_with_pay).toBe(16)
+})
+
+test("the intake's years of work pick the pay level", () => {
+  expect([null, 0, 1, 2, 4, 5, 6, 10].map(jobMarketLevelForYears)).toEqual([
+    null,
+    'junior',
+    'junior',
+    'mid',
+    'mid',
+    'senior',
+    'senior',
+    'senior'
+  ])
 })

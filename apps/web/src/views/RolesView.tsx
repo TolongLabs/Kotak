@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { DEFAULT_SCENARIO } from '@kotak/shared'
+import { DEFAULT_SCENARIO, jobMarketLevelForYears, yearsOfWork } from '@kotak/shared'
 import { AccessChip, AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
-import { popularityLabel } from '../components/kotak/JobMarketCard'
+import { payLabel, popularityLabel } from '../components/kotak/JobMarketCard'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
 import { SourceList } from '../components/kotak/SourceList'
@@ -40,6 +40,8 @@ export function RolesView() {
   // Active ads, estimated JobStreet ads and median pay per ranked role (#272), from JobStreet ads Kotak's admins
   // approved.
   const markets = useJobMarkets(checkup?.roles.map((candidate) => candidate.onet_code) ?? [])
+  // Pay for the user's level, from their years of work, where enough ads at that level state it.
+  const level = jobMarketLevelForYears(yearsOfWork(session.profile))
 
   if (!assessedRoleCode(session)) {
     return (
@@ -203,8 +205,7 @@ export function RolesView() {
                       <span className="text-body-s text-text-primary">
                         {market.ads.active.toLocaleString('en-MY')} active {market.ads.active === 1 ? 'ad' : 'ads'}
                         {popularityLabel(market) && ` · ${popularityLabel(market)}`}
-                        {market.pay &&
-                          ` · median advertised pay RM ${market.pay.median.toLocaleString('en-MY')} a month`}
+                        {payLabel(market, level) && ` · ${payLabel(market, level)}`}
                       </span>
                     )}
                     {goals.length > 0 && (

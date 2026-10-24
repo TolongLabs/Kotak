@@ -1,4 +1,4 @@
-import { JOB_MARKET_MIN_PAY_ADS, JOB_MARKET_MIN_SKILL_ADS, type JobMarket } from '@kotak/shared'
+import { JOB_MARKET_MIN_PAY_ADS, JOB_MARKET_MIN_SKILL_ADS, type JobMarket, type JobMarketLevel } from '@kotak/shared'
 import type { jobstreetDatabase } from '../scrapers/jobstreet/database'
 import { SKILL_BY_KEY, SKILL_PATTERN_ROWS, SKILL_TERMS, SKILL_VOCABULARY_VERSION, type SkillCategory } from './skills'
 
@@ -19,6 +19,49 @@ const WEEKS = 12
 export const MIN_ESTIMATE_SAMPLE = 20
 
 const AI_KEYS = SKILL_TERMS.filter((term) => term.category === 'ai').map((term) => term.key)
+
+// The experience an ad asks for, in its title, summary, card text or description, as Postgres regular expressions
+// matched without case. YEARS captures the first number of "3+ years of experience", "minimum 2 years' working
+// experience", "2-4 yrs relevant exp" (group 1) or "experience: 1 to 3 years" (group 2). A number must sit within three
+// words of "experience", so "20 years in business" is not asked of anyone, and the gap after "experience" holds no
+// digits, so a range gives its first number. FRESH marks an ad open to new graduates.
+export const EXPERIENCE_YEARS = String.raw`\m(\d{1,2})\s*(?:\+|plus)?\s*(?:(?:-|–|to)\s*\d{1,2}\s*\+?\s*)?(?:years?|yrs?)(?:['’]s?)?\s+(?:of\s+)?(?:[a-z&/-]+\s+){0,3}(?:experience|exp)\M|\m(?:experience|exp)\M[^.;0-9]{0,25}\m(\d{1,2})\s*(?:\+|plus)?\s*(?:(?:-|–|to)\s*\d{1,2}\s*\+?\s*)?(?:years?|yrs?)\M`
+/** Experience asked for above this many years is taken for company history ("with over 20 years of experience"). */
+export const MAX_ASKED_YEARS = 15
+export const FRESH_GRADUATES = String.raw`fresh\s*grad|no\s+(?:prior\s+|previous\s+|working\s+)?experience\s+(?:is\s+)?(?:required|needed)|entry[- ]level|graduates?\s+(?:are\s+)?(?:welcome|encouraged)`
+// When an ad states no experience, its title can still name the level. "Staff" is left out ("Admin Staff", "Staff
+// Nurse" are entry jobs in Malaysia), and "lead" counts only as a team or technical lead.
+export const JUNIOR_TITLE = String.raw`\m(?:junior|jr|graduate|fresh|entry|trainee)\M`
+export const SENIOR_TITLE = String.raw`\m(?:senior|sr|principal|head|manager|director|chief|vp)\M|\m(?:team|tech|technical)\s+lead\M|\mlead\s+(?:engineer|developer|designer|analyst|architect|consultant|scientist|programmer)\M`
+
+const literal = (value: string) => `'${value.replaceAll("'", "''")}'`
+
+/**
+ * The level an ad asks for, as `ad_level.level`: 'junior' under 2 years' experience or open to new graduates, 'mid'
+ * for 2 to 4 years, 'senior' for 5 or more; failing those, what its title says; or NULL when it doesn't say. An ad
+ * that names experience more than once ("2 years minimum, 5 years preferred") asks for the least of them, up to
+ * MAX_ASKED_YEARS. `payload` and `description` are the SQL for the listing's payload and description text.
+ */
+export const adLevel = (payload: string, description: string) => `CROSS JOIN LATERAL (
+    SELECT concat_ws(' ', ${payload}->>'title', ${payload}->>'summary',
+      replace(${payload}->>'listing_text', coalesce(${payload}->>'company', ''), ' '), ${description}) AS text
+  ) ad_text
+  CROSS JOIN LATERAL (
+    -- An aggregate without rows gives NULL, so an ad that names no experience has none.
+    SELECT min(asked.years) AS years
+    FROM regexp_matches(ad_text.text, ${literal(EXPERIENCE_YEARS)}, 'gi') AS found(years_match)
+    CROSS JOIN LATERAL (SELECT coalesce(found.years_match[1], found.years_match[2])::int AS years) asked
+    WHERE asked.years <= ${MAX_ASKED_YEARS}
+  ) ad_years
+  CROSS JOIN LATERAL (
+    SELECT CASE
+      WHEN ad_years.years IS NOT NULL THEN
+        CASE WHEN ad_years.years < 2 THEN 'junior' WHEN ad_years.years < 5 THEN 'mid' ELSE 'senior' END
+      WHEN ad_text.text ~* ${literal(FRESH_GRADUATES)} THEN 'junior'
+      WHEN ${payload}->>'title' ~* ${literal(JUNIOR_TITLE)} THEN 'junior'
+      WHEN ${payload}->>'title' ~* ${literal(SENIOR_TITLE)} THEN 'senior'
+    END AS level
+  ) ad_level`
 
 /**
  * The selling points an employer puts on an ad's card, up to three short lines such as "Medical Benefit" or "Free
@@ -177,6 +220,16 @@ type MarketRow = {
   pay_p25: number | null
   pay_median: number | null
   pay_p75: number | null
+  junior_ads: number | null
+  mid_ads: number | null
+  senior_ads: number | null
+  level_pay: Array<{
+    level: JobMarketLevel
+    ads_with_pay: number
+    median: number
+    p25: number
+    p75: number
+  }> | null
   regions: Array<{ name: string; ads: number }> | null
   work_types: Array<{ name: string; ads: number }> | null
   skills: Record<string, number> | null
@@ -191,7 +244,8 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
   const rows = (await sql.query(
     `WITH reviewed AS (
        SELECT review.onet_code, listing.job_id, listing.career_slug, career.title AS search_title,
-         listing.latest_payload AS payload, listing.latest_seen_at
+         listing.latest_payload AS payload, listing.latest_detail->>'description_text' AS description,
+         listing.latest_seen_at
        FROM jobstreet_listing_reviews review
        JOIN jobstreet_careers career
          ON career.slug = review.career_slug AND career.onet_code = review.onet_code AND NOT career.hidden
@@ -200,7 +254,7 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
      ),
      ads AS (
        -- One row per ad and occupation, from its newest sighting when two search titles found it.
-       SELECT DISTINCT ON (onet_code, job_id) onet_code, job_id, career_slug, payload, latest_seen_at
+       SELECT DISTINCT ON (onet_code, job_id) onet_code, job_id, career_slug, payload, description, latest_seen_at
        FROM reviewed ORDER BY onet_code, job_id, latest_seen_at DESC
      ),
      latest AS (SELECT onet_code, max(latest_seen_at) AS seen_at FROM ads GROUP BY onet_code),
@@ -209,9 +263,11 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
        SELECT ads.onet_code, ads.job_id, ads.payload, matched.skills,
          ($2::jsonb)->>lower(btrim(regexp_replace(ads.payload->>'location', '^.*,', ''))) AS state,
          regexp_match(replace(lower(ads.payload->>'salary'), ',', ''), $3) AS pay_match,
-         card_points.highlights <> '' AS has_highlights, matched.vocabulary_version = $10 AS current_vocabulary
+         card_points.highlights <> '' AS has_highlights, matched.vocabulary_version = $10 AS current_vocabulary,
+         ad_level.level
        FROM ads
        ${cardHighlights('ads.payload')}
+       ${adLevel('ads.payload', 'ads.description')}
        JOIN latest USING (onet_code)
        LEFT JOIN jobstreet_listing_skills matched
          ON matched.job_id = ads.job_id AND matched.career_slug = ads.career_slug
@@ -226,7 +282,10 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
          count(*) FILTER (WHERE skills IS NOT NULL)::int AS skills_checked,
          -- Benefits came in with vocabulary 2026-10-24.1, so only listings matched by the current one have them.
          count(*) FILTER (WHERE current_vocabulary AND has_highlights)::int AS highlights_checked,
-         count(*) FILTER (WHERE skills && $5::text[])::int AS ai_ads
+         count(*) FILTER (WHERE skills && $5::text[])::int AS ai_ads,
+         count(*) FILTER (WHERE level = 'junior')::int AS junior_ads,
+         count(*) FILTER (WHERE level = 'mid')::int AS mid_ads,
+         count(*) FILTER (WHERE level = 'senior')::int AS senior_ads
        FROM active GROUP BY onet_code
      ),
      -- How many of JobStreet's ads match each occupation. A breadth run's report keeps JobStreet's count of every ad
@@ -283,9 +342,9 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
        ) best
      ),
      monthly AS (
-       SELECT onet_code, (low + high) / 2 / CASE WHEN rest ~ $6 THEN 12 ELSE 1 END AS monthly_pay
+       SELECT onet_code, level, (low + high) / 2 / CASE WHEN rest ~ $6 THEN 12 ELSE 1 END AS monthly_pay
        FROM (
-         SELECT onet_code,
+         SELECT onet_code, level,
            pay_match[1]::numeric * CASE WHEN pay_match[2] = 'k' THEN 1000 ELSE 1 END AS low,
            COALESCE(pay_match[3]::numeric * CASE WHEN pay_match[4] = 'k' THEN 1000 ELSE 1 END,
              pay_match[1]::numeric * CASE WHEN pay_match[2] = 'k' THEN 1000 ELSE 1 END) AS high,
@@ -300,6 +359,19 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
          round(percentile_cont(0.5) WITHIN GROUP (ORDER BY monthly_pay)::numeric, -2)::int AS median,
          round(percentile_cont(0.75) WITHIN GROUP (ORDER BY monthly_pay)::numeric, -2)::int AS p75
        FROM monthly WHERE monthly_pay BETWEEN 500 AND 100000 GROUP BY onet_code
+     ),
+     level_pay AS (
+       SELECT onet_code,
+         jsonb_agg(jsonb_build_object('level', level, 'ads_with_pay', ads_with_pay, 'median', median, 'p25', p25,
+           'p75', p75) ORDER BY CASE level WHEN 'junior' THEN 1 WHEN 'mid' THEN 2 ELSE 3 END) AS level_pay
+       FROM (
+         SELECT onet_code, level, count(*)::int AS ads_with_pay,
+           round(percentile_cont(0.25) WITHIN GROUP (ORDER BY monthly_pay)::numeric, -2)::int AS p25,
+           round(percentile_cont(0.5) WITHIN GROUP (ORDER BY monthly_pay)::numeric, -2)::int AS median,
+           round(percentile_cont(0.75) WITHIN GROUP (ORDER BY monthly_pay)::numeric, -2)::int AS p75
+         FROM monthly WHERE level IS NOT NULL AND monthly_pay BETWEEN 500 AND 100000 GROUP BY onet_code, level
+       ) per_level
+       GROUP BY onet_code
      ),
      region_counts AS (
        SELECT onet_code, jsonb_agg(jsonb_build_object('name', state, 'ads', ads) ORDER BY ads DESC, state) AS regions
@@ -354,11 +426,13 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
        ranking.search_ads AS estimate_search_ads, ranking.decided AS estimate_decided,
        ranking.approved AS estimate_approved, ranking.rank AS estimate_rank, ranking.roles AS ranked_roles,
        pay_stats.ads_with_pay, pay_stats.p25 AS pay_p25, pay_stats.median AS pay_median, pay_stats.p75 AS pay_p75,
+       counts.junior_ads, counts.mid_ads, counts.senior_ads, level_pay.level_pay,
        region_counts.regions, work_type_counts.work_types, skill_counts.skills, weekly_counts.weekly
      FROM summary
      LEFT JOIN counts USING (onet_code)
      LEFT JOIN ranking USING (onet_code)
      LEFT JOIN pay_stats USING (onet_code)
+     LEFT JOIN level_pay USING (onet_code)
      LEFT JOIN region_counts USING (onet_code)
      LEFT JOIN work_type_counts USING (onet_code)
      LEFT JOIN skill_counts USING (onet_code)
@@ -421,6 +495,16 @@ function toJobMarket(row: MarketRow): JobMarket {
       adsWithPay >= JOB_MARKET_MIN_PAY_ADS && row.pay_median !== null && row.pay_p25 !== null && row.pay_p75 !== null
         ? { ads_with_pay: adsWithPay, median: row.pay_median, p25: row.pay_p25, p75: row.pay_p75 }
         : null,
+    levels: {
+      ads: {
+        junior: row.junior_ads ?? 0,
+        mid: row.mid_ads ?? 0,
+        senior: row.senior_ads ?? 0,
+        not_stated: (row.active ?? 0) - (row.junior_ads ?? 0) - (row.mid_ads ?? 0) - (row.senior_ads ?? 0)
+      },
+      // Only levels with as many ads stating pay as the overall figure needs.
+      pay: (row.level_pay ?? []).filter((band) => band.ads_with_pay >= JOB_MARKET_MIN_PAY_ADS)
+    },
     regions: (row.regions ?? []).slice(0, TOP_REGIONS),
     without_state: row.without_state ?? 0,
     remote: row.remote ?? 0,
