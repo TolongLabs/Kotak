@@ -84,6 +84,7 @@ To remove everything, delete both directories and this package.
 - The open build is Chromium 150; the installed Chrome is 155. Clearcote's newer builds need a licence and are not reproducible from public source, so they are not used.
 - The IP address is your own unless a proxy is set.
 - Verification checkboxes still have to be completed by hand.
+- In `bun test`, don't launch a profile inside `expect(promise).rejects` or `.resolves`; settle the promise with a plain `await` and check the result. Bun 1.4 waits for those promises in a nested event loop that can skip the microtask checkpoint after a `setImmediate` callback ([oven-sh/bun#45020](https://github.com/oven-sh/bun/issues/45020)). Playwright handles each DevTools message in its own `setImmediate`, so the first page's `load` event can arrive before Playwright listens for it, and the launch hangs until Playwright's 180-second timeout. A launch awaited directly, as the scraper and its runner do, is not affected.
 
 ## See also
 
