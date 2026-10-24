@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kotak Demo Graphics</title>
+    <link rel="stylesheet" href="../deck/assets/fonts.css" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --panel: #f8f7f2;
+        --ink: #191812;
+        --ink-2: #3f3e37;
+        --muted: #595851;
+        --line: #d8d8d2;
+        --control: #828078;
+        --yellow: #f6d732;
+        --dark: #10100b;
+        --on-dark: #f3f2ed;
+        --sans: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+        --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+      }
+      html {
+        background: transparent;
+      }
+      body {
+        margin: 0;
+        background: #9a9a92;
+        font-family: var(--sans);
+        color: var(--ink);
+      }
+      body.render {
+        background: transparent;
+      }
+      .ov {
+        position: relative;
+        margin: 24px auto;
+        background: repeating-conic-gradient(#d9d9d3 0% 25%, #eeeee8 0% 50%) 0 / 32px 32px;
+        overflow: hidden;
+      }
+      body.render .ov {
+        margin: 0;
+        background: transparent;
+      }
+      /* HUD: bottom bar */
+      .hud {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        bottom: 28px;
+        height: 72px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 28px;
+        padding: 0 22px;
+        background: var(--bg);
+        border: 3px solid var(--ink);
+        border-radius: 18px;
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+      .here {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font: 600 22px/1 var(--sans);
+        white-space: nowrap;
+      }
+      .here strong {
+        font-weight: 800;
+      }
+      .act {
+        padding: 8px 14px;
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        font: 700 15px/1 var(--mono);
+        font-style: normal;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: var(--yellow);
+      }
+      .rail {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+      }
+      .grp {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0.55;
+      }
+      .grp.on {
+        opacity: 1;
+      }
+      .grp b {
+        font: 700 13px/1 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .grp ol {
+        display: flex;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .grp li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px 6px 7px;
+        border-radius: 999px;
+        font: 600 15px/1 var(--sans);
+        color: var(--muted);
+      }
+      .grp li i {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid var(--control);
+        box-sizing: border-box;
+      }
+      .grp li.done i {
+        background: var(--ink);
+        border-color: var(--ink);
+      }
+      .grp li.now {
+        background: var(--yellow);
+        border: 2px solid var(--ink);
+        color: var(--ink);
+        font-weight: 800;
+      }
+      .grp li.now i {
+        background: var(--ink);
+        border-color: var(--ink);
+      }
+      .tag {
+        font: 600 15px/1 var(--mono);
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      /* act banner: top left */
+      .banner {
+        position: absolute;
+        left: 56px;
+        top: 56px;
+        padding: 26px 36px 30px;
+        background: var(--yellow);
+        border: 4px solid var(--ink);
+        border-radius: 22px;
+        box-shadow: 10px 10px 0 var(--ink);
+      }
+      .banner small {
+        display: block;
+        font: 700 20px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+      .banner h1 {
+        margin: 14px 0 0;
+        font: 800 64px/1.05 var(--sans);
+        letter-spacing: -0.035em;
+      }
+      /* callout card: right side, above the HUD */
+      .card {
+        position: absolute;
+        right: 56px;
+        bottom: 140px;
+        width: 560px;
+        box-sizing: border-box;
+        padding: 26px 30px 28px 30px;
+        background: var(--bg);
+        border: 4px solid var(--ink);
+        border-radius: 20px;
+        box-shadow: 10px 10px 0 var(--ink);
+      }
+      .card .badge {
+        position: absolute;
+        left: -22px;
+        top: -22px;
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        background: var(--yellow);
+        border: 3px solid var(--ink);
+        border-radius: 50%;
+        font: 800 22px/1 var(--sans);
+        font-style: normal;
+      }
+      .card small {
+        display: block;
+        font: 700 16px/1.2 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .card p {
+        margin: 12px 0 0;
+        font: 800 38px/1.1 var(--sans);
+        letter-spacing: -0.02em;
+      }
+      .card span {
+        display: block;
+        margin-top: 12px;
+        font: 500 23px/1.3 var(--sans);
+        color: var(--ink-2);
+      }
+      .card .kopi {
+        position: absolute;
+        right: 18px;
+        top: -86px;
+        width: 120px;
+      }
+      /* result card: centre */
+      .result {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -54%);
+        min-width: 980px;
+        box-sizing: border-box;
+        padding: 40px 60px 46px;
+        text-align: center;
+        background: var(--yellow);
+        border: 5px solid var(--ink);
+        border-radius: 28px;
+        box-shadow: 14px 14px 0 var(--ink);
+      }
+      .result small {
+        display: block;
+        font: 700 22px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+      .result p {
+        margin: 18px 0 0;
+        font: 800 104px/1 var(--sans);
+        letter-spacing: -0.05em;
+        white-space: nowrap;
+      }
+      .result span {
+        display: block;
+        margin-top: 18px;
+        font: 600 28px/1.3 var(--sans);
+      }
+      /* marks */
+      .ring {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        box-sizing: border-box;
+        border: 8px solid var(--yellow);
+        outline: 3px solid var(--ink);
+        outline-offset: 0;
+        box-shadow: inset 0 0 0 3px var(--ink);
+      }
+      .arrow {
+        position: absolute;
+        inset: 0;
+        width: 220px;
+        height: 220px;
+      }
+      .arrow path {
+        fill: var(--yellow);
+        stroke: var(--ink);
+        stroke-width: 8;
+        stroke-linejoin: round;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ov" id="hud-1" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a0">Problem</em><span>Step 1 of 8 · <strong>Intake</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp on">
+            <b>Problem</b>
+            <ol>
+              <li class="now"><i></i><span>Intake</span></li>
+              <li class="next"><i></i><span>Questions</span></li>
+              <li class="next"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Solution</b>
+            <ol>
+              <li class="next"><i></i><span>Roles</span></li>
+              <li class="next"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Outcome</b>
+            <ol>
+              <li class="next"><i></i><span>What Changed</span></li>
+              <li class="next"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-2" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a0">Problem</em><span>Step 2 of 8 · <strong>Questions</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp on">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="now"><i></i><span>Questions</span></li>
+              <li class="next"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Solution</b>
+            <ol>
+              <li class="next"><i></i><span>Roles</span></li>
+              <li class="next"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Outcome</b>
+            <ol>
+              <li class="next"><i></i><span>What Changed</span></li>
+              <li class="next"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-3" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a0">Problem</em><span>Step 3 of 8 · <strong>Radar</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp on">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="done"><i></i><span>Questions</span></li>
+              <li class="now"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Solution</b>
+            <ol>
+              <li class="next"><i></i><span>Roles</span></li>
+              <li class="next"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Outcome</b>
+            <ol>
+              <li class="next"><i></i><span>What Changed</span></li>
+              <li class="next"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-4" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a1">Solution</em><span>Step 4 of 8 · <strong>Roles</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="done"><i></i><span>Questions</span></li>
+              <li class="done"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp on">
+            <b>Solution</b>
+            <ol>
+              <li class="now"><i></i><span>Roles</span></li>
+              <li class="next"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Outcome</b>
+            <ol>
+              <li class="next"><i></i><span>What Changed</span></li>
+              <li class="next"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-5" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a1">Solution</em><span>Step 5 of 8 · <strong>Roadmap</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="done"><i></i><span>Questions</span></li>
+              <li class="done"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp on">
+            <b>Solution</b>
+            <ol>
+              <li class="done"><i></i><span>Roles</span></li>
+              <li class="now"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Outcome</b>
+            <ol>
+              <li class="next"><i></i><span>What Changed</span></li>
+              <li class="next"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-6" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a2">Outcome</em><span>Step 6 of 8 · <strong>What Changed</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="done"><i></i><span>Questions</span></li>
+              <li class="done"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Solution</b>
+            <ol>
+              <li class="done"><i></i><span>Roles</span></li>
+              <li class="done"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp on">
+            <b>Outcome</b>
+            <ol>
+              <li class="now"><i></i><span>What Changed</span></li>
+              <li class="next"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-7" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a2">Outcome</em><span>Step 7 of 8 · <strong>Ask Kopi</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="done"><i></i><span>Questions</span></li>
+              <li class="done"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Solution</b>
+            <ol>
+              <li class="done"><i></i><span>Roles</span></li>
+              <li class="done"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp on">
+            <b>Outcome</b>
+            <ol>
+              <li class="done"><i></i><span>What Changed</span></li>
+              <li class="now"><i></i><span>Ask Kopi</span></li>
+              <li class="next"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="hud-8" data-w="1920" data-h="1080">
+      <div class="hud">
+        <div class="here">
+          <em class="act a2">Outcome</em><span>Step 8 of 8 · <strong>Your AI</strong></span>
+        </div>
+        <div class="rail">
+          <div class="grp">
+            <b>Problem</b>
+            <ol>
+              <li class="done"><i></i><span>Intake</span></li>
+              <li class="done"><i></i><span>Questions</span></li>
+              <li class="done"><i></i><span>Radar</span></li>
+            </ol>
+          </div>
+          <div class="grp">
+            <b>Solution</b>
+            <ol>
+              <li class="done"><i></i><span>Roles</span></li>
+              <li class="done"><i></i><span>Roadmap</span></li>
+            </ol>
+          </div>
+          <div class="grp on">
+            <b>Outcome</b>
+            <ol>
+              <li class="done"><i></i><span>What Changed</span></li>
+              <li class="done"><i></i><span>Ask Kopi</span></li>
+              <li class="now"><i></i><span>Your AI</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tag">Sample Persona · Demo Answers</div>
+      </div>
+    </div>
+    <div class="ov" id="act-1-problem" data-w="1920" data-h="1080">
+      <div class="banner">
+        <small>Live Demo · 01 · The Problem</small>
+        <h1>Which of Aina’s Skills<br />Is AI Changing?</h1>
+      </div>
+    </div>
+    <div class="ov" id="act-2-solution" data-w="1920" data-h="1080">
+      <div class="banner">
+        <small>02 · The Solution</small>
+        <h1>A Ranked Path,<br />Not a Course List.</h1>
+      </div>
+    </div>
+    <div class="ov" id="act-3-outcome" data-w="1920" data-h="1080">
+      <div class="banner">
+        <small>03 · The Outcome</small>
+        <h1>A Dated Plan That<br />Moves With the Data.</h1>
+      </div>
+    </div>
+    <div class="ov" id="c-d1-who" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">1</i><small>Starting Point</small>
+        <p>Working · Web Developer</p>
+        <span>Goal: stay strong in her job as AI changes it.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d2-questions" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">2</i><small>The Check-Up</small>
+        <p>12 Can-Do Questions</p>
+        <span>About 3 minutes. No CV.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d2-reversed" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">3</i><small>Built-In Honesty Check</small>
+        <p>5 Questions Are Reversed</p>
+        <span>Agreeing means less skill, so autopilot answers show up.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d3-radar" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">4</i><small>Her Radar</small>
+        <p>Self-Reported vs Needed</p>
+        <span>Dashed line: what the job needs by May 2027, an estimate.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d3-rising" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">5</i><small>AI Trend · Dated Source</small>
+        <p>Rising: Technical Documentation</p>
+        <span>AI helps it scale. Anthropic Economic Index, May 2026.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d3-declining" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">6</i><small>AI Trend · Dated Source</small>
+        <p>Declining: Web Site Building</p>
+        <span>AI is taking over more of this work.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d3-jobs" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">7</i><small>Real Hiring · JobStreet</small>
+        <p>About 170 Ads in Malaysia</p>
+        <span>Median RM6,300 a month · as of 24 Oct 2026.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d4-fit" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">8</i><small>Ranked Roles</small>
+        <p>Fit = Levels She Already Meets</p>
+        <span>Every score comes with its reason.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d4-maths" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">9</i><small>No Black Box</small>
+        <p>See the Maths</p>
+        <span>The formula behind every number.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d5-order" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">10</i><small>Smart Order</small>
+        <p>Most Fit per Hour, First</p>
+        <span>Declining skills go last.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d5-free" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">11</i><small>Every Step</small>
+        <p>Hours + a Free First Step</p>
+        <span>Plus the HRD Corp funding route for her employer.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d6-same" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">12</i><small>Same Answers. New Month.</small>
+        <p>April → May 2026</p>
+        <span>Only the trend data moves.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d6-april" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">13</i><small>April · One Month of Data</small>
+        <p>Every Skill: Unknown</p>
+        <span>Thin data, so Kotak never guesses.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d6-may" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">14</i><small>May · Two Months of Data</small>
+        <p>6 Verdicts Flip</p>
+        <span>The role ranking reorders.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-d6-step" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">15</i><small>The Plan Moves With the Data</small>
+        <p>Web Site Building: Step 4 → 6</p>
+        <span>Now declining, so it goes last.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-m1-mcp" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">17</i><small>Your AI</small>
+        <p>Same Rules, Over MCP</p>
+        <span>Any AI assistant can call Kotak’s tools.</span>
+      </div>
+    </div>
+    <div class="ov" id="c-blank" data-w="1920" data-h="1080"><div class="card" style="height: 200px"></div></div>
+    <div class="ov" id="c-d7-kopi" data-w="1920" data-h="1080">
+      <div class="card">
+        <i class="badge">16</i><img class="kopi" src="../deck/assets/kopi/explaining.png" alt="" /><small
+          >Ask Kopi</small
+        >
+        <p>Kopi Explains. Rules Decide.</p>
+        <span>It calls sample rows “sample data”, plainly.</span>
+      </div>
+    </div>
+    <div class="ov" id="r-d5-plan" data-w="1920" data-h="1080">
+      <div class="result">
+        <small>What Aina Walks Away With</small>
+        <p>80% Fit by Week 35</p>
+        <span>At 10 hours a week · an estimate, with dated steps</span>
+      </div>
+    </div>
+    <div class="ov" id="r-d6-moved" data-w="1920" data-h="1080">
+      <div class="result">
+        <small>Same Answers · New Data</small>
+        <p>The Plan Moved.</p>
+        <span>6 verdicts flipped from April to May 2026</span>
+      </div>
+    </div>
+    <div class="ov" id="ring-wide" data-w="680" data-h="160">
+      <div class="ring" style="width: 640px; height: 120px; border-radius: 22px"></div>
+    </div>
+    <div class="ov" id="ring-box" data-w="500" data-h="360">
+      <div class="ring" style="width: 460px; height: 320px; border-radius: 26px"></div>
+    </div>
+    <div class="ov" id="ring-small" data-w="280" data-h="136">
+      <div class="ring" style="width: 240px; height: 96px; border-radius: 18px"></div>
+    </div>
+    <div class="ov" id="ring-circle" data-w="300" data-h="300">
+      <div class="ring" style="width: 260px; height: 260px; border-radius: 130px"></div>
+    </div>
+    <div class="ov" id="arrow-right" data-w="220" data-h="220">
+      <svg class="arrow" viewBox="0 0 220 220" style="transform: rotate(0deg)">
+        <path d="M28 86 H128 V46 L196 110 L128 174 V134 H28 Z" />
+      </svg>
+    </div>
+    <div class="ov" id="arrow-down" data-w="220" data-h="220">
+      <svg class="arrow" viewBox="0 0 220 220" style="transform: rotate(90deg)">
+        <path d="M28 86 H128 V46 L196 110 L128 174 V134 H28 Z" />
+      </svg>
+    </div>
+    <div class="ov" id="arrow-left" data-w="220" data-h="220">
+      <svg class="arrow" viewBox="0 0 220 220" style="transform: rotate(180deg)">
+        <path d="M28 86 H128 V46 L196 110 L128 174 V134 H28 Z" />
+      </svg>
+    </div>
+    <div class="ov" id="arrow-up" data-w="220" data-h="220">
+      <svg class="arrow" viewBox="0 0 220 220" style="transform: rotate(270deg)">
+        <path d="M28 86 H128 V46 L196 110 L128 174 V134 H28 Z" />
+      </svg>
+    </div>
+    <script>
+      for (const o of document.querySelectorAll('.ov')) {
+        o.style.width = o.dataset.w + 'px'
+        o.style.height = o.dataset.h + 'px'
+      }
+      if (location.hash === '#render') document.body.classList.add('render')
+    </script>
+  </body>
+</html>
