@@ -18,7 +18,7 @@ import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { toRoles } from '../engine/viewModel'
-import { updateGuestSession, useGuestSession } from '../session/store'
+import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
 import {
   deriveRoleEvidence,
   kopiRoleSpeech,
@@ -43,7 +43,7 @@ export function RolesView() {
   // Pay for the user's level, from their years of work, where enough ads at that level state it.
   const level = jobMarketLevelForYears(yearsOfWork(session.profile))
 
-  if (!assessedRoleCode(session)) {
+  if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Matched Roles</h1>

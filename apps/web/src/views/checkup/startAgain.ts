@@ -1,12 +1,20 @@
+import { assessedRoleCode } from '@kotak/sdk'
 import type { GuestSession } from '@kotak/shared'
 import { routes } from '../../app/routes'
+import { hasAnswers } from '../../session/store'
 
 /**
  * Where a page with no role to show sends the user: to pick a role when they've already told Kopi about themselves
- * without naming a job (#284), otherwise to the check-up start.
+ * without naming a job (#284), back to the questions when the job is set but unanswered, otherwise to the check-up
+ * start.
  */
-export function startAgain(session: Pick<GuestSession, 'profile' | 'role_code'>) {
-  return session.profile.situation !== null && !session.role_code
+export function startAgain(
+  session: Pick<GuestSession, 'profile' | 'role_code' | 'goal' | 'target_role_code' | 'answers'>
+) {
+  const roleCode = assessedRoleCode(session)
+  if (roleCode && !hasAnswers(session))
+    return { route: routes.questions, label: 'Answer the Questions', speech: 'Finish your 12 questions' }
+  return session.profile.situation !== null && !roleCode
     ? { route: routes.choose, label: 'Pick a Role to Check', speech: 'Pick a role to check first' }
     : { route: routes.checkUp, label: 'Choose Your Job', speech: 'Tell me your job first' }
 }
