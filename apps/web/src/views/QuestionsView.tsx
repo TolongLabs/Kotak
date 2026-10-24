@@ -8,7 +8,7 @@ import {
   type Rating
 } from '@kotak/shared'
 import { Check } from 'lucide-react'
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { PageTransition } from '../components/kotak/PageTransition'
@@ -22,6 +22,7 @@ import { assessedRoleCode } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import { startAgain } from './checkup/startAgain'
+import { AnswerKeys } from './checkup/useAnswerKeys'
 
 // Answers arrive in asking order (rising corners first); the session stores them by the corner's place in the
 // role's batch order: [2i] is corner i's basic rating, [2i + 1] its advanced rating (see engine/checkup.ts).
@@ -135,18 +136,9 @@ export function QuestionsView() {
     }, 300)
   }
 
-  const handleQuestionKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return
-
-    const rating = RATINGS.find((item) => item.value === Number(event.key))
-    if (rating) {
-      event.preventDefault()
-      onAnswer(rating.value)
-    }
-  }
-
   return (
     <QuestionsFrame>
+      <AnswerKeys onAnswer={onAnswer} />
       <h2 className="text-title-s text-text-primary">Testing You Against {role.title}</h2>
 
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" aria-live="polite">
@@ -156,7 +148,7 @@ export function QuestionsView() {
         <span className="font-mono text-mono-s text-text-primary">{corner.name}</span>
       </div>
 
-      <section className="space-y-3" aria-label="Question Card" onKeyDown={handleQuestionKeyDown}>
+      <section className="space-y-3" aria-label="Question Card">
         <KopiAside pose={chosen !== null ? 'happy' : 'asking'} speech={statement} hop={chosen !== null} centred />
 
         <p className="text-center text-body-s text-text-muted">
