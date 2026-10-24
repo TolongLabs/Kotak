@@ -184,7 +184,7 @@ A check-up for a web developer with a computer science degree who wants to see w
 
     <img src="/docs/readme/steps/4-roles.png" alt="Roles" width="100%">
 
-5.  **Follow your roadmap.** The next 12 weeks of ordered steps for the role you picked, here Data Scientists, each with its hours, one free resource and its SDG targets, plus the software employers name for the role. The week you pass 80% fit moves with your weekly hours, and the plan exports as a PDF.
+5.  **Follow your roadmap.** Ordered steps for the role you picked, running at least 12 weeks and on to the week you reach 80% fit, here Data Scientists, each with its hours, one free resource and its SDG targets, plus the software employers name for the role. That week moves with your weekly hours (1 to 20), and the plan exports as a PDF.
 
     <img src="/docs/readme/steps/5-roadmap.png" alt="Roadmap" width="100%">
 

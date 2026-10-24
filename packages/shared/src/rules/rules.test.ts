@@ -238,7 +238,7 @@ describe('#83 scoring', () => {
     expect(own[0]).toMatchObject({ label: 'self-reported', level: 1 })
   })
 
-  test('roadmap: Rising gaps largest first, then Steady, Split and Unknown, Declining last and tagged', () => {
+  test('roadmap: most fit per hour first, each corner in level order, ties by tier and gap size, Declining last and tagged', () => {
     const signals = [
       corner('rise-small', growing, 'augmentation', ['flat']),
       corner('decline', shrinking, 'augmentation', ['down']),
@@ -260,8 +260,20 @@ describe('#83 scoring', () => {
       })),
       start_date: '2026-10-22'
     })
-    const order = [...new Set(roadmap.items.map((i) => i.corner_id))]
-    expect(order).toEqual(['rise-big', 'rise-small', 'split', 'steady', 'unknown', 'decline'])
+    const steps = roadmap.items.map((i) => `${i.corner_id}:${i.to_level}`)
+    expect(steps).toEqual([
+      'rise-big:1',
+      'split:1',
+      'rise-big:2',
+      'split:2',
+      'steady:2',
+      'unknown:2',
+      'rise-big:3',
+      'rise-small:3',
+      'split:3',
+      'decline:1',
+      'decline:2'
+    ])
     expect(roadmap.items.map((i) => i.rank)).toEqual(roadmap.items.map((_, i) => i + 1))
     expect(roadmap.items.filter((i) => i.tag === 'less important by 2027').map((i) => i.corner_id)).toEqual([
       'decline',

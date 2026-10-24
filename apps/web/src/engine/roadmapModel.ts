@@ -77,10 +77,16 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
   )
 }
 
-/** The first 12 weeks of the full SDK path. Partial milestones earn no level gain. */
-export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: string[]) {
+/** Weeks the web roadmap shows: at least ROADMAP_WEEKS, and on to the week the plan first reaches 80% fit. */
+export function planWeeksFor<T extends { week: number }>(points: T[], fit: (point: T) => number): number {
+  const ready = points.find((point) => fit(point) >= 80) ?? points[points.length - 1]
+  return Math.max(ROADMAP_WEEKS, ready?.week ?? 0)
+}
+
+/** The first `weeks` weeks of the full SDK path. Partial milestones earn no level gain. */
+export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: string[], weeks = ROADMAP_WEEKS) {
   const fullSteps = toRoadmapSteps(checkup, role, ticked)
-  const budget = ROADMAP_WEEKS * checkup.roadmap.weekly_hours
+  const budget = weeks * checkup.roadmap.weekly_hours
   const hoursById = new Map(checkup.roadmap.items.map((item) => [`${item.corner_id}:${item.statement}`, item.hours]))
   const partialIds = new Set<string>()
   const stepHours = new Map<string, number>()
@@ -100,24 +106,24 @@ export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: stri
     }
     partialIds.add(step.id)
     const start = addDays(checkup.roadmap.start_date, (step.weeks[0] - 1) * 7)
-    const end = addDays(checkup.roadmap.start_date, ROADMAP_WEEKS * 7 - 1)
+    const end = addDays(checkup.roadmap.start_date, weeks * 7 - 1)
     steps.push({
       ...step,
-      weeks: [step.weeks[0], ROADMAP_WEEKS],
-      when: `Estimated · Weeks ${step.weeks[0]}–${ROADMAP_WEEKS} · ${formatDateRange(start, end)}${step.conditional ? ` · ${step.conditional}` : ''}`,
+      weeks: [step.weeks[0], weeks],
+      when: `Estimated · Weeks ${step.weeks[0]}–${weeks} · ${formatDateRange(start, end)}${step.conditional ? ` · ${step.conditional}` : ''}`,
       description:
-        `${step.description} First ${allocated} of ${hours} estimated hours. Continue after Week ${ROADMAP_WEEKS}.`.trim(),
+        `${step.description} First ${allocated} of ${hours} estimated hours. Continue after Week ${weeks}.`.trim(),
       gain: `Target after the full milestone: ${step.gain}`
     })
   }
   return { steps, stepHours, partialIds, later, remainingHours: Math.max(0, checkup.roadmap.total_hours - budget) }
 }
 
-/** Carry the last completed milestone's fit to week 12; never credit a clipped milestone. */
-export function toReadinessWindow<T extends PlanReadinessPoint>(points: T[]): T[] {
-  const visible = points.filter((point) => point.week <= ROADMAP_WEEKS)
+/** Carry the last completed milestone's fit to the window's last week; never credit a clipped milestone. */
+export function toReadinessWindow<T extends PlanReadinessPoint>(points: T[], weeks = ROADMAP_WEEKS): T[] {
+  const visible = points.filter((point) => point.week <= weeks)
   const last = visible[visible.length - 1]
-  return last && last.week < ROADMAP_WEEKS ? [...visible, { ...last, week: ROADMAP_WEEKS }] : visible
+  return last && last.week < weeks ? [...visible, { ...last, week: weeks }] : visible
 }
 
 export function toReadinessPoints(checkup: Checkup, role: BundleRole): PlanReadinessPoint[]

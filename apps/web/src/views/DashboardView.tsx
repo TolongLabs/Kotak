@@ -15,7 +15,7 @@ import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
-import { ROADMAP_WEEKS, toReadinessPoints, toReadinessWindow, toRoadmapSteps } from '../engine/roadmapModel'
+import { planWeeksFor, toReadinessPoints, toReadinessWindow, toRoadmapSteps } from '../engine/roadmapModel'
 import { hasAnswers, useGuestSession } from '../session/store'
 import { startAgain } from './checkup/startAgain'
 
@@ -237,8 +237,10 @@ export function DashboardView() {
   const fitRoleCode = planRoleCodeOf(session)
   const fitRole = currentCheckup.roles.find((entry) => entry.onet_code === fitRoleCode)
   const fitBundleRole = [role, ...bundle.data.related].find((entry) => entry.onet_code === fitRoleCode) ?? role
-  const readinessPoints = toReadinessWindow(toReadinessPoints(slowCheckup, fastCheckup, fitBundleRole))
   const readinessKey = DEFAULT_SCENARIO === 'fast' ? 'fast' : 'plan'
+  const fullReadiness = toReadinessPoints(slowCheckup, fastCheckup, fitBundleRole)
+  const planWeeks = planWeeksFor(fullReadiness, (point) => point[readinessKey])
+  const readinessPoints = toReadinessWindow(fullReadiness, planWeeks)
   const readinessSeries = readinessPoints.map((point) => ({ week: point.week, value: point[readinessKey] }))
   const readyPoint = readinessPoints.find((point) => point[readinessKey] >= 80)
   const readinessCaption = readyPoint
@@ -246,7 +248,7 @@ export function DashboardView() {
       ? 'Already at least 80% fit.'
       : `80% fit by Week ${readyPoint.week} at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
     : readinessPoints.length > 1
-      ? `Below 80% fit within ${ROADMAP_WEEKS} weeks at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
+      ? `Below 80% fit within ${planWeeks} weeks at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
       : 'No readiness estimate yet.'
 
   const totalWeeks = Math.ceil(currentCheckup.roadmap.weeks)

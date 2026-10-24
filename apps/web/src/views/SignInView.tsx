@@ -9,7 +9,7 @@ import { startGuestSession } from '../session/guest'
 
 const benefits = [
   'Verdicts from public data, with every source shown',
-  'A 12-week roadmap you can follow after work',
+  'A roadmap to 80% fit you can follow after work',
   'No account needed for the pilot'
 ]
 

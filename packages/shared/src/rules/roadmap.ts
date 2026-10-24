@@ -66,9 +66,11 @@ export function aiDividend(verdicts: CornerVerdict[], corners: RoadmapCorner[]):
 }
 
 /**
- * The ordered milestones: Rising gaps first, then Steady, Split and Unknown, then Declining tagged LESS_IMPORTANT_TAG;
- * bigger gaps first within each tier, then the batch's corner order. Each gap gets one milestone per can-do statement
- * between the user's level and the target, rounded up.
+ * The ordered milestones. Each gap gets one milestone per can-do statement between the user's level and the target,
+ * rounded up, and a gap's milestones stay in level order. Across gaps, the next milestone is the one that adds the most
+ * fit per hour, so cheap basic steps come before costly advanced ones and the plan reaches the 80% threshold soonest.
+ * Declining gaps, tagged LESS_IMPORTANT_TAG, always come last. Ties keep the tier order (Rising, then Steady, Split and
+ * Unknown), bigger gaps first, then the batch's corner order.
  */
 export function roadmapItems(
   verdicts: CornerVerdict[],
@@ -79,27 +81,52 @@ export function roadmapItems(
   const gaps = cornerGaps(verdicts, corners, scenario)
   const ordered = [...gaps].sort((a, b) => TIER_RANK[TIER[a.status]] - TIER_RANK[TIER[b.status]] || b.size - a.size)
 
-  return ordered
-    .flatMap((gap) => {
-      const tier = TIER[gap.status]
-      const done = Math.floor(gap.user_level) // a half step (2.5) has not reached the next whole statement
-      const levels = Array.from({ length: Math.ceil(gap.target_level) - done }, (_, i) => done + 1 + i)
-      return levels.map((to_level): Omit<RoadmapItem, 'rank'> => {
-        const statement = STATEMENT[to_level]!
-        return {
-          corner_id: gap.corner_id,
-          status: gap.status,
-          tier,
-          gap_size: gap.size,
-          to_level,
-          statement,
-          hours: byId.get(gap.corner_id)!.milestone_hours[statement],
-          tag: tier === 'declining' ? LESS_IMPORTANT_TAG : null,
-          is_estimate: true
-        }
-      })
+  const queues = ordered.map((gap) => {
+    const tier = TIER[gap.status]
+    const done = Math.floor(gap.user_level) // a half step (2.5) has not reached the next whole statement
+    const levels = Array.from({ length: Math.ceil(gap.target_level) - done }, (_, i) => done + 1 + i)
+    return levels.map((to_level): Omit<RoadmapItem, 'rank'> => {
+      const statement = STATEMENT[to_level]!
+      return {
+        corner_id: gap.corner_id,
+        status: gap.status,
+        tier,
+        gap_size: gap.size,
+        to_level,
+        statement,
+        hours: byId.get(gap.corner_id)!.milestone_hours[statement],
+        tag: tier === 'declining' ? LESS_IMPORTANT_TAG : null,
+        is_estimate: true
+      }
     })
-    .map((item, i) => ({ rank: i + 1, ...item }))
+  })
+
+  // A milestone lifts its corner from the level before it (or the user's own) to its level, capped at the target.
+  const gainPerHour = (gap: CornerGap, item: Omit<RoadmapItem, 'rank'>) => {
+    const from = Math.max(gap.user_level, item.to_level - 1)
+    const gain = Math.min(item.to_level, gap.target_level) - Math.min(from, gap.target_level)
+    return gain / Math.max(item.hours, Number.EPSILON)
+  }
+  const next = queues.map(() => 0)
+  const total = queues.reduce((sum, queue) => sum + queue.length, 0)
+  const items: Omit<RoadmapItem, 'rank'>[] = []
+  while (items.length < total) {
+    let pick = -1
+    queues.forEach((queue, g) => {
+      const item = queue[next[g]!]
+      if (!item) return
+      if (pick < 0) {
+        pick = g
+        return
+      }
+      const best = queues[pick]![next[pick]!]!
+      const declining = Number(item.tier === 'declining') - Number(best.tier === 'declining')
+      if (declining < 0 || (declining === 0 && gainPerHour(ordered[g]!, item) > gainPerHour(ordered[pick]!, best)))
+        pick = g
+    })
+    items.push(queues[pick]![next[pick]!++]!)
+  }
+  return items.map((item, i) => ({ rank: i + 1, ...item }))
 }
 
 /** The roadmap with its AI-dividend weekly hours. Finish date = start + total_hours / weekly_hours weeks. */
