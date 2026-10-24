@@ -93,14 +93,14 @@ A valid submission is complete: "Every file there, every link opens, every decla
 
 ### Repository requirements
 
-- **A fresh repository**: create it after 19 October, 8 PM, and don't recycle an older one without the organiser's prior written approval ([Terms and Conditions 5.5][tc55]). This repository was created on 9 October. We keep it and ask the organiser for that written approval ([issue #260](https://github.com/TolongLabs/Kotak/issues/260)); [issue #45](https://github.com/TolongLabs/Kotak/issues/45) holds the fallback move.
+- **A fresh repository**: create it after 19 October, 8 PM, and don't recycle an older one without the organiser's prior written approval ([Terms and Conditions 5.5][tc55]). This repository was created on 24 October, and its history starts after 19 October, 8 PM.
 - **Visibility**: private while building, public before submitting ([slide 46]), and public until judging ends ([participant handbook 10][ph10]).
 - **Licence**: a `LICENSE` file with the Apache License 2.0 ([participant handbook 10][ph10]; [licence tutorials][vt-licence]).
 - **README**: team name, domain, the demo and pitch video links, how to run the project, its structure, and how we used Replit and RunPod ([slide 35]). The README template adds the SDG track and the deck ([slide 42]; [sample repository][gh]). Preliminary judges set the project up themselves, so the run steps matter ([transcript], 01:14:47).
 - **`submission/` folder**: the Submission Template PDF and the Replit and RunPod proof of use, also as PDFs ([transcript], 00:47:18; [sample file tree][gh-tree]).
 - **Commit history**: genuine and continuous. A near-complete codebase landing in one big commit gets reviewed and may be disqualified as pre-built ([slide 46]; [participant handbook 6.3.5][ph63]).
 - **Secrets**: no API keys or passwords in the repository ([slide 46]).
-- **Collaborators**: add the committee's GitHub accounts ([slide 46]), which no source names yet ([issue #18](https://github.com/TolongLabs/Kotak/issues/18)).
+- **Collaborators**: add the committee's GitHub accounts ([slide 46]), which no source names yet (issue #18).
 - **Freeze**: no commits of any kind after the deadline ([Terms and Conditions 6.6][tc66]). The briefing called a commit after 8 AM on 25 October "immediate disqualification" ([transcript], 00:53:54).
 
 [tc55]: /docs/sources/sdchack.my/terms-and-conditions.md#55-github-repository-requirements
@@ -175,10 +175,10 @@ Penalties run from a warning through deductions, cancelled finalist status and d
 
 ## Support and contacts
 
-- **Mentors**: one 15-minute Zoom session per team, booked on the [team portal][tp-mentors] at least 24 hours ahead, first come, first served ([booking rules][disc-mentor]). The six mentors and their windows, which end on Friday 23 October, are listed there ([mentors][tp-mentor-list]). Mentors give feedback only, and outside mentors are off limits ([transcript], 01:17:22). Our booking is [issue #96](https://github.com/TolongLabs/Kotak/issues/96).
+- **Mentors**: one 15-minute Zoom session per team, booked on the [team portal][tp-mentors] at least 24 hours ahead, first come, first served ([booking rules][disc-mentor]). The six mentors and their windows, which end on Friday 23 October, are listed there ([mentors][tp-mentor-list]). Mentors give feedback only, and outside mentors are off limits ([transcript], 01:17:22). Our booking is issue #96.
 - **Discord** is the official channel and every member must join ([participant handbook 15.2][ph152]). Use `#ask-the-organizers` for general questions, `#ask-tech` for platform problems and `#open-ticket` for a private channel ([slide 56]; [slide 57]; [slide 58]).
 - **Formal questions**: the official Discord or [sdc.xmumhack@gmail.com](mailto:sdc.xmumhack@gmail.com) ([slide 51]).
-- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]). The portal also shows the Replit Core code; redeem it with the organisers' guide, which turns off auto-reload to avoid charges ([team portal][tp-replit]; [guide][replit-guide]). On 22 October the code had expired and a refresh was pending with Replit; [issue #99](https://github.com/TolongLabs/Kotak/issues/99) tracks it, with the free Starter app as the fallback.
+- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]). The portal also shows the Replit Core code; redeem it with the organisers' guide, which turns off auto-reload to avoid charges ([team portal][tp-replit]; [guide][replit-guide]). On 22 October the code had expired and a refresh was pending with Replit; issue #99 tracks it, with the free Starter app as the fallback.
 
 [disc-mentor]: /docs/sources/discord.com/announcements.md#mentorship-booking-rules
 [tp-mentor-list]: /docs/sources/sdchack.my/team-portal.md#mentors

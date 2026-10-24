@@ -26,7 +26,7 @@ Contents:
 - The [Figma file][figma] has seven pages: Cover, Foundations, Brand, Iconography, Components, Mockups and Archive · v0.1.
 - Build screens from the Mockups page. Each view has a phone frame (390 px) and a desktop frame (1440 px) with the same content.
 - When the code and this file disagree, this file wins. When this file and Figma disagree, ask AlaskanTuna, who owns the design.
-- Open design work is tracked in [#31](https://github.com/TolongLabs/Kotak/issues/31).
+- Open design work is tracked in #31.
 - Use the semantic tokens below, never raw hex values. The primitive scales (ink, box, green, amber, red and sdg) sit underneath them.
 
 ## Colour
@@ -212,14 +212,14 @@ The Mockups page has 13 views, each as a phone and desktop pair. Every pair show
 12. State: AI Unavailable
 13. State: No Job Match
 
-The app has grown past the mockups in two places ([#284](https://github.com/TolongLabs/Kotak/issues/284)):
+The app has grown past the mockups in two places (#284):
 
 - **Check-Up: Start** now asks where the user is, their study and years of work, their job and a goal, before the questions.
 - **Check-Up: Roles to Check** follows it for a user with no job or no role in mind: a "What Do You Enjoy?" step, then the suggested roles. It uses the Matched Roles card layout.
 
 On Matched Roles and Roles to Check, the highlighted card carries one bold line saying why it is highlighted, such as "Picked for you: your best fit of the 4 Rising roles."
 
-The app dropped two parts of the mockups in [#167](https://github.com/TolongLabs/Kotak/pull/167): the National View screen and the radar's Scenario Switch. The radar shows the slow scenario, and the national view is read through Kotak's `national_skill_gaps` tool in Ask Kopi or an MCP client.
+The app dropped two parts of the mockups in #167: the National View screen and the radar's Scenario Switch. The radar shows the slow scenario, and the national view is read through Kotak's `national_skill_gaps` tool in Ask Kopi or an MCP client.
 
 ## See also
 

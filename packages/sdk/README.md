@@ -163,4 +163,4 @@ if (national.status === 'available')
 
 - [`packages/shared/src/api.ts`](/packages/shared/src/api.ts): the API's request and response schemas.
 - [`scripts/sdk-checkup.ts`](/scripts/sdk-checkup.ts): a check-up for each demo role, from the bundle on disk.
-- [Issue #184](https://github.com/TolongLabs/Kotak/issues/184): the SDK and agent layer spec.
+- Issue #184: the SDK and agent layer spec.

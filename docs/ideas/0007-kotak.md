@@ -97,7 +97,7 @@ Each corner gets three inputs from dated snapshots:
 
 - **Split** covers corners where the two scenarios give different verdicts, or where sources point opposite ways. A Split corner shows both futures.
 - **Unknown** means fewer than two dated points. The app always shows it.
-- **Projection**: each trend runs 12 months ahead. Slow keeps Malaysia's current pace of AI use; fast moves Malaysia halfway to Singapore's level, which raises every corner's projected AI-use growth. kymil4's [Seberang notes][seberang] give May 2026 usage indexes of 5.81 for Singapore and 0.87 for Malaysia; [issue #50](https://github.com/TolongLabs/Kotak/issues/50) re-checks both. Every projection is labelled an estimate.
+- **Projection**: each trend runs 12 months ahead. Slow keeps Malaysia's current pace of AI use; fast moves Malaysia halfway to Singapore's level, which raises every corner's projected AI-use growth. kymil4's [Seberang notes][seberang] give May 2026 usage indexes of 5.81 for Singapore and 0.87 for Malaysia; issue #50 re-checks both. Every projection is labelled an estimate.
 - **AI advancement**: the Economic Index is the main signal. One dated line from [Epoch AI][epoch] adds what frontier models can now do.
 
 [seberang]: /docs/ideas/0005-seberang.md

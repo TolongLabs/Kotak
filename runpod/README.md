@@ -1,6 +1,6 @@
 # RunPod batch
 
-Kotak drafts every O\*NET occupation's 6 skill corners and 18 can-do statements once, before the demo, on a RunPod serverless GPU ([#77]). This folder holds the deploy notes; the workload code is [`scripts/corners/run-batch.ts`](/scripts/corners/run-batch.ts).
+Kotak drafts every O\*NET occupation's 6 skill corners and 18 can-do statements once, before the demo, on a RunPod serverless GPU (#77). This folder holds the deploy notes; the workload code is [`scripts/corners/run-batch.ts`](/scripts/corners/run-batch.ts).
 
 Contents:
 
@@ -16,11 +16,9 @@ Contents:
 1.  [Test without a key](#test-without-a-key)
 1.  [See also](#see-also)
 
-[#77]: https://github.com/TolongLabs/Kotak/issues/77
-
 ## Workload
 
-One chat request per occupation, 923 in all ([#74]):
+One chat request per occupation, 923 in all (#74):
 
 1.  **Input.** The occupation's title, description and candidate groups from `data/generated/corner-groups.json`: its O\*NET tasks grouped by work activity (IWA) into at most 6 groups by fixed rules, with no AI. `bun run build:corner-groups` rebuilds that file.
 2.  **Ask.** The prompt in [`packages/shared/src/corners/prompt.ts`](/packages/shared/src/corners/prompt.ts) asks the model to split or merge the groups into up to 6 corners, using only the occupation's own task IDs, and to draft for each corner a name, 3 yes/no can-do statements (basic, working, advanced), milestone hours, 1 to 3 SDG targets and free-resource search queries.
@@ -30,8 +28,6 @@ One chat request per occupation, 923 in all ([#74]):
 6.  **Write.** `data/generated/role-corners.json` (`quality: "auto-generated"`, `generated_by: "runpod"`) and the run summary `data/generated/role-corners-run.json`.
 
 The batch makes no title embeddings: the job match route in #43 searches titles and asks Claude, and never reads embeddings.
-
-[#74]: https://github.com/TolongLabs/Kotak/issues/74
 
 ## Handler
 
@@ -97,15 +93,13 @@ RUNPOD_ENDPOINT_ID=...
     bun run batch:corners
     ```
 
-3.  Codes that still fail are in `missing_codes` in `data/generated/role-corners-run.json`. Run the batch again for them. The final run left none, so the planned Claude backup ([#79]) was never needed.
+3.  Codes that still fail are in `missing_codes` in `data/generated/role-corners-run.json`. Run the batch again for them. The final run left none, so the planned Claude backup (#79) was never needed.
 4.  Set **Max workers** to 0 when done, so nothing more can bill.
 5.  Commit `data/generated/role-corners.json` and `data/generated/role-corners-run.json`.
 
 Options: `--codes` (comma-separated subset), `--concurrency` (default 32; keep it at `MAX_CONCURRENCY`), `--attempts` (default 3), `--force` (regenerate the given codes; an earlier answer stays until a new one passes), `--model` (default: the endpoint's served model), `--out` and `--summary` (file paths).
 
 The first request waits for a worker to load the model; the runner polls `/openai/v1/models` for up to 30 minutes before sending the batch. Sampling is greedy (`temperature: 0`), but batched GPU runs are not bit-for-bit repeatable, so the committed file, not a rerun, is the record.
-
-[#79]: https://github.com/TolongLabs/Kotak/issues/79
 
 ## Example requests
 
@@ -149,15 +143,13 @@ The run summary records the real runtime and token counts; the RunPod billing pa
 
 ## Proof for the declaration
 
-[#70] compiles `submission/RUNPOD PROOF OF USE.pdf`. Capture during or right after the full run:
+#70 compiles `submission/RUNPOD PROOF OF USE.pdf`. Capture during or right after the full run:
 
 - The endpoint page, with the endpoint ID, the GPU type and the worker image.
 - The **Workers** or **Logs** tab while the batch runs, showing vLLM serving requests.
 - The **Metrics** or **Requests** tab with completed jobs and execution time.
 - The billing page with the spend for the run.
 - `data/generated/role-corners-run.json`: endpoint ID, GPU types, model, runtime, tokens and failures for every run.
-
-[#70]: https://github.com/TolongLabs/Kotak/issues/70
 
 ## Test without a key
 

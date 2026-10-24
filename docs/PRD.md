@@ -153,14 +153,12 @@ The target, indicator and baseline come from the UN SDG API, accessed on 22 Octo
 - **Target SDG sub-target**: target 4.4, "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship". It is measured by indicator 4.4.1, "Proportion of youth and adults with information and communications technology (ICT) skills, by type of skill" ([UN SDG API, goal 4][sdg-goal4]).
 - **Current problem baseline**: in 2024, 39.8% of Malaysians aged 15 and over had above-basic digital skills in all 5 skill areas, and 19.6% reported writing a computer program in a programming language. Both figures are indicator 4.4.1, series `SE_ADT_ACTS`, from DOSM ([UN SDG API, Malaysia][sdg-441]). For AI skills, 56% of Malaysian professionals use AI tools at work, but only 26% have had formal training ([Domain 1 brief][d1-bg]).
 - **Core measurable KPI**: the sourced-roadmap rate. It is the percentage of finished check-ups that reach a roadmap in under 3 minutes, where every verdict, fit score and milestone shows its source and date. A second count tracks uncited recommendations, which must stay at 0 ([LLM credibility notes][bp-llm]).
-- **Phase 2 impact target**: 100% of 20 seeded test profiles reach a sourced roadmap in under 3 minutes with 0 uncited recommendations ([issue #28][i28]; [LLM credibility notes][bp-llm]). On 100% of the hand-checked demo roles, the April-to-May 2026 snapshot swap changes at least one verdict ([issue #37][i37]).
+- **Phase 2 impact target**: 100% of 20 seeded test profiles reach a sourced roadmap in under 3 minutes with 0 uncited recommendations ([LLM credibility notes][bp-llm]). On 100% of the hand-checked demo roles, the April-to-May 2026 snapshot swap changes at least one verdict ([demo roles](/data/demo-roles.json)).
 
 [bp-impact]: /docs/research/best-practices.md#impact-claims
 [sdg-goal4]: https://unstats.un.org/sdgapi/v1/sdg/Goal/4/Target/List?includechildren=true
 [sdg-441]: https://unstats.un.org/sdgapi/v1/sdg/Indicator/Data?indicator=4.4.1&areaCode=458
 [bp-llm]: /docs/research/best-practices.md#llm-credibility
-[i28]: https://github.com/TolongLabs/Kotak/issues/28
-[i37]: https://github.com/TolongLabs/Kotak/issues/37
 
 ## 5. Eligibility & readiness checklist
 

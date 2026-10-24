@@ -10,14 +10,11 @@ Contents:
 
 ## Demo video
 
-[`video.md`](video.md) is the plan for the pitching video ([issue #82][i82]): the rules, the timing, the live-demo shot list, the Playwright recording harness and the Remotion edit. The captions and the public upload are [issue #84][i84].
-
-[i82]: https://github.com/TolongLabs/Kotak/issues/82
-[i84]: https://github.com/TolongLabs/Kotak/issues/84
+[`video.md`](video.md) is the plan for the pitching video (issue #82): the rules, the timing, the live-demo shot list, the Playwright recording harness and the Remotion edit. The captions and the public upload are issue #84.
 
 ## Example deck
 
-[`example-pitch-deck.html`](example-pitch-deck.html) is a finished 11-slide deck from an earlier hackathon of ours, with its names replaced by placeholders. Use it as the reference for layout and visual assets. Our deck is a PPTX file ([issue #80][i80]) in Kotak's colours and type ([design system](/docs/DESIGN.md)). Open the example in Chrome or Edge, and move between slides with the arrow keys or the controls that show when you move the mouse. Press N for its presenter notes.
+[`example-pitch-deck.html`](example-pitch-deck.html) is a finished 11-slide deck from an earlier hackathon of ours, with its names replaced by placeholders. Use it as the reference for layout and visual assets. Our deck is a PPTX file (issue #80) in Kotak's colours and type ([design system](/docs/DESIGN.md)). Open the example in Chrome or Edge, and move between slides with the arrow keys or the controls that show when you move the mouse. Press N for its presenter notes.
 
 Copy these from it:
 
@@ -28,8 +25,6 @@ Copy these from it:
 - **A dark closing slide** with QR codes for the code and the live demo.
 
 Its images are embedded in the HTML as base64, so the file needs nothing else. Make our own renders in the same style.
-
-[i80]: https://github.com/TolongLabs/Kotak/issues/80
 
 ## See also
 
