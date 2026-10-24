@@ -1,6 +1,6 @@
 # Demo
 
-How the team makes the submission media: the pitching video and the pitch deck. [`kotak-director-script.md`](kotak-director-script.md) holds the video's words and timing, [`video.md`](video.md) says how a Playwright harness films the demo and Remotion assembles the video, [`demo-graphics.md`](demo-graphics.md) gives the live demo's on-screen graphics and when each appears, and [`example-pitch-deck.html`](example-pitch-deck.html) is the design reference for the deck.
+How the team makes the submission media: the pitching video and the pitch deck. [`kotak-director-script.md`](kotak-director-script.md) holds the video's words and timing, [`video.md`](video.md) says how a Playwright harness films the demo, Remotion assembles the demo segment and Premiere Pro edits the whole video, [`demo-graphics.md`](demo-graphics.md) gives the live demo's on-screen graphics and when each appears, and [`example-pitch-deck.html`](example-pitch-deck.html) is the design reference for the deck.
 
 Contents:
 
@@ -10,7 +10,7 @@ Contents:
 
 ## Demo video
 
-[`kotak-director-script.md`](kotak-director-script.md) is the pitching video's script: the narration for every segment, the timing, the claim guardrails and the claims ledger. [`video.md`](video.md) is the how-to: the rules, the shot list with the demo answer key, the recording harness, the Remotion edit, the captions and the public upload.
+[`kotak-director-script.md`](kotak-director-script.md) is the pitching video's script: the narration for every segment, the timing, the claim guardrails and the claims ledger. [`video.md`](video.md) is the how-to: the rules, the shot list with the demo answer key, the recording harness, the demo segment, the Premiere edit, the captions and the public upload.
 
 ## Example deck
 
