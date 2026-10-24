@@ -1,6 +1,6 @@
 # Demo
 
-How the team makes the submission media: the pitching video and the pitch deck. [`kotak-director-script.md`](kotak-director-script.md) holds the video's words and timing, [`video.md`](video.md) says how the team records it in OBS Studio and edits it in Adobe Premiere Pro, and [`example-pitch-deck.html`](example-pitch-deck.html) is the design reference for the deck.
+How the team makes the submission media: the pitching video and the pitch deck. [`kotak-director-script.md`](kotak-director-script.md) holds the video's words and timing, [`video.md`](video.md) says how the team records it in OBS Studio and edits it in Adobe Premiere Pro, [`demo-graphics.md`](demo-graphics.md) gives the live demo's on-screen graphics and when each appears, and [`example-pitch-deck.html`](example-pitch-deck.html) is the design reference for the deck.
 
 Contents:
 
