@@ -28,9 +28,9 @@ const ordinal = (n: number) => {
 }
 
 // Where the role ranks by its estimated JobStreet ads among the roles Kotak has an estimate for: "the 3rd most of the
-// 24 roles Kotak tracks", or null when it is the only one.
+// 24 roles with a JobStreet estimate", or null when it is the only one.
 const rankLabel = ({ rank, roles }: NonNullable<JobMarket['popularity']>) =>
-  roles < 2 ? null : `the ${rank === 1 ? '' : `${ordinal(rank)} `}most of the ${roles} roles Kotak tracks`
+  roles < 2 ? null : `the ${rank === 1 ? '' : `${ordinal(rank)} `}most of the ${roles} roles with a JobStreet estimate`
 
 const LEVELS: Record<JobMarketLevel, { name: string; asks: string }> = {
   junior: { name: 'Junior', asks: 'under 2 years, or new graduates' },
@@ -47,16 +47,16 @@ export function payForLevel(market: JobMarket, level: JobMarketLevel | null) {
 const levelRoles = (level: JobMarketLevel) => `${LEVELS[level].name.toLowerCase()} roles`
 
 /**
- * The role card's pay: "median pay RM 4,800 a month for junior roles" when enough ads at the user's level state pay,
+ * The role card's pay: "median pay RM 4,800 a month for junior roles, by your years of work" when enough ads at the user's level state pay,
  * else the median of every level, or null when too few ads state any.
  */
 export function payLabel(market: JobMarket, level: JobMarketLevel | null) {
   const band = payForLevel(market, level)
-  if (band && level) return `median pay ${ringgit(band.median)} a month for ${levelRoles(level)}`
+  if (band && level) return `median pay ${ringgit(band.median)} a month for ${levelRoles(level)}, by your years of work`
   return market.pay ? `median advertised pay ${ringgit(market.pay.median)} a month` : null
 }
 
-/** The role card's line: "about 980 on JobStreet, the 2nd most of the 24 roles Kotak tracks", or null without one. */
+/** The role card's line: "about 980 on JobStreet, the 2nd most of the 24 roles with a JobStreet estimate", or null without one. */
 export function popularityLabel(market: JobMarket) {
   const { popularity } = market
   if (!popularity) return null

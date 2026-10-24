@@ -333,3 +333,70 @@ test("the intake's years of work pick the pay level", () => {
     'senior'
   ])
 })
+
+test('only ads approved under the title’s current occupation, from titles not hidden, count', async () => {
+  await addCareer('web-developer', '15-1254.00')
+  await addCareer('hidden-title', '15-1254.00', true)
+  // 5 approved at RM 5,000; 3 excluded at RM 9,000, which must not count.
+  await addRun('web-developer', '15-1254.00', {
+    id: 'run-web',
+    approved: 5,
+    excluded: 3,
+    ad: (index) => ({ salary: index < 5 ? 'RM 5,000 per month' : 'RM 9,000 per month' })
+  })
+  // An ad approved while the title had another occupation.
+  await addRun('web-developer', '15-1255.00', {
+    id: 'run-old',
+    approved: 1,
+    ad: () => ({ salary: 'RM 9,000 per month' })
+  })
+  // A hidden title's approved ads.
+  await addRun('hidden-title', '15-1254.00', {
+    id: 'run-hidden',
+    approved: 5,
+    ad: () => ({ salary: 'RM 1,000 per month' })
+  })
+  const [web] = await readJobMarkets(sql, ['15-1254.00'])
+  expect(web.ads).toEqual({ reviewed: 5, active: 5, employers: 1 })
+  expect(web.pay).toEqual({ ads_with_pay: 5, median: 5000, p25: 5000, p75: 5000 })
+  expect(web.search_titles).toEqual(['web-developer'])
+})
+
+test('pay is monthly ringgit: yearly pay is divided by 12, and other pay is left out', async () => {
+  await addCareer('web-developer', '15-1254.00')
+  const salaries = [
+    'RM 60,000 per year', // 5,000 a month
+    'MYR 5,000', // no period: monthly
+    'RM 4k - RM 6k per month', // midpoint 5,000
+    'RM 4,500 – RM 5,500 per month + annual bonus', // the words straight after set the period
+    'RM 5,000 (Basic) per month',
+    'RM 30 per hour', // hourly: left out
+    'SGD 5,000 per month', // not ringgit: left out
+    'RM 200 per month', // under RM 500: left out
+    'Competitive salary' // no figure: left out
+  ]
+  await addRun('web-developer', '15-1254.00', {
+    id: 'run-web',
+    approved: salaries.length,
+    ad: (index) => ({ salary: salaries[index] })
+  })
+  const [web] = await readJobMarkets(sql, ['15-1254.00'])
+  expect(web.pay).toEqual({ ads_with_pay: 5, median: 5000, p25: 5000, p75: 5000 })
+})
+
+test('a location gives its state from the text after the last comma, or JobStreet’s area name', async () => {
+  await addCareer('web-developer', '15-1254.00')
+  const locations = ['Bayan Lepas, Penang', 'Petaling Jaya, Selangor', 'Shah Alam/Subang', 'Kuala Lumpur', 'Malaysia']
+  await addRun('web-developer', '15-1254.00', {
+    id: 'run-web',
+    approved: locations.length,
+    ad: (index) => ({ location: locations[index] })
+  })
+  const [web] = await readJobMarkets(sql, ['15-1254.00'])
+  expect(web.regions).toEqual([
+    { name: 'Selangor', ads: 2 },
+    { name: 'Kuala Lumpur', ads: 1 },
+    { name: 'Penang', ads: 1 }
+  ])
+  expect(web.without_state).toBe(1)
+})
