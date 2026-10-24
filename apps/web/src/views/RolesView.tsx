@@ -148,7 +148,7 @@ export function RolesView() {
     : ''
   function pick() {
     updateGuestSession({
-      plan_role_code: selected && selected.id !== assessedRoleCode(session) ? selected.id : null
+      plan_role_code: selected ? selected.id : null
     })
     navigate(routes.roadmap)
   }

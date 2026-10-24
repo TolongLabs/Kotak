@@ -27,6 +27,7 @@ test('paragraphs, headings and lists split into blocks', () => {
   expect(blocks[2]).toEqual({
     kind: 'list',
     ordered: false,
+    start: 1,
     items: [
       [
         { kind: 'strong', text: 'Testing' },
@@ -36,6 +37,25 @@ test('paragraphs, headings and lists split into blocks', () => {
     ]
   })
   expect(blocks[3]).toMatchObject({ kind: 'list', ordered: true })
+})
+
+test('an asterisk inside a word stays, and bold may hold one', () => {
+  expect(parseInline('O*NET 30.1 and O*NET 30.3')).toEqual([{ kind: 'text', text: 'O*NET 30.1 and O*NET 30.3' }])
+  expect(parseInline('From **O*NET 30.1**, *dated*.')).toEqual([
+    { kind: 'text', text: 'From ' },
+    { kind: 'strong', text: 'O*NET 30.1' },
+    { kind: 'text', text: ', ' },
+    { kind: 'em', text: 'dated' },
+    { kind: 'text', text: '.' }
+  ])
+  expect(plainChatText('**O*NET** says')).toBe('O*NET says')
+})
+
+test('a numbered list split by blank lines or sub-bullets keeps its numbers', () => {
+  const blocks = parseChatText('1. Practise\n\n2. Review\n   - with a colleague\n3. Re-check')
+  expect(
+    blocks.map((block) => (block.kind === 'list' ? `${block.ordered ? 'ol' : 'ul'}${block.start}` : block.kind))
+  ).toEqual(['ol1', 'ol2', 'ul1', 'ol3'])
 })
 
 test('the screen-reader text has no Markdown markers', () => {

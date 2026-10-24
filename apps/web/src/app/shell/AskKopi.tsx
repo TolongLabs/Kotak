@@ -421,10 +421,13 @@ function Spans({ spans }: { spans: ChatSpan[] }) {
   )
 }
 
-function ChatList({ ordered, items }: { ordered: boolean; items: ChatSpan[][] }) {
+function ChatList({ ordered, start, items }: { ordered: boolean; start: number; items: ChatSpan[][] }) {
   const List = ordered ? 'ol' : 'ul'
   return (
-    <List className={cn('space-y-1 pl-5', ordered ? 'list-decimal' : 'list-disc')}>
+    <List
+      start={ordered && start !== 1 ? start : undefined}
+      className={cn('space-y-1 pl-5', ordered ? 'list-decimal' : 'list-disc')}
+    >
       {items.map((item, index) => (
         <li key={index}>
           <Spans spans={item} />
@@ -442,7 +445,7 @@ function ChatText({ text }: { text: string }) {
         <Spans spans={block.spans} />
       </p>
     ) : block.kind === 'list' ? (
-      <ChatList key={index} ordered={block.ordered} items={block.items} />
+      <ChatList key={index} ordered={block.ordered} start={block.start} items={block.items} />
     ) : (
       <p key={index}>
         {block.lines.map((line, lineIndex) => (

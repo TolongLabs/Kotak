@@ -119,7 +119,7 @@ weeks = total hours ÷ weekly hours
 
 - **Order**: Rising gaps first, largest first; then Steady, Split and Unknown; Declining last, tagged "less important by 2027".
 - **Steps**: each is the next can-do statement, with an AI-drafted hour estimate and one free resource. A partial step earns no projected level gain.
-- **Weekly hours**: the default is one hour in five of the time AI could save the user on declining corners, from 1 to 10 hours, and the user can change it.
+- **Weekly hours**: the app starts at 4 hours a week, from 1 to 10, and the user can change it. Without a figure, the SDK uses one hour in five of the time AI could save the user on declining corners.
 - **Window**: the page shows the next 12 weeks and the week fit passes 80%; the hours left after Week 12 are listed.
 
 ## What changed
