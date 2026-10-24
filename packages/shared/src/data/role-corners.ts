@@ -21,6 +21,19 @@ export const ReversedStatementsSchema = z
   .object({ basic: z.string().min(1).optional(), advanced: z.string().min(1).optional() })
   .strict()
 
+/** Plain-English explainers (#249) for the `basic` and `advanced` statements the triage marked vague; under 40 words. */
+const ExplainerSchema = z
+  .string()
+  .min(1)
+  .refine((text) => text.trim().split(/\s+/).length < 40, 'an explainer must be under 40 words')
+
+export const CornerExplainersSchema = z
+  .object({ basic: ExplainerSchema.optional(), advanced: ExplainerSchema.optional() })
+  .strict()
+
+/** `data/generated/statement-explainers.json`: `{ [onet_code]: { [corner_id]: { basic?, advanced? } } }`. */
+export const StatementExplainersSchema = z.record(z.string(), z.record(z.string(), CornerExplainersSchema))
+
 /** AI-drafted hours to reach each statement from the level below it. Estimates, never shown as data. */
 export const MilestoneHoursSchema = z
   .object({ basic: z.number().positive(), working: z.number().positive(), advanced: z.number().positive() })

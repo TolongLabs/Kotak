@@ -5,6 +5,7 @@
 import {
   CornerGroupsFileSchema,
   RoleCornersSchema,
+  StatementExplainersSchema,
   cornerIwaErrors,
   foreignTaskErrors,
   validateOccupationCorners,
@@ -15,6 +16,7 @@ import {
 } from '../../packages/shared/src/index'
 
 export const BATCH_FILE = 'data/generated/role-corners.json'
+export const EXPLAINERS_FILE = 'data/generated/statement-explainers.json'
 export const GROUPS_FILE = 'data/generated/corner-groups.json'
 
 export type FoundCorners = Pick<BundleRole, 'corners_source' | 'quality' | 'generated' | 'corners'>
@@ -30,6 +32,7 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
   const groups = await read(`${root}/${GROUPS_FILE}`, CornerGroupsFileSchema)
   if (!groups) throw new Error(`${GROUPS_FILE} is missing: run bun run build:corner-groups`)
 
+  const explainers = (await read(`${root}/${EXPLAINERS_FILE}`, StatementExplainersSchema)) ?? {}
   const found = new Map<string, FoundCorners>()
   for (const occupation of groups.occupations) {
     found.set(occupation.onet_code, {
@@ -51,11 +54,15 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
   for (const role of batch?.roles ?? []) {
     const { errors } = validateOccupationCorners(role, tasks[role.onet_code] ?? [])
     if (errors.length > 0) throw new Error(`${BATCH_FILE} ${role.onet_code}: ${errors.join('; ')}`)
+    const byCorner = explainers[role.onet_code] ?? {}
+    const orphans = Object.keys(byCorner).filter((id) => !role.corners.some((c) => c.corner_id === id))
+    if (orphans.length > 0)
+      throw new Error(`${EXPLAINERS_FILE} ${role.onet_code}: unknown corner ${orphans.join(', ')}`)
     found.set(role.onet_code, {
       corners_source: 'batch',
       quality: role.quality,
       generated: { generated_by: role.generated_by, model: role.model, generated_date: role.generated_date },
-      corners: role.corners
+      corners: role.corners.map((c) => (byCorner[c.corner_id] ? { ...c, explainers: byCorner[c.corner_id] } : c))
     })
   }
   return found

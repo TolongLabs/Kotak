@@ -21,6 +21,7 @@ import { checkupBundleKey, loadCheckupBundleFor, useRoleBundle } from '../engine
 import { assessedRoleCode } from '../engine/checkup'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
+import { QuestionInfo } from './checkup/QuestionInfo'
 import { startAgain } from './checkup/startAgain'
 import { AnswerKeys } from './checkup/useAnswerKeys'
 
@@ -150,7 +151,15 @@ export function QuestionsView() {
         <span className="font-mono text-mono-s text-text-muted">
           Question {questionIndex + 1} of {totalQuestions}
         </span>
-        <span className="font-mono text-mono-s text-text-primary">{corner.name}</span>
+        <span className="inline-flex items-center gap-2 font-mono text-mono-s text-text-primary">
+          {corner.name}
+          <QuestionInfo
+            key={questionIndex}
+            cornerName={corner.name}
+            explainer={corner.explainers?.[level]}
+            tasks={corner.task_ids.flatMap((id) => role.tasks.find((task) => task.task_id === id)?.statement ?? [])}
+          />
+        </span>
       </div>
 
       <section className="space-y-3" aria-label="Question Card">

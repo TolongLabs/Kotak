@@ -11,6 +11,7 @@ import {
 } from '../data/onet'
 import {
   CanDoStatementsSchema,
+  CornerExplainersSchema,
   ReversedStatementsSchema,
   FreeResourceSchema,
   MilestoneHoursSchema,
@@ -54,6 +55,7 @@ export const BundleCornerSchema = z
     /** null until the batch writes them; the build never makes them up. */
     statements: CanDoStatementsSchema.nullable(),
     reversed_statements: ReversedStatementsSchema.nullish(),
+    explainers: CornerExplainersSchema.optional(),
     hours: MilestoneHoursSchema.nullable(),
     sdg_targets: z.array(SdgTargetSchema),
     resources: z.array(FreeResourceSchema)
