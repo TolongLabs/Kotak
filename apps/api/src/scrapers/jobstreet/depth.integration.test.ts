@@ -132,6 +132,19 @@ afterAll(async () => {
   }
 })
 
+// The message of a run that must fail. A plain await settles it: bun:test waits for expect(run).rejects in a nested
+// event loop that can skip the microtask checkpoint after each setImmediate callback (oven-sh/bun#45020). Playwright
+// handles each DevTools message in one, so a browser launched in there can miss its page's load event and hang until
+// Playwright's 180-second launch timeout.
+async function failure(run: Promise<unknown>): Promise<string> {
+  try {
+    await run
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error)
+  }
+  throw new Error('Expected the run to fail')
+}
+
 const options = (name: string): DepthOptions => ({
   inputs: [input],
   profileId: Bun.env.BROWSER_PROFILE_ID,
@@ -197,7 +210,7 @@ browserTest(
   async () => {
     scenario = 'blocked'
     const config = options('blocked')
-    await expect(run(config)).rejects.toThrow('429')
+    expect(await failure(run(config))).toContain('429')
     const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
     expect([report.status, report.stop_reason, report.jobs_attempted, blockedAttempts]).toEqual([
       'failed',
@@ -218,7 +231,7 @@ browserTest(
     scenario = 'challenge'
     blockedAttempts = 0
     const config = options('challenge')
-    await expect(run({ ...config, verificationTimeoutMs: 0 })).rejects.toThrow('Verification did not clear')
+    expect(await failure(run({ ...config, verificationTimeoutMs: 0 }))).toContain('Verification did not clear')
     const report = JSON.parse(await readFile(join(config.output, 'run.json'), 'utf8'))
     expect([report.stop_reason, report.jobs_attempted, blockedAttempts]).toEqual(['verification_timeout', 1, 1])
     const detail = (await lines(join(config.output, 'details.jsonl')))[0]
