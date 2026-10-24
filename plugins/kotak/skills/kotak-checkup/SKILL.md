@@ -28,7 +28,7 @@ Use it when someone asks:
 - which roles they could move to, or how far they are from one;
 - why their Kotak result or plan changed, or where Kotak's data comes from;
 - which skills workers in Malaysia, a job family or a role lack most, a question officers at TalentCorp, HRD Corp or a career centre ask;
-- what a role pays in Malaysia, how many ads there are, where the jobs are, or which tools, languages and AI skills employers ask for.
+- what a role pays in Malaysia, how many ads there are, where the jobs are, which benefits employers offer, or which tools, languages and AI skills they ask for.
 
 ## Rules
 
@@ -98,8 +98,10 @@ For a question about workers in general rather than the user, such as "which ris
 For a question about a role's job ads in Malaysia, such as "what does a web developer earn in KL?" or "do employers want AI skills for this job?", call `job_market` with up to 5 role codes from `find_role` or from a check-up's ranked roles. It needs no check-up answers.
 
 - **What it is**: JobStreet ads that Kotak's admins approved for the role's O*NET occupation. It is context beside the verdicts and sets none, so never credit a verdict to it.
-- **Counts**: active ads were seen in the 14 days before the latest scrape. Say how many ads a figure rests on: `pay.ads_with_pay` for pay, `skills.ads_checked` for skills, languages and AI.
+- **Counts**: active ads were seen in the 14 days before the latest scrape. Say how many ads a figure rests on: `pay.ads_with_pay` for pay, `skills.ads_checked` for skills, languages and AI, `benefits.ads_checked` for benefits.
+- **Popularity**: `popularity.estimated_ads` is an estimate of how many JobStreet ads match the role: JobStreet's count for the search `popularity.search_title` (`search_ads`) times the share of the ads Kotak reviewed that matched (`sample_approved` of `sample_reviewed`). Call it an estimate. `rank` of `roles` places the role by it among the roles Kotak has estimates for, 1 the most; say it ranks only those roles, not every job in Malaysia.
 - **Pay**: advertised monthly ringgit, the midpoint of each ad's range. Quote the median and the middle half (p25 to p75) as given; `pay` is null under 5 ads that state pay.
 - **Skills**: give each tool, language or AI skill as a share of `skills.ads_checked`. A missing skill only means the ads Kotak read don't mention it.
+- **Benefits**: give each benefit as a share of `benefits.ads_checked`, the ads whose JobStreet cards list selling points. Most cards list none, so a missing benefit can still be offered; `benefits` is null under 10 such ads.
 - **Missing roles**: when `database_available` is true, a role absent from `markets` has no approved ads yet. When it is false, the figures in `markets` may be up to an hour old, and a role missing from them is unknown rather than without ads.
 - **Sources**: cite each market's `source` and its vintage date.

@@ -1,6 +1,6 @@
 import { JOB_MARKET_MIN_PAY_ADS, JOB_MARKET_MIN_SKILL_ADS, type JobMarket } from '@kotak/shared'
 import type { jobstreetDatabase } from '../scrapers/jobstreet/database'
-import { SKILL_BY_KEY, SKILL_PATTERN_ROWS, SKILL_TERMS, SKILL_VOCABULARY_VERSION } from './skills'
+import { SKILL_BY_KEY, SKILL_PATTERN_ROWS, SKILL_TERMS, SKILL_VOCABULARY_VERSION, type SkillCategory } from './skills'
 
 // The job-ad market (#271): what the JobStreet ads an admin approved under an O*NET occupation say about it. Postgres
 // does the matching and the sums, so the Worker, with 10 ms of CPU a request, only shapes a few rows.
@@ -13,18 +13,45 @@ const TOP_REGIONS = 5
 const TOP_TOOLS = 8
 const TOP_LANGUAGES = 4
 const TOP_AI = 5
+const TOP_BENEFITS = 8
 const WEEKS = 12
+/** Decided listings a search title's run needs before it estimates how many JobStreet ads match the occupation. */
+export const MIN_ESTIMATE_SAMPLE = 20
 
 const AI_KEYS = SKILL_TERMS.filter((term) => term.category === 'ai').map((term) => term.key)
 
+/**
+ * The selling points an employer puts on an ad's card, up to three short lines such as "Medical Benefit" or "Free
+ * Parking", as `card_points.highlights`. The card text reads "… This is a Full time job <location>[(Remote)] [<pay>]
+ * <selling points> <summary> subClassification: …", so they are what lies between the location, work arrangement and
+ * pay, and the summary. A card without any gives '', and one laid out otherwise gives NULL. `payload` is the SQL for
+ * the listing's payload.
+ */
+export const cardHighlights = (payload: string) => `CROSS JOIN LATERAL (
+    SELECT ${payload}->>'listing_text' AS text, ' job ' || (${payload}->>'location') AS anchor,
+      nullif(${payload}->>'summary', '') AS summary, nullif(${payload}->>'salary', '') AS salary
+  ) card
+  CROSS JOIN LATERAL (
+    SELECT CASE WHEN strpos(card.text, card.anchor) > 0 AND strpos(card.text, card.summary) > 0 THEN
+      substr(card.text, strpos(card.text, card.anchor) + length(card.anchor),
+        greatest(0, strpos(card.text, card.summary) - strpos(card.text, card.anchor) - length(card.anchor)))
+    END AS between_text
+  ) card_span
+  CROSS JOIN LATERAL (
+    SELECT btrim(regexp_replace(
+      CASE WHEN card.salary IS NULL THEN card_span.between_text ELSE replace(card_span.between_text, card.salary, ' ') END,
+      '^\\s*\\([^)]*\\)', '')) AS highlights
+  ) card_points`
+
 // The text a listing's skills are matched in: its title, summary, card text and, once a depth run fetched it, its
 // description. The card text names the employer, which is taken out, so "Swift Haulage" is no Swift job. Its "Listed
-// two days ago" changes every scrape, so the hash that decides whether to match again leaves the card text out.
+// two days ago" changes every scrape, so the hash that decides whether to match again leaves the card text out and
+// takes only its selling points, which benefits are matched in.
 const MATCHED_TEXT = `concat_ws(' ', listing.latest_payload->>'title', listing.latest_payload->>'summary',
   replace(listing.latest_payload->>'listing_text', coalesce(listing.latest_payload->>'company', ''), ' '),
   listing.latest_detail->>'description_text')`
 const HASHED_TEXT = `md5(concat_ws(' ', listing.latest_payload->>'title', listing.latest_payload->>'summary',
-  listing.latest_detail->>'description_text', $2::text))`
+  listing.latest_detail->>'description_text', card_points.highlights, $2::text))`
 
 /**
  * Matches up to `limit` listings whose skills are missing or stale, newest first, optionally for one search title.
@@ -33,12 +60,14 @@ const HASHED_TEXT = `md5(concat_ws(' ', listing.latest_payload->>'title', listin
 export async function refreshListingSkills(sql: Sql, options: { limit: number; careerSlug?: string }) {
   const rows = await sql.query(
     `WITH vocabulary AS (
-       SELECT key, pattern, case_sensitive
-       FROM jsonb_to_recordset($1::jsonb) AS term(key text, pattern text, case_sensitive boolean)
+       SELECT key, pattern, case_sensitive, highlights
+       FROM jsonb_to_recordset($1::jsonb) AS term(key text, pattern text, case_sensitive boolean, highlights boolean)
      ),
      pending AS MATERIALIZED (
-       SELECT listing.job_id, listing.career_slug, ${MATCHED_TEXT} AS text, ${HASHED_TEXT} AS text_md5
+       SELECT listing.job_id, listing.career_slug, ${MATCHED_TEXT} AS text, card_points.highlights,
+         ${HASHED_TEXT} AS text_md5
        FROM jobstreet_listings listing
+       ${cardHighlights('listing.latest_payload')}
        LEFT JOIN jobstreet_listing_skills matched
          ON matched.job_id = listing.job_id AND matched.career_slug = listing.career_slug
        WHERE ($3::text IS NULL OR listing.career_slug = $3)
@@ -48,14 +77,15 @@ export async function refreshListingSkills(sql: Sql, options: { limit: number; c
      ),
      -- Pattern by pattern, not listing by listing: Postgres keeps only 32 compiled patterns, so going through every
      -- pattern for each listing would compile each one again for every listing, about four times slower on 1,000
-     -- listings. OFFSET 0 keeps the planner from turning the order round.
+     -- listings. OFFSET 0 keeps the planner from turning the order round. Benefit patterns read only the selling points.
      hits AS (
        SELECT hit.job_id, hit.career_slug, vocabulary.key
        FROM vocabulary
        CROSS JOIN LATERAL (
          SELECT pending.job_id, pending.career_slug FROM pending
-         WHERE CASE WHEN vocabulary.case_sensitive THEN pending.text ~ vocabulary.pattern
-           ELSE pending.text ~* vocabulary.pattern END
+         WHERE CASE WHEN vocabulary.case_sensitive
+           THEN (CASE WHEN vocabulary.highlights THEN pending.highlights ELSE pending.text END) ~ vocabulary.pattern
+           ELSE (CASE WHEN vocabulary.highlights THEN pending.highlights ELSE pending.text END) ~* vocabulary.pattern END
          OFFSET 0
        ) hit
      )
@@ -134,7 +164,15 @@ type MarketRow = {
   hybrid: number | null
   without_state: number | null
   skills_checked: number | null
+  highlights_checked: number | null
   ai_ads: number | null
+  estimated_ads: number | null
+  estimate_title: string | null
+  estimate_search_ads: number | null
+  estimate_decided: number | null
+  estimate_approved: number | null
+  estimate_rank: number | null
+  ranked_roles: number | null
   ads_with_pay: number | null
   pay_p25: number | null
   pay_median: number | null
@@ -170,8 +208,10 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
        -- Skills matched by an older vocabulary still count until the nightly refresh matches them again.
        SELECT ads.onet_code, ads.job_id, ads.payload, matched.skills,
          ($2::jsonb)->>lower(btrim(regexp_replace(ads.payload->>'location', '^.*,', ''))) AS state,
-         regexp_match(replace(lower(ads.payload->>'salary'), ',', ''), $3) AS pay_match
+         regexp_match(replace(lower(ads.payload->>'salary'), ',', ''), $3) AS pay_match,
+         card_points.highlights <> '' AS has_highlights, matched.vocabulary_version = $10 AS current_vocabulary
        FROM ads
+       ${cardHighlights('ads.payload')}
        JOIN latest USING (onet_code)
        LEFT JOIN jobstreet_listing_skills matched
          ON matched.job_id = ads.job_id AND matched.career_slug = ads.career_slug
@@ -184,8 +224,63 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
          count(*) FILTER (WHERE payload->>'work_arrangement' ILIKE '%hybrid%')::int AS hybrid,
          count(*) FILTER (WHERE state IS NULL)::int AS without_state,
          count(*) FILTER (WHERE skills IS NOT NULL)::int AS skills_checked,
+         -- Benefits came in with vocabulary 2026-10-24.1, so only listings matched by the current one have them.
+         count(*) FILTER (WHERE current_vocabulary AND has_highlights)::int AS highlights_checked,
          count(*) FILTER (WHERE skills && $5::text[])::int AS ai_ads
        FROM active GROUP BY onet_code
+     ),
+     -- How many of JobStreet's ads match each occupation. A breadth run's report keeps JobStreet's count of every ad
+     -- its search finds, and the listings the run saw are a sample of them, newest first: the count times the share of
+     -- that sample an admin approved under the occupation, once $9 or more of it are decided and one is approved.
+     -- Each search title gives the estimate of its latest such run among its 3 latest counted runs, which keeps the
+     -- observations read bounded, and an occupation takes its largest, since two searches can find the same ads. The
+     -- occupations with an estimate are ranked by it: 1 has the most, and a tie shares a rank.
+     counted_runs AS (
+       SELECT id, career_slug, created_at, total FROM (
+         SELECT run.id, run.career_slug, run.created_at, reported.total,
+           row_number() OVER (PARTITION BY run.career_slug ORDER BY run.created_at DESC) AS recency
+         FROM jobstreet_scrape_runs run
+         CROSS JOIN LATERAL (
+           SELECT coalesce(
+             CASE WHEN jsonb_typeof(run.report->'reported_total_jobs_latest') = 'number'
+               THEN (run.report->>'reported_total_jobs_latest')::int END,
+             CASE WHEN jsonb_typeof(run.report->'reported_total_jobs_first') = 'number'
+               THEN (run.report->>'reported_total_jobs_first')::int END
+           ) AS total
+         ) reported
+         WHERE run.mode = 'breadth' AND reported.total > 0
+       ) runs
+       WHERE recency <= 3
+     ),
+     run_samples AS (
+       SELECT counted.career_slug, counted.created_at, counted.total, career.onet_code, career.title,
+         count(DISTINCT observation.job_id) FILTER (WHERE review.job_id IS NOT NULL)::int AS decided,
+         count(DISTINCT observation.job_id) FILTER (WHERE review.approved)::int AS approved
+       FROM counted_runs counted
+       JOIN jobstreet_careers career
+         ON career.slug = counted.career_slug AND career.onet_code IS NOT NULL AND NOT career.hidden
+       JOIN jobstreet_observations observation
+         ON observation.scrape_run_id = counted.id AND observation.career_slug = counted.career_slug
+       LEFT JOIN jobstreet_listing_reviews review
+         ON review.job_id = observation.job_id AND review.career_slug = observation.career_slug
+         AND review.onet_code = career.onet_code
+       GROUP BY counted.id, counted.career_slug, counted.created_at, counted.total, career.onet_code, career.title
+     ),
+     title_estimates AS (
+       -- Rounded to 10 from 100 up; a smaller estimate is kept whole, and is at least 1 since an ad was approved.
+       SELECT DISTINCT ON (career_slug) onet_code, title AS search_title, total AS search_ads, decided, approved,
+         CASE WHEN total::numeric * approved / decided >= 100 THEN round(total::numeric * approved / decided, -1)
+           ELSE greatest(1, round(total::numeric * approved / decided)) END::int AS estimated_ads
+       FROM run_samples
+       WHERE decided >= $9 AND approved > 0
+       ORDER BY career_slug, created_at DESC
+     ),
+     ranking AS (
+       SELECT best.*, rank() OVER (ORDER BY best.estimated_ads DESC)::int AS rank, count(*) OVER ()::int AS roles
+       FROM (
+         SELECT DISTINCT ON (onet_code) onet_code, search_title, search_ads, decided, approved, estimated_ads
+         FROM title_estimates ORDER BY onet_code, estimated_ads DESC, search_title
+       ) best
      ),
      monthly AS (
        SELECT onet_code, (low + high) / 2 / CASE WHEN rest ~ $6 THEN 12 ELSE 1 END AS monthly_pay
@@ -255,23 +350,37 @@ export async function readJobMarkets(sql: Sql, codes: string[]): Promise<JobMark
      )
      SELECT summary.onet_code, summary.search_titles, summary.reviewed, summary.first_seen, summary.vintage_date,
        counts.active, counts.employers, counts.remote, counts.hybrid, counts.without_state, counts.skills_checked,
-       counts.ai_ads,
+       counts.highlights_checked, counts.ai_ads, ranking.estimated_ads, ranking.search_title AS estimate_title,
+       ranking.search_ads AS estimate_search_ads, ranking.decided AS estimate_decided,
+       ranking.approved AS estimate_approved, ranking.rank AS estimate_rank, ranking.roles AS ranked_roles,
        pay_stats.ads_with_pay, pay_stats.p25 AS pay_p25, pay_stats.median AS pay_median, pay_stats.p75 AS pay_p75,
        region_counts.regions, work_type_counts.work_types, skill_counts.skills, weekly_counts.weekly
      FROM summary
      LEFT JOIN counts USING (onet_code)
+     LEFT JOIN ranking USING (onet_code)
      LEFT JOIN pay_stats USING (onet_code)
      LEFT JOIN region_counts USING (onet_code)
      LEFT JOIN work_type_counts USING (onet_code)
      LEFT JOIN skill_counts USING (onet_code)
      LEFT JOIN weekly_counts USING (onet_code)
      ORDER BY summary.onet_code`,
-    [codes, JSON.stringify(STATES), PAY_PATTERN, ACTIVE_WINDOW_DAYS, AI_KEYS, PER_YEAR, NOT_MONTHLY, WEEKS]
+    [
+      codes,
+      JSON.stringify(STATES),
+      PAY_PATTERN,
+      ACTIVE_WINDOW_DAYS,
+      AI_KEYS,
+      PER_YEAR,
+      NOT_MONTHLY,
+      WEEKS,
+      MIN_ESTIMATE_SAMPLE,
+      SKILL_VOCABULARY_VERSION
+    ]
   )) as MarketRow[]
   return rows.map(toJobMarket)
 }
 
-function topSkills(counts: Record<string, number>, category: 'tool' | 'language' | 'ai', limit: number) {
+function topSkills(counts: Record<string, number>, category: SkillCategory, limit: number) {
   return Object.entries(counts)
     .flatMap(([key, ads]) => {
       const term = SKILL_BY_KEY.get(key)
@@ -283,12 +392,31 @@ function topSkills(counts: Record<string, number>, category: 'tool' | 'language'
 
 function toJobMarket(row: MarketRow): JobMarket {
   const skillsChecked = row.skills_checked ?? 0
+  const highlightsChecked = row.highlights_checked ?? 0
   const skillCounts = row.skills ?? {}
   const adsWithPay = row.ads_with_pay ?? 0
   return {
     onet_code: row.onet_code,
     search_titles: row.search_titles,
     ads: { reviewed: row.reviewed, active: row.active ?? 0, employers: row.employers ?? 0 },
+    popularity:
+      row.estimated_ads !== null &&
+      row.estimate_title !== null &&
+      row.estimate_search_ads !== null &&
+      row.estimate_decided !== null &&
+      row.estimate_approved !== null &&
+      row.estimate_rank !== null &&
+      row.ranked_roles !== null
+        ? {
+            estimated_ads: row.estimated_ads,
+            rank: row.estimate_rank,
+            roles: row.ranked_roles,
+            search_title: row.estimate_title,
+            search_ads: row.estimate_search_ads,
+            sample_reviewed: row.estimate_decided,
+            sample_approved: row.estimate_approved
+          }
+        : null,
     pay:
       adsWithPay >= JOB_MARKET_MIN_PAY_ADS && row.pay_median !== null && row.pay_p25 !== null && row.pay_p75 !== null
         ? { ads_with_pay: adsWithPay, median: row.pay_median, p25: row.pay_p25, p75: row.pay_p75 }
@@ -307,6 +435,10 @@ function toJobMarket(row: MarketRow): JobMarket {
             languages: topSkills(skillCounts, 'language', TOP_LANGUAGES),
             ai: topSkills(skillCounts, 'ai', TOP_AI)
           }
+        : null,
+    benefits:
+      highlightsChecked >= JOB_MARKET_MIN_SKILL_ADS
+        ? { ads_checked: highlightsChecked, items: topSkills(skillCounts, 'benefit', TOP_BENEFITS) }
         : null,
     weekly: row.weekly ?? [],
     first_seen: row.first_seen,

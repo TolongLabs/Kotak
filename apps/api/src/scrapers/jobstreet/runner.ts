@@ -78,6 +78,9 @@ if (excess.length)
 const root = fileURLToPath(new URL('../../../../../data/jobstreet/production', import.meta.url))
 const delayMs = Number(Bun.env.JOBSTREET_DELAY_MS ?? 30_000)
 const delayJitterMs = Number(Bun.env.JOBSTREET_DELAY_JITTER_MS ?? 30_000)
+// Search pages per breadth run, newest ads first. A lower cap scrapes a sample of a broad search's newest ads, and
+// JobStreet's own count of the search's ads is still kept in the run's report.
+const maxPages = Number(Bun.env.JOBSTREET_MAX_PAGES?.trim() || 200)
 const headless = Bun.env.BROWSER_HEADLESS === 'true'
 const profileId = Bun.env.BROWSER_PROFILE_ID
 const sleep = (duration: number) => new Promise((done) => setTimeout(done, duration))
@@ -222,7 +225,7 @@ async function runQueued(input: unknown) {
         url: career.searchUrl,
         profileId,
         output: outputPath,
-        maxPages: 200,
+        maxPages,
         maxJobs: 5000,
         delayMs,
         delayJitterMs,

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { DEFAULT_SCENARIO } from '@kotak/shared'
 import { AccessChip, AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
+import { popularityLabel } from '../components/kotak/JobMarketCard'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
 import { SourceList } from '../components/kotak/SourceList'
@@ -36,7 +37,8 @@ export function RolesView() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
   const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
-  // Active ads and median pay per ranked role (#272), from JobStreet ads Kotak's admins approved.
+  // Active ads, estimated JobStreet ads and median pay per ranked role (#272), from JobStreet ads Kotak's admins
+  // approved.
   const markets = useJobMarkets(checkup?.roles.map((candidate) => candidate.onet_code) ?? [])
 
   if (!assessedRoleCode(session)) {
@@ -168,7 +170,8 @@ export function RolesView() {
           {marketSource && (
             <>
               {' '}
-              Active ads and median pay come from JobStreet ads Kotak’s admins approved <Citation n={marketSource.n} />.
+              Active ads, JobStreet estimates and median pay come from JobStreet ads Kotak’s admins approved{' '}
+              <Citation n={marketSource.n} />.
             </>
           )}
         </p>
@@ -199,6 +202,7 @@ export function RolesView() {
                     {market && (
                       <span className="text-body-s text-text-primary">
                         {market.ads.active.toLocaleString('en-MY')} active {market.ads.active === 1 ? 'ad' : 'ads'}
+                        {popularityLabel(market) && ` · ${popularityLabel(market)}`}
                         {market.pay &&
                           ` · median advertised pay RM ${market.pay.median.toLocaleString('en-MY')} a month`}
                       </span>
