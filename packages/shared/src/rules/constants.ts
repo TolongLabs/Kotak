@@ -21,4 +21,4 @@ export const LESS_IMPORTANT_TAG = 'less important by 2027' // TRD wording for de
 export const DIVIDEND_SHARE = 0.2 // Dividen's default pledge: one hour in five of the time AI saves goes to learning
 export const WORK_WEEK_HOURS = 40 // a standard full-time week, split evenly across the role's corners, so the dividend isn't overstated
 export const MIN_WEEKLY_HOURS = 1 // floor so a role with no declining corner still gets a finish date; the user can edit it
-export const MAX_WEEKLY_HOURS = 10 // the Roadmap page's Hours Per Week slider runs from MIN_WEEKLY_HOURS to here; a chosen figure stays in that range
+export const MAX_WEEKLY_HOURS = 20 // the Roadmap page's Hours Per Week slider runs from MIN_WEEKLY_HOURS to here; a chosen figure stays in that range

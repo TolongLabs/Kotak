@@ -69,7 +69,7 @@ export function LandingHero() {
           </h1>
           <p className="max-w-[660px] text-body-m text-text-muted lg:text-body-l xl:col-span-7">
             Kotak tracks how AI is changing Malaysian work, shows which of your skills are rising or fading, and builds
-            your next 12 weeks. Every verdict cites its source.
+            a step-by-step plan to 80% fit. Every verdict cites its source.
           </p>
           <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 xl:col-span-5 xl:justify-end">
             <LandingActionLink to={routes.checkUp} variant="primary" showArrow className="w-full sm:w-auto">
