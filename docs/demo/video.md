@@ -19,10 +19,10 @@ Contents:
 
 ## Rules for the video
 
-- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:16; keep the cut between 5:30 and 6:30.
-- **The live demo runs at least 3:00.** It is the most important feature live: the trend data feeding the role matching and the plan.
-- **Our own voices.** A team member narrates at 1.0× speed. No generated narration and no sped-up audio. Kopi's voice is heard only as the app's own sound in shot D6.
-- **The persona first.** The first 24 seconds show Aina, the moment and her finished plan.
+- **Five to seven minutes, public on YouTube.** Each 30 seconds over 7:00 costs 1 point ([deliverables](/docs/BRIEF.md#preliminary-deliverables)). The script runs 6:30; keep the cut between 5:30 and 6:30.
+- **The live demo runs 3:00.** It is the most important feature live: the trend data feeding the role matching and the plan.
+- **Our own voices.** A team member narrates. The slide segments (V1 to V10) may play at up to 1.2× with the pitch kept; the demo segments (D1 to M1) play at 1.0×. No generated narration. Kopi's voice is heard only as the app's own sound in shot D6.
+- **The team first, then the hook.** The first 13 seconds say who we are, the domain and what we built; the real job-loss numbers follow.
 - **Sample means labelled.** Aina is a sample persona and the answers are demo answers; the edit tags every app shot, and the app's own "self-reported" and "sample data" labels stay readable ([content rules](/docs/DESIGN.md#content-rules)).
 - **Every number has a source** in the script's [claims ledger](/docs/demo/kotak-director-script.md#claims-ledger).
 
@@ -32,7 +32,7 @@ Record each shot as its own OBS file. Lengths are the edit's slots; record a few
 
 | Shot | Slot | Screen                                | On camera                                                                                                                        |
 | ---- | ---: | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| H1   | 24 s | Roadmap                               | Aina's finished plan at rest: "Your 35-Week Roadmap", "80% Fit by Week 35", the timeline, then a slow scroll to the funding card |
+| H1   | 12 s | Roadmap, in V4                        | Aina's finished plan at rest: "Your 35-Week Roadmap", "80% Fit by Week 35", the timeline, then a slow scroll to the funding card |
 | D1   | 14 s | Check-Up start                        | Working, "web developer" typed and Web Developers picked, then the goal Stay Strong in My Job                                    |
 | D2   | 18 s | Questions                             | Kopi asks questions 1 to 3, answered with the number keys from the [answer key](#answer-key)                                     |
 | D3   | 34 s | Radar and Gaps                        | The radar with its "self-reported" label, verdicts, dated sources and the "Needed by" line; then the Job Ads in Malaysia card    |
@@ -92,14 +92,15 @@ Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#record
 
 ## Edit in Premiere
 
-1.  **Sequence:** 1920 × 1080, 30 fps. Import the 12 deck stills (`S01` to `S12`, 1920 × 1080 PNG, exported with the deck), the remuxed MP4 takes and the narration files.
-1.  **Lay out the timeline** in the script's [timing](/docs/demo/kotak-director-script.md#timing) order. Video track 1: H1 (V1), then the deck stills (V2 to V5), the demo takes (D1 to M1) and the deck stills again (V6 to V10). Audio track 1: the narration. Audio track 2: the footage sound, muted everywhere except Kopi's voice in D6.
+1.  **Sequence:** 1920 × 1080, 30 fps. Import the 10 deck stills (`S01` to `S10`, 1920 × 1080 PNG, exported with the deck), the remuxed MP4 takes and the narration files.
+1.  **Lay out the timeline** in the script's [timing](/docs/demo/kotak-director-script.md#timing) order. Video track 1: the deck stills S01 to S05 (V1 to V5, with H1 cut into V4), the demo takes (D1 to M1), then S06 to S10 (V6 to V10). Audio track 1: the narration. Audio track 2: the footage sound, muted everywhere except Kopi's voice in D6.
+1.  **Speed the slide narration.** Select the V1 to V10 narration clips, Clip → Speed/Duration → 120%, with Maintain Audio Pitch ticked. Leave D1 to M1 at 100%.
 1.  **Trim to the narration.** Each slot runs from its first word to a beat after its last. Cut the waits out of the takes; keep the actions.
 1.  **Move gently.** On each deck still, scale from 100% to about 106% over the segment. Where the script names a push-in, move toward that card instead. Cross Dissolve of 8 frames between segments.
 1.  **Text on screen** (Essential Graphics, Atkinson Hyperlegible Next, or a plain sans if it isn't installed):
     - A chip top left on each demo shot, at least 54 px: Intake, Questions, Radar, Roles, Roadmap, What Changed, Ask Kopi, Your AI.
     - The script's callout for the shot, at least 54 px, one at a time, never over an app label.
-    - "Sample persona · demo answers", at least 36 px, bottom left, on every app shot including H1.
+    - "Sample persona · demo answers", at least 36 px, bottom left, on every app shot, H1 included.
 1.  **Sound:** keep the narration level steady; let Kopi's line in D6 play clear, with no narration over it. No music.
 
 ## Captions and export
