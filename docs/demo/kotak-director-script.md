@@ -1,6 +1,6 @@
 # Kotak video director script
 
-The script for the Kotak pitching video: ten narrated slides with a live demo of the working app between slides 5 and 6. One narrator, a team member, reads every `VOICEOVER` block, at 1.0× speed. The team records the app with OBS Studio and edits the video in Adobe Premiere Pro; [`video.md`](/docs/demo/video.md) owns the recording and editing steps. The voice follows the team's MyTakziah finals scripts: say who we are in a breath, open on real people and real numbers, carry one argument with a link from each part to the next, say the honest limits plainly, and close by echoing the opening.
+The script for the Kotak pitching video: ten narrated slides with a live demo of the working app between slides 5 and 6. One narrator, a team member, reads every `VOICEOVER` block, at 1.0× speed. A Playwright harness films the app, and Remotion assembles the slides, the footage, the narration and the demo graphics; [`video.md`](/docs/demo/video.md) owns the recording and editing steps. The voice follows the team's MyTakziah finals scripts: say who we are in a breath, open on real people and real numbers, carry one argument with a link from each part to the next, say the honest limits plainly, and close by echoing the opening.
 
 Contents:
 
@@ -133,7 +133,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### Live demo
 
-**TIME:** `1:47–4:47` · three minutes of the live app, recorded in OBS from the live demo link ([shot list](/docs/demo/video.md#shot-list)).
+**TIME:** `1:47–4:47` · three minutes of the live app, recorded by the harness on a production build ([shot list](/docs/demo/video.md#shot-list)).
 
 **ON SCREEN:** the app fills the frame. The graphics pack frames it in three acts: Problem (D1 to D3), Solution (D4 and D5) and Outcome (D6 to M1). An act banner opens each act, the HUD at the bottom shows the act and the step, and at most one callout or result card is on screen at a time ([cue sheet](/docs/demo/demo-graphics.md#cue-sheet)). The tag "Sample persona · demo answers" stays on throughout. Cut on the narration, not on the clicks.
 
@@ -324,7 +324,7 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 - **The narrator** reads every segment from this script, at 1.0× speed.
 - **The room:** small and soft, with curtains, a sofa or a wardrobe of clothes nearby. Phone or laptop mic about 20 cm away, a little off to the side. No fan or air-conditioner noise.
 - **Files:** one per segment, named by the segment (`V01` to `V10`, `D1` to `D7`, `M1`), two takes each. Record 10 seconds of silence in the same room for the edit.
-- **Check the length:** if a segment runs more than 2 seconds over its "Read" time, read it again at a calm pace and cut a pause in the edit instead. Speed only the slide segments, to at most 1.2× (Premiere: Speed/Duration, Maintain Audio Pitch).
+- **Check the length:** if a segment runs more than 2 seconds over its "Read" time, read it again at a calm pace and cut a pause in the edit instead. Speed only the slide segments, to at most 1.2× (the voice staging uses ffmpeg's pitch-keeping `atempo`).
 - **Trim list,** if the cut runs past 6:45, in this order: V2 "That's about two hundred and seventy people a day."; V6 "A chatbot can't say where its plan came from." Together they save about 6 seconds at 1.2×. The 1.2× speed-up itself is not optional: without it the cut runs about 7:22.
 - **Pickup lines** for the figures that can change on the day:
   - D3, if the card shows a different count or median: "about <count> JobStreet ads in Malaysia match her job, at a median of <median> ringgit a month."
@@ -381,7 +381,7 @@ Pronunciation: T010NG is "Tolong"; Kotak is "KO-tak"; Kopi is "KO-pee"; e-LATiH 
 
 ## Sources
 
-- [Recording and editing steps](/docs/demo/video.md), with the shot list, the OBS settings and the Premiere edit.
+- [Recording and editing steps](/docs/demo/video.md), with the shot list, the answer key and the Remotion pipeline.
 - [Pitch deck](/docs/demo/deck/kotak-pitch-deck.html): the slide text and sources each segment reads from.
 - [Brief: deliverables and judging](/docs/BRIEF.md).
 - [Design system: content rules](/docs/DESIGN.md).

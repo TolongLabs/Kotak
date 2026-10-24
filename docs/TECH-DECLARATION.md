@@ -51,27 +51,30 @@ The system block diagram is in the [PRD, section 3.1][prd-31].
 
 ### 2.2. Languages, frameworks & libraries
 
-| Name & Version                                | Purpose in Project                                         | License                             |
-| --------------------------------------------- | ---------------------------------------------------------- | ----------------------------------- |
-| TypeScript 7.0                                | The language of the whole codebase                         | Apache 2.0                          |
-| Bun 1.4                                       | Runtime, package manager, test runner and Replit server    | MIT                                 |
-| React 19.3                                    | The web app's user interface                               | MIT                                 |
-| Vite 8.3                                      | Builds and serves the web app                              | MIT                                 |
-| Tailwind CSS 4.3                              | Styling and design tokens                                  | MIT                                 |
-| Recharts 3.10                                 | The Future Skills Radar and the roadmap charts             | MIT                                 |
-| Lucide React 1.61                             | Icons                                                      | ISC                                 |
-| pixi.js 6.5 and pixi-live2d-display 0.4       | Renders Kopi, the Live2D cat                               | MIT                                 |
-| Hono 4.13                                     | The API server on Cloudflare Workers and Bun               | MIT                                 |
-| Zod 4.6                                       | Validates every request, response and data file            | MIT                                 |
-| Anthropic TypeScript SDK 1.1                  | Calls the Claude API                                       | Apache 2.0                          |
-| MCP server SDK 2.3                            | Serves Kotak's tools to AI assistants at `/api/mcp`        | Apache 2.0                          |
-| Neon serverless driver 1.2                    | Connects the API to Postgres                               | MIT                                 |
-| Wrangler 4.151                                | Deploys to Cloudflare Workers                              | MIT or Apache 2.0                   |
-| Playwright Core 1.64 and Clearcote 0.60       | Drives the browser for the JobStreet scraper               | Apache 2.0, BSD-3                   |
-| Live2D Cubism Core for Web                    | Runtime that plays Live2D models, loaded from Live2D's CDN | Live2D Proprietary Software License |
-| Atkinson Hyperlegible and Shantell Sans fonts | Body, mono and Kopi's handwritten type, from Google Fonts  | SIL Open Font License 1.1           |
-| OBS Studio                                    | Records the pitch video's screen and voice                 | GPL 2.0                             |
-| Adobe Premiere Pro                            | Edits the pitch video                                      | Adobe General Terms of Use, paid    |
+| Name & Version                                | Purpose in Project                                                                    | License                                |
+| --------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------- |
+| TypeScript 7.0                                | The language of the whole codebase                                                    | Apache 2.0                             |
+| Bun 1.4                                       | Runtime, package manager, test runner and Replit server                               | MIT                                    |
+| React 19.3                                    | The web app's user interface                                                          | MIT                                    |
+| Vite 8.3                                      | Builds and serves the web app                                                         | MIT                                    |
+| Tailwind CSS 4.3                              | Styling and design tokens                                                             | MIT                                    |
+| Recharts 3.10                                 | The Future Skills Radar and the roadmap charts                                        | MIT                                    |
+| Lucide React 1.61                             | Icons                                                                                 | ISC                                    |
+| pixi.js 6.5 and pixi-live2d-display 0.4       | Renders Kopi, the Live2D cat                                                          | MIT                                    |
+| Hono 4.13                                     | The API server on Cloudflare Workers and Bun                                          | MIT                                    |
+| Zod 4.6                                       | Validates every request, response and data file                                       | MIT                                    |
+| Anthropic TypeScript SDK 1.1                  | Calls the Claude API                                                                  | Apache 2.0                             |
+| MCP server SDK 2.3                            | Serves Kotak's tools to AI assistants at `/api/mcp`                                   | Apache 2.0                             |
+| Neon serverless driver 1.2                    | Connects the API to Postgres                                                          | MIT                                    |
+| Wrangler 4.151                                | Deploys to Cloudflare Workers                                                         | MIT or Apache 2.0                      |
+| Playwright Core 1.64 and Clearcote 0.60       | Drives the browser for the JobStreet scraper                                          | Apache 2.0, BSD-3                      |
+| Live2D Cubism Core for Web                    | Runtime that plays Live2D models, loaded from Live2D's CDN                            | Live2D Proprietary Software License    |
+| Atkinson Hyperlegible and Shantell Sans fonts | Body, mono and Kopi's handwritten type, from Google Fonts                             | SIL Open Font License 1.1              |
+| Playwright 1.64                               | Films the pitch video's demo takes from a local production build                      | Apache 2.0                             |
+| Remotion 4.0.530                              | Assembles and renders the pitch video                                                 | Remotion License, free for individuals |
+| ffmpeg 6.1                                    | Encodes the video, speeds the slide narration 1.2× with pitch kept, and sets loudness | LGPL 2.1 or later                      |
+
+The pitch video's recording and editing tooling is ported from the team's own earlier hackathon project and lives outside this repository.
 
 ## 3. APIs & cloud services
 
@@ -136,6 +139,7 @@ Yes, the team used generative-AI tools.
 | Claude Code, with Claude models                                                    | Code, reviews, research and documentation                 | Major         |
 | Codex CLI, OpenCode and Antigravity CLI, with GPT, DeepSeek, GLM and Gemini models | Parallel code changes from written briefs                 | Moderate      |
 | Claude, GPT and Gemini chat models                                                 | The field simulation and design review in `docs/research` | Minor         |
+| OpenAI Whisper, `whisper-1` API                                                    | Word timings for the pitch video's cuts and captions      | Minor         |
 
 How the team reviewed, tested and took responsibility for AI-generated output (100 words max):
 
