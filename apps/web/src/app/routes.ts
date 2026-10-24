@@ -7,6 +7,7 @@ export const routes = {
   questions: '/app/check-up/questions',
   radar: '/app/radar',
   roles: '/app/roles',
+  jobs: '/app/jobs',
   roadmap: '/app/roadmap',
   changes: '/app/changes',
   connect: '/app/connect',
@@ -14,3 +15,6 @@ export const routes = {
   adminSignIn: '/admin/sign-in',
   adminScraping: '/admin/scraping'
 } as const
+
+/** The page for one job, by O*NET code. */
+export const jobPath = (onetCode: string) => `${routes.jobs}/${encodeURIComponent(onetCode)}`

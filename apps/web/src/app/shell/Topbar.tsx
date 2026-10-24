@@ -1,14 +1,12 @@
 import { CalendarDays, Menu, UserRound } from 'lucide-react'
 import { useEffect, useId, useRef, useState, type RefObject } from 'react'
-import { SearchField } from '../../components/ui/SearchField'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { cn } from '../../components/ui/cn'
 import { useRoleIndex } from '../../engine/bundle'
 import { assessedRoleCode, planRoleCodeOf } from '../../engine/checkup'
 import { useGuestSession } from '../../session/store'
-import { navigate } from '../router'
-import { routes } from '../routes'
 import { Brand } from './Sidebar'
+import { TopbarSearch } from './TopbarSearch'
 
 const listFormat = new Intl.ListFormat('en', { type: 'conjunction' })
 
@@ -165,17 +163,7 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
 
   return (
     <header className={cn('surface-glass h-16 items-center gap-4 rounded-md px-4', className)}>
-      <form
-        role="search"
-        className="w-full min-w-0 max-w-[360px]"
-        onSubmit={(event) => {
-          event.preventDefault()
-          const job = String(new FormData(event.currentTarget).get('job') ?? '').trim()
-          navigate(job ? `${routes.checkUp}?job=${encodeURIComponent(job)}` : routes.checkUp)
-        }}
-      >
-        <SearchField ref={searchRef} name="job" label="Search Jobs" hideLabel placeholder="Search 900 Jobs" />
-      </form>
+      <TopbarSearch ref={searchRef} />
       <div className="ml-auto flex items-center gap-3">
         <DataChip snapshot={dataLabel} />
         <div className="inline-flex shrink-0 items-center gap-2 text-label-m text-text-primary">

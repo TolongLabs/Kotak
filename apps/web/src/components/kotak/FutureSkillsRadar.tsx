@@ -9,6 +9,10 @@ export interface FutureSkillsRadarProps {
   size?: 'sm' | 'md' | 'lg'
   className?: string
   neededLabel?: string
+  // false draws only the needed line (a job page has no You).
+  showYou?: boolean
+  // Share of the chart the web takes; smaller leaves more room for labels on a phone.
+  outerRadius?: string
 }
 
 type RadarDatum = {
@@ -74,7 +78,9 @@ export function FutureSkillsRadar({
   scenario,
   size = 'md',
   className,
-  neededLabel = 'Needed by 2027'
+  neededLabel = 'Needed by 2027',
+  showYou = true,
+  outerRadius = '62%'
 }: FutureSkillsRadarProps) {
   const data: RadarDatum[] = corners.map((corner) => ({
     name: corner.name,
@@ -87,7 +93,7 @@ export function FutureSkillsRadar({
       <figcaption className="sr-only">Future Skills Radar</figcaption>
       <div className={cn('w-full', chartHeights[size])}>
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-          <RadarChart data={data} margin={{ top: 16, right: 24, bottom: 16, left: 24 }} outerRadius="62%">
+          <RadarChart data={data} margin={{ top: 16, right: 24, bottom: 16, left: 24 }} outerRadius={outerRadius}>
             <PolarGrid zIndex={150} gridType="polygon" stroke="var(--color-border-subtle)" />
             <PolarAngleAxis
               dataKey="name"
@@ -105,30 +111,34 @@ export function FutureSkillsRadar({
               tickLine={false}
               tick={false}
             />
-            <Radar
-              name="You (Self-Reported)"
-              dataKey="you"
-              zIndex={100}
-              stroke="none"
-              strokeWidth={0}
-              fill="var(--color-radar-you-fill)"
-              fillOpacity={1}
-              dot={false}
-              activeDot={false}
-              isAnimationActive={false}
-            />
-            <Radar
-              name="You (Self-Reported)"
-              dataKey="you"
-              zIndex={175}
-              stroke="var(--color-text-primary)"
-              strokeWidth={1.5}
-              fill="none"
-              fillOpacity={0}
-              dot={{ r: 2.5, fill: 'var(--color-text-primary)', stroke: 'var(--color-text-primary)' }}
-              activeDot={false}
-              isAnimationActive={false}
-            />
+            {showYou && (
+              <>
+                <Radar
+                  name="You (Self-Reported)"
+                  dataKey="you"
+                  zIndex={100}
+                  stroke="none"
+                  strokeWidth={0}
+                  fill="var(--color-radar-you-fill)"
+                  fillOpacity={1}
+                  dot={false}
+                  activeDot={false}
+                  isAnimationActive={false}
+                />
+                <Radar
+                  name="You (Self-Reported)"
+                  dataKey="you"
+                  zIndex={175}
+                  stroke="var(--color-text-primary)"
+                  strokeWidth={1.5}
+                  fill="none"
+                  fillOpacity={0}
+                  dot={{ r: 2.5, fill: 'var(--color-text-primary)', stroke: 'var(--color-text-primary)' }}
+                  activeDot={false}
+                  isAnimationActive={false}
+                />
+              </>
+            )}
             <Radar
               name={neededLabel}
               dataKey="needed"
@@ -147,13 +157,15 @@ export function FutureSkillsRadar({
       </div>
 
       <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2" aria-label="Radar chart legend">
-        <li className="flex items-center gap-2 text-label-s text-text-primary">
-          <span
-            className="h-3.5 w-3.5 shrink-0 rounded-sm border-[1.5px] border-text-primary bg-radar-you-fill"
-            aria-hidden="true"
-          />
-          You (Self-Reported)
-        </li>
+        {showYou && (
+          <li className="flex items-center gap-2 text-label-s text-text-primary">
+            <span
+              className="h-3.5 w-3.5 shrink-0 rounded-sm border-[1.5px] border-text-primary bg-radar-you-fill"
+              aria-hidden="true"
+            />
+            You (Self-Reported)
+          </li>
+        )}
         <li className="flex items-center gap-2 text-label-s text-text-primary">
           <span className="w-5 shrink-0 border-t-2 border-dashed border-radar-role" aria-hidden="true" />
           {neededLabel}
@@ -162,11 +174,13 @@ export function FutureSkillsRadar({
 
       <div className="sr-only">
         <table>
-          <caption>Skill levels from 0 to 3. Values for You and {neededLabel} by skill.</caption>
+          <caption>
+            Skill levels from 0 to 3. {showYou ? `Values for You and ${neededLabel}` : neededLabel} by skill.
+          </caption>
           <thead>
             <tr>
               <th scope="col">Skill</th>
-              <th scope="col">You</th>
+              {showYou && <th scope="col">You</th>}
               <th scope="col">{neededLabel}</th>
             </tr>
           </thead>
@@ -174,7 +188,7 @@ export function FutureSkillsRadar({
             {data.map((datum) => (
               <tr key={datum.name}>
                 <th scope="row">{datum.name}</th>
-                <td>{datum.you}</td>
+                {showYou && <td>{datum.you}</td>}
                 <td>{datum.needed}</td>
               </tr>
             ))}

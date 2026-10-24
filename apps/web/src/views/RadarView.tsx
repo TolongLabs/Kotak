@@ -8,6 +8,7 @@ import { AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
+import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { JobMarketCard } from '../components/kotak/JobMarketCard'
 import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
@@ -19,6 +20,7 @@ import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
+import { trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useCheckupBundle } from '../engine/bundle'
@@ -215,6 +217,25 @@ export function RadarView() {
           : 'I don’t have a ready skill statement for your first step yet.'
         : 'No rising skill gap stands out for this job yet.'
 
+  // You, the target and up to 5 other jobs from the check-up; the map merges repeats by code.
+  const quadrantOf = (candidate: (typeof roles)[number], kind: QuadrantPoint['kind']): QuadrantPoint => ({
+    id: candidate.id,
+    label: candidate.title,
+    fit: candidate.fit,
+    trend: trendOf(candidate.outlook),
+    kind
+  })
+  const quadrantPoints = [
+    ...roles.filter((candidate) => candidate.isCurrentJob).map((candidate) => quadrantOf(candidate, 'you')),
+    ...roles
+      .filter((candidate) => candidate.id === session.target_role_code)
+      .map((candidate) => quadrantOf(candidate, 'target')),
+    ...roles
+      .filter((candidate) => !candidate.isCurrentJob && candidate.id !== session.target_role_code)
+      .slice(0, 5)
+      .map((candidate) => quadrantOf(candidate, 'suggested'))
+  ]
+
   const weaknessNames = new Set(swot.weaknesses.map((item) => item.label))
   const weaknessCorners = corners
     .filter((corner) => weaknessNames.has(corner.name))
@@ -338,7 +359,7 @@ export function RadarView() {
       />
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-6">
-        <section className="space-y-4 lg:sticky lg:top-24 lg:self-start" aria-label="Future Skills Radar">
+        <section className="space-y-4" aria-label="Future Skills Radar">
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
           <Banner
             type="info"
@@ -347,43 +368,45 @@ export function RadarView() {
           />
         </section>
 
-        <div className="space-y-4">
-          <SkillsSwot swot={swot} size="desktop" />
+        <QuadrantMap points={quadrantPoints} />
+      </div>
 
-          <section className="space-y-4" aria-labelledby="gaps-title">
-            <header className="flex items-center justify-between gap-3">
-              <h2 id="gaps-title" className="text-title-s text-text-primary">
-                Your Gaps
-              </h2>
-              <span className="shrink-0 font-mono text-mono-s text-text-muted">
-                {weaknessCorners.length} of {corners.length} Skills
-              </span>
-            </header>
+      <div className="space-y-4">
+        <SkillsSwot swot={swot} size="desktop" />
 
-            {weaknessCorners.map(renderGapCard)}
-          </section>
+        <section className="space-y-4" aria-labelledby="gaps-title">
+          <header className="flex items-center justify-between gap-3">
+            <h2 id="gaps-title" className="text-title-s text-text-primary">
+              Your Gaps
+            </h2>
+            <span className="shrink-0 font-mono text-mono-s text-text-muted">
+              {weaknessCorners.length} of {corners.length} Skills
+            </span>
+          </header>
 
-          {jobMarket && jobMarketSource && (
-            <JobMarketCard
-              market={jobMarket}
-              roleTitle={role.title}
-              sourceNumber={jobMarketSource.n}
-              level={jobMarketLevelForYears(yearsOfWork(session.profile))}
-            />
-          )}
+          {weaknessCorners.map(renderGapCard)}
+        </section>
 
-          {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} />}
+        {jobMarket && jobMarketSource && (
+          <JobMarketCard
+            market={jobMarket}
+            roleTitle={role.title}
+            sourceNumber={jobMarketSource.n}
+            level={jobMarketLevelForYears(yearsOfWork(session.profile))}
+          />
+        )}
 
-          <SourceList sources={sources} label="All Sources" />
+        {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} />}
 
-          <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
-            <Link
-              to={routes.roles}
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-            >
-              See Roles That Fit
-            </Link>
-          </div>
+        <SourceList sources={sources} label="All Sources" />
+
+        <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
+          <Link
+            to={routes.roles}
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          >
+            See Roles That Fit
+          </Link>
         </div>
       </div>
     </div>
