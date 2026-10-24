@@ -54,6 +54,8 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
+        <li><a href="#team-information">Team Information</a></li>
+        <li><a href="#links">Links</a></li>
         <li><a href="#screenshots">Screenshots</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
         <li><a href="#features">Features</a></li>
@@ -72,8 +74,10 @@
     </li>
     <li><a href="#how-we-use-replit">How We Use Replit</a></li>
     <li><a href="#how-we-use-runpod">How We Use RunPod</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#challenges-and-learnings">Challenges and Learnings</a></li>
+    <li><a href="#future-improvements">Future Improvements</a></li>
     <li><a href="#team">Team</a></li>
+    <li><a href="#submission-checklist">Submission Checklist</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -90,6 +94,28 @@ Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
 Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/DECISIONS.md) explain how it works.
+
+### Team Information
+
+| Field                 | Details                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| **Team Name**         | T010NG                                                                             |
+| **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce                                       |
+| **SDG Track (1–17)**  | SDG 4: Quality Education (target 4.4), with SDG 8: Decent Work and Economic Growth |
+| **Team Leader**       | Hee Zi Jie                                                                         |
+| **University**        | Asia Pacific University (APU), University of Reading, University of Sheffield      |
+| **Number of Members** | 5                                                                                  |
+
+### Links
+
+| Resource          | Link                                                                                                                       |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| GitHub Repository | <https://github.com/TolongLabs/Kotak>                                                                                      |
+| Live Demo         | <https://kotak-alaskxntxna.replit.app>, published on Replit; mirror at <https://kotak.tp073654.workers.dev>                |
+| Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started) |
+| RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                           |
+| Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf)    |
+| Demo Video        | Coming soon on YouTube                                                                                                     |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -369,17 +395,42 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
-<!-- ROADMAP -->
+<!-- CHALLENGES AND LEARNINGS -->
 
-## Roadmap
+## Challenges and Learnings
 
-See [open issues](https://github.com/TolongLabs/Kotak/issues) for a full list of proposed features (and known issues).
+- **Thin data.** With only April's AI-use data, every skill read Unknown. Kotak shows Unknown rather than guess, and May's data then flipped six verdicts. Honest uncertainty proved more useful than a confident guess.
+- **Keeping AI out of the verdicts.** An explanation from a language model can drift from the rule it explains. A check now rejects any explanation that changes a verdict, and a template answers when Claude cannot.
+- **A plan that reaches its goal.** An early roadmap finished each skill to Advanced before starting the next, so a test user's 12-week plan stopped at 47% fit. Steps now go in order of fit gained per hour, and the plan runs until 80% fit; every simulated plan reaches it.
+- **Real hiring data.** Job ads change daily and pages fail. The collector runs from a queue that resumes after a crash, in an isolated runner with a restricted database role, and a person checks the ads Claude sorts.
+- **923 jobs at once.** One RunPod batch drafted every job's skills and questions in 13 minutes with none failed, because a JSON schema shaped each answer and a validator rejected any task from another job.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+<!-- FUTURE IMPROVEMENTS -->
+
+## Future Improvements
+
+- [ ] Kotak Team: a skill-gap view for an employer's whole team, and who to train first
+- [ ] Bahasa Malaysia and Chinese versions of the app
+- [ ] Slow and fast AI-uptake scenarios side by side on the radar (the engine already holds both)
+- [ ] Checked free and HRD Corp-claimable courses for each step, beyond today's search suggestions
+- [ ] A notice when new monthly data moves a user's plan
+- [ ] A pilot with HR teams at levy-paying employers, measuring steps done and fit gained
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
 <!-- CONTRIBUTING -->
 
 ## Team
+
+| Name           | Role        | GitHub                                         | University                    |
+| -------------- | ----------- | ---------------------------------------------- | ----------------------------- |
+| Hee Zi Jie     | Team leader | [@AlaskanTuna](https://github.com/AlaskanTuna) | Asia Pacific University (APU) |
+| Yow Li Hao     | Member      | [@chaosiris](https://github.com/chaosiris)     | Asia Pacific University (APU) |
+| Lim Yuh Kang   | Member      | [@kymil4](https://github.com/kymil4)           | Asia Pacific University (APU) |
+| Liau Jin Siang | Member      | [@DrxgClanPC](https://github.com/DrxgClanPC)   | University of Reading         |
+| Jun Song       | Member      | [@Doraemon-00](https://github.com/Doraemon-00) | University of Sheffield       |
 
 <a href="https://github.com/TolongLabs/Kotak/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=TolongLabs/Kotak" alt="Kotak team" />
@@ -389,11 +440,27 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
+<!-- SUBMISSION CHECKLIST -->
+
+## Submission Checklist
+
+- [x] Team name, domain (Domain 1) and SDG track filled in
+- [x] Slide deck link added
+- [ ] Demo video link added
+- [x] Replit used, with proof of use in `submission/`
+- [x] RunPod used, with proof of use in `submission/`
+- [x] Submission template completed in `submission/`
+- [x] Technical and tools declaration completed in `submission/`
+- [x] "How to Run" steps verified
+- [x] No API keys or secrets committed to the repository
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
 <!-- LICENSE -->
 
 ## License
 
-See [LICENSE](/LICENSE) for more information.
+This project is licensed under the [Apache License 2.0](/LICENSE).
 
 Third-party data, models, assets and libraries keep their own licences, listed in [NOTICE.md](/NOTICE.md).
 
