@@ -86,15 +86,15 @@
     <section class="page yellow" data-base="4" data-strip="text 279 752 317 788">
       <div class="fill" style="left: 84.7pt; top: 388.5pt; width: 451.2pt; height: 350.3pt">
         <p>
-          Kotak, Malay for &quot;box&quot;, is a web app. Kopi, a cat counsellor, asks 12 yes/no can-do questions about
-          the user's job or a role they want. It draws a Future Skills Radar of the job's 6 core skills, ranks matched
-          roles and builds a dated roadmap in about 3 minutes.
+          Kotak, Malay for &quot;box&quot;, is a web app. Kopi, a cat counsellor, asks 12 can-do questions, rated 1 to
+          4, about the user's job or a role they want. It draws a Future Skills Radar of the job's 6 core skills, ranks
+          matched roles and builds a dated roadmap in about 3 minutes.
         </p>
         <p>The six must-haves:</p>
         <ol>
           <li>
-            <strong>Skills profile intake</strong>: a job title in any language, a goal (stay, move or explore) and the
-            12 questions.
+            <strong>Skills profile intake</strong>: situation, study, a job title in any language, a goal (stay, move,
+            explore or not sure) and the 12 questions.
           </li>
           <li>
             <strong>AI-trend signal layer</strong>: dated Anthropic Economic Index snapshots for Malaysia (April and May
@@ -106,8 +106,7 @@
             set by the user's weekly hours.
           </li>
           <li>
-            <strong>SDG mapping</strong>: skills carry SDG targets, jobs show the goals their work serves, and the
-            roadmap highlights steps by goal.
+            <strong>SDG mapping</strong>: skills and jobs carry SDG targets, and the roadmap highlights steps by goal.
           </li>
           <li>
             <strong>Handling uncertainty</strong>: targets are labelled estimates, Split shows slow and fast AI-uptake
@@ -131,7 +130,7 @@
             Live, Claude Haiku 5.5 explains each verdict with its dated sources and matches Malay and local job titles.
           </li>
           <li>
-            Ask Kopi, a chat agent, answers through 6 read-only tools over the same rules, which other assistants reach
+            Ask Kopi, a chat agent, answers through 8 read-only tools over the same rules, which other assistants reach
             through an MCP server.
           </li>
           <li>ElevenLabs voices Kopi, with mute and a text fallback.</li>
@@ -156,7 +155,7 @@
           Kotak is a TypeScript monorepo run with Bun. It has two apps, <code>apps/web</code> (the React app) and
           <code>apps/api</code> (the Hono API), and four packages: <code>shared</code> (the rules and Zod schemas),
           <code>sdk</code> (the check-up engine), <code>agent</code> (the AI tools) and <code>browser</code> (the
-          research scraper's browser).
+          JobStreet scraper's browser).
         </p>
         <ul>
           <li>
@@ -194,10 +193,10 @@
       <div class="box" style="left: 84.7pt; top: 196.1pt; width: 451.2pt; height: 542.7pt">
         <ul>
           <li>
-            <strong>Agent layer</strong>: <code>@kotak/agent</code> exposes 6 read-only tools over
-            <code>@kotak/sdk</code>: find a role, get the questions, run a check-up, what changed, national skill gaps
-            and list sources. Ask Kopi calls them through Claude, and outside assistants call them through
-            <code>/api/mcp</code>. Every number the agent quotes comes from a tool.
+            <strong>Agent layer</strong>: <code>@kotak/agent</code> exposes 8 read-only tools over
+            <code>@kotak/sdk</code>: find a role, get the questions, suggest roles, run a check-up, what changed,
+            national skill gaps, job ads in Malaysia and list sources. Ask Kopi calls them through Claude, and outside
+            assistants call them through <code>/api/mcp</code>. Every number the agent quotes comes from a tool.
           </li>
           <li>
             <strong>Voice</strong>: ElevenLabs. Fixed lines are pre-generated with <code>eleven_v4</code>, and live
@@ -207,14 +206,15 @@
           </li>
           <li>
             <strong>Data pipeline</strong>: Bun scripts ingest O*NET 30.1, filter the Economic Index to Malaysia,
-            Singapore and global rows, and extract DOSM Job Market Insights (Q3 2019 to Q2 2026). Every record carries
-            its source, date and layer. A GitHub Actions workflow checks for new releases every Saturday and rebuilds
-            the snapshots.
+            Singapore and global rows, extract DOSM Job Market Insights (Q3 2019 to Q2 2026), and map fields of study to
+            jobs through the NCES CIP to SOC crosswalk. Every record carries its source, date and layer. A GitHub
+            Actions workflow checks for new releases every Saturday and rebuilds the snapshots.
           </li>
           <li>
-            <strong>Database</strong>: Neon Postgres 18 (region <code>aws-ap-southeast-1</code>). One table stores
-            anonymous check-ups: only the role code, the 6 skill levels, a sample flag and the date, and totals show
-            only for groups of 10 or more. Other tables hold the research scraper's job listings and its admin accounts.
+            <strong>Database</strong>: Neon Postgres 18 (region <code>aws-ap-southeast-1</code>). One table holds the
+            anonymous national view: only a role code, 6 skill levels, a sample flag and a date, with totals only for
+            groups of 10 or more; no screen sends check-ups yet, so it holds labelled sample rows. Other tables hold the
+            scraper's JobStreet listings, the admins' reviews and matched skills, and the admin accounts.
           </li>
           <li>
             <strong>GPU</strong>: a RunPod serverless endpoint runs <code>Qwen/Qwen3.8-27B-FP8</code> on vLLM for the
@@ -274,7 +274,7 @@
             served this same worker (<a
               href="https://github.com/TolongLabs/Kotak/blob/main/docs/research/field-simulation.md"
               >field simulation</a
-            >). So Kotak's uniqueness comes from its mechanism: yes/no can-do questions, skills built from the job's own
+            >). So Kotak's uniqueness comes from its mechanism: rated can-do questions, skills built from the job's own
             tasks, and verdicts set by visible rules.
           </li>
           <li>

@@ -56,13 +56,13 @@
         <p>
           The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations
           with Claude Haiku 5.5, then checks each explanation against the rules and falls back to a template if it
-          fails. It sends Kopi's lines to ElevenLabs for speech, and caches both by a hash of the request. Ask Kopi and
-          the MCP endpoint call 6 read-only tools over the same rules; one tool reads anonymous check-up totals from
-          Neon Postgres.
+          fails. It sends Kopi's lines to ElevenLabs for speech and caches both by request hash. Ask Kopi and the MCP
+          endpoint call 8 read-only tools over the same rules; two read Neon Postgres totals: national skill gaps and
+          reviewed JobStreet ads.
         </p>
         <p>
-          Before the demo, a RunPod serverless GPU ran Qwen3.8-27B to build each job's 6 skills and 18 questions, which
-          ship inside the snapshots.
+          Before the demo, a RunPod GPU ran Qwen3.8-27B to build each job's 6 skills and 18 questions, which ship inside
+          the snapshots.
         </p>
         <p>
           GitHub Actions builds and deploys the app and API to Cloudflare Workers on every merge to <code>main</code>,
@@ -132,7 +132,7 @@
           <div>Deploys to Cloudflare Workers</div>
           <div>MIT or Apache 2.0</div>
           <div>Playwright Core 1.64 and Clearcote 0.60</div>
-          <div>Drives the browser for the JobStreet research scraper</div>
+          <div>Drives the browser for the JobStreet scraper</div>
           <div>Apache 2.0, BSD-3</div>
           <div>Live2D Cubism Core for Web</div>
           <div>Runtime that plays Live2D models, loaded from Live2D's CDN</div>
@@ -182,7 +182,10 @@
           <div>The mirror deployment: app, API, KV cache and a Durable Object for MCP and chat</div>
           <div>Workers Free; global, Durable Object in APAC</div>
           <div>Neon Postgres, Neon</div>
-          <div>Anonymous check-up totals, research job listings and admin accounts</div>
+          <div>
+            The national view's sample rows, JobStreet listings, the admins' reviews and matched skills, and admin
+            accounts
+          </div>
           <div>Free; <code>aws-ap-southeast-1</code>, Postgres 18</div>
           <div>RunPod Serverless, RunPod</div>
           <div>The vLLM GPU endpoint for the one-time batch; 0 workers when idle</div>
@@ -210,6 +213,14 @@
           <div>Qwen, run on RunPod with vLLM</div>
           <div>Pre-trained</div>
           <div>Apache 2.0</div>
+          <div>Gemini Pro and Flash models, through Antigravity CLI</div>
+          <div>Google</div>
+          <div>Pre-trained</div>
+          <div>Google Antigravity terms of service</div>
+          <div>DeepSeek V4.1 Flash</div>
+          <div>DeepSeek, run on River</div>
+          <div>Pre-trained</div>
+          <div>River terms of service</div>
         </div>
         <p class="after">No model is fine-tuned or self-trained.</p>
       </div>
@@ -248,7 +259,11 @@
           <div>CC BY 4.0; one figure cited</div>
           <div>N</div>
           <div>UN SDG indicator 4.4.1, Malaysia</div>
-          <div><a href="https://unstats.un.org/sdgapi/">https://unstats.un.org/sdgapi/</a></div>
+          <div>
+            <a href="https://unstats.un.org/sdgapi/v1/sdg/Indicator/Data?indicator=4.4.1&amp;areaCode=458"
+              >unstats.un.org/sdgapi, indicator 4.4.1</a
+            >
+          </div>
           <div>Public</div>
           <div>UN terms of use; one baseline cited</div>
           <div>N</div>
@@ -257,14 +272,6 @@
           <div>Synthetic, from public data</div>
           <div>The team's own work</div>
           <div>N</div>
-          <div>JobStreet job listings</div>
-          <div>
-            Collected by the team's research scraper from
-            <a href="https://my.jobstreet.com">https://my.jobstreet.com</a>
-          </div>
-          <div>Self-collected</div>
-          <div>JobStreet's terms apply</div>
-          <div>N; job ads only</div>
         </div>
       </div>
     </section>
@@ -279,6 +286,34 @@
           <div class="h" style="min-height: 28.2pt">Type (public / private / self-collected / synthetic)</div>
           <div class="h" style="min-height: 28.2pt">License</div>
           <div class="h" style="min-height: 28.2pt">Personal Data? (Y/N)</div>
+          <div>Question explainers and reversed question wording</div>
+          <div>
+            Drafted from the Kotak questions by Gemini (explainers) and DeepSeek (reversed wording); a script checked
+            every line and the team spot-checked samples
+          </div>
+          <div>Synthetic, from public data</div>
+          <div>The team's own work</div>
+          <div>N</div>
+          <div>JobStreet job listings</div>
+          <div>
+            Collected by the team's scraper from
+            <a href="https://my.jobstreet.com">https://my.jobstreet.com</a>, reviewed by admins
+          </div>
+          <div>Self-collected</div>
+          <div>JobStreet's terms apply; Kotak publishes totals only</div>
+          <div>N; job ads only</div>
+          <div>CIP 2020 to SOC 2018 Crosswalk</div>
+          <div>
+            <a href="https://nces.ed.gov/ipeds/cipcode/resources.aspx?y=56">nces.ed.gov/ipeds/cipcode</a>
+          </div>
+          <div>Public</div>
+          <div>Public domain (US government work)</div>
+          <div>N</div>
+          <div>Malaysian regulated professions</div>
+          <div>Each row cites its Act on the Laws of Malaysia site, the regulator's site or a legal database</div>
+          <div>Self-collected</div>
+          <div>The team's own work; sources cited</div>
+          <div>N</div>
           <div>Demo check-up profiles</div>
           <div>Written by the team</div>
           <div>Synthetic</div>
@@ -286,8 +321,9 @@
           <div>N</div>
         </div>
         <p class="after">
-          MyCOL and Epoch AI are cited as context only; Kotak loads no data from them. The research listings feed no
-          verdict, score or roadmap.
+          MyCOL and Epoch AI are cited as context only; Kotak loads no data from them. Approved JobStreet listings feed
+          the job-title suggestions, the Job Ads in Malaysia card, the role cards' ad counts and pay, and Kopi's
+          <code>job_market</code> tool, but no verdict, fit score or roadmap.
         </p>
       </div>
     </section>
@@ -370,9 +406,9 @@
           of the request.
         </p>
         <p>
-          Postgres stores anonymous check-ups as a role code, 6 skill levels, a sample flag and a date, and shows totals
-          only for groups of 10 or more. The research scraper stores public job ads, not personal profiles. Keys live
-          only in host secrets.
+          Postgres holds the national view as a role code, 6 skill levels, a sample flag and a date, with totals only
+          for groups of 10 or more; no screen sends check-ups, so it holds labelled sample rows. The JobStreet scraper
+          stores public job ads, not personal profiles. Keys live only in host secrets.
         </p>
       </div>
     </section>
