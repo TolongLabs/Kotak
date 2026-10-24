@@ -16,7 +16,10 @@ function sourceNumber(source: CornerDiffItem['sources']['before'][number], refs:
 
 function formatStorySource(sources: CornerDiffItem['sources']['after']): string {
   if (sources.length === 0) return 'New data'
-  const primary = sources[0]
+  // A verdict's sources list the AI-use trend from its first point, so the first is April's. The card names the newest
+  // Economic Index point, the May data that moved it, or the newest source when no Economic Index row is cited (#325).
+  const newest = (list: typeof sources) => [...list].sort((a, b) => b.vintage_date.localeCompare(a.vintage_date))[0]
+  const primary = newest(sources.filter((source) => source.source_name.includes('Economic Index'))) ?? newest(sources)!
   let title = primary.source_name
   if (title.includes('DOSM')) {
     title = 'DOSM'
