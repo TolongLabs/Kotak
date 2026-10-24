@@ -70,6 +70,8 @@ The system block diagram is in the [PRD, section 3.1][prd-31].
 | Playwright Core 1.64 and Clearcote 0.60       | Drives the browser for the JobStreet scraper               | Apache 2.0, BSD-3                   |
 | Live2D Cubism Core for Web                    | Runtime that plays Live2D models, loaded from Live2D's CDN | Live2D Proprietary Software License |
 | Atkinson Hyperlegible and Shantell Sans fonts | Body, mono and Kopi's handwritten type, from Google Fonts  | SIL Open Font License 1.1           |
+| OBS Studio                                    | Records the pitch video's screen and voice                 | GPL 2.0                             |
+| Adobe Premiere Pro                            | Edits the pitch video                                      | Adobe General Terms of Use, paid    |
 
 ## 3. APIs & cloud services
 
