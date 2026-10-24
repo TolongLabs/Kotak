@@ -366,6 +366,6 @@ Pronunciation: T010NG is "Tolong"; Kotak is "KO-tak"; Kopi is "KO-pee"; e-LATiH 
 ## Sources
 
 - [Recording and editing steps](/docs/demo/video.md), with the shot list, the OBS settings and the Premiere edit.
-- [Pitch deck](/docs/demo/deck/pitch-deck.html): the slide text and sources each segment reads from.
+- [Pitch deck](/docs/demo/deck/kotak-pitch-deck.html): the slide text and sources each segment reads from.
 - [Brief: deliverables and judging](/docs/BRIEF.md).
 - [Design system: content rules](/docs/DESIGN.md).

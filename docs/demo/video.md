@@ -131,6 +131,6 @@ Before upload, watch the whole export once with sound, and check:
 ## Sources
 
 - [Director script](/docs/demo/kotak-director-script.md): the narration, the timing and the claims ledger.
-- [Pitch deck](/docs/demo/deck/pitch-deck.html) and its stills.
+- [Pitch deck](/docs/demo/deck/kotak-pitch-deck.html) and its stills.
 - [Brief: deliverables](/docs/BRIEF.md#preliminary-deliverables) and [judging](/docs/BRIEF.md#judging).
 - [OBS Studio](https://obsproject.com/kb/) and [Adobe Premiere Pro](https://helpx.adobe.com/premiere-pro/user-guide.html) user guides.
