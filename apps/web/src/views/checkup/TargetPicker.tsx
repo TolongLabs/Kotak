@@ -98,7 +98,21 @@ export function TargetPicker({
   }
 
   return (
-    <div ref={wrapperRef} className="w-full min-w-0 max-w-[532px] space-y-2">
+    <div
+      ref={wrapperRef}
+      className="w-full min-w-0 max-w-[532px] space-y-2"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false)
+      }}
+      onKeyDown={(event) => {
+        // Escape closes an open list and keeps the typed text, so the native clear is cancelled here.
+        if (event.key !== 'Escape' || !listOpen) return
+        event.preventDefault()
+        // Focus first: the input's onFocus opens the list, so closing must come after it.
+        inputRef.current?.focus()
+        setOpen(false)
+      }}
+    >
       {targets.length > 0 && (
         <ul className="flex flex-wrap gap-2" aria-label="Roles You Picked">
           {targets.map((target, index) => (
@@ -130,78 +144,79 @@ export function TargetPicker({
         </ul>
       )}
       {!full && (
-        <SearchField
-          ref={inputRef}
-          label="Target Role"
-          hideLabel
-          placeholder={targets.length ? 'Add Another Role (Optional)' : 'Type the Role You Want'}
-          shortcutHint=""
-          value={query}
-          onChange={(event) => {
-            setQuery(event.currentTarget.value)
-            setOpen(true)
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') setOpen(false)
-          }}
-          onFocus={() => setOpen(true)}
-          aria-controls={listOpen ? listId : undefined}
-          aria-expanded={listOpen}
-        />
-      )}
-      {listOpen && (
-        <ul
-          id={listId}
-          aria-label="Target Role Suggestions"
-          className="w-full min-w-0 space-y-0.5 rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
-        >
-          {waiting && (
-            <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
-              Kopi is matching your title…
-            </li>
-          )}
-          {remote && allowed(remote.onet_code) && settled?.status === 'available' && (
-            <li>
-              <button type="button" onClick={() => add(remote)} className={cn(optionClass, 'bg-bg-panel')}>
-                <span className="w-full break-words text-label-l">
-                  Kopi thinks you mean {getRoleDisplayTitle(remote)}
-                </span>
-                <span className="font-mono text-mono-s text-text-muted">
-                  {getRoleCodeLine(remote)}
-                  {settled.data.match_source === 'claude' && ' · Matched by Claude'}
-                  {settled.data.match_source === 'title_search' && ' · Matched by Title Search'}
-                </span>
-              </button>
-            </li>
-          )}
-          {suggestions.map((suggestion, index) => (
-            <li key={suggestion.key}>
-              <button
-                type="button"
-                onClick={() => add(suggestion.role)}
-                className={cn(optionClass, index === 0 && 'bg-bg-panel')}
-              >
-                <span className="w-full break-words text-label-l">{suggestion.label}</span>
-                <span className="font-mono text-mono-s text-text-muted">{suggestion.codeLine}</span>
-              </button>
-            </li>
-          ))}
-          {noMatch && (
-            <>
-              <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
-                No match yet. Try a simpler title, or pick one:
-              </li>
-              {picks.map((role) => (
-                <li key={role.onet_code}>
-                  <button type="button" onClick={() => add(role)} className={optionClass}>
-                    <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
-                    <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
+        <div className="relative">
+          <SearchField
+            ref={inputRef}
+            label="Target Role"
+            hideLabel
+            placeholder={targets.length ? 'Add Another Role (Optional)' : 'Type the Role You Want'}
+            shortcutHint=""
+            value={query}
+            onChange={(event) => {
+              setQuery(event.currentTarget.value)
+              setOpen(true)
+            }}
+            onFocus={() => setOpen(true)}
+            aria-controls={listOpen ? listId : undefined}
+            aria-expanded={listOpen}
+          />
+          {listOpen && (
+            <ul
+              id={listId}
+              aria-label="Target Role Suggestions"
+              // Picking an option keeps focus in the field, so Safari does not blur and drop the click.
+              onMouseDown={(event) => event.preventDefault()}
+              className="absolute inset-x-0 top-full z-20 mt-1 max-h-[60vh] space-y-0.5 overflow-y-auto rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
+            >
+              {waiting && (
+                <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
+                  Kopi is matching your title…
+                </li>
+              )}
+              {remote && allowed(remote.onet_code) && settled?.status === 'available' && (
+                <li>
+                  <button type="button" onClick={() => add(remote)} className={cn(optionClass, 'bg-bg-panel')}>
+                    <span className="w-full break-words text-label-l">
+                      Kopi thinks you mean {getRoleDisplayTitle(remote)}
+                    </span>
+                    <span className="font-mono text-mono-s text-text-muted">
+                      {getRoleCodeLine(remote)}
+                      {settled.data.match_source === 'claude' && ' · Matched by Claude'}
+                      {settled.data.match_source === 'title_search' && ' · Matched by Title Search'}
+                    </span>
+                  </button>
+                </li>
+              )}
+              {suggestions.map((suggestion, index) => (
+                <li key={suggestion.key}>
+                  <button
+                    type="button"
+                    onClick={() => add(suggestion.role)}
+                    className={cn(optionClass, index === 0 && 'bg-bg-panel')}
+                  >
+                    <span className="w-full break-words text-label-l">{suggestion.label}</span>
+                    <span className="font-mono text-mono-s text-text-muted">{suggestion.codeLine}</span>
                   </button>
                 </li>
               ))}
-            </>
+              {noMatch && (
+                <>
+                  <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
+                    No match yet. Try a simpler title, or pick one:
+                  </li>
+                  {picks.map((role) => (
+                    <li key={role.onet_code}>
+                      <button type="button" onClick={() => add(role)} className={optionClass}>
+                        <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
+                        <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
+                      </button>
+                    </li>
+                  ))}
+                </>
+              )}
+            </ul>
           )}
-        </ul>
+        </div>
       )}
       {targets.length > 1 && (
         <p className="text-body-s text-text-muted">
