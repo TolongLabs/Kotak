@@ -296,6 +296,8 @@ def build(name):
         out = ROOT / "submission" / OUTPUTS[name]
         pdf.save(out, compress_streams=True, object_stream_mode=pikepdf.ObjectStreamMode.generate)
         print(f"wrote submission/{OUTPUTS[name]} ({len(pdf.pages)} pages, {out.stat().st_size // 1024} KB)")
+        # Windows can't delete the temporary overlay while pikepdf still has it open.
+        sheets.close()
 
 
 if __name__ == "__main__":

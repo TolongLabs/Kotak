@@ -41,9 +41,9 @@ Contents:
 
 A user opens Kotak in the browser. The React app loads dated JSON snapshots built from O\*NET, the Anthropic Economic Index and DOSM Job Market Insights, and computes every verdict, fit score and roadmap in the browser with fixed rules. Answers stay in the browser's `localStorage`.
 
-The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations with Claude Haiku 5.5, then checks each explanation against the rules and falls back to a template if it fails. It sends Kopi's lines to ElevenLabs for speech, and caches both by a hash of the request. Ask Kopi and the MCP endpoint call 8 read-only tools over the same rules; one tool reads anonymous check-up totals and one reads the reviewed JobStreet ads' totals from Neon Postgres.
+The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations with Claude Haiku 5.5, then checks each explanation against the rules and falls back to a template if it fails. It sends Kopi's lines to ElevenLabs for speech and caches both by request hash. Ask Kopi and the MCP endpoint call 8 read-only tools over the same rules; two read Neon Postgres totals: national skill gaps and reviewed JobStreet ads.
 
-Before the demo, a RunPod serverless GPU ran Qwen3.8-27B to build each job's 6 skills and 18 questions, which ship inside the snapshots.
+Before the demo, a RunPod GPU ran Qwen3.8-27B to build each job's 6 skills and 18 questions, which ship inside the snapshots.
 
 GitHub Actions builds and deploys the app and API to Cloudflare Workers on every merge to `main`, and refreshes the data every Saturday. Replit publishes the same code from the team's account. Keys live only in GitHub, Cloudflare and Replit secrets.
 
@@ -69,7 +69,7 @@ The system block diagram is in the [PRD, section 3.1][prd-31].
 | MCP server SDK 2.3                            | Serves Kotak's tools to AI assistants at `/api/mcp`        | Apache 2.0                          |
 | Neon serverless driver 1.2                    | Connects the API to Postgres                               | MIT                                 |
 | Wrangler 4.151                                | Deploys to Cloudflare Workers                              | MIT or Apache 2.0                   |
-| Playwright Core 1.64 and Clearcote 0.60       | Drives the browser for the JobStreet research scraper      | Apache 2.0, BSD-3                   |
+| Playwright Core 1.64 and Clearcote 0.60       | Drives the browser for the JobStreet scraper               | Apache 2.0, BSD-3                   |
 | Live2D Cubism Core for Web                    | Runtime that plays Live2D models, loaded from Live2D's CDN | Live2D Proprietary Software License |
 | Atkinson Hyperlegible and Shantell Sans fonts | Body, mono and Kopi's handwritten type, from Google Fonts  | SIL Open Font License 1.1           |
 
@@ -89,13 +89,13 @@ The data sources in section 4.2 are downloaded files, not live APIs: the app nev
 
 ### 3.2. Cloud platforms & deployment
 
-| Service & Provider                | Purpose in Project                                                                                        | Plan / Region                                |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| Replit Deployments, Replit        | Publishes the live demo from `main` on the team's own account                                             | Replit Core (sponsor-provided)               |
-| Cloudflare Workers, Cloudflare    | The mirror deployment: app, API, KV cache and a Durable Object for MCP and chat                           | Workers Free; global, Durable Object in APAC |
-| Neon Postgres, Neon               | Anonymous check-up totals, JobStreet listings, the admins' reviews and matched skills, and admin accounts | Free; `aws-ap-southeast-1`, Postgres 18      |
-| RunPod Serverless, RunPod         | The vLLM GPU endpoint for the one-time batch; 0 workers when idle                                         | Sponsor credit; one H100 80 GB GPU           |
-| GitHub and GitHub Actions, GitHub | Code hosting, CI, deploys on every merge to `main` and the Saturday data refresh                          | Free                                         |
+| Service & Provider                | Purpose in Project                                                                                              | Plan / Region                                |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Replit Deployments, Replit        | Publishes the live demo from `main` on the team's own account                                                   | Replit Core (sponsor-provided)               |
+| Cloudflare Workers, Cloudflare    | The mirror deployment: app, API, KV cache and a Durable Object for MCP and chat                                 | Workers Free; global, Durable Object in APAC |
+| Neon Postgres, Neon               | The national view's sample rows, JobStreet listings, the admins' reviews and matched skills, and admin accounts | Free; `aws-ap-southeast-1`, Postgres 18      |
+| RunPod Serverless, RunPod         | The vLLM GPU endpoint for the one-time batch; 0 workers when idle                                               | Sponsor credit; one H100 80 GB GPU           |
+| GitHub and GitHub Actions, GitHub | Code hosting, CI, deploys on every merge to `main` and the Saturday data refresh                                | Free                                         |
 
 ## 4. AI tools, models & datasets
 
@@ -106,23 +106,26 @@ The data sources in section 4.2 are downloaded files, not live APIs: the app nev
 | Claude Haiku 5.5 (`claude-haiku-5-5`)                      | Anthropic, Claude API         | Pre-trained | Anthropic Commercial Terms of Service |
 | ElevenLabs `eleven_v4` and `eleven_v4_turbo`, voice Johari | ElevenLabs                    | Pre-trained | ElevenLabs Terms of Service           |
 | Qwen3.8-27B-FP8                                            | Qwen, run on RunPod with vLLM | Pre-trained | Apache 2.0                            |
+| Gemini Pro and Flash models, through Antigravity CLI       | Google                        | Pre-trained | Google Antigravity terms of service   |
+| DeepSeek V4.1 Flash                                        | DeepSeek, run on River        | Pre-trained | River terms of service                |
 
 No model is fine-tuned or self-trained.
 
 ### 4.2. Datasets
 
-| Dataset Name                                  | Source / URL                                                                                                                        | Type                        | License                                              | Personal Data?  |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------- | --------------- |
-| O\*NET 30.1 Database                          | <https://www.onetcenter.org/database.html>                                                                                          | Public                      | CC BY 4.0                                            | N               |
-| Anthropic Economic Index, April and May 2026  | <https://huggingface.co/datasets/Anthropic/EconomicIndex>                                                                           | Public                      | Data CC BY; code MIT                                 | N               |
-| DOSM Job Market Insights, Q3 2019 to Q2 2026  | <https://www.dosm.gov.my>                                                                                                           | Public                      | DOSM terms, with source credit                       | N               |
-| OpenDOSM skill-related underemployment by age | <https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age>                                                                           | Public                      | CC BY 4.0; one figure cited                          | N               |
-| UN SDG indicator 4.4.1, Malaysia              | <https://unstats.un.org/sdgapi/>                                                                                                    | Public                      | UN terms of use; one baseline cited                  | N               |
-| Kotak skills and questions for 923 jobs       | Built from O\*NET by the RunPod batch                                                                                               | Synthetic, from public data | The team's own work                                  | N               |
-| CIP 2020 to SOC 2018 Crosswalk                | <https://nces.ed.gov/ipeds/cipcode/resources.aspx?y=56>                                                                             | Public                      | Public domain (US government work)                   | N               |
-| Malaysian regulated professions               | Each row cites its Act on the Laws of Malaysia site, the regulator's site or, where neither opened, a legal database or news report | Self-collected              | The team's own work; sources cited                   | N               |
-| JobStreet job listings                        | Collected by the team's scraper from <https://my.jobstreet.com>, reviewed by admins                                                 | Self-collected              | JobStreet's terms apply; Kotak publishes totals only | N; job ads only |
-| Demo check-up profiles                        | Written by the team                                                                                                                 | Synthetic                   | The team's own work                                  | N               |
+| Dataset Name                                      | Source / URL                                                                                                                                           | Type                        | License                                              | Personal Data?  |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | ---------------------------------------------------- | --------------- |
+| O\*NET 30.1 Database                              | <https://www.onetcenter.org/database.html>                                                                                                             | Public                      | CC BY 4.0                                            | N               |
+| Anthropic Economic Index, April and May 2026      | <https://huggingface.co/datasets/Anthropic/EconomicIndex>                                                                                              | Public                      | Data CC BY; code MIT                                 | N               |
+| DOSM Job Market Insights, Q3 2019 to Q2 2026      | <https://www.dosm.gov.my>                                                                                                                              | Public                      | DOSM terms, with source credit                       | N               |
+| OpenDOSM skill-related underemployment by age     | <https://open.dosm.gov.my/data-catalogue/lfs_qtr_sru_age>                                                                                              | Public                      | CC BY 4.0; one figure cited                          | N               |
+| UN SDG indicator 4.4.1, Malaysia                  | <https://unstats.un.org/sdgapi/v1/sdg/Indicator/Data?indicator=4.4.1&areaCode=458>                                                                     | Public                      | UN terms of use; one baseline cited                  | N               |
+| Kotak skills and questions for 923 jobs           | Built from O\*NET by the RunPod batch                                                                                                                  | Synthetic, from public data | The team's own work                                  | N               |
+| Question explainers and reversed question wording | Drafted from the Kotak questions by Gemini (explainers) and DeepSeek (reversed wording); a script checked every line and the team spot-checked samples | Synthetic, from public data | The team's own work                                  | N               |
+| CIP 2020 to SOC 2018 Crosswalk                    | <https://nces.ed.gov/ipeds/cipcode/resources.aspx?y=56>                                                                                                | Public                      | Public domain (US government work)                   | N               |
+| Malaysian regulated professions                   | Each row cites its Act on the Laws of Malaysia site, the regulator's site or, where neither opened, a legal database or news report                    | Self-collected              | The team's own work; sources cited                   | N               |
+| JobStreet job listings                            | Collected by the team's scraper from <https://my.jobstreet.com>, reviewed by admins                                                                    | Self-collected              | JobStreet's terms apply; Kotak publishes totals only | N; job ads only |
+| Demo check-up profiles                            | Written by the team                                                                                                                                    | Synthetic                   | The team's own work                                  | N               |
 
 MyCOL and Epoch AI are cited as context only; Kotak loads no data from them. Approved JobStreet listings feed the check-up's job-title suggestions, the Job Ads in Malaysia card, the role cards' ad counts and pay, and Kopi's `job_market` tool. They feed no verdict, fit score or roadmap.
 
@@ -164,7 +167,7 @@ Kotak has no user accounts. A check-up runs in guest mode: the job, goal and ans
 
 The app sends a typed job title to the Claude API for matching, and a role's skill data for explanations. Ask Kopi sends the user's message, and the results of tools run on their check-up, to Claude. Kopi's lines go to ElevenLabs for speech. Neither request carries a name, email or ID. The API caches answers and audio by a hash of the request.
 
-Postgres stores anonymous check-ups as a role code, 6 skill levels, a sample flag and a date, and shows totals only for groups of 10 or more. The research scraper stores public job ads, not personal profiles. Keys live only in host secrets.
+Postgres holds the national view as a role code, 6 skill levels, a sample flag and a date, with totals only for groups of 10 or more; no screen sends check-ups, so it holds labelled sample rows. The JobStreet scraper stores public job ads, not personal profiles. Keys live only in host secrets.
 
 ### 6.2. Known limitations & risks (150 words max)
 
