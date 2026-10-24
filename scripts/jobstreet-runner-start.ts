@@ -111,7 +111,7 @@ if (headless && !['true', 'false'].includes(headless)) throw new Error('BROWSER_
 if (headless) childEnv.BROWSER_HEADLESS = headless
 
 function addIntegerSetting(
-  name: 'JOBSTREET_DELAY_MS' | 'JOBSTREET_DELAY_JITTER_MS' | 'JOBSTREET_MAX_PAGES',
+  name: 'JOBSTREET_DELAY_MS' | 'JOBSTREET_DELAY_JITTER_MS' | 'JOBSTREET_MAX_PAGES' | 'JOBSTREET_MAX_DEPTH_JOBS',
   minimum: number,
   maximum: number
 ) {
@@ -127,6 +127,7 @@ addIntegerSetting('JOBSTREET_DELAY_MS', 2_000, 3_600_000)
 addIntegerSetting('JOBSTREET_DELAY_JITTER_MS', 0, 60_000)
 // The pipeline's own limit is 200 search pages.
 addIntegerSetting('JOBSTREET_MAX_PAGES', 1, 200)
+addIntegerSetting('JOBSTREET_MAX_DEPTH_JOBS', 1, 1000)
 childEnv.BROWSER_PROFILE_ROOT = profileRoot
 childEnv.JOBSTREET_DATA_DIR = dataRoot
 childEnv.JOBSTREET_RUNNER_DATABASE_URL = databaseUrl

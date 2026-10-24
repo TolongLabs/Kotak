@@ -81,6 +81,9 @@ const delayJitterMs = Number(Bun.env.JOBSTREET_DELAY_JITTER_MS ?? 30_000)
 // Search pages per breadth run, newest ads first. A lower cap scrapes a sample of a broad search's newest ads, and
 // JobStreet's own count of the search's ads is still kept in the run's report.
 const maxPages = Number(Bun.env.JOBSTREET_MAX_PAGES?.trim() || 200)
+// Job pages per depth run. Each takes about half a minute, so a lower cap keeps one search title's descriptions from
+// holding the queue for hours.
+const maxDepthJobs = Number(Bun.env.JOBSTREET_MAX_DEPTH_JOBS?.trim() || 1000)
 const headless = Bun.env.BROWSER_HEADLESS === 'true'
 const profileId = Bun.env.BROWSER_PROFILE_ID
 const sleep = (duration: number) => new Promise((done) => setTimeout(done, duration))
@@ -248,8 +251,8 @@ async function runQueued(input: unknown) {
   const stored = (await sql.query(
     `SELECT job_id, career_slug, latest_payload FROM jobstreet_listings
      WHERE career_slug = $1 AND latest_detail IS NULL
-     ORDER BY approved_at IS NULL, latest_seen_at DESC LIMIT 1000`,
-    [career.slug]
+     ORDER BY approved_at IS NULL, latest_seen_at DESC LIMIT $2`,
+    [career.slug, maxDepthJobs]
   )) as Array<{ job_id: string; career_slug: string; latest_payload: Record<string, unknown> }>
   if (!stored.length) {
     const report = {

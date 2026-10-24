@@ -1,4 +1,4 @@
-import { JOB_MARKET_MIN_SKILL_ADS } from '@kotak/shared'
+import { JOB_MARKET_MIN_SKILL_ADS, JobMarketLevelSchema, type JobMarketLevel } from '@kotak/shared'
 import type { JobMarket } from '../../engine/api'
 import { Citation } from '../ui/Citation'
 
@@ -31,6 +31,30 @@ const ordinal = (n: number) => {
 // 24 roles Kotak tracks", or null when it is the only one.
 const rankLabel = ({ rank, roles }: NonNullable<JobMarket['popularity']>) =>
   roles < 2 ? null : `the ${rank === 1 ? '' : `${ordinal(rank)} `}most of the ${roles} roles Kotak tracks`
+
+const LEVELS: Record<JobMarketLevel, { name: string; asks: string }> = {
+  junior: { name: 'Junior', asks: 'under 2 years, or new graduates' },
+  mid: { name: 'Mid-Level', asks: '2 to 4 years' },
+  senior: { name: 'Senior', asks: '5 years or more' }
+}
+
+/** The pay of the ads that ask for this level, or null when too few of them state pay. */
+export function payForLevel(market: JobMarket, level: JobMarketLevel | null) {
+  return (level && market.levels?.pay.find((band) => band.level === level)) || null
+}
+
+/** "junior roles", for a sentence. */
+const levelRoles = (level: JobMarketLevel) => `${LEVELS[level].name.toLowerCase()} roles`
+
+/**
+ * The role card's pay: "median pay RM 4,800 a month for junior roles" when enough ads at the user's level state pay,
+ * else the median of every level, or null when too few ads state any.
+ */
+export function payLabel(market: JobMarket, level: JobMarketLevel | null) {
+  const band = payForLevel(market, level)
+  if (band && level) return `median pay ${ringgit(band.median)} a month for ${levelRoles(level)}`
+  return market.pay ? `median advertised pay ${ringgit(market.pay.median)} a month` : null
+}
 
 /** The role card's line: "about 980 on JobStreet, the 2nd most of the 24 roles Kotak tracks", or null without one. */
 export function popularityLabel(market: JobMarket) {
@@ -78,18 +102,58 @@ function ShareList({
   )
 }
 
+// Pay for each level, the user's own marked, with the ads that ask for it. A level with too few ads stating pay says so.
+function LevelPay({ market, level }: { market: JobMarket; level: JobMarketLevel | null }) {
+  const { levels } = market
+  if (!levels || !levels.pay.length) return null
+  const stated = levels.ads.junior + levels.ads.mid + levels.ads.senior
+  return (
+    <div className="space-y-2">
+      <h3 className="text-label-m text-text-primary">Pay by Level</h3>
+      <ul className="space-y-1.5">
+        {JobMarketLevelSchema.options.map((key) => {
+          const band = payForLevel(market, key)
+          return (
+            <li key={key} className="flex items-baseline justify-between gap-3 text-body-s">
+              <span className="min-w-0 break-words text-text-primary">
+                {LEVELS[key].name}
+                {key === level && <span className="text-text-muted"> (your level)</span>}
+                <span className="text-text-muted"> · asks {LEVELS[key].asks}</span>
+              </span>
+              <span className="shrink-0 text-right font-mono text-mono-s text-text-muted">
+                {band
+                  ? `${ringgit(band.median)} · ${plural(band.ads_with_pay, 'ad', 'ads')}`
+                  : `too few state pay · ${plural(levels.ads[key], 'ad', 'ads')}`}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
+      <p className="text-body-s text-text-muted">
+        Each figure is the median monthly pay of the ads that ask for that level. The level is the experience an ad asks
+        for, or its job title when it asks none: {plural(stated, 'active ad says', 'active ads say')} one, and{' '}
+        {plural(levels.ads.not_stated, 'ad doesn’t', 'ads don’t')}.
+      </p>
+    </div>
+  )
+}
+
 export function JobMarketCard({
   market,
   roleTitle,
-  sourceNumber
+  sourceNumber,
+  level = null
 }: {
   market: JobMarket
   roleTitle: string
   sourceNumber: number
+  // The user's level from their years of work, whose pay leads when enough ads at that level state it.
+  level?: JobMarketLevel | null
 }) {
   const { ads, pay, skills, benefits, popularity } = market
   const titleId = `job-ads-${market.onet_code}`
   const rank = popularity && rankLabel(popularity)
+  const levelPay = payForLevel(market, level)
   // regions lists the top five states, so the rest of the ads that name one are in other states.
   const otherStates =
     ads.active - market.without_state - market.regions.reduce((total, region) => total + region.ads, 0)
@@ -129,20 +193,37 @@ export function JobMarketCard({
           </dd>
         </div>
         <div className="rounded-md border border-border-subtle p-3">
-          <dt className="text-label-m text-text-muted">Median Advertised Pay</dt>
-          {pay ? (
+          {level && levelPay ? (
             <>
-              <dd className="text-title-m tabular-nums text-text-primary">{ringgit(pay.median)} a month</dd>
+              <dt className="text-label-m text-text-muted">Median Pay, {LEVELS[level].name} Roles</dt>
+              <dd className="text-title-m tabular-nums text-text-primary">{ringgit(levelPay.median)} a month</dd>
               <dd className="text-body-s text-text-muted">
-                Middle half {ringgit(pay.p25)} to {ringgit(pay.p75)}, from {plural(pay.ads_with_pay, 'ad', 'ads')} that
-                state pay
+                Middle half {ringgit(levelPay.p25)} to {ringgit(levelPay.p75)}, from{' '}
+                {plural(levelPay.ads_with_pay, 'ad', 'ads')} asking for your level that state pay
+                {pay && `; ${ringgit(pay.median)} across all levels`}
               </dd>
             </>
           ) : (
-            <dd className="text-body-s text-text-muted">Too few ads state pay in ringgit to give a figure.</dd>
+            <>
+              <dt className="text-label-m text-text-muted">Median Advertised Pay, All Levels</dt>
+              {pay ? (
+                <>
+                  <dd className="text-title-m tabular-nums text-text-primary">{ringgit(pay.median)} a month</dd>
+                  <dd className="text-body-s text-text-muted">
+                    Middle half {ringgit(pay.p25)} to {ringgit(pay.p75)}, from {plural(pay.ads_with_pay, 'ad', 'ads')}{' '}
+                    that state pay
+                    {level && `. Too few ${levelRoles(level)} state pay for a figure of their own`}
+                  </dd>
+                </>
+              ) : (
+                <dd className="text-body-s text-text-muted">Too few ads state pay in ringgit to give a figure.</dd>
+              )}
+            </>
           )}
         </div>
       </dl>
+
+      <LevelPay market={market} level={level} />
 
       <ShareList label="Where the Jobs Are" items={market.regions} base={ads.active} />
       {(otherStates > 0 || market.without_state > 0 || market.remote > 0 || market.hybrid > 0) && (
