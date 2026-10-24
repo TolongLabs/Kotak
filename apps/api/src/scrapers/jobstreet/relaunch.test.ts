@@ -145,7 +145,11 @@ const lines = async (path: string) =>
     .split('\n')
     .filter(Boolean)
     .map((line) => JSON.parse(line))
-const breadth = (open: OpenBrowser, path: string) =>
+// The fake browser ignores the profile. Every test but the one about temporary profiles names a saved one, so
+// withRelaunches creates none: a temporary profile is written to the profile folder the runner uses (DEFAULT_ROOT,
+// which @kotak/browser doesn't let an environment variable move), and on Windows creating one starts powershell.exe.
+const SAVED_PROFILE = 'saved-test-profile'
+const breadth = (open: OpenBrowser, path: string, { temporaryProfile = false } = {}) =>
   scrapeJobstreet({
     url: SEARCH,
     output: path,
@@ -153,6 +157,7 @@ const breadth = (open: OpenBrowser, path: string) =>
     maxJobs: 100,
     delayMs: 2000,
     delayJitterMs: 0,
+    profileId: temporaryProfile ? undefined : SAVED_PROFILE,
     openBrowser: open
   })
 
@@ -256,6 +261,7 @@ test('a depth crash keeps the job as a failed attempt and resumes at the next jo
     delayMs: 2000,
     delayJitterMs: 0,
     discoverLocalCache: false,
+    profileId: SAVED_PROFILE,
     openBrowser: open
   })
   expect(site.actions.filter((action) => action.includes(' goto '))).toEqual([
@@ -291,7 +297,7 @@ test('a run without a saved profile reopens one temporary profile after a crash 
     })
     return open(options, run, onProfile)
   }
-  const report = await breadth(recording, output())
+  const report = await breadth(recording, output(), { temporaryProfile: true })
   expect([report.status, report.relaunches, site.launches]).toEqual(['success', 1, 2])
   expect(launches[0].profileId).toBeString()
   expect(launches).toEqual([

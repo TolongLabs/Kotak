@@ -17,6 +17,21 @@ export function parseJobstreetTask(value: unknown): { careerSlug: string; mode: 
   return { careerSlug: input.career_slug, mode: input.mode }
 }
 
+// The runner's claim: the oldest queued run, marked running, for parseQueuedJobstreetRun. The Neon driver parses a
+// date column into a JavaScript Date, which that check rejects as an invalid schedule date, so the nightly runs failed
+// before scraping (#289). The date goes out as YYYY-MM-DD text instead, from to_char: a ::text cast follows the
+// session's DateStyle. A manual run's date stays null.
+export const CLAIM_NEXT_RUN = `UPDATE jobstreet_scrape_runs
+  SET status = 'running', started_at = now(), heartbeat_at = now(), error = NULL
+  WHERE id = (
+    SELECT id FROM jobstreet_scrape_runs
+    WHERE status = 'queued'
+    ORDER BY created_at
+    LIMIT 1
+    FOR UPDATE SKIP LOCKED
+  )
+  RETURNING id, career_slug, mode, source, to_char(scheduled_for, 'YYYY-MM-DD') AS scheduled_for`
+
 export function parseQueuedJobstreetRun(value: unknown): {
   id: string
   career_slug: string
