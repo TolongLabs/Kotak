@@ -16,7 +16,7 @@ import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Chec
 import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
 import { ROADMAP_WEEKS, toReadinessPoints, toReadinessWindow, toRoadmapSteps } from '../engine/roadmapModel'
-import { useGuestSession } from '../session/store'
+import { hasAnswers, useGuestSession } from '../session/store'
 import { startAgain } from './checkup/startAgain'
 
 const beforeSnapshot: SnapshotId = '2026-04'
@@ -139,7 +139,7 @@ export function DashboardView() {
 
   if (!session.is_guest) return null
 
-  if (!assessedRoleCode(session)) {
+  if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <DashboardState>
         <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can show how it is changing.`} />

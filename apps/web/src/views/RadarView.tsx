@@ -24,7 +24,7 @@ import { occupationSdgs } from '../engine/occupationSdg'
 import { useCheckupBundle } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
 import { useJobMarkets } from '../engine/useJobMarkets'
-import { useGuestSession } from '../session/store'
+import { hasAnswers, useGuestSession } from '../session/store'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
 import type { ExplanationResponse } from '@kotak/shared'
@@ -122,7 +122,7 @@ export function RadarView() {
     setExplanationsPaused(false)
   }
 
-  if (!assessedRoleCode(session)) {
+  if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="sr-only">Future Skills Radar</h1>
