@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless'
+import { readMigrations } from './read-migrations'
 
 const databaseUrl = Bun.env.DATABASE_URL?.trim()
 if (!databaseUrl) {
@@ -6,12 +7,9 @@ if (!databaseUrl) {
   process.exit(1)
 }
 
-const migrationFiles = [...new Bun.Glob('migrations/*.sql').scanSync({ cwd: import.meta.dir, absolute: true })].sort()
-const statements = (await Promise.all(migrationFiles.map((file) => Bun.file(file).text())))
-  .flatMap((text) => text.replace(/^\s*--.*$/gm, '').split(/;\s*$/m))
-  .map((statement) => statement.trim())
-  .filter(Boolean)
+const migrations = await readMigrations()
+const statements = migrations.flatMap((migration) => migration.statements)
 
 const sql = neon(databaseUrl)
 await sql.transaction(statements.map((statement) => sql.query(statement)))
-console.info(`Applied ${migrationFiles.length} migration file(s).`)
+console.info(`Applied ${migrations.length} migration file(s).`)

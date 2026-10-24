@@ -824,7 +824,7 @@ Any GPU work must run on RunPod, proved by a screenshot of the Pod ID or endpoin
 
 - Neon Postgres 18, project `kotak`, region `aws-ap-southeast-1`.
 - `DATABASE_URL` holds Neon's pooled connection URL.
-- JobStreet tables: search titles, scrape runs, listings, observations, detail attempts, the review tables ([#235]) and `jobstreet_listing_skills` ([#271]). Listings carry `approved_at`, a copy of their standing approval for the runner ([#276]). The runner saves listings in one transaction per save, so the statements that write `approved_at` (the admin sync, the nightly repair and the migration backfill) never wait for a row lock: they skip listings another transaction holds (`FOR NO KEY UPDATE SKIP LOCKED`), and the nightly repair writes them later. The admin transactions that sync take `jobstreet_listings`' `ROW EXCLUSIVE` lock first, because every deploy's `CREATE INDEX IF NOT EXISTS` statements take `SHARE` locks on that table and then on the review table.
+- JobStreet tables: search titles, scrape runs, listings, observations, detail attempts, the review tables ([#235]) and `jobstreet_listing_skills` ([#271]). Listings carry `approved_at`, a copy of their standing approval for the runner ([#276]). The runner saves listings in one transaction per save, so the statements that write `approved_at` (the admin sync, the nightly repair and the migration backfill) never wait for a row lock: they skip listings another transaction holds (`FOR NO KEY UPDATE SKIP LOCKED`), and the nightly repair writes them later. The admin transactions that sync take `jobstreet_listings`' `ROW EXCLUSIVE` lock first. Since [#293] a deploy creates an index only when the catalog lacks it, so rerunning the migrations takes no `SHARE` lock; the lock guards the first deploy of a future migration that indexes these tables, whose `CREATE INDEX` takes `SHARE` locks on the listings table and then on the review table. It conflicts with nothing else: the runner's saves and other writes take `ROW EXCLUSIVE` too.
 - The Postgres driver must run on the Workers runtime; [#34] picks it.
 
 ### Environment variables and secrets
@@ -1093,5 +1093,6 @@ These plans from the issues are not in the submitted build. The schemas and the 
 [#276]: https://github.com/TolongLabs/Kotak/issues/276
 [#283]: https://github.com/TolongLabs/Kotak/issues/283
 [#284]: https://github.com/TolongLabs/Kotak/issues/284
+[#293]: https://github.com/TolongLabs/Kotak/pull/293
 [mqf]: https://cgs.unimap.edu.my/v2/2020/MQF.pdf
 [jobstreet-guide]: /apps/api/src/scrapers/jobstreet/README.md
