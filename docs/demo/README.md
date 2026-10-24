@@ -1,6 +1,6 @@
 # Demo
 
-How the team makes the submission media: the pitching video and the pitch deck. [`video.md`](video.md) says how two agent sessions record the prototype and assemble the video, and [`example-pitch-deck.html`](example-pitch-deck.html) is the design reference for the deck.
+How the team makes the submission media: the pitching video and the pitch deck. [`kotak-director-script.md`](kotak-director-script.md) holds the video's words and timing, [`video.md`](video.md) says how the team records it in OBS Studio and edits it in Adobe Premiere Pro, and [`example-pitch-deck.html`](example-pitch-deck.html) is the design reference for the deck.
 
 Contents:
 
@@ -10,11 +10,11 @@ Contents:
 
 ## Demo video
 
-[`video.md`](video.md) is the plan for the pitching video (issue #82): the rules, the timing, the live-demo shot list, the Playwright recording harness and the Remotion edit. The captions and the public upload are issue #84.
+[`kotak-director-script.md`](kotak-director-script.md) is the pitching video's script: the narration for every segment, the timing, the claim guardrails and the claims ledger. [`video.md`](video.md) is the how-to: the rules, the shot list with the demo answer key, the OBS recording steps, the Premiere edit, the captions and the public upload.
 
 ## Example deck
 
-[`example-pitch-deck.html`](example-pitch-deck.html) is a finished 11-slide deck from an earlier hackathon of ours, with its names replaced by placeholders. Use it as the reference for layout and visual assets. Our deck is a PPTX file (issue #80) in Kotak's colours and type ([design system](/docs/DESIGN.md)). Open the example in Chrome or Edge, and move between slides with the arrow keys or the controls that show when you move the mouse. Press N for its presenter notes.
+[`example-pitch-deck.html`](example-pitch-deck.html) is a finished 11-slide deck from an earlier hackathon of ours, with its names replaced by placeholders. Use it as the reference for layout and visual assets. Our deck, [`deck/pitch-deck.html`](deck/pitch-deck.html), exports to PPTX and PDF in Kotak's colours and type ([design system](/docs/DESIGN.md)). Open the example in Chrome or Edge, and move between slides with the arrow keys or the controls that show when you move the mouse. Press N for its presenter notes.
 
 Copy these from it:
 
