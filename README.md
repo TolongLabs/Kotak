@@ -19,7 +19,7 @@
     <br />
     <a href="https://kotak-alaskxntxna.replit.app"><strong>Live Demo &rarr;</strong></a>
     &middot;
-    <a href="#">Demo Video</a>
+    <a href="https://youtu.be/HQgdbantbN0">Demo Video</a>
     &middot;
     <a href="/docs/demo/deck/kotak-pitch-deck.pptx">Slide Deck</a>
     &middot;
@@ -115,7 +115,7 @@ Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf)
 | Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started) |
 | RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                           |
 | Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf)    |
-| Demo Video        | Coming soon on YouTube                                                                                                     |
+| Demo Video        | <https://youtu.be/HQgdbantbN0>, public on YouTube (5:34)                                                                   |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -446,7 +446,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 - [x] Team name, domain (Domain 1) and SDG track filled in
 - [x] Slide deck link added
-- [ ] Demo video link added
+- [x] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod used, with proof of use in `submission/`
 - [x] Submission template completed in `submission/`
