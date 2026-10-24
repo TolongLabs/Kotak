@@ -1,0 +1,2533 @@
+{
+  "D1": {
+    "src": "voice/demo/D1.wav",
+    "take": "6.wav",
+    "sourceFrom": 0.452,
+    "cutsMs": [],
+    "durationMs": 8018,
+    "gainDb": 5.84,
+    "heard": "First, the problem. Aina starts with who she is. Working, as a web developer, and she wants to stay strong in her job as AI changes it.",
+    "words": [
+      {
+        "word": "First,",
+        "startMs": 120,
+        "endMs": 480,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 680,
+        "endMs": 700,
+        "matched": true
+      },
+      {
+        "word": "problem.",
+        "startMs": 700,
+        "endMs": 1080,
+        "matched": true
+      },
+      {
+        "word": "Aina",
+        "startMs": 1560,
+        "endMs": 1600,
+        "matched": true
+      },
+      {
+        "word": "starts",
+        "startMs": 1600,
+        "endMs": 1960,
+        "matched": true
+      },
+      {
+        "word": "with",
+        "startMs": 1960,
+        "endMs": 2180,
+        "matched": true
+      },
+      {
+        "word": "who",
+        "startMs": 2180,
+        "endMs": 2380,
+        "matched": true
+      },
+      {
+        "word": "she",
+        "startMs": 2380,
+        "endMs": 2580,
+        "matched": true
+      },
+      {
+        "word": "is:",
+        "startMs": 2580,
+        "endMs": 2900,
+        "matched": true
+      },
+      {
+        "word": "working,",
+        "startMs": 3600,
+        "endMs": 3620,
+        "matched": true
+      },
+      {
+        "word": "as",
+        "startMs": 3900,
+        "endMs": 3980,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 3980,
+        "endMs": 4120,
+        "matched": true
+      },
+      {
+        "word": "web",
+        "startMs": 4120,
+        "endMs": 4240,
+        "matched": true
+      },
+      {
+        "word": "developer,",
+        "startMs": 4240,
+        "endMs": 4600,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 5160,
+        "endMs": 5240,
+        "matched": true
+      },
+      {
+        "word": "she",
+        "startMs": 5240,
+        "endMs": 5440,
+        "matched": true
+      },
+      {
+        "word": "wants",
+        "startMs": 5440,
+        "endMs": 5560,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 5560,
+        "endMs": 5840,
+        "matched": true
+      },
+      {
+        "word": "stay",
+        "startMs": 5840,
+        "endMs": 5960,
+        "matched": true
+      },
+      {
+        "word": "strong",
+        "startMs": 5960,
+        "endMs": 6280,
+        "matched": true
+      },
+      {
+        "word": "in",
+        "startMs": 6280,
+        "endMs": 6400,
+        "matched": true
+      },
+      {
+        "word": "her",
+        "startMs": 6400,
+        "endMs": 6540,
+        "matched": true
+      },
+      {
+        "word": "job",
+        "startMs": 6540,
+        "endMs": 6720,
+        "matched": true
+      },
+      {
+        "word": "as",
+        "startMs": 6720,
+        "endMs": 7000,
+        "matched": true
+      },
+      {
+        "word": "AI",
+        "startMs": 7000,
+        "endMs": 7260,
+        "matched": true
+      },
+      {
+        "word": "changes",
+        "startMs": 7260,
+        "endMs": 7640,
+        "matched": true
+      },
+      {
+        "word": "it.",
+        "startMs": 7640,
+        "endMs": 7900,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        105
+      ],
+      [
+        1213,
+        1321
+      ],
+      [
+        7839,
+        8018
+      ]
+    ]
+  },
+  "D2": {
+    "src": "voice/demo/D2.wav",
+    "take": "7.wav",
+    "sourceFrom": 0.486,
+    "cutsMs": [
+      [
+        9891,
+        9898
+      ]
+    ],
+    "durationMs": 11569,
+    "gainDb": 6.23,
+    "heard": "Then Kopi, Kotak's guide, asks twelve can-do questions about her own work, two for each of six skills. Some are worded the other way round, to catch answers on autopilot. It takes about three minutes.",
+    "words": [
+      {
+        "word": "Then",
+        "startMs": 120,
+        "endMs": 440,
+        "matched": true
+      },
+      {
+        "word": "Kopi,",
+        "startMs": 440,
+        "endMs": 860,
+        "matched": true
+      },
+      {
+        "word": "Kotak's",
+        "startMs": 1320,
+        "endMs": 1520,
+        "matched": true
+      },
+      {
+        "word": "guide,",
+        "startMs": 1520,
+        "endMs": 1700,
+        "matched": true
+      },
+      {
+        "word": "asks",
+        "startMs": 1920,
+        "endMs": 2180,
+        "matched": true
+      },
+      {
+        "word": "twelve",
+        "startMs": 2180,
+        "endMs": 2540,
+        "matched": true
+      },
+      {
+        "word": "can-do",
+        "startMs": 2540,
+        "endMs": 2940,
+        "matched": false
+      },
+      {
+        "word": "questions",
+        "startMs": 2940,
+        "endMs": 3400,
+        "matched": true
+      },
+      {
+        "word": "about",
+        "startMs": 3400,
+        "endMs": 3640,
+        "matched": true
+      },
+      {
+        "word": "her",
+        "startMs": 3640,
+        "endMs": 3780,
+        "matched": true
+      },
+      {
+        "word": "own",
+        "startMs": 3780,
+        "endMs": 4160,
+        "matched": true
+      },
+      {
+        "word": "work,",
+        "startMs": 4160,
+        "endMs": 4320,
+        "matched": true
+      },
+      {
+        "word": "two",
+        "startMs": 4860,
+        "endMs": 4980,
+        "matched": true
+      },
+      {
+        "word": "for",
+        "startMs": 4980,
+        "endMs": 5160,
+        "matched": true
+      },
+      {
+        "word": "each",
+        "startMs": 5160,
+        "endMs": 5400,
+        "matched": true
+      },
+      {
+        "word": "of",
+        "startMs": 5400,
+        "endMs": 5580,
+        "matched": true
+      },
+      {
+        "word": "six",
+        "startMs": 5580,
+        "endMs": 5800,
+        "matched": true
+      },
+      {
+        "word": "skills.",
+        "startMs": 5800,
+        "endMs": 6180,
+        "matched": true
+      },
+      {
+        "word": "Some",
+        "startMs": 6660,
+        "endMs": 6940,
+        "matched": true
+      },
+      {
+        "word": "are",
+        "startMs": 6940,
+        "endMs": 7100,
+        "matched": true
+      },
+      {
+        "word": "worded",
+        "startMs": 7100,
+        "endMs": 7320,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 7320,
+        "endMs": 7480,
+        "matched": true
+      },
+      {
+        "word": "other",
+        "startMs": 7480,
+        "endMs": 7660,
+        "matched": true
+      },
+      {
+        "word": "way",
+        "startMs": 7660,
+        "endMs": 7940,
+        "matched": true
+      },
+      {
+        "word": "round,",
+        "startMs": 7940,
+        "endMs": 8120,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 8160,
+        "endMs": 8260,
+        "matched": true
+      },
+      {
+        "word": "catch",
+        "startMs": 8260,
+        "endMs": 8460,
+        "matched": true
+      },
+      {
+        "word": "answers",
+        "startMs": 8460,
+        "endMs": 8860,
+        "matched": true
+      },
+      {
+        "word": "on",
+        "startMs": 8860,
+        "endMs": 9120,
+        "matched": true
+      },
+      {
+        "word": "autopilot.",
+        "startMs": 9120,
+        "endMs": 9600,
+        "matched": true
+      },
+      {
+        "word": "It",
+        "startMs": 10113,
+        "endMs": 10593,
+        "matched": true
+      },
+      {
+        "word": "takes",
+        "startMs": 10593,
+        "endMs": 10673,
+        "matched": true
+      },
+      {
+        "word": "about",
+        "startMs": 10673,
+        "endMs": 10953,
+        "matched": true
+      },
+      {
+        "word": "three",
+        "startMs": 10953,
+        "endMs": 11173,
+        "matched": true
+      },
+      {
+        "word": "minutes.",
+        "startMs": 11173,
+        "endMs": 11453,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        119
+      ],
+      [
+        1684,
+        1894
+      ],
+      [
+        4238,
+        4298
+      ],
+      [
+        4605,
+        4795
+      ],
+      [
+        6527,
+        6610
+      ],
+      [
+        9627,
+        9735
+      ],
+      [
+        9741,
+        10041
+      ],
+      [
+        10081,
+        10352
+      ],
+      [
+        11357,
+        11425
+      ]
+    ]
+  },
+  "D3": {
+    "src": "voice/demo/D3.wav",
+    "take": "8.wav",
+    "sourceFrom": 0.55,
+    "cutsMs": [],
+    "durationMs": 23347,
+    "gainDb": 5.99,
+    "heard": "Her radar compares six skills. Her own, self-reported level against what the job is estimated to need a year ahead. Each skill gets a verdict with a dated source. Technical documentation gets rising. AI helps it scale. Web site building gets declining because of AI. And it's tied to real hiring. About a hundred and seventy JobStreet ads in Malaysia match her job, at a median of six thousand three hundred ringgit a month.",
+    "words": [
+      {
+        "word": "Her",
+        "startMs": 120,
+        "endMs": 340,
+        "matched": true
+      },
+      {
+        "word": "radar",
+        "startMs": 340,
+        "endMs": 560,
+        "matched": true
+      },
+      {
+        "word": "compares",
+        "startMs": 560,
+        "endMs": 960,
+        "matched": true
+      },
+      {
+        "word": "six",
+        "startMs": 960,
+        "endMs": 1260,
+        "matched": true
+      },
+      {
+        "word": "skills:",
+        "startMs": 1260,
+        "endMs": 1460,
+        "matched": true
+      },
+      {
+        "word": "her",
+        "startMs": 1660,
+        "endMs": 1820,
+        "matched": true
+      },
+      {
+        "word": "own,",
+        "startMs": 1820,
+        "endMs": 2200,
+        "matched": true
+      },
+      {
+        "word": "self-reported",
+        "startMs": 2200,
+        "endMs": 2800,
+        "matched": false
+      },
+      {
+        "word": "level",
+        "startMs": 2800,
+        "endMs": 3100,
+        "matched": true
+      },
+      {
+        "word": "against",
+        "startMs": 3100,
+        "endMs": 3560,
+        "matched": true
+      },
+      {
+        "word": "what",
+        "startMs": 3560,
+        "endMs": 3740,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 3740,
+        "endMs": 3900,
+        "matched": true
+      },
+      {
+        "word": "job",
+        "startMs": 3900,
+        "endMs": 4040,
+        "matched": true
+      },
+      {
+        "word": "is",
+        "startMs": 4040,
+        "endMs": 4240,
+        "matched": true
+      },
+      {
+        "word": "estimated",
+        "startMs": 4240,
+        "endMs": 4640,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 4640,
+        "endMs": 4940,
+        "matched": true
+      },
+      {
+        "word": "need",
+        "startMs": 4940,
+        "endMs": 5120,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 5120,
+        "endMs": 5300,
+        "matched": true
+      },
+      {
+        "word": "year",
+        "startMs": 5300,
+        "endMs": 5500,
+        "matched": true
+      },
+      {
+        "word": "ahead.",
+        "startMs": 5500,
+        "endMs": 5840,
+        "matched": true
+      },
+      {
+        "word": "Each",
+        "startMs": 6400,
+        "endMs": 6520,
+        "matched": true
+      },
+      {
+        "word": "skill",
+        "startMs": 6520,
+        "endMs": 6740,
+        "matched": true
+      },
+      {
+        "word": "gets",
+        "startMs": 6740,
+        "endMs": 6960,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 6960,
+        "endMs": 7200,
+        "matched": true
+      },
+      {
+        "word": "verdict",
+        "startMs": 7200,
+        "endMs": 7320,
+        "matched": true
+      },
+      {
+        "word": "with",
+        "startMs": 7320,
+        "endMs": 7500,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 7500,
+        "endMs": 7800,
+        "matched": true
+      },
+      {
+        "word": "dated",
+        "startMs": 7800,
+        "endMs": 7900,
+        "matched": true
+      },
+      {
+        "word": "source.",
+        "startMs": 7900,
+        "endMs": 8280,
+        "matched": true
+      },
+      {
+        "word": "Technical",
+        "startMs": 8960,
+        "endMs": 9080,
+        "matched": true
+      },
+      {
+        "word": "documentation",
+        "startMs": 9080,
+        "endMs": 9680,
+        "matched": true
+      },
+      {
+        "word": "gets",
+        "startMs": 9680,
+        "endMs": 10040,
+        "matched": true
+      },
+      {
+        "word": "rising:",
+        "startMs": 10040,
+        "endMs": 10480,
+        "matched": true
+      },
+      {
+        "word": "AI",
+        "startMs": 11020,
+        "endMs": 11240,
+        "matched": true
+      },
+      {
+        "word": "helps",
+        "startMs": 11240,
+        "endMs": 11520,
+        "matched": true
+      },
+      {
+        "word": "it",
+        "startMs": 11520,
+        "endMs": 11760,
+        "matched": true
+      },
+      {
+        "word": "scale.",
+        "startMs": 11760,
+        "endMs": 12000,
+        "matched": true
+      },
+      {
+        "word": "Web",
+        "startMs": 12660,
+        "endMs": 12800,
+        "matched": true
+      },
+      {
+        "word": "site",
+        "startMs": 12800,
+        "endMs": 13020,
+        "matched": true
+      },
+      {
+        "word": "building",
+        "startMs": 13020,
+        "endMs": 13380,
+        "matched": true
+      },
+      {
+        "word": "gets",
+        "startMs": 13380,
+        "endMs": 13720,
+        "matched": true
+      },
+      {
+        "word": "declining",
+        "startMs": 13720,
+        "endMs": 14180,
+        "matched": true
+      },
+      {
+        "word": "because",
+        "startMs": 14180,
+        "endMs": 14540,
+        "matched": true
+      },
+      {
+        "word": "of",
+        "startMs": 14540,
+        "endMs": 14820,
+        "matched": true
+      },
+      {
+        "word": "AI.",
+        "startMs": 14820,
+        "endMs": 15020,
+        "matched": true
+      },
+      {
+        "word": "And",
+        "startMs": 15400,
+        "endMs": 15620,
+        "matched": true
+      },
+      {
+        "word": "it's",
+        "startMs": 15620,
+        "endMs": 15780,
+        "matched": true
+      },
+      {
+        "word": "tied",
+        "startMs": 15780,
+        "endMs": 15940,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 15940,
+        "endMs": 16120,
+        "matched": true
+      },
+      {
+        "word": "real",
+        "startMs": 16120,
+        "endMs": 16440,
+        "matched": true
+      },
+      {
+        "word": "hiring:",
+        "startMs": 16440,
+        "endMs": 16700,
+        "matched": true
+      },
+      {
+        "word": "about",
+        "startMs": 17300,
+        "endMs": 17500,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 17500,
+        "endMs": 17560,
+        "matched": true
+      },
+      {
+        "word": "hundred",
+        "startMs": 17560,
+        "endMs": 17860,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 17860,
+        "endMs": 18400,
+        "matched": true
+      },
+      {
+        "word": "seventy",
+        "startMs": 18400,
+        "endMs": 18400,
+        "matched": true
+      },
+      {
+        "word": "JobStreet",
+        "startMs": 18400,
+        "endMs": 18880,
+        "matched": true
+      },
+      {
+        "word": "ads",
+        "startMs": 18880,
+        "endMs": 19080,
+        "matched": true
+      },
+      {
+        "word": "in",
+        "startMs": 19080,
+        "endMs": 19240,
+        "matched": true
+      },
+      {
+        "word": "Malaysia",
+        "startMs": 19240,
+        "endMs": 19540,
+        "matched": true
+      },
+      {
+        "word": "match",
+        "startMs": 19540,
+        "endMs": 19820,
+        "matched": true
+      },
+      {
+        "word": "her",
+        "startMs": 19820,
+        "endMs": 20020,
+        "matched": true
+      },
+      {
+        "word": "job,",
+        "startMs": 20020,
+        "endMs": 20240,
+        "matched": true
+      },
+      {
+        "word": "at",
+        "startMs": 20580,
+        "endMs": 20660,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 20660,
+        "endMs": 20880,
+        "matched": true
+      },
+      {
+        "word": "median",
+        "startMs": 20880,
+        "endMs": 21060,
+        "matched": true
+      },
+      {
+        "word": "of",
+        "startMs": 21060,
+        "endMs": 21280,
+        "matched": true
+      },
+      {
+        "word": "six",
+        "startMs": 21280,
+        "endMs": 21480,
+        "matched": true
+      },
+      {
+        "word": "thousand",
+        "startMs": 21480,
+        "endMs": 21860,
+        "matched": true
+      },
+      {
+        "word": "three",
+        "startMs": 21860,
+        "endMs": 22200,
+        "matched": true
+      },
+      {
+        "word": "hundred",
+        "startMs": 22200,
+        "endMs": 22460,
+        "matched": true
+      },
+      {
+        "word": "ringgit",
+        "startMs": 22460,
+        "endMs": 22720,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 22720,
+        "endMs": 23060,
+        "matched": true
+      },
+      {
+        "word": "month.",
+        "startMs": 23060,
+        "endMs": 23100,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        74
+      ],
+      [
+        6247,
+        6313
+      ],
+      [
+        8306,
+        8371
+      ],
+      [
+        8630,
+        8702
+      ],
+      [
+        10560,
+        10685
+      ],
+      [
+        10793,
+        10945
+      ],
+      [
+        12061,
+        12189
+      ],
+      [
+        15132,
+        15213
+      ],
+      [
+        15323,
+        15434
+      ],
+      [
+        20493,
+        20576
+      ],
+      [
+        23226,
+        23347
+      ]
+    ]
+  },
+  "D4": {
+    "src": "voice/demo/D4.wav",
+    "take": "9.wav",
+    "sourceFrom": 0.296,
+    "cutsMs": [],
+    "durationMs": 8224,
+    "gainDb": 6.26,
+    "heard": "Now the solution. Kotak ranks the roles she fits, each with its score and its reason. See the Maths opens the formula behind every number.",
+    "words": [
+      {
+        "word": "Now",
+        "startMs": 120,
+        "endMs": 440,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 440,
+        "endMs": 640,
+        "matched": true
+      },
+      {
+        "word": "solution.",
+        "startMs": 640,
+        "endMs": 1220,
+        "matched": true
+      },
+      {
+        "word": "Kotak",
+        "startMs": 1780,
+        "endMs": 1920,
+        "matched": true
+      },
+      {
+        "word": "ranks",
+        "startMs": 1920,
+        "endMs": 2200,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 2200,
+        "endMs": 2440,
+        "matched": true
+      },
+      {
+        "word": "roles",
+        "startMs": 2440,
+        "endMs": 2620,
+        "matched": true
+      },
+      {
+        "word": "she",
+        "startMs": 2620,
+        "endMs": 2840,
+        "matched": true
+      },
+      {
+        "word": "fits,",
+        "startMs": 2840,
+        "endMs": 3160,
+        "matched": true
+      },
+      {
+        "word": "each",
+        "startMs": 3560,
+        "endMs": 3760,
+        "matched": true
+      },
+      {
+        "word": "with",
+        "startMs": 3760,
+        "endMs": 3960,
+        "matched": true
+      },
+      {
+        "word": "its",
+        "startMs": 3960,
+        "endMs": 4140,
+        "matched": true
+      },
+      {
+        "word": "score",
+        "startMs": 4140,
+        "endMs": 4340,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 4340,
+        "endMs": 4500,
+        "matched": true
+      },
+      {
+        "word": "its",
+        "startMs": 4500,
+        "endMs": 4880,
+        "matched": true
+      },
+      {
+        "word": "reason.",
+        "startMs": 4880,
+        "endMs": 5040,
+        "matched": true
+      },
+      {
+        "word": "See",
+        "startMs": 5620,
+        "endMs": 5700,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 5700,
+        "endMs": 5900,
+        "matched": true
+      },
+      {
+        "word": "Maths",
+        "startMs": 5900,
+        "endMs": 6260,
+        "matched": true
+      },
+      {
+        "word": "opens",
+        "startMs": 6260,
+        "endMs": 6540,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 6540,
+        "endMs": 7100,
+        "matched": true
+      },
+      {
+        "word": "formula",
+        "startMs": 7100,
+        "endMs": 7100,
+        "matched": true
+      },
+      {
+        "word": "behind",
+        "startMs": 7100,
+        "endMs": 7460,
+        "matched": true
+      },
+      {
+        "word": "every",
+        "startMs": 7460,
+        "endMs": 7840,
+        "matched": true
+      },
+      {
+        "word": "number.",
+        "startMs": 7840,
+        "endMs": 8060,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        118
+      ],
+      [
+        1293,
+        1508
+      ],
+      [
+        1508,
+        1615
+      ],
+      [
+        3259,
+        3345
+      ],
+      [
+        3385,
+        3586
+      ],
+      [
+        5150,
+        5283
+      ],
+      [
+        5375,
+        5482
+      ]
+    ]
+  },
+  "D5": {
+    "src": "voice/demo/D5.wav",
+    "take": "10.wav",
+    "sourceFrom": 0.612,
+    "cutsMs": [],
+    "durationMs": 16888,
+    "gainDb": 6.18,
+    "heard": "Her roadmap puts the steps in the order that gains the most fit per hour, and leaves declining skills for last. At ten hours a week, Kotak estimates she reaches eighty per cent fit by week thirty-five. Each step shows its hours and a free search link. And the funding card tells her employer to apply before the training starts.",
+    "words": [
+      {
+        "word": "Her",
+        "startMs": 120,
+        "endMs": 380,
+        "matched": true
+      },
+      {
+        "word": "roadmap",
+        "startMs": 380,
+        "endMs": 660,
+        "matched": true
+      },
+      {
+        "word": "puts",
+        "startMs": 660,
+        "endMs": 940,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 940,
+        "endMs": 1380,
+        "matched": true
+      },
+      {
+        "word": "steps",
+        "startMs": 1380,
+        "endMs": 1380,
+        "matched": true
+      },
+      {
+        "word": "in",
+        "startMs": 1380,
+        "endMs": 1520,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 1520,
+        "endMs": 1720,
+        "matched": true
+      },
+      {
+        "word": "order",
+        "startMs": 1720,
+        "endMs": 1840,
+        "matched": true
+      },
+      {
+        "word": "that",
+        "startMs": 1840,
+        "endMs": 2100,
+        "matched": true
+      },
+      {
+        "word": "gains",
+        "startMs": 2100,
+        "endMs": 2280,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 2280,
+        "endMs": 2480,
+        "matched": true
+      },
+      {
+        "word": "most",
+        "startMs": 2480,
+        "endMs": 2720,
+        "matched": true
+      },
+      {
+        "word": "fit",
+        "startMs": 2720,
+        "endMs": 2880,
+        "matched": true
+      },
+      {
+        "word": "per",
+        "startMs": 2880,
+        "endMs": 3120,
+        "matched": true
+      },
+      {
+        "word": "hour,",
+        "startMs": 3120,
+        "endMs": 3360,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 3620,
+        "endMs": 3760,
+        "matched": true
+      },
+      {
+        "word": "leaves",
+        "startMs": 3760,
+        "endMs": 3940,
+        "matched": true
+      },
+      {
+        "word": "declining",
+        "startMs": 3940,
+        "endMs": 4340,
+        "matched": true
+      },
+      {
+        "word": "skills",
+        "startMs": 4340,
+        "endMs": 4740,
+        "matched": true
+      },
+      {
+        "word": "for",
+        "startMs": 4740,
+        "endMs": 4960,
+        "matched": true
+      },
+      {
+        "word": "last.",
+        "startMs": 4960,
+        "endMs": 5240,
+        "matched": true
+      },
+      {
+        "word": "At",
+        "startMs": 5740,
+        "endMs": 5880,
+        "matched": true
+      },
+      {
+        "word": "ten",
+        "startMs": 5880,
+        "endMs": 6100,
+        "matched": true
+      },
+      {
+        "word": "hours",
+        "startMs": 6100,
+        "endMs": 6360,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 6360,
+        "endMs": 6800,
+        "matched": true
+      },
+      {
+        "word": "week,",
+        "startMs": 6800,
+        "endMs": 6800,
+        "matched": true
+      },
+      {
+        "word": "Kotak",
+        "startMs": 7040,
+        "endMs": 7220,
+        "matched": true
+      },
+      {
+        "word": "estimates",
+        "startMs": 7220,
+        "endMs": 7700,
+        "matched": true
+      },
+      {
+        "word": "she",
+        "startMs": 7700,
+        "endMs": 8020,
+        "matched": true
+      },
+      {
+        "word": "reaches",
+        "startMs": 8020,
+        "endMs": 8300,
+        "matched": true
+      },
+      {
+        "word": "eighty",
+        "startMs": 8300,
+        "endMs": 8640,
+        "matched": true
+      },
+      {
+        "word": "per",
+        "startMs": 8640,
+        "endMs": 8840,
+        "matched": true
+      },
+      {
+        "word": "cent",
+        "startMs": 8840,
+        "endMs": 8980,
+        "matched": true
+      },
+      {
+        "word": "fit",
+        "startMs": 8980,
+        "endMs": 9200,
+        "matched": true
+      },
+      {
+        "word": "by",
+        "startMs": 9200,
+        "endMs": 9400,
+        "matched": true
+      },
+      {
+        "word": "week",
+        "startMs": 9400,
+        "endMs": 9640,
+        "matched": true
+      },
+      {
+        "word": "thirty-five.",
+        "startMs": 9640,
+        "endMs": 10820,
+        "matched": false
+      },
+      {
+        "word": "Each",
+        "startMs": 10820,
+        "endMs": 11020,
+        "matched": true
+      },
+      {
+        "word": "step",
+        "startMs": 11020,
+        "endMs": 11280,
+        "matched": true
+      },
+      {
+        "word": "shows",
+        "startMs": 11280,
+        "endMs": 11560,
+        "matched": true
+      },
+      {
+        "word": "its",
+        "startMs": 11560,
+        "endMs": 11780,
+        "matched": true
+      },
+      {
+        "word": "hours",
+        "startMs": 11780,
+        "endMs": 12100,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 12100,
+        "endMs": 12300,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 12300,
+        "endMs": 12440,
+        "matched": true
+      },
+      {
+        "word": "free",
+        "startMs": 12440,
+        "endMs": 12680,
+        "matched": true
+      },
+      {
+        "word": "search",
+        "startMs": 12680,
+        "endMs": 12920,
+        "matched": true
+      },
+      {
+        "word": "link.",
+        "startMs": 12920,
+        "endMs": 13200,
+        "matched": true
+      },
+      {
+        "word": "And",
+        "startMs": 13620,
+        "endMs": 13800,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 13800,
+        "endMs": 13900,
+        "matched": true
+      },
+      {
+        "word": "funding",
+        "startMs": 13900,
+        "endMs": 14100,
+        "matched": true
+      },
+      {
+        "word": "card",
+        "startMs": 14100,
+        "endMs": 14420,
+        "matched": true
+      },
+      {
+        "word": "tells",
+        "startMs": 14420,
+        "endMs": 14680,
+        "matched": true
+      },
+      {
+        "word": "her",
+        "startMs": 14680,
+        "endMs": 14880,
+        "matched": true
+      },
+      {
+        "word": "employer",
+        "startMs": 14880,
+        "endMs": 15180,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 15180,
+        "endMs": 15460,
+        "matched": true
+      },
+      {
+        "word": "apply",
+        "startMs": 15460,
+        "endMs": 15680,
+        "matched": true
+      },
+      {
+        "word": "before",
+        "startMs": 15680,
+        "endMs": 15960,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 15960,
+        "endMs": 16200,
+        "matched": true
+      },
+      {
+        "word": "training",
+        "startMs": 16200,
+        "endMs": 16360,
+        "matched": true
+      },
+      {
+        "word": "starts.",
+        "startMs": 16360,
+        "endMs": 16860,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        118
+      ],
+      [
+        5262,
+        5332
+      ],
+      [
+        5615,
+        5680
+      ],
+      [
+        6681,
+        6818
+      ],
+      [
+        6825,
+        6937
+      ],
+      [
+        9581,
+        9650
+      ],
+      [
+        10675,
+        10827
+      ],
+      [
+        13259,
+        13326
+      ],
+      [
+        16675,
+        16759
+      ]
+    ]
+  },
+  "D6": {
+    "src": "voice/demo/D6.wav",
+    "take": "11.wav",
+    "sourceFrom": 0.577,
+    "cutsMs": [
+      [
+        20750,
+        21052
+      ]
+    ],
+    "durationMs": 24107,
+    "gainDb": 6.16,
+    "heard": "And the outcome. A plan that moves with the data. Same job. Same twelve answers. Only the data moves, from April to May. Our hardest risk is thin data, so Kotak never guesses. In April, with one month of AI-use data, every skill read Unknown. In May, six verdicts flip, the ranking reorders, and web site building, now declining, drops from step four to last. The trend data drives the plan. Kopi just says why.",
+    "words": [
+      {
+        "word": "And",
+        "startMs": 120,
+        "endMs": 280,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 280,
+        "endMs": 760,
+        "matched": true
+      },
+      {
+        "word": "outcome:",
+        "startMs": 760,
+        "endMs": 760,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 1020,
+        "endMs": 1180,
+        "matched": true
+      },
+      {
+        "word": "plan",
+        "startMs": 1180,
+        "endMs": 1260,
+        "matched": true
+      },
+      {
+        "word": "that",
+        "startMs": 1260,
+        "endMs": 1700,
+        "matched": true
+      },
+      {
+        "word": "moves",
+        "startMs": 1700,
+        "endMs": 1700,
+        "matched": true
+      },
+      {
+        "word": "with",
+        "startMs": 1700,
+        "endMs": 1920,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 1920,
+        "endMs": 2160,
+        "matched": true
+      },
+      {
+        "word": "data.",
+        "startMs": 2160,
+        "endMs": 2320,
+        "matched": true
+      },
+      {
+        "word": "Same",
+        "startMs": 2880,
+        "endMs": 3000,
+        "matched": true
+      },
+      {
+        "word": "job.",
+        "startMs": 3000,
+        "endMs": 3300,
+        "matched": true
+      },
+      {
+        "word": "Same",
+        "startMs": 3520,
+        "endMs": 3660,
+        "matched": true
+      },
+      {
+        "word": "twelve",
+        "startMs": 3660,
+        "endMs": 3920,
+        "matched": true
+      },
+      {
+        "word": "answers.",
+        "startMs": 3920,
+        "endMs": 4340,
+        "matched": true
+      },
+      {
+        "word": "Only",
+        "startMs": 4560,
+        "endMs": 4680,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 4680,
+        "endMs": 4960,
+        "matched": true
+      },
+      {
+        "word": "data",
+        "startMs": 4960,
+        "endMs": 5100,
+        "matched": true
+      },
+      {
+        "word": "moves,",
+        "startMs": 5100,
+        "endMs": 5420,
+        "matched": true
+      },
+      {
+        "word": "from",
+        "startMs": 5540,
+        "endMs": 5700,
+        "matched": true
+      },
+      {
+        "word": "April",
+        "startMs": 5700,
+        "endMs": 5920,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 5920,
+        "endMs": 6180,
+        "matched": true
+      },
+      {
+        "word": "May.",
+        "startMs": 6180,
+        "endMs": 6360,
+        "matched": true
+      },
+      {
+        "word": "Our",
+        "startMs": 6840,
+        "endMs": 7080,
+        "matched": true
+      },
+      {
+        "word": "hardest",
+        "startMs": 7080,
+        "endMs": 7380,
+        "matched": true
+      },
+      {
+        "word": "risk",
+        "startMs": 7380,
+        "endMs": 7640,
+        "matched": true
+      },
+      {
+        "word": "is",
+        "startMs": 7640,
+        "endMs": 7860,
+        "matched": true
+      },
+      {
+        "word": "thin",
+        "startMs": 7860,
+        "endMs": 8080,
+        "matched": true
+      },
+      {
+        "word": "data,",
+        "startMs": 8080,
+        "endMs": 8380,
+        "matched": true
+      },
+      {
+        "word": "so",
+        "startMs": 8540,
+        "endMs": 8740,
+        "matched": true
+      },
+      {
+        "word": "Kotak",
+        "startMs": 8740,
+        "endMs": 8980,
+        "matched": true
+      },
+      {
+        "word": "never",
+        "startMs": 8980,
+        "endMs": 9240,
+        "matched": true
+      },
+      {
+        "word": "guesses:",
+        "startMs": 9240,
+        "endMs": 9580,
+        "matched": true
+      },
+      {
+        "word": "in",
+        "startMs": 10180,
+        "endMs": 10380,
+        "matched": true
+      },
+      {
+        "word": "April,",
+        "startMs": 10380,
+        "endMs": 10660,
+        "matched": true
+      },
+      {
+        "word": "with",
+        "startMs": 10800,
+        "endMs": 11020,
+        "matched": true
+      },
+      {
+        "word": "one",
+        "startMs": 11020,
+        "endMs": 11180,
+        "matched": true
+      },
+      {
+        "word": "month",
+        "startMs": 11180,
+        "endMs": 11320,
+        "matched": true
+      },
+      {
+        "word": "of",
+        "startMs": 11320,
+        "endMs": 11460,
+        "matched": true
+      },
+      {
+        "word": "AI-use",
+        "startMs": 11460,
+        "endMs": 11940,
+        "matched": false
+      },
+      {
+        "word": "data,",
+        "startMs": 11940,
+        "endMs": 12240,
+        "matched": true
+      },
+      {
+        "word": "every",
+        "startMs": 12640,
+        "endMs": 13000,
+        "matched": true
+      },
+      {
+        "word": "skill",
+        "startMs": 13000,
+        "endMs": 13220,
+        "matched": true
+      },
+      {
+        "word": "read",
+        "startMs": 13220,
+        "endMs": 13500,
+        "matched": true
+      },
+      {
+        "word": "Unknown.",
+        "startMs": 13500,
+        "endMs": 13800,
+        "matched": true
+      },
+      {
+        "word": "In",
+        "startMs": 14360,
+        "endMs": 14740,
+        "matched": true
+      },
+      {
+        "word": "May,",
+        "startMs": 14740,
+        "endMs": 14740,
+        "matched": true
+      },
+      {
+        "word": "six",
+        "startMs": 14880,
+        "endMs": 15160,
+        "matched": true
+      },
+      {
+        "word": "verdicts",
+        "startMs": 15160,
+        "endMs": 15580,
+        "matched": true
+      },
+      {
+        "word": "flip,",
+        "startMs": 15580,
+        "endMs": 15700,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 16000,
+        "endMs": 16360,
+        "matched": true
+      },
+      {
+        "word": "ranking",
+        "startMs": 16360,
+        "endMs": 16460,
+        "matched": true
+      },
+      {
+        "word": "reorders,",
+        "startMs": 16460,
+        "endMs": 16920,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 17220,
+        "endMs": 17400,
+        "matched": true
+      },
+      {
+        "word": "web",
+        "startMs": 17400,
+        "endMs": 17500,
+        "matched": true
+      },
+      {
+        "word": "site",
+        "startMs": 17500,
+        "endMs": 17700,
+        "matched": true
+      },
+      {
+        "word": "building,",
+        "startMs": 17700,
+        "endMs": 18020,
+        "matched": true
+      },
+      {
+        "word": "now",
+        "startMs": 18120,
+        "endMs": 18360,
+        "matched": true
+      },
+      {
+        "word": "declining,",
+        "startMs": 18360,
+        "endMs": 18700,
+        "matched": true
+      },
+      {
+        "word": "drops",
+        "startMs": 19060,
+        "endMs": 19120,
+        "matched": true
+      },
+      {
+        "word": "from",
+        "startMs": 19120,
+        "endMs": 19400,
+        "matched": true
+      },
+      {
+        "word": "step",
+        "startMs": 19400,
+        "endMs": 19660,
+        "matched": true
+      },
+      {
+        "word": "four",
+        "startMs": 19660,
+        "endMs": 19860,
+        "matched": true
+      },
+      {
+        "word": "to",
+        "startMs": 19860,
+        "endMs": 20020,
+        "matched": true
+      },
+      {
+        "word": "last.",
+        "startMs": 20020,
+        "endMs": 20380,
+        "matched": true
+      },
+      {
+        "word": "The",
+        "startMs": 20898,
+        "endMs": 21078,
+        "matched": true
+      },
+      {
+        "word": "trend",
+        "startMs": 21078,
+        "endMs": 21278,
+        "matched": true
+      },
+      {
+        "word": "data",
+        "startMs": 21278,
+        "endMs": 21618,
+        "matched": true
+      },
+      {
+        "word": "drives",
+        "startMs": 21618,
+        "endMs": 21838,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 21838,
+        "endMs": 22078,
+        "matched": true
+      },
+      {
+        "word": "plan.",
+        "startMs": 22078,
+        "endMs": 22298,
+        "matched": true
+      },
+      {
+        "word": "Kopi",
+        "startMs": 22778,
+        "endMs": 23078,
+        "matched": true
+      },
+      {
+        "word": "just",
+        "startMs": 23078,
+        "endMs": 23318,
+        "matched": true
+      },
+      {
+        "word": "says",
+        "startMs": 23318,
+        "endMs": 23498,
+        "matched": true
+      },
+      {
+        "word": "why.",
+        "startMs": 23498,
+        "endMs": 23778,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        122
+      ],
+      [
+        2441,
+        2532
+      ],
+      [
+        2597,
+        2704
+      ],
+      [
+        6416,
+        6493
+      ],
+      [
+        9730,
+        9804
+      ],
+      [
+        12323,
+        12388
+      ],
+      [
+        12507,
+        12570
+      ],
+      [
+        12570,
+        12636
+      ],
+      [
+        13935,
+        14074
+      ],
+      [
+        14134,
+        14373
+      ],
+      [
+        15741,
+        15934
+      ],
+      [
+        20372,
+        20491
+      ],
+      [
+        20600,
+        20900
+      ],
+      [
+        22507,
+        22778
+      ],
+      [
+        23891,
+        24104
+      ]
+    ]
+  },
+  "D7": {
+    "src": "voice/demo/D7.wav",
+    "take": "12.wav",
+    "sourceFrom": 0.443,
+    "cutsMs": [],
+    "durationMs": 6874,
+    "gainDb": 5.99,
+    "heard": "Aina can ask Kopi about her plan. Here it checks the national skill gaps, and says plainly that these rows are sample data.",
+    "words": [
+      {
+        "word": "Aina",
+        "startMs": 120,
+        "endMs": 380,
+        "matched": true
+      },
+      {
+        "word": "can",
+        "startMs": 380,
+        "endMs": 660,
+        "matched": true
+      },
+      {
+        "word": "ask",
+        "startMs": 660,
+        "endMs": 840,
+        "matched": true
+      },
+      {
+        "word": "Kopi",
+        "startMs": 840,
+        "endMs": 1180,
+        "matched": true
+      },
+      {
+        "word": "about",
+        "startMs": 1180,
+        "endMs": 1380,
+        "matched": true
+      },
+      {
+        "word": "her",
+        "startMs": 1380,
+        "endMs": 1520,
+        "matched": true
+      },
+      {
+        "word": "plan.",
+        "startMs": 1520,
+        "endMs": 1820,
+        "matched": true
+      },
+      {
+        "word": "Here",
+        "startMs": 2220,
+        "endMs": 2380,
+        "matched": true
+      },
+      {
+        "word": "it",
+        "startMs": 2380,
+        "endMs": 2560,
+        "matched": true
+      },
+      {
+        "word": "checks",
+        "startMs": 2560,
+        "endMs": 2800,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 2800,
+        "endMs": 3020,
+        "matched": true
+      },
+      {
+        "word": "national",
+        "startMs": 3020,
+        "endMs": 3460,
+        "matched": true
+      },
+      {
+        "word": "skill",
+        "startMs": 3460,
+        "endMs": 3760,
+        "matched": true
+      },
+      {
+        "word": "gaps,",
+        "startMs": 3760,
+        "endMs": 4040,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 4260,
+        "endMs": 4340,
+        "matched": true
+      },
+      {
+        "word": "says",
+        "startMs": 4340,
+        "endMs": 4620,
+        "matched": true
+      },
+      {
+        "word": "plainly",
+        "startMs": 4620,
+        "endMs": 5120,
+        "matched": true
+      },
+      {
+        "word": "that",
+        "startMs": 5120,
+        "endMs": 5240,
+        "matched": true
+      },
+      {
+        "word": "these",
+        "startMs": 5240,
+        "endMs": 5500,
+        "matched": true
+      },
+      {
+        "word": "rows",
+        "startMs": 5500,
+        "endMs": 5740,
+        "matched": true
+      },
+      {
+        "word": "are",
+        "startMs": 5740,
+        "endMs": 5940,
+        "matched": true
+      },
+      {
+        "word": "sample",
+        "startMs": 5940,
+        "endMs": 6220,
+        "matched": true
+      },
+      {
+        "word": "data.",
+        "startMs": 6220,
+        "endMs": 6560,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        122
+      ],
+      [
+        997,
+        1058
+      ],
+      [
+        1904,
+        1987
+      ],
+      [
+        2010,
+        2173
+      ],
+      [
+        4110,
+        4174
+      ],
+      [
+        6659,
+        6874
+      ]
+    ]
+  },
+  "M1": {
+    "src": "voice/demo/M1.wav",
+    "take": "13.wav",
+    "sourceFrom": 0.512,
+    "cutsMs": [
+      [
+        3784,
+        3849
+      ]
+    ],
+    "durationMs": 11258,
+    "gainDb": 6.08,
+    "heard": "Kotak doesn't stop at its own screen. Most teams build a chatbot. Kotak is the tool a chatbot calls. Any AI assistant that speaks MCP can ask Kotak, and get the same verdicts, from the same rules.",
+    "words": [
+      {
+        "word": "Kotak",
+        "startMs": 120,
+        "endMs": 420,
+        "matched": true
+      },
+      {
+        "word": "doesn't",
+        "startMs": 420,
+        "endMs": 760,
+        "matched": true
+      },
+      {
+        "word": "stop",
+        "startMs": 760,
+        "endMs": 960,
+        "matched": true
+      },
+      {
+        "word": "at",
+        "startMs": 960,
+        "endMs": 1100,
+        "matched": true
+      },
+      {
+        "word": "its",
+        "startMs": 1100,
+        "endMs": 1160,
+        "matched": true
+      },
+      {
+        "word": "own",
+        "startMs": 1160,
+        "endMs": 1460,
+        "matched": true
+      },
+      {
+        "word": "screen.",
+        "startMs": 1460,
+        "endMs": 1800,
+        "matched": true
+      },
+      {
+        "word": "Most",
+        "startMs": 2260,
+        "endMs": 2400,
+        "matched": true
+      },
+      {
+        "word": "teams",
+        "startMs": 2400,
+        "endMs": 2660,
+        "matched": true
+      },
+      {
+        "word": "build",
+        "startMs": 2660,
+        "endMs": 2940,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 2940,
+        "endMs": 3260,
+        "matched": true
+      },
+      {
+        "word": "chatbot.",
+        "startMs": 3260,
+        "endMs": 3480,
+        "matched": true
+      },
+      {
+        "word": "Kotak",
+        "startMs": 4095,
+        "endMs": 4215,
+        "matched": true
+      },
+      {
+        "word": "is",
+        "startMs": 4215,
+        "endMs": 4355,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 4355,
+        "endMs": 4575,
+        "matched": true
+      },
+      {
+        "word": "tool",
+        "startMs": 4575,
+        "endMs": 4715,
+        "matched": true
+      },
+      {
+        "word": "a",
+        "startMs": 4715,
+        "endMs": 4935,
+        "matched": true
+      },
+      {
+        "word": "chatbot",
+        "startMs": 4935,
+        "endMs": 5235,
+        "matched": true
+      },
+      {
+        "word": "calls.",
+        "startMs": 5235,
+        "endMs": 5695,
+        "matched": true
+      },
+      {
+        "word": "Any",
+        "startMs": 6155,
+        "endMs": 6355,
+        "matched": true
+      },
+      {
+        "word": "AI",
+        "startMs": 6355,
+        "endMs": 6635,
+        "matched": true
+      },
+      {
+        "word": "assistant",
+        "startMs": 6635,
+        "endMs": 7135,
+        "matched": true
+      },
+      {
+        "word": "that",
+        "startMs": 7135,
+        "endMs": 7355,
+        "matched": true
+      },
+      {
+        "word": "speaks",
+        "startMs": 7355,
+        "endMs": 7555,
+        "matched": true
+      },
+      {
+        "word": "MCP",
+        "startMs": 7555,
+        "endMs": 8115,
+        "matched": true
+      },
+      {
+        "word": "can",
+        "startMs": 8115,
+        "endMs": 8315,
+        "matched": true
+      },
+      {
+        "word": "ask",
+        "startMs": 8315,
+        "endMs": 8515,
+        "matched": true
+      },
+      {
+        "word": "Kotak,",
+        "startMs": 8515,
+        "endMs": 8915,
+        "matched": true
+      },
+      {
+        "word": "and",
+        "startMs": 8995,
+        "endMs": 9135,
+        "matched": true
+      },
+      {
+        "word": "get",
+        "startMs": 9135,
+        "endMs": 9235,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 9235,
+        "endMs": 9515,
+        "matched": true
+      },
+      {
+        "word": "same",
+        "startMs": 9515,
+        "endMs": 9655,
+        "matched": true
+      },
+      {
+        "word": "verdicts,",
+        "startMs": 9655,
+        "endMs": 10215,
+        "matched": true
+      },
+      {
+        "word": "from",
+        "startMs": 10215,
+        "endMs": 10335,
+        "matched": true
+      },
+      {
+        "word": "the",
+        "startMs": 10335,
+        "endMs": 10475,
+        "matched": true
+      },
+      {
+        "word": "same",
+        "startMs": 10475,
+        "endMs": 10675,
+        "matched": true
+      },
+      {
+        "word": "rules.",
+        "startMs": 10675,
+        "endMs": 11015,
+        "matched": true
+      }
+    ],
+    "silences": [
+      [
+        0,
+        120
+      ],
+      [
+        1846,
+        1976
+      ],
+      [
+        2028,
+        2099
+      ],
+      [
+        2106,
+        2179
+      ],
+      [
+        3444,
+        3634
+      ],
+      [
+        3634,
+        3934
+      ],
+      [
+        5703,
+        5801
+      ],
+      [
+        5970,
+        6040
+      ],
+      [
+        11189,
+        11278
+      ]
+    ]
+  }
+}
