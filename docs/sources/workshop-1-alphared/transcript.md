@@ -1,6 +1,6 @@
 # Workshop 1 transcript
 
-What was said at SDC Hackathon 2026 Workshop 1, run by Alpha Red, the platinum sponsor and Domain 2 partner, on Zoom on 20 October 2026 from about 10:01 AM to 10:52 AM MYT. It was announced as "Agentic Development with Cloudflare cf CLI". Cheong Nan Feng showed how to build AI agents on Cloudflare, then KC Cheah introduced and demoed Orbyte, the platform behind the [Domain 2 problem statement](/docs/sources/drive.google.com/domain-2-orbyte.md). The slides are in [Cloudflare slides](slides-cloudflare.md) and [Orbyte slides](slides-orbyte.md), and what the recording shows of the Zoom chat in the [meeting chat](chat.md).
+What was said at SDC Hackathon 2026 Workshop 1, run by Alpha Red, the platinum sponsor and Domain 2 partner, on Zoom on 20 October 2026 from about 10:01 AM to 10:52 AM MYT. It was announced as "Agentic Development with Cloudflare cf CLI". Cheong Nan Feng showed how to build AI agents on Cloudflare, then KC Cheah introduced and demoed Orbyte, the platform behind the [Domain 2 problem statement](/docs/sources/drive.google.com/domain-2-orbyte.md). The slides are in [Cloudflare slides](slides-cloudflare.md) and [Orbyte slides](slides-orbyte.md), and what the recording shows of the Zoom chat in the [meeting chat](chat.md). The screens of the two live demos are in the [demo screens](slides.md).
 
 Times count from the start of the organisers' recording, about 10:01 AM, from the workshop's [Drive folder](https://drive.google.com/drive/folders/1sWs2gnuY_Mfa_SCvHzEpS1Tw4XYvXYgF). The text merges two machine transcriptions, a local Whisper medium pass and an OpenAI gpt-4o-transcribe pass, checked against each other and the slides. Doubtful words are marked _(as heard: "...")_, and fillers and false starts are trimmed. Questions typed in the Zoom chat aren't in the recording, and the participants who asked them aren't named; only two chat notifications show on screen, in the [meeting chat](chat.md).
 
@@ -74,7 +74,7 @@ _From 00:24:15 to 00:25:50 Nan Feng sets up the demo without speaking._
 
 **[00:25:54] Nan Feng:** So this is the sample app. You can of course connect it to your Workers AI in Cloudflare if you really want to try it out. I will share the link as well so you can view it. These are the sample demos I mentioned just now: you can have a missing demo link, then this is the form, then save and validate, so you can see it running. All right, I'll leave the exploration to you guys. Next, I'll invite _(as heard: "Bernard")_ to demo the Orbyte platform.
 
-_The app shown is "Build Weekend" organizer assistant, the deck's demo, running on sample fixtures rather than live model calls. See [slide 42](slides-cloudflare.md#slide-42-the-full-working-product)._
+_The app shown is "Build Weekend" organizer assistant, the deck's demo, running on sample fixtures rather than live model calls. See [slide 42](slides-cloudflare.md#slide-42-the-full-working-product) and the [demo screens](slides.md#slide-01-build-weekend-demo-the-participant-view)._
 
 **[00:27:03] KC:** I'll do that instead. Okay. All right, let me try to share.
 
@@ -110,7 +110,7 @@ _The app shown is "Build Weekend" organizer assistant, the deck's demo, running 
 
 **[00:43:16] KC:** Then in the Talent Hub we can manage leave, OT and claims, and we use AI to do CV screening; we do the job posting as well. We also have a few modules that we use for our development operations: for dev planning we do BRD analysis, which can create user stories in our DevOps tools. And we have e-signing, which leverages an open-source project called Documenso _(as heard: "DocumentSoul")_. So these are some of the modules we have. Later you can log in to the staging environment and play around with it. Of course, you won't have all the modules under your access, but at least you'll get a feel for what it looks like.
 
-_The demo showed Alpha Red's own Orbyte workspace: sign-in, the dashboard, job listings, task lists, the project focus timeline, meeting summaries, and BRD analysis with Azure DevOps sync. Staff names on screen are left out here._
+_The demo showed Alpha Red's own Orbyte workspace: sign-in, the dashboard, job listings, task lists, the project focus timeline, meeting summaries, and BRD analysis with Azure DevOps sync. Staff names on screen are left out here. See the [demo screens](slides.md#slide-05-orbyte-demo-sign-in)._
 
 **[00:44:11] KC:** Okay, I think that's all from my side. Is there any other question? Oh yes, I think we have some questions in the chat. _[A participant's question in the chat.]_ I think most of the functions are quite self-explanatory and self-serve. Once you log in, if you have other questions... I'm not sure whether there's another way for participants to post their questions, but I think most of the functions are pretty self-explanatory, and we probably don't need a full walkthrough of all of them.
 
