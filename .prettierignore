@@ -8,3 +8,5 @@ data/onet/
 data/pathways/onet-preparation.json
 data/pathways/cip-soc.json
 data/generated/
+# Other finalist teams' repositories, kept byte-for-byte as cloned
+docs/sources/finalists/*/
