@@ -1,10 +1,13 @@
-# Participant Drive sources
+# Participant and finalist Drive sources
 
 The organisers' [SDC Hackathon 2026 - Participant Resources](https://drive.google.com/drive/folders/1xw7c2aN8N-at8hPEULzkcU76e_FFb0Ef) Google Drive folder, cleaned into Markdown. It went live at 10 PM on 19 October 2026 with the problem statements, handbooks, submission templates and tutorials, and was captured that night. A recheck just after midnight on 20 October found no file added or changed since. By about 9 PM on 20 October, the orientation slides and recording had moved into a new folder 5, and the first workshop's files were in folder 6.
+
+Finalists got a second folder, [SDC Hackathon - Finalist Drive](https://drive.google.com/drive/folders/1-RPEyUik2nHSz6DvFVVe22SBYXEqj965), set up on 26 October 2026 and captured on 28 October with Firecrawl, both signed in and signed out, after its tour video and directory videos were added that day.
 
 Contents:
 
 1.  [Folder map](#folder-map)
+1.  [Finalist Drive map](#finalist-drive-map)
 1.  [Conflicts between sources](#conflicts-between-sources)
 
 ## Folder map
@@ -28,6 +31,20 @@ The Drive folder's layout, with where each item lives in this repo:
   - **Workshop 1: AlphaRed (Agentic Development)**: the recording, the Orbyte introduction deck and a group photo, written up in [Workshop 1: Alpha Red](/docs/sources/workshop-1-alphared/transcript.md).
 - **Must Watch: Drive Guide**: also in the [video tutorials](video-tutorials.md).
 
+## Finalist Drive map
+
+The Finalist Drive's layout, with where each item lives in this repo:
+
+- **1. Domain 1**: [Domain 1 finalist guide](domain-1-aiversecity-finalist-guide.md), our team's domain.
+- **2. Domain 2**: [Domain 2 finalist guide](domain-2-orbyte-finalist-guide.md).
+- **3. Official Handbooks**: byte-for-byte copies of the three PDFs in the participant folder: the [official handbook](/docs/sources/sdchack.my/handbook.md), the [Terms and Conditions](/docs/sources/sdchack.my/terms-and-conditions.md) and the [participant handbook](participant-handbook.md).
+- **4. Finalist Guidelines**:
+  - **1. Github Sample Folder**: "GitHub Repository Sample", the same PDF as the participant folder's, linking to the [GitHub submission template](github-submission-template.md). The [tour](finalist-drive-tour.md) calls it only a reference: keep improving your preliminary repository rather than starting a new one.
+  - **2. Template for Document Submission**: the [Phase 2 final report template](final-report-template.md) and the [finalist copy of the Technical Tools Declaration](technical-tools-declaration-template.md#finalist-copy), both as `.docx` only.
+- **5. Finalist Credits**: the [finalist credits guide](finalist-credits-guide.md) for Replit, Runpod and KrackedDevs. The tour video also shows detailed Replit and KrackedDevs guides here, but they weren't in the folder when captured.
+- **6. Directory**: four campus walkthrough videos, listed in the [Finalist Drive tour](finalist-drive-tour.md#directory-videos).
+- **SDC Finalist Drive Tour**: the narrated tour of the folder, transcribed in the [Finalist Drive tour](finalist-drive-tour.md).
+
 ## Conflicts between sources
 
 The organisers' documents disagree on these points. Check with the organisers, in `#ask-the-organizers` on Discord or at sdc.xmumhack@gmail.com, before relying on the looser rule.
@@ -39,3 +56,6 @@ The organisers' documents disagree on these points. Check with the organisers, i
 - **Formal questions**: the official Discord server (participant handbook 15.4), but the official event email (official handbook 12.13 and the FAQ). Slide 51 of the briefing gives both.
 - **Score reviews**: requests are not entertained unless the committee verifies an administrative or technical error (participant handbook 6.8.2), but no appeal or re-evaluation request is entertained at all (Terms and Conditions 7.4.2).
 - **Final pitching session**: 6:00 to 8:30 PM on 1 November in A3#517 and A3#516 (participant handbook 6.7.1 and 6.7.3), but 9:40 AM to 3:40 PM in Room 1, A4#113, and Room 2, A5#119 (participant handbook 7.2 and 5).
+- **Final pitch deck format**: `.pptx` (participant handbook 6.6.4.6), but "exported and saved as a flattened PDF file" ([final report template](final-report-template.md#6-final-submission-checklist), section 6).
+- **Length of the final sprint**: "the 48-hour physical sprint" ([final report template](final-report-template.md#32-implementation--hackathon-deliverables), 3.2), but the participant handbook runs it from 9:30 AM on 31 October to 7:59:59 AM on 1 November (6.6.1 and 6.6.3), under 23 hours.
+- **Final pitch and Q&A length**: 10 minutes and 5 minutes (participant handbook 6.7.3), but both finalist guides say the time limit "will be confirmed by the organizers".

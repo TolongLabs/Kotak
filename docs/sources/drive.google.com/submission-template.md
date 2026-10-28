@@ -176,5 +176,6 @@ The [GitHub submission template](github-submission-template.md) ships an older c
 ## See also
 
 - [Technical tools declaration template](technical-tools-declaration-template.md), the second PDF teams submit alongside the project
+- [Phase 2 final report template](final-report-template.md), which replaces this one for finalists
 - [GitHub submission template](github-submission-template.md), the sample repository whose `submission/` folder holds the older copy of this template
 - [SDC Hackathon 2026 official handbook](/docs/sources/sdchack.my/handbook.md), especially section 8 on declaring tools and pre-existing work

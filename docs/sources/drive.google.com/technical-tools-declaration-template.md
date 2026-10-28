@@ -22,6 +22,7 @@ Contents:
     1.  [6.2. Known limitations & risks](#62-known-limitations--risks)
 1.  [7. Compliance & readiness](#7-compliance--readiness)
 1.  [8. Declaration](#8-declaration)
+1.  [Finalist copy](#finalist-copy)
 1.  [See also](#see-also)
 
 ## Cover page and submission rules
@@ -35,7 +36,7 @@ The instructions box on the cover says, verbatim:
 What that means in practice:
 
 - **File**: one PDF named `SDC2026_TeamName_TechDeclaration.pdf`, with your team name in place of `TeamName`, submitted together with your project submission.
-- **Deadline**: not set. The cover still shows the placeholder "[Insert date]".
+- **Deadline**: not set. The cover still shows the placeholder "[Insert date]". The [finalist copy](#finalist-copy) sets 1 November 2026.
 - **No blanks**: complete every section. Where a category does not apply, tick "No" or write "None".
 - **Penalty**: undeclared third-party resources discovered at judging may affect your score or eligibility.
 - **Secrets**: do not include API keys or secrets (section 3.1), and the section 7 checklist asks you to confirm none are exposed anywhere.
@@ -204,6 +205,10 @@ By submitting this document, the team leader confirms that the information provi
 [Date]
 
 The template leaves blank space under each placeholder. It does not say whether the signature must be handwritten or may be typed.
+
+## Finalist copy
+
+The Finalist Drive holds a finalist copy, "2. SDC Hackathon: Tech. Tools Declaration Template (Finalist)" ([source `.docx`](https://drive.google.com/file/d/1VrG2XqRfnl1_Sku-ZslEdrtZJG60dWcA/view)), added on 26 October 2026. Its text matches the `.docx` copy in the participant Drive, except that the deadline reads "Submission Deadline: 1st November 2026" and the cover background image is gone. The [Drive tour](finalist-drive-tour.md) asks finalists to submit a new copy for the final, alongside the [Phase 2 report](final-report-template.md).
 
 ## See also
 

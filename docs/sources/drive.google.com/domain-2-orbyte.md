@@ -125,7 +125,7 @@ The preliminary round judges your proposed idea and gives you first proof that y
 
 - A criterion’s score is its weight multiplied by the band’s percentage.
 - A GitHub repository link is required. Make sure it is public or accessible to judges and reflects what you demo.
-- Your preliminary score does not carry forward. The final round uses a different rubric, which will be shared with finalists.
+- Your preliminary score does not carry forward. The final round uses a different rubric, shared with finalists in the [finalist guide](domain-2-orbyte-finalist-guide.md).
 
 ## Contact
 
