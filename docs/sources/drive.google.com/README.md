@@ -23,7 +23,7 @@ The Drive folder's layout, with where each item lives in this repo:
   - The 23 October revisions are listed in the [document updates announcement](/docs/sources/discord.com/announcements.md#document-updates), and the docs here follow them.
 - **4. Participant Guideline (Docs & Tutorials)**:
   - **1. Documentation for Submission**:
-    - **1. Github Sample Folder**: [GitHub submission template](github-submission-template.md), the sample repository.
+    - **1. Github Sample Folder**: `GitHub Link.pdf`, a link to the [sample repository](https://github.com/michaelzhngg/SDC_Hackathon_Submission_Template), written up in the [GitHub submission template](github-submission-template.md). It replaced the repository's zip on 21 October.
     - **2. Template for docs inside GitHub Rep**: the [submission template](submission-template.md) and the [Technical Tools Declaration template](technical-tools-declaration-template.md).
       - On 22 October 2026, the organisers added a `.docx` copy of each template beside its PDF. The copies have a simpler design to cut the file size, and the content is the same, so a team can fill either one. The announcement says: "All teams must convert to PDF and submit in PDF format. Please do not submit in Docs/Word format."
   - **2. Video Tutorials Needed**: [video tutorials](video-tutorials.md) on submission, the Apache 2.0 licence, mentor booking, the website and Orbyte account setup.

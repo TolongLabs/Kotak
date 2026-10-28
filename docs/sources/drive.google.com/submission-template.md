@@ -166,7 +166,7 @@ The template leaves blank space under each placeholder. It does not say whether 
 
 ## Differences from the older copy in the GitHub template
 
-The [GitHub submission template](github-submission-template.md) ships an older copy of this template as `submission/Submission Template SDC Hackathon.pdf`: a 6-page Microsoft Word export dated 18 October 2026, where this one is a 14-page Canva export dated 19 October 2026. Every section, field, prompt, word limit, checkbox and the file-name rule are the same in both. The differences are layout only:
+The zip of the [GitHub submission template](github-submission-template.md) shipped an older copy of this template as `submission/Submission Template SDC Hackathon.pdf`: a 6-page Microsoft Word export dated 18 October 2026, where this one is a 14-page Canva export dated 19 October 2026. The repository has since [replaced it with this one](github-submission-template.md#changes-since-the-zip). Every section, field, prompt, word limit, checkbox and the file-name rule are the same in both. The differences are layout only:
 
 - The older copy has no designed cover page, logo strip, Instagram/email footer or page numbers. Its title reads "SDC HACKATHON 2026" above "Phase 1: Preliminary Project Proposal".
 - Section 1 is headed "Team & Project Overview" rather than "Team and Project Overview".
@@ -177,5 +177,5 @@ The [GitHub submission template](github-submission-template.md) ships an older c
 
 - [Technical tools declaration template](technical-tools-declaration-template.md), the second PDF teams submit alongside the project
 - [Phase 2 final report template](final-report-template.md), which replaces this one for finalists
-- [GitHub submission template](github-submission-template.md), the sample repository whose `submission/` folder holds the older copy of this template
+- [GitHub submission template](github-submission-template.md), the sample repository whose `submission/` folder held the older copy of this template
 - [SDC Hackathon 2026 official handbook](/docs/sources/sdchack.my/handbook.md), especially section 8 on declaring tools and pre-existing work

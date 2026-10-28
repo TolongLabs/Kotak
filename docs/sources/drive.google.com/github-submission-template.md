@@ -1,6 +1,8 @@
 # SDC Hackathon 2026 GitHub submission template
 
-The sample repository the organisers shared as "SDC Hackathon Submission Template (GitHub)", a zip on Google Drive ([source zip](https://drive.google.com/file/d/1Atfzhuehpr6zYvM0oenDOzXeNymTHow_/view)). It is a minimal Python project set up for Replit and RunPod, with a README template and a `submission/` folder for the required PDFs. This page lists every file, reproduces the small ones verbatim, and summarises the rest.
+The sample repository the organisers shared, now public at [michaelzhngg/SDC_Hackathon_Submission_Template](https://github.com/michaelzhngg/SDC_Hackathon_Submission_Template). It is a minimal Python project set up for Replit and RunPod, with a README template and a `submission/` folder for the required PDFs.
+
+This page was cleaned from the zip the Drive first shared as "SDC Hackathon Submission Template (GitHub)" ([source zip](https://drive.google.com/file/d/1Atfzhuehpr6zYvM0oenDOzXeNymTHow_/view), which asked for sign-in on 29 October), matching the repository's commit [`1ad25e8`](https://github.com/michaelzhngg/SDC_Hackathon_Submission_Template/tree/1ad25e8) of 18 October. On 21 October 2026, `GitHub Link.pdf`, a one-page PDF holding only the repository link, replaced the zip. Every section but [Changes since the zip](#changes-since-the-zip) describes the zip: it lists every file, reproduces the small ones verbatim, and summarises the rest.
 
 Contents:
 
@@ -21,6 +23,7 @@ Contents:
     1.  [Proof-of-use sample PDFs](#proof-of-use-sample-pdfs)
     1.  [Older copy of the proposal template](#older-copy-of-the-proposal-template)
 1.  [License file](#license-file)
+1.  [Changes since the zip](#changes-since-the-zip)
 1.  [See also](#see-also)
 
 ## File tree
@@ -443,11 +446,27 @@ if __name__ == "__main__":
 
 ### Older copy of the proposal template
 
-`submission/Submission Template SDC Hackathon.pdf` is a 6-page Microsoft Word export, dated 18 October 2026, of the Phase 1 preliminary project proposal template. Its questions, word limits and file-name rule (`SDC2026_TeamName_Preliminary.pdf`) match the 14-page Canva version shared separately on Drive; the layout differences are listed in [Phase 1 preliminary project proposal template](submission-template.md#differences-from-the-older-copy-in-the-github-template).
+`submission/Submission Template SDC Hackathon.pdf` is a 6-page Microsoft Word export, dated 18 October 2026, of the Phase 1 preliminary project proposal template. Its questions, word limits and file-name rule (`SDC2026_TeamName_Preliminary.pdf`) match the 14-page Canva version shared separately on Drive; the layout differences are listed in [Phase 1 preliminary project proposal template](submission-template.md#differences-from-the-older-copy-in-the-github-template). The repository has since replaced it with the Canva version; see [Changes since the zip](#changes-since-the-zip).
 
 ## License file
 
 `LICENSE` is the standard, unmodified Apache License, Version 2.0 text, including the appendix with its `[yyyy]` and `[name of copyright owner]` placeholders. The README's last section says the project is licensed under it.
+
+## Changes since the zip
+
+Checked on 29 October 2026 against commit [`d748202`](https://github.com/michaelzhngg/SDC_Hackathon_Submission_Template/tree/d748202), the repository's last push, on 24 October. Only the `submission/` folder and the README changed; the code, configuration files, tests and `LICENSE` are the same as in the zip.
+
+- **Submission file names** (19 October): the PDFs follow the `SDC2026_TeamName_*.pdf` pattern, and a technical tools declaration joins them:
+  - `REPLIT PROOF OF USE.pdf` became `SDC2026_TeamName_Replit_POU.pdf`, otherwise unchanged.
+  - `RUNPOD PROOF OF USE.pdf` became `SDC2026_TeamName_Runpod_POU.pdf`, otherwise unchanged.
+  - `Submission Template SDC Hackathon.pdf` became `SDC2026_TeamName_Preliminary.pdf`.
+  - `SDC2026_TeamName_TechDeclaration.pdf` is new.
+- **Templates** (21 October): `SDC2026_TeamName_Preliminary.pdf` and `SDC2026_TeamName_TechDeclaration.pdf` are now the 14-page [Phase 1 preliminary project proposal template](submission-template.md) and the 16-page [Technical Tools Declaration template](technical-tools-declaration-template.md), with the same text as the Canva PDFs on Drive.
+- **README** (19 October, except where noted):
+  - A callout at the top links the [participant Drive folder](https://drive.google.com/drive/folders/1xw7c2aN8N-at8hPEULzkcU76e_FFb0Ef): "All required submission templates are in the Google Drive folder below. Download them before you start."
+  - The project structure tree and both proof-of-use links use the new file names.
+  - The checklist replaces "Submission template completed in `submission/`" with three items: "Preliminary submission completed (`SDC2026_TeamName_Preliminary.pdf`)", "Technology declaration completed (`SDC2026_TeamName_TechDeclaration.pdf`)" and "Submission files renamed with your team name (replace `TeamName`)".
+  - The Links table no longer has the "Replit Project" row (24 October).
 
 ## See also
 
