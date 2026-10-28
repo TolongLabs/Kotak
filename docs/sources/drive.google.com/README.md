@@ -1,6 +1,6 @@
 # Participant and finalist Drive sources
 
-The organisers' [SDC Hackathon 2026 - Participant Resources](https://drive.google.com/drive/folders/1xw7c2aN8N-at8hPEULzkcU76e_FFb0Ef) Google Drive folder, cleaned into Markdown. It went live at 10 PM on 19 October 2026 with the problem statements, handbooks, submission templates and tutorials, and was captured that night. A recheck just after midnight on 20 October found no file added or changed since. By about 9 PM on 20 October, the orientation slides and recording had moved into a new folder 5, and the first workshop's files were in folder 6.
+The organisers' [SDC Hackathon 2026 - Participant Resources](https://drive.google.com/drive/folders/1xw7c2aN8N-at8hPEULzkcU76e_FFb0Ef) Google Drive folder, cleaned into Markdown. It went live at 10 PM on 19 October 2026 with the problem statements, handbooks, submission templates and tutorials, and was captured that night. A recheck just after midnight on 20 October found no file added or changed since. By about 9 PM on 20 October, the orientation slides and recording had moved into a new folder 5, and the first workshop's files were in folder 6. Workshops 2 to 5 and an Orbyte account setup video followed from 21 to 23 October; they were captured just after midnight on 29 October from a signed-out listing of the folder.
 
 Finalists got a second folder, [SDC Hackathon - Finalist Drive](https://drive.google.com/drive/folders/1-RPEyUik2nHSz6DvFVVe22SBYXEqj965), set up on 26 October 2026 and captured on 28 October with a Firecrawl crawl of the whole folder tree, signed in, after its tour video and directory videos were added that day. A signed-out listing matched. The three handbooks are over Firecrawl's 50 MiB limit, so they were compared by checksum instead, and the tour video was transcribed separately.
 
@@ -26,16 +26,19 @@ The Drive folder's layout, with where each item lives in this repo:
     - **1. Github Sample Folder**: [GitHub submission template](github-submission-template.md), the sample repository.
     - **2. Template for docs inside GitHub Rep**: the [submission template](submission-template.md) and the [Technical Tools Declaration template](technical-tools-declaration-template.md).
       - On 22 October 2026, the organisers added a `.docx` copy of each template beside its PDF. The copies have a simpler design to cut the file size, and the content is the same, so a team can fill either one. The announcement says: "All teams must convert to PDF and submit in PDF format. Please do not submit in Docs/Word format."
-  - **2. Video Tutorials Needed**: [video tutorials](video-tutorials.md) on submission, the Apache 2.0 licence, mentor booking and the website.
-    - **4. Domain 2 - Orbyte Setup**: "Orbyte Account Setup.mp4", added on 21 October, the registration tutorial from the [Domain 2 announcement](/docs/sources/discord.com/announcements.md#domain-2-orbyte-registration). Not transcribed.
+  - **2. Video Tutorials Needed**: [video tutorials](video-tutorials.md) on submission, the Apache 2.0 licence, mentor booking, the website and Orbyte account setup.
+    - **4. Domain 2 - Orbyte Setup**: "Orbyte Account Setup.mp4", added on 21 October, the registration tutorial from the [Domain 2 announcement](/docs/sources/discord.com/announcements.md#domain-2-orbyte-registration), transcribed in the [video tutorials](video-tutorials.md#orbyte-account-setup).
 - **5. Online Orientation Briefing**: the organisers' slides and recording of the [opening briefing](/docs/sources/opening-briefing/transcript.md). The recording was at the top of the folder on 19 October.
 - **6. Workshop Recordings**:
   - **Workshop 1: AlphaRed (Agentic Development)**: the recording, the Orbyte introduction deck and a group photo, written up in [Workshop 1: Alpha Red](/docs/sources/workshop-1-alphared/transcript.md).
-  - Workshops 2 to 5, added from 21 to 23 October, aren't written up yet ([#333](https://github.com/TolongLabs/Kotak-dev/issues/333)):
-    - **Workshop 2: Replit (Build an app with replit in 20 minutes)**: the recording.
-    - **Workshop 3: Runpod (From Text to Decisions: Building AI Applications with Structured Outputs)**: the recording, the Zoom chat, the slides "Deploying Open Source Models on Runpod Serverless", a resource sheet and "Runpod Getting Started Resources".
-    - **Workshop 4: AIoT: The Convergence of IoT Artificial Intelligence**: the recording.
-    - **Workshop 5: KrackedDevs (AI Builder Foundation: Introduction to VibeCoding)**: the recording.
+  - **Workshop 2: Replit (Build an app with replit in 20 minutes)**: the recording, written up in [Workshop 2: Replit](/docs/sources/workshop-2-replit/transcript.md). Its first 48 minutes are a waiting screen, mic checks and sponsor videos; the session itself ran about 40 minutes.
+  - **Workshop 3: Runpod (From Text to Decisions: Building AI Applications with Structured Outputs)**: written up in four files:
+    - The recording, in the [transcript](/docs/sources/workshop-3-runpod/transcript.md). Its first 37 minutes are a waiting screen and sponsor videos.
+    - `chat.txt`, the Zoom chat, in the [meeting chat](/docs/sources/workshop-3-runpod/chat.md).
+    - The slides, "Deploying Open Source Models on Runpod Serverless", in [Workshop 3 slides](/docs/sources/workshop-3-runpod/slides.md).
+    - The resource sheet and "Runpod Getting Started Resources", in [Workshop 3 resources](/docs/sources/workshop-3-runpod/resources.md).
+  - **Workshop 4: AIoT: The Convergence of IoT Artificial Intelligence**: the recording of Favoriot's talk and platform demo, written up in [Workshop 4: Favoriot](/docs/sources/workshop-4-favoriot/transcript.md). It starts mid-sentence, so the session's opening is missing. The slides aren't in the folder; the transcript notes them as they change.
+  - **Workshop 5: KrackedDevs (AI Builder Foundation: Introduction to VibeCoding)**: the recording, written up in [Workshop 5: KrackedDevs](/docs/sources/workshop-5-krackeddevs/transcript.md). It skips about 13 minutes near the start and ends as the speaker leaves attendees to build, about halfway through the 3-hour slot. His slides aren't in the folder, but [the deck](https://fadlikhalid.github.io/vibe101-deck/) is online.
 - **Must Watch: Drive Guide**: also in the [video tutorials](video-tutorials.md).
 
 ## Finalist Drive map

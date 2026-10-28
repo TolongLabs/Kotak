@@ -1,6 +1,6 @@
 # Participant Drive video tutorials
 
-What the organisers' tutorial videos in the participant Drive folder say and show. Three of them were also played at the opening briefing and are transcribed in its [transcript](/docs/sources/opening-briefing/transcript.md); the other four are transcribed here, from their narration or, where there is none, their on-screen captions.
+What the organisers' tutorial videos in the participant Drive folder say and show. Three of them were also played at the opening briefing and are transcribed in its [transcript](/docs/sources/opening-briefing/transcript.md); the other five are transcribed here, from their narration or, where there is none, their on-screen captions.
 
 Contents:
 
@@ -9,6 +9,7 @@ Contents:
 1.  [Apache 2.0 licence tutorial B (manual)](#apache-20-licence-tutorial-b-manual)
 1.  [Summary submission](#summary-submission)
 1.  [Detailed submission](#detailed-submission)
+1.  [Orbyte account setup](#orbyte-account-setup)
 1.  [Website text shown in the submission videos](#website-text-shown-in-the-submission-videos)
     1.  [Mentor booking page](#mentor-booking-page)
     1.  [Submit page](#submit-page)
@@ -24,6 +25,7 @@ Contents:
 | [Apache 2.0 License Tutorial B][apb]    | Video Tutorials › 2. Apache 2.0 Tutorial                    | 1:32   | [Below](#apache-20-licence-tutorial-b-manual) |
 | [1. Summary Submission][sum]            | Video Tutorials › 3. Mentorship Booking & Submission Method | 1:09   | [Below](#summary-submission)                  |
 | [2. Detailed Submission][det]           | Video Tutorials › 3. Mentorship Booking & Submission Method | 4:06   | [Below](#detailed-submission)                 |
+| [Orbyte Account Setup.mp4][orb]         | Video Tutorials › 4. Domain 2 - Orbyte Setup                | 1:44   | [Below](#orbyte-account-setup)                |
 
 The three videos played at the briefing match their Drive files word for word. The Drive Guide promises a mentorship booking tutorial "soon"; the two Mentorship Booking & Submission Method videos are it.
 
@@ -34,6 +36,7 @@ The three videos played at the briefing match their Drive files word for word. T
 [apb]: https://drive.google.com/file/d/1TRDXns2RkOjXr6N7gB7IEgBKEGriWAAq/view
 [sum]: https://drive.google.com/file/d/1Yiw_g5BqBXWH5PPqewSulEpP9PRgoriu/view
 [det]: https://drive.google.com/file/d/1MenEjAJsxfPRONE8UjNYpg8anuG_yNzl/view
+[orb]: https://drive.google.com/file/d/1Nu2c4rjvpZxvbuVGQXEu9vRTDIizRORm/view
 
 ## Apache 2.0 licence tutorial A (direct)
 
@@ -85,6 +88,20 @@ A narrated screen recording of the website's preview pages, with fake teams, men
 **[1:41]** Moving on to project submission. This part is quick and straightforward. When submission is open, access this page, paste your team's official GitHub repository link, and hit Submit before the deadline. _(From 1:57 to about 2:08 the narration is unclear and there are no captions; the screen shows the submit page.)_
 
 **[2:12]** From here the video plays the same Discord tour shown at the opening briefing, from "Finally, let's explore our official Discord server" to "enjoy the process" (opening briefing transcript, 01:04:44), and ends: "We wish you the absolute best of luck on your journey, and happy hacking!"
+
+## Orbyte account setup
+
+Added on 21 October 2026 with the [Domain 2 Orbyte registration](/docs/sources/discord.com/announcements.md#domain-2-orbyte-registration) announcement. A narrated screen recording whose title card reads "Domain 2 · Optional", "Orbyte account setup for Domain 2 teams" and "Create a demo Orbyte account on the Alpha Red Solutions platform", with each step numbered in a caption. The email address and verification code it shows are left out.
+
+**[0:00]** Hi, Domain 2 teams. Here's how to create an account on Orbyte, the business platform from Alpha Red Solutions. Before we start, an important note: creating an Orbyte account is not compulsory. It's only to help you understand the platform. If Alpha Red Solutions doesn't approve your account in time, the organising committee can't be held responsible for the delay. The Domain 2 guide doesn't depend on it. It's just for your understanding.
+
+**[0:30]** Go to the Orbyte sign-up page. The link is on screen _(`orbyte-xyz.alphareds.com`)_. Enter your email and continue with email. On Register your organization, make sure Customize organization code is unticked. A unique code will be generated for you. For company name and company registration number, just use your team name. For full name, enter your team leader's name. Your contact email is already filled in. Set a password, then click Create company workspace.
+
+**[0:58]** Orbyte sends an 8-digit verification code to your email. Open the email and copy the code. Back on Orbyte, paste the code and click Verify email. Your email is verified, and your application is now pending approval. Alpha Red Solutions will review it and email you when a decision is made. You can sign in again any time to check. Until it's approved, you'll see "Your company is awaiting approval", so please be patient and wait for the approval.
+
+**[1:31]** That's it. Remember, the Orbyte account is optional and just for your understanding. Good luck, Domain 2 teams, and see you at SDC Hackathon 2026.
+
+The closing card sums it up: sign up with your email, organisation details and the verification code; use your team name for the company name and registration number; and it's optional, "only to help you understand Orbyte".
 
 ## Website text shown in the submission videos
 

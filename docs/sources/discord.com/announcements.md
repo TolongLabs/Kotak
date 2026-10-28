@@ -77,6 +77,8 @@ Both are on Zoom. The team portal lists the same two with fuller descriptions; s
 
 On 21 October the Replit post was reposted at 12:03 AM, and each workshop was reposted with its meeting ID and passcode in full: the Replit workshop at 8:30 AM and the Runpod workshop at 9:42 PM.
 
+The workshops are written up in [Workshop 2: Replit](/docs/sources/workshop-2-replit/transcript.md) and [Workshop 3: Runpod](/docs/sources/workshop-3-runpod/transcript.md).
+
 ## Mentorship booking cut-off
 
 At 10:26 AM on 21 October, marked "IMPORTANT UPDATE", the cut-off changed: "mentorship sessions for the next day must now be booked before 10:00 PM today. For reference, you cannot book any session for tomorrow if it is already past 10:00 PM tonight." One team can still book one slot only.
@@ -99,12 +101,14 @@ At 12:17 PM on 21 October, the Replit workshop recording went up in a [Drive fol
 
 ## Domain 2: Orbyte registration
 
-At 5:38 PM on 21 October, for Domain 2 participants: register on the Orbyte site, following a video tutorial; use a shared temporary account (its login is left out here) until your own account is approved, which takes about an hour. The step is "not compulsory": "the official domain guide makes no reference to this platform. It is purely for your own understanding."
+At 5:38 PM on 21 October, for Domain 2 participants: register on the Orbyte site, following a video tutorial; use a shared temporary account (its login is left out here) until your own account is approved, which takes about an hour. The step is "not compulsory": "the official domain guide makes no reference to this platform. It is purely for your own understanding." The tutorial is transcribed in [Orbyte account setup](/docs/sources/drive.google.com/video-tutorials.md#orbyte-account-setup).
 
 ## Workshops on 22 and 23 October
 
 - **AIoT: The Convergence of IoT and Artificial Intelligence**, by Favoriot, 22 October 2026 (Thursday), 10:30 AM to 12:00 PM, on Zoom. Posted at 6:42 PM on 21 October.
 - **AI Builder Foundation: Introduction to Vibe Coding**, by Fadli Khalid, Co-founder & CAIO of KrackedDevs, 23 October 2026 (Friday), 4:00 PM to 7:00 PM, on Google Meet. "Beginner-friendly", "hands-on and practical": "Learn how to build applications using AI and vibe coding!" Posted at 10:04 PM on 22 October, with reminders on 23 October.
+
+The workshops are written up in [Workshop 4: Favoriot](/docs/sources/workshop-4-favoriot/transcript.md) and [Workshop 5: KrackedDevs](/docs/sources/workshop-5-krackeddevs/transcript.md).
 
 ## RunPod vouchers
 
