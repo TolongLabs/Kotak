@@ -363,7 +363,7 @@ bun test
 - **Run configuration:** `.replit` installs with Bun, builds the data and the app, and starts the Hono server on port 5000.
 - **Secrets:** API keys and the Neon `DATABASE_URL` are stored in Replit Secrets, never in the code. The admin page at `/admin/sign-in` needs `DATABASE_URL`, and the published app needs it in its deployment secrets too.
 
-📄 Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](/submission/REPLIT%20PROOF%20OF%20USE.pdf)
+📄 Proof of use: [`submission/SDC2026_T010NG_Replit_POU.pdf`](/submission/SDC2026_T010NG_Replit_POU.pdf)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -391,7 +391,7 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
   }'
 ```
 
-📄 Proof of use: [`submission/RUNPOD PROOF OF USE.pdf`](/submission/RUNPOD%20PROOF%20OF%20USE.pdf)
+📄 Proof of use: [`submission/SDC2026_T010NG_Runpod_POU.pdf`](/submission/SDC2026_T010NG_Runpod_POU.pdf)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

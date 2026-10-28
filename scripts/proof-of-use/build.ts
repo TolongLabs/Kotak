@@ -1,4 +1,4 @@
-// Prints submission/RUNPOD PROOF OF USE.pdf and submission/REPLIT PROOF OF USE.pdf from the HTML beside this file.
+// Prints submission/SDC2026_T010NG_Runpod_POU.pdf and SDC2026_T010NG_Replit_POU.pdf from the HTML beside this file.
 // It serves the repo root (so proof.js can read Kopi and the screenshots onto a canvas) and prints each page with
 // headless Chrome. Fonts load from Google Fonts, so it needs a network connection.
 // Run: bun run build:proofs   (set CHROME to use another Chrome or Chromium binary)
@@ -8,7 +8,7 @@ import { join, resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dir, '../..')
 const CHROME = process.env.CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const PROOFS = { runpod: 'RUNPOD PROOF OF USE.pdf', replit: 'REPLIT PROOF OF USE.pdf' }
+const PROOFS = { runpod: 'SDC2026_T010NG_Runpod_POU.pdf', replit: 'SDC2026_T010NG_Replit_POU.pdf' }
 
 const server = Bun.serve({
   port: 0,

@@ -812,7 +812,7 @@ Replit is compulsory, and proof must come from the team's own account ([brief][b
 - `.replit` at the repository root installs dependencies and starts the Bun server and the frontend.
 - Replit Secrets hold the runtime variables, by the names in `.env.example`.
 - The Bun server also serves `/api/mcp` and Kopi's chat, reading the data bundle from disk (#186).
-- Screenshots show the account name, the project URL, the run or version history, the Secrets names and the running app (#68). #102 compiles them into `submission/REPLIT PROOF OF USE.pdf`.
+- Screenshots show the account name, the project URL, the run or version history, the Secrets names and the running app (#68). #102 compiles them into `submission/SDC2026_T010NG_Replit_POU.pdf`.
 - Plan: Replit Core from the sponsor code, if #99 gets a working code and #100 redeems it. Otherwise the one free Starter app, which "Includes 1 free published app. The deployment expires after 30 days" ([deploy notes][deploy], #99).
 
 ### RunPod
@@ -821,7 +821,7 @@ Any GPU work must run on RunPod, proved by a screenshot of the Pod ID or endpoin
 
 - The batch runs on a RunPod serverless GPU endpoint (#77).
 - The handler code lives in `runpod/` and matches the workload in the README and the declaration (#70).
-- Proof shows the endpoint, GPU type, worker logs, runtime and cost (#77, #70). #70 compiles `submission/RUNPOD PROOF OF USE.pdf` with an example `curl` command.
+- Proof shows the endpoint, GPU type, worker logs, runtime and cost (#77, #70). #70 compiles `submission/SDC2026_T010NG_Runpod_POU.pdf` with an example `curl` command.
 
 ### Database
 

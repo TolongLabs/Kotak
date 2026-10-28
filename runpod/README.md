@@ -143,7 +143,7 @@ The run summary records the real runtime and token counts; the RunPod billing pa
 
 ## Proof for the declaration
 
-#70 compiles `submission/RUNPOD PROOF OF USE.pdf`. Capture during or right after the full run:
+#70 compiles `submission/SDC2026_T010NG_Runpod_POU.pdf`. Capture during or right after the full run:
 
 - The endpoint page, with the endpoint ID, the GPU type and the worker image.
 - The **Workers** or **Logs** tab while the batch runs, showing vLLM serving requests.
