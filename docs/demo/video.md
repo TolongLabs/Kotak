@@ -22,7 +22,7 @@ Contents:
 - **The team first, then the hook.** The first 13 seconds say who we are, the domain and what we built.
 - **Sample means labelled.** Aina is a sample persona and the answers are demo answers. The edit tags every app shot, and the app's own "self-reported" and "sample data" labels stay readable ([content rules](/docs/DESIGN.md#content-rules)).
 - **Every number has a source** in the script's [claims ledger](/docs/demo/kotak-director-script.md#claims-ledger).
-- **Declared tools:** Playwright films the takes, Remotion renders the demo segment, ffmpeg encodes it, OpenAI Whisper (`whisper-1`) times the demo narration's words, and Adobe Premiere Pro edits the whole video. All are in [`TECH-DECLARATION.md`](/docs/TECH-DECLARATION.md); a fallback tool joins them only if it is used.
+- **Declared tools:** Playwright films the takes, Remotion renders the demo segment, ffmpeg encodes it, OpenAI Whisper (`whisper-1`) times the demo narration's words, and Adobe Premiere Pro edits the whole video. All are in [`tech-declaration.md`](/docs/tech-declaration.md); a fallback tool joins them only if it is used.
 
 ## Shot list
 

@@ -198,7 +198,7 @@ The code also uses these open-source frameworks and tools: Bun, TypeScript, Reac
 [dosm-terms]: /docs/research/demand-official.md
 [l2d]: https://www.live2d.com/eula/live2d-free-material-license-agreement_en.html
 [idea-mascot]: /docs/ideas/0007-kotak.md#mascot
-[decl]: /docs/TECH-DECLARATION.md#22-languages-frameworks--libraries
+[decl]: /docs/tech-declaration.md#22-languages-frameworks--libraries
 [notice]: /NOTICE.md
 
 ### 6.3. Employment-related IP conflicts
