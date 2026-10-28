@@ -2,6 +2,8 @@
 
 These are the binding terms and conditions that participants agree to when they register for SDC Hackathon 2026, as published in the [terms PDF dated 21 August 2026](https://sdchack.my/legal/terms-2026-08-21.pdf). For how the event runs, see the [official handbook](handbook.md).
 
+On 23 October 2026 the organisers replaced the copy in the participant and finalist Drive folders ([revised PDF](https://drive.google.com/file/d/1KEEORFqvroPw49UvAXKJpGzH-BDpK21O/view)), changing only the 4.1 heading and 8.2.6; this page follows the revision. The [announcement](/docs/sources/discord.com/announcements.md#document-updates) says to re-download from the website, but on 28 October the website still served the 21 August PDF.
+
 Contents:
 
 1.  [1. Introduction](#1-introduction)
@@ -27,7 +29,7 @@ Contents:
     1.  [3.6. Team modification](#36-team-modification)
     1.  [3.7. Accuracy of information](#37-accuracy-of-information)
 1.  [4. Competition structure](#4-competition-structure)
-    1.  [4.1. Team modification](#41-team-modification)
+    1.  [4.1. Competition stages](#41-competition-stages)
     1.  [4.2. Phase 1: Online preliminary round](#42-phase-1-online-preliminary-round)
     1.  [4.3. Preliminary judging](#43-preliminary-judging)
     1.  [4.4. Finalist selection](#44-finalist-selection)
@@ -318,7 +320,7 @@ The following individuals are not eligible to participate:
 
 ## 4. Competition structure
 
-### 4.1. Team modification
+### 4.1. Competition stages
 
 4.1.1. SDC Hackathon 2026 consists of multiple stages conducted over both online and physical formats.
 
@@ -692,7 +694,7 @@ Examples include but are not limited to:
 
 8.2.5. In the event that a finalist team notifies the Organiser before **29th October, 12:00 PM MYT (UTC+8)** that they are unable to participate, the vacant finalist position shall be offered to the next highest-ranked team (e.g., the 16th-ranked team).
 
-8.2.6. The replacement team shall have **five (5) hours**, until **29th October, 8:00 PM MYT (UTC+8)**, to complete the required forms and confirmation.
+8.2.6. The replacement team shall have **eight (8) hours**, until **29th October, 8:00 PM MYT (UTC+8)**, to complete the required forms and confirmation.
 
 ### 8.3. Physical attendance
 

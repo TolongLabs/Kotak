@@ -1,10 +1,11 @@
 # SDC Hackathon 2026 team portal
 
-The pages a registered team sees after signing in at [sdchack.my/login](https://sdchack.my/login): the team page, the submission page and mentor booking. Captured from our team's account just after midnight MYT on 20 October 2026, and rechecked at about 9 PM that day, when the team page had gained two workshop announcements and a Replit Core section. Our team's private details are left out and stay on the portal: member emails, payment and refund account details, Discord invite links, RunPod voucher codes, the Replit Core code, Zoom meeting IDs and passcodes, and the WhatsApp invite link.
+The pages a registered team sees after signing in at [sdchack.my/login](https://sdchack.my/login): the team page, the submission page, mentor booking and, for finalists, the final round page. Captured from our team's account just after midnight MYT on 20 October 2026, and rechecked at about 9 PM that day, when the team page had gained two workshop announcements and a Replit Core section. Rechecked again on 28 October, after the finalists were announced, with Firecrawl and our team's session: the team page had gained a finalist section and lost the workshops, the preliminary submission had closed and our mentor session was done. Our team's private details are left out and stay on the portal: member emails, payment and refund account details, Discord invite links, RunPod voucher codes, the Replit Core code, Zoom meeting IDs and passcodes, and the WhatsApp invite link.
 
 Contents:
 
 1.  [Team page](#team-page)
+    1.  [Finalist materials](#finalist-materials)
     1.  [Competition documents](#competition-documents)
     1.  [Workshops](#workshops)
     1.  [Registration status](#registration-status)
@@ -17,11 +18,27 @@ Contents:
 1.  [Submission page](#submission-page)
 1.  [Mentor booking](#mentor-booking)
     1.  [Mentors](#mentors)
+1.  [Final round page](#final-round-page)
+    1.  [Offline mentoring session](#offline-mentoring-session)
+    1.  [Finalist submission](#finalist-submission)
 1.  [See also](#see-also)
 
 ## Team page
 
-The [team page](https://sdchack.my/portal), where signing in lands.
+The [team page](https://sdchack.my/portal), where signing in lands. By 28 October, every portal page opened with a banner: "**Finalists announced** · [See the list](finalists.md) · Final submissions close 1 Nov, 8 AM".
+
+### Finalist materials
+
+Added for finalist teams after the preliminary judging, at the top of the page: "Congratulations — you're a finalist."
+
+> Your team is through to the final round in **Domain 1 - AIVERSECITY**. Everything you need for the final — the schedule, judging and pitch guidelines — is in the finalist materials folder. Read it before the offline day.
+
+The **Open the finalist materials** button opens the Finalist Drive, cleaned into Markdown in the [Finalist Drive map](/docs/sources/drive.google.com/README.md#finalist-drive-map). Two to-do items follow:
+
+- **Offline mentoring**: "Booking opens 31 October 2026, 9:00 AM (MYT)."
+- **Finalist submission**: "Not submitted yet — due 1 November 2026, 8:00 AM (MYT)."
+
+The **Book mentoring & submit** button opens the [final round page](#final-round-page).
 
 ### Competition documents
 
@@ -29,7 +46,7 @@ Now available. Everything for the preliminary round is in one Google Drive folde
 
 ### Workshops
 
-Added on 20 October. Each card has a **Join on Zoom** button and the meeting ID and password, left out here. Both workshops are on Wednesday 21 October 2026; the [Discord announcement](/docs/sources/discord.com/announcements.md#workshops-on-21-october) lists the same two.
+Added on 20 October, and gone from the page by 28 October. Each card has a **Join on Zoom** button and the meeting ID and password, left out here. Both workshops are on Wednesday 21 October 2026; the [Discord announcement](/docs/sources/discord.com/announcements.md#workshops-on-21-october) lists the same two.
 
 **How to Build An App with Replit In a 20 min Time Frame**, 9:00 AM to 10:00 AM (MYT). Speaker: Sarah Li, Developer Relations at Replit.
 
@@ -74,7 +91,7 @@ A second platform for announcements to all participants. Please join the communi
 
 One unique RunPod voucher per participant — never shared. Copy yours from the list below: this page is the durable copy, so every voucher your team was emailed stays here even if an email never arrives.
 
-At both captures, our team leader had a voucher and the other four members' entries read "Your voucher is on the way — the committee is getting more from RunPod."
+At all three captures, our team leader had a voucher and the other four members' entries read "Your voucher is on the way — the committee is getting more from RunPod."
 
 ### Replit Core
 
@@ -86,7 +103,7 @@ The [Discord announcement](/docs/sources/discord.com/announcements.md#replit-cor
 
 ### Mentorship session
 
-Booking is open until 25 October 2026. Each team books one session — times are limited and first come, first served, so we recommend booking early. The **Book a mentor** button opens [mentor booking](#mentor-booking).
+By 28 October the section read: "You met with **Ravenna Chen Yaohui** on Fri 23 Oct, 16:20–16:35 (MYT)." Before the session it read: booking is open until 25 October 2026. Each team books one session — times are limited and first come, first served, so we recommend booking early. The **Book a mentor** button opens [mentor booking](#mentor-booking).
 
 ### Your project submission
 
@@ -103,9 +120,11 @@ The form has two fields and a **Submit** button:
 
 You can resubmit as many times as you like until 25 October 2026, 11:59 PM (MYT).
 
+By 28 October the form was gone: "The submission window has closed." The page showed our last submitted repository, [TolongLabs/Kotak](https://github.com/TolongLabs/Kotak).
+
 ## Mentor booking
 
-The [mentor booking page](https://sdchack.my/mentorship):
+The [mentor booking page](https://sdchack.my/mentorship). By 28 October it showed only our completed session: "Session completed", Ravenna Chen Yaohui, Chief Executive Officer, Intrinsic SEA Sdn. Bhd. "Your team met on Fri 23 Oct, 16:20–16:35 (MYT). Each team gets one session, so there's nothing more to book — good luck with your submission." Before that, it read:
 
 Pick a mentor and a time below. This page updates live, so a time another team takes disappears. Each team books one session, and can move or cancel it until 24 hours before it starts. All times are Malaysia time (MYT). Booking closes on 25 October 2026.
 
@@ -128,7 +147,51 @@ Every session is 15 minutes, and sessions start every 20 minutes within each win
 
 Mr Cheah Kwan Cheong, Alpha Red's CEO, wasn't listed at this capture. A 20 October announcement moved his sessions off Wednesday to Thursday 22 October, 10:00–12:00 and 14:00–16:00, and Friday 23 October, 13:00–15:00; see the [mentorship schedule update](/docs/sources/discord.com/announcements.md#mentorship-schedule-update).
 
+## Final round page
+
+The [final round page](https://sdchack.my/finalist), for finalist teams only, repeats the [finalist materials](#finalist-materials) box and adds two sections.
+
+### Offline mentoring session
+
+Sat 31 Oct, in person, in Room **A3#512**.
+
+> In your session your team presents its project to a panel of mentors from your domain — several mentors at once, not a single one — and gets their feedback before the final.
+>
+> Each finalist team gets one 15-minute session. Pick any free slot — first come, first served. Booking runs from 31 October 2026, 9:00 AM (MYT) to 31 October 2026, 1:00 PM (MYT) sharp, and you can move or release your slot until then. There's a slot for every finalist team. Please be at the room a few minutes early.
+
+"Booking opens 31 October 2026, 9:00 AM (MYT) — the same moment for every finalist team. This page updates by itself." The 15 slots, all free at capture, run from 1:35 PM to 6:50 PM:
+
+| Slot | Time (MYT)  |
+| ---- | ----------- |
+| 1    | 13:35–13:50 |
+| 2    | 13:55–14:10 |
+| 3    | 14:15–14:30 |
+| 4    | 14:35–14:50 |
+| 5    | 14:55–15:10 |
+|      | Tea break   |
+| 6    | 15:25–15:40 |
+| 7    | 15:45–16:00 |
+| 8    | 16:05–16:20 |
+| 9    | 16:25–16:40 |
+| 10   | 16:45–17:00 |
+|      | Tea break   |
+| 11   | 17:15–17:30 |
+| 12   | 17:35–17:50 |
+| 13   | 17:55–18:10 |
+| 14   | 18:15–18:30 |
+| 15   | 18:35–18:50 |
+
+### Finalist submission
+
+"The public GitHub repository for your final-round project, due 1 November 2026, 8:00 AM (MYT). This is separate from your preliminary submission, which stays as it was."
+
+The form matches the [preliminary submission page](#submission-page): a required **GitHub repository** URL ("Must be public — we check this when you submit."), the checkbox "Our project integrates our API Premium sponsor's technology — mandatory for both rounds. Submissions without it are disqualified." and a **Submit** button. "You can resubmit as many times as you like until 1 November 2026, 8:00 AM (MYT)."
+
+The page asks for nothing else. The [final report template](/docs/sources/drive.google.com/final-report-template.md) and the participant handbook expect more deliverables; see the [conflicts between sources](/docs/sources/drive.google.com/README.md#conflicts-between-sources).
+
 ## See also
+
+- [Finalists](finalists.md)
 
 - [Overview](overview.md)
 - [FAQ](faq.md)

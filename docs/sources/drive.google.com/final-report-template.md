@@ -26,7 +26,7 @@ The first page reads "SDC HACKATHON 2026", "Phase 2: Final Project & Prototype R
 
 What that means in practice:
 
-- **File**: one PDF named `SDC2026_TeamName_Final.pdf`, with your team name in place of `TeamName`. The template is only shared as a `.docx`; the organisers' 23 October announcement says to convert to PDF and not submit in Word format.
+- **File**: one PDF named `SDC2026_TeamName_Final.pdf`, with your team name in place of `TeamName`. The template is only shared as a `.docx`; the organisers' [22 October announcement](/docs/sources/discord.com/announcements.md#participant-resources-in-docs-format) says to convert to PDF and not submit in Word format.
 - **Submitted with it**: the pitch deck, as a flattened PDF per the [checklist](#6-final-submission-checklist), and a working deployment link.
 - **Deadline**: 1 November 2026. The template gives no time of day.
 - **Word limits**: 250 words for section 2, 300 words for 3.2 and 250 words for section 5. No limit is stated for 3.1, section 4 or 4.1.

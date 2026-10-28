@@ -2,6 +2,8 @@
 
 The official handbook for SDC Hackathon 2026, dated 17 August 2026 ([source PDF](https://sdchack.my/legal/handbook-2026-08-17.pdf)). This is the guide, not the contract. It covers how the event runs. The binding rules you agree to when you register are in the [Terms and Conditions](terms-and-conditions.md).
 
+On 23 October 2026 the organisers replaced the copy in the participant and finalist Drive folders ([revised PDF](https://drive.google.com/file/d/1tCX2ndGtaHt4oi_u5wp1czhNEKDxxvry/view)); the only change is 4.3.6, and this page follows the revision. The [announcement](/docs/sources/discord.com/announcements.md#document-updates) says to re-download from the website, but on 28 October the website still served the 17 August PDF.
+
 Contents:
 
 1.  [1. Event overview](#1-event-overview)
@@ -184,7 +186,7 @@ The SDC: Sustainably Developing Code Hackathon Competition is open to students w
 
 4.3.5. Teams that submit incomplete, inaccessible, invalid, or insufficient work will not be eligible for a refund.
 
-4.3.6. Shortlisted teams that fail to attend the physical event without providing at least 48 hours’ prior notice will have their RM25 commitment fee permanently forfeited, as physical space, event resources, and logistical arrangements have been reserved for them.
+4.3.6. Shortlisted teams that fail to attend the physical event without providing prior notice before 29 October 2026, 12:00:00 PM MYT will have their RM25 commitment fee permanently forfeited, as physical space, event resources, and logistical arrangements have been reserved for them.
 
 4.3.7. The organizing committee reserves the right to verify whether a team’s preliminary submission meets the minimum refund requirements.
 

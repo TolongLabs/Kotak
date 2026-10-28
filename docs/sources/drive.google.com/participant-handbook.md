@@ -1,6 +1,6 @@
 # SDC Hackathon 2026 participant handbook
 
-The participant handbook for SDC Hackathon 2026, shared with registered teams on Google Drive on 19 October 2026 ([source PDF](https://drive.google.com/file/d/1fGBS-jevDj_FrF8wsbYNPzyU5TTrfk1V/view)). It covers how the event runs in practice: venues, schedules, deliverables, required tools, submission, mentorship and on-site arrangements. It governs event operations, while the [official handbook](/docs/sources/sdchack.my/handbook.md) still governs eligibility, conduct and policy, and the [Terms and Conditions](/docs/sources/sdchack.my/terms-and-conditions.md) take precedence over this handbook wherever the two conflict.
+The participant handbook for SDC Hackathon 2026, shared with registered teams on Google Drive on 19 October 2026 ([source PDF](https://drive.google.com/file/d/1fGBS-jevDj_FrF8wsbYNPzyU5TTrfk1V/view)). The organisers replaced the PDF on 23 October 2026 ([23 October announcement](/docs/sources/discord.com/announcements.md#document-updates)), and this page follows that revision. It covers how the event runs in practice: venues, schedules, deliverables, required tools, submission, mentorship and on-site arrangements. It governs event operations, while the [official handbook](/docs/sources/sdchack.my/handbook.md) still governs eligibility, conduct and policy, and the [Terms and Conditions](/docs/sources/sdchack.my/terms-and-conditions.md) take precedence over this handbook wherever the two conflict.
 
 Contents:
 
@@ -132,7 +132,7 @@ This venue will be used exclusively for the final round of the hackathon, includ
 
 6.1.1. Teams must prepare all required equipment and technical setup before the event, including laptops, chargers, software installations, development tools, accounts, multi-plug adapters, and any backup equipment needed for development or demonstration.
 
-6.1.2. Teams need to create and prepare their GitHub repository before the hacking period begins. Repositories should be set to private during the hacking period to prevent unauthorized copying or access by other teams.
+6.1.2. Teams need to create and prepare their GitHub repository after the hacking period begins. Repositories should be set to private during the hacking period to prevent unauthorized copying or access by other teams.
 
 6.1.3. Before the submission deadline, teams must add the committee's designated GitHub account(s) as collaborators to allow the organizing committee and judging panel to access and review the submitted code.
 
@@ -141,8 +141,6 @@ This venue will be used exclusively for the final round of the hackathon, includ
 6.1.5. Teams planning to use large pre-trained models, datasets, APIs, cloud services, or external tools must prepare the required access, files, and configurations before the physical event to avoid technical delays during the hacking period.
 
 6.1.6. Teams must ensure that no sensitive information, such as API keys, passwords, private credentials, or payment details, is exposed in their GitHub repository.
-
-6.1.7. Teams must ensure that no sensitive information, such as API keys, passwords, private credentials, or payment details, is exposed in their GitHub repository.
 
 ### 6.2. Problem statement reveal
 
@@ -227,17 +225,15 @@ This venue will be used exclusively for the final round of the hackathon, includ
 
 6.6.10. Parking will be available at the A Block basement parking area, specifically around the A3 Building.
 
-6.6.11. Participants who intend to drive must register their vehicle with the organizing committee at least 48 hours before the event. A temporary visitor pass will be issued for approved registered vehicles.
-
-6.6.12. Replacement teams confirmed under 6.4.7 are not able to meet the 48-hour vehicle registration deadline, so they will not receive a temporary visitor pass. If they choose to drive, they must park outside Xiamen University Malaysia and arrange their own parking.
+6.6.11. Participants including the replacement teams who intend to drive must register their vehicle with the organizing committee latest by 29 October 2026, 12:00:00 PM MYT. A temporary visitor pass will be issued for approved registered vehicles.
 
 ### 6.7. Pitching session
 
-6.7.1. The final pitching session will be held on 1 November 2026, from 6:00:00 PM to 8:30:00 PM MYT (UTC+8).
+6.7.1. The final pitching session will be held on 1 November 2026. For the time schedule please refer to 7.2.
 
 6.7.2. Each finalist team will present their final solution to the judging panel according to the assigned pitching schedule. Teams are expected to clearly explain their problem, proposed solution, technical implementation, SDG relevance, impact, feasibility, and prototype demonstration.
 
-6.7.3. **Pitching Duration:** 10 minutes. **Q&A Duration:** 5 minutes. **Pitching Venue:** A3#517 and A3#516.
+6.7.3. **Pitching Duration:** 10 minutes. **Q&A Duration:** 5 minutes. **Pitching Venue:** A4#113 and A5#119.
 
 6.7.4. Teams must be ready before their assigned pitching slot and complete their presentation within the allocated time; exceeding the allowed presentation time will result in a deduction of 1 point for every 30 seconds exceeded, subject to the final judging rules.
 
@@ -284,22 +280,22 @@ This venue will be used exclusively for the final round of the hackathon, includ
 | ----------- | ----------------------------- | ------------------------------------------------------------------------------------------------ |
 | 08:00–09:30 | Registration & Refreshments   | Finalists and committee arrival. Distribution of welcome packs.                                  |
 | 09:30–10:30 | Opening Ceremony & Briefing   | Official welcome, logistical briefing (hacking zones, resting areas) and hackathon commencement. |
-| 10:30–12:30 | Lunch & Prayer Break          |                                                                                                  |
 | 10:30–12:30 | Hacking Phase Commences       | Teams deploy to their respective hacking rooms to begin ideation and development.                |
+| 12:30–13:30 | Lunch & Prayer Break          |                                                                                                  |
 | 13:30–18:30 | Hacking & Mentorship Sessions | Intensive hacking period alongside scheduled mentoring rotations.                                |
 | 18:30–19:30 | Dinner & Prayer Break         |                                                                                                  |
 | 19:30–00:00 | Evening Hacking Session       | Teams continue development into the night.                                                       |
 
 #### 1 November 2026 (Sunday)
 
-| Time        | Activity                         | Details                                                                                |
-| ----------- | -------------------------------- | -------------------------------------------------------------------------------------- |
-| 08:00–09:40 | Breakfast & Pitch Preparation    | Morning refreshments and final pitch deck polishing (A3 5th Floor / Auditorium Lobby). |
-| 09:40–12:40 | Parallel Track Pitching (Part 1) | Teams present their solutions in parallel domain tracks.                               |
-| 12:40–13:40 | Lunch & Prayer Break             |                                                                                        |
-| 13:40–15:40 | Parallel Track Pitching (Part 2) | Conclusion of final pitches across all domains.                                        |
-| 15:40–16:00 | Intermission & Score Tabulation  | Participants migrate to the Main Auditorium while the committee finalises results.     |
-| 16:00–18:30 | Closing Ceremony                 |                                                                                        |
+| Time        | Activity                         | Details                                                                            |
+| ----------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| 08:00–09:40 | Breakfast & Pitch Preparation    | Morning refreshments and pitch preparation (A3 6th Floor).                         |
+| 09:40–12:40 | Parallel Track Pitching (Part 1) | Teams present their solutions in parallel domain tracks.                           |
+| 12:40–13:40 | Lunch & Prayer Break             |                                                                                    |
+| 13:40–15:40 | Parallel Track Pitching (Part 2) | Conclusion of final pitches across all domains.                                    |
+| 15:40–16:00 | Intermission & Score Tabulation  | Participants migrate to the Main Auditorium while the committee finalises results. |
+| 16:00–18:30 | Closing Ceremony                 |                                                                                    |
 
 ## 8. Physical help desk
 
@@ -353,7 +349,7 @@ This venue will be used exclusively for the final round of the hackathon, includ
 
 11.2.1. Mentor slots will be arranged on a first-come, first-served (FCFS) basis. This is subject to mentor availability.
 
-11.2.2. Teams must request or book mentorship through the official process announced by the organizing committee through the Discord channel.
+11.2.2. Teams must request or book mentorship through the official process announced by the organizing committee through the SDC Website.
 
 11.2.3. Teams are encouraged to prepare specific questions before meeting mentors to make the session more effective.
 
@@ -517,7 +513,7 @@ No fixed dataset will be provided unless otherwise stated in the official domain
 
 ### 15.21. Is there any specific programming language required?
 
-No specific programming language is required. Participants may use any programming language, framework, library, or development tool that they are comfortable with, as long as it is suitable for building their proposed solution. However, the project must still use Replit (see Section 9.2). Any work that needs a GPU must also be done on RunPod (see Section 9.3).
+No specific programming language is required. Participants may use any programming language, framework, library, or development tool that they are comfortable with, as long as it is suitable for building their proposed solution. However, the project must still use Replit (see Section 9.3). Any work that needs a GPU must also be done on RunPod (see Section 9.4).
 
 Participants are encouraged to use technologies that help them develop a functional and presentable prototype or minimum viable product. Teams should also be prepared to explain their technical choices, implementation process, and how their solution works during submission or pitching.
 

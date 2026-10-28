@@ -12,6 +12,7 @@ Contents:
     1.  [Competition timeline](#competition-timeline)
 1.  [Prizes](#prizes)
 1.  [Sponsors](#sponsors)
+1.  [Mentors and judges](#mentors-and-judges)
 1.  [Registration, submission and contact](#registration-submission-and-contact)
 1.  [See also](#see-also)
 
@@ -27,6 +28,8 @@ Build AI that matters. XMUM AI Club and XMUM Rotaract Club, 19 Oct – 1 Nov 202
 The two challenge domains are assigned at random on Orientation Day.
 
 Figures are launch targets and will be finalised as sponsorship confirms.
+
+By 28 October, the page opened with a banner, "**Finalists announced** · See the list · Final submissions close 1 Nov, 8 AM", and the hero showed a countdown to "**Final** Submission Closes" with a **See the finalists** button. The list is in [Finalists](finalists.md).
 
 ## What is SDC?
 
@@ -87,11 +90,69 @@ Every finalist is paid. Nobody leaves empty-handed.
 ## Sponsors
 
 - **Powered by**: AIversecity.
-- **Supported by**: Alpha Red Solutions, Replit, Runpod, KD, Rotary Club of Sri Petaling, Nilai Bekal Hardware Sdn Bhd, Intrinsic SEA, ChangeMaker, JomHack, Favoriot, ASEAN CXO Association Ltd, STEPAN-UNESCO, AI Business Chamber, ATOX, TIDE, Futurum Academy, Sime Darby Property, Ascenthea Sdn Bhd, Lineark, Orion AI Youth Community.
+- **Supported by**: Alpha Red Solutions, Replit, Runpod, KD, Rotary Club of Sri Petaling, Nilai Bekal Hardware Sdn Bhd, Intrinsic SEA, ChangeMaker, JomHack, Favoriot, ASEAN CXO Association Ltd, STEPAN-UNESCO, AI Business Chamber, ATOX, TIDE, Futurum Academy, Sime Darby Property, Ascenthea Sdn Bhd, Lineark, Orion AI Youth Community, and, new by 28 October, PropTech Venture, Sonicon and INFREV.
+- **Our media partners**: 22 student and professional societies, shown as logos only, by 28 October.
+
+## Mentors and judges
+
+Listed on the page by 28 October.
+
+**Mentors** (17):
+
+| Name                          | Role                                     | Organisation              |
+| ----------------------------- | ---------------------------------------- | ------------------------- |
+| Cheah Kwan Cheong             | CEO                                      | Alpha Red Solutions       |
+| Abdul Hafeez bin Sadon        | Data & Forward Deployed Engineering Lead | KD                        |
+| Adam Alias bin Amin           | Academic Director                        | KD                        |
+| Muhaimin bin Juhairi          | Co-founder & CTO                         | KD                        |
+| Muhammad Fadli bin Md Khalid  | Co-founder & CAIO                        | KD                        |
+| Ravenna Chen Yaohui           | Chief Executive Officer                  | Intrinsic SEA             |
+| John Tay                      | Founder and Chairman                     | ChangeMaker               |
+| Stanley Seow                  | Co-founder                               | ChangeMaker               |
+| Prof. Dr. Aini Suzana Ariffin | President of AI & Robotics               | ASEAN CXO Association Ltd |
+| Chin Jun Quan                 | Backend Engineer Intern                  | Binance                   |
+| Daniel Koh Yu Hang            | Backend Engineer Intern                  | Binance                   |
+| Tan Hao Wen                   | Backend Engineer Intern                  | Binance                   |
+| Lim Jia Le                    | Data Science Intern                      | Intel                     |
+| Mohamad Izwan bin Zakaria     | Founding Partner                         | Izwan & Partners          |
+| Dr. Chin Shin Liang           | Head of AI Incubator, Asia Pacific       | Mastercard                |
+| Mark Li                       | Director of Southeast Asia               | Saichuang Weilai          |
+| Chua Zhu Heng                 | Firmware Engineering Intern              | Western Digital           |
+
+**Judges** (26):
+
+| Name                                             | Role                                             | Organisation             |
+| ------------------------------------------------ | ------------------------------------------------ | ------------------------ |
+| Gordan Vong                                      | CEO                                              | AIversecity              |
+| Cheah Kwan Cheong                                | CEO                                              | Alpha Red Solutions      |
+| Cheong Nan Feng                                  | Head of Solutions                                | Alpha Red Solutions      |
+| Muhammad Akmal Alif bin Md Azam                  | AI Engineer                                      | KD                       |
+| Sheikh Muhammad Irfan Allhabshee bin Che Ibrahim | Head, Business Development & Legal Affairs       | KD                       |
+| John Tay                                         | Founder and Chairman                             | ChangeMaker              |
+| Stanley Seow                                     | Co-founder                                       | ChangeMaker              |
+| Poo Ching Loong                                  | Chairman                                         | AI Business Chamber      |
+| Dai Siyuan                                       | Robotic Teacher                                  | Futurum Academy          |
+| Kenny Lim Jun Jia                                | Supervisor                                       | Futurum Academy          |
+| Lim Angel                                        | Trainer and Teaching Supervisor                  | Futurum Academy          |
+| Stevensan Innasimuthu                            | General Manager, Group Technology and Innovation | Sime Darby Property      |
+| Joy Tan                                          | CEO                                              | Ascenthea Sdn Bhd        |
+| Dr Ian Tan                                       | CEO                                              | Lineark                  |
+| Fei                                              | COO                                              | Lineark                  |
+| Lesley Mong                                      | Founder                                          | Orion AI Youth Community |
+| Sr Jayne Khor Jing Y’ng                          | Director                                         | PropTech Venture         |
+| Tan Guan Han                                     | Managing Director                                | Sonicon                  |
+| Jerry Chong                                      | Domain Lead Architect                            | INFREV                   |
+| Jason Lee Lik Wei                                | CTO                                              | Axcova                   |
+| Ujwal Suresh Vanjare                             | Software Engineer                                | BNSF Railway             |
+| Pang Haoyang                                     | Founder                                          | Canlah.AI                |
+| Bala Vignesh Charllo                             | Member of Technical Staff                        | OpenAI                   |
+| Alex Liew                                        | Chairman                                         | PIKOM                    |
+| Yang Cheng                                       | Chairman                                         | TAFA Holding             |
+| Swapneswar Sundar Ray                            | Assistant Vice President                         | US Bank                  |
 
 ## Registration, submission and contact
 
-Team registration closed on 19 October 2026, 12:00 PM (MYT), and no new teams are accepted. The preliminary round is on. Submissions close 25 October 2026, 11:59 PM (MYT). Registered teams sign in to the [team portal](team-portal.md).
+Team registration closed on 19 October 2026, 12:00 PM (MYT), and no new teams are accepted. On 20 October the page said the preliminary round was on, with submissions closing 25 October 2026, 11:59 PM (MYT). By 28 October it read: "The finalists have been announced and the final round is on. Final submissions close 1 November 2026, 8:00 AM (MYT)." Registered teams sign in to the [team portal](team-portal.md).
 
 Read the [official handbook](handbook.md) and the [terms and conditions](terms-and-conditions.md). Questions first? [Ask us on Discord](https://discord.gg/p72amSbw7X).
 
@@ -107,3 +168,4 @@ Contact a committee member on WhatsApp:
 - [SDC Hackathon 2026 website](https://sdchack.my/), the source of this page
 - [FAQ](faq.md)
 - [Team portal](team-portal.md)
+- [Finalists](finalists.md)

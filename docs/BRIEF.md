@@ -162,7 +162,7 @@ Penalties run from a warning through deductions, cancelled finalist status and d
 - **No real personal data**: use public, open or self-collected data and credit the sources ([slide 51]).
 - **Discord is official**: "I didn't see it" isn't accepted for a missed announcement ([slide 51]).
 - **Late is never**: a late submission isn't accepted ([slide 50]).
-- **Deposit**: the RM 25 deposit comes back only for a valid, complete submission. A finalist that doesn't show, without 48 hours' notice, forfeits it ([slide 50]).
+- **Deposit**: the RM 25 deposit comes back only for a valid, complete submission. A finalist that doesn't show without notice before 29 October 2026, 12:00 PM MYT forfeits it ([official handbook 4.3.6](/docs/sources/sdchack.my/handbook.md#43-commitment-fee-and-refund-policy), revised 23 October; [slide 50] said 48 hours).
 
 [ph9]: /docs/sources/drive.google.com/participant-handbook.md#9-official-tools-and-resources
 [slide 51]: /docs/sources/opening-briefing/slides.md#slide-51-faqs
