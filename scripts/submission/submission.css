@@ -222,6 +222,11 @@ li::marker {
   hyphens: auto;
 }
 
+/* Links show URLs, where an inserted hyphen reads as part of the address, so they only break at overflow-wrap. */
+.tbl.narrow a {
+  hyphens: manual;
+}
+
 .tbl > .h {
   display: grid;
   place-items: center;
