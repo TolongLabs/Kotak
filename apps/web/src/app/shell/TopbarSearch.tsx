@@ -1,8 +1,8 @@
-import { forwardRef, useEffect, useId, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
-import { cn } from '../../components/ui/cn'
 import { useRoleIndex } from '../../engine/bundle'
 import { normalizeJobQuery, searchRoles } from '../../views/checkup/roleSearch'
+import { SuggestionList, useSuggestionList } from '../../views/checkup/SuggestionList'
 import { navigate } from '../router'
 import { jobPath, routes } from '../routes'
 
@@ -12,14 +12,23 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
   const index = useRoleIndex()
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
-  const [active, setActive] = useState(0)
-  const listId = useId()
   const wrapperRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const key = normalizeJobQuery(query)
   const matches = index.status === 'ready' ? searchRoles(index.data.roles, [], key) : []
   const listOpen = open && key.length > 0 && index.status === 'ready'
+  const list = useSuggestionList(
+    matches.map((match) => ({
+      key: match.key,
+      title: match.label,
+      detail: match.role.onet_code,
+      pick: () => pick(match.role.onet_code)
+    })),
+    listOpen,
+    key,
+    () => setOpen(true)
+  )
 
   useEffect(() => {
     const close = (event: PointerEvent) => {
@@ -41,9 +50,8 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
       role="search"
       className="relative w-full min-w-0 max-w-[360px]"
       onSubmit={(event) => {
+        // Enter on a shown option picks it in the list's key handler, so a submit is a title with no option.
         event.preventDefault()
-        const match = matches[active]
-        if (listOpen && match) return pick(match.role.onet_code)
         const job = query.trim()
         setOpen(false)
         navigate(job ? `${routes.checkUp}?job=${encodeURIComponent(job)}` : routes.checkUp)
@@ -63,7 +71,6 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
         value={query}
         onChange={(event) => {
           setQuery(event.currentTarget.value)
-          setActive(0)
           setOpen(true)
         }}
         onFocus={() => setOpen(true)}
@@ -73,47 +80,13 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
         }}
         onKeyDown={(event) => {
           if (event.key === 'Escape') setOpen(false)
-          if (!listOpen || matches.length === 0) return
-          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-            event.preventDefault()
-            const step = event.key === 'ArrowDown' ? 1 : -1
-            setActive((current) => (current + step + matches.length) % matches.length)
-          }
+          list.onKeyDown(event)
         }}
-        role="combobox"
-        aria-expanded={listOpen}
-        aria-controls={listOpen ? listId : undefined}
-        aria-autocomplete="list"
-        aria-activedescendant={listOpen && matches.length ? `${listId}-${active}` : undefined}
+        {...list.inputProps}
         shortcutHint="/"
       />
       {listOpen && (
-        <ul
-          id={listId}
-          aria-label="Job Suggestions"
-          className="absolute left-0 right-0 top-full z-30 mt-2 space-y-0.5 rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
-        >
-          {matches.length === 0 && <li className="px-3 py-2 text-body-s text-text-muted">No match yet</li>}
-          {matches.map((match, i) => (
-            <li
-              key={match.key}
-              id={`${listId}-${i}`}
-              role="option"
-              aria-selected={i === active}
-              // The input keeps focus, so a mouse press must not blur it before the click lands.
-              onMouseDown={(event) => event.preventDefault()}
-              onMouseEnter={() => setActive(i)}
-              onClick={() => pick(match.role.onet_code)}
-              className={cn(
-                'flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-sm px-3 py-2 text-body-s text-text-primary',
-                i === active ? 'bg-accent-box text-accent-on-box' : 'hover:bg-bg-panel'
-              )}
-            >
-              <span className="min-w-0 break-words text-label-l">{match.label}</span>
-              <span className="shrink-0 font-mono text-mono-s">{match.role.onet_code}</span>
-            </li>
-          ))}
-        </ul>
+        <SuggestionList list={list} label="Job Suggestions" status={matches.length === 0 && 'No match yet'} inline />
       )}
     </form>
   )

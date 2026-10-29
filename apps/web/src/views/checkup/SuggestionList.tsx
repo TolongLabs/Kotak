@@ -3,8 +3,8 @@ import { useId, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { cn } from '../../components/ui/cn'
 import { getRoleCodeLine, getRoleDisplayTitle, type RoleSuggestion } from './roleSearch'
 
-// The suggestion list under the job and target-role fields, an ARIA combobox like the top-bar search (#319): focus
-// stays in the field, the arrow keys move the highlight, Enter picks it and one Tab leaves the field (#320).
+// The suggestion list under the job and target-role fields and the top-bar search, an ARIA combobox: focus stays in
+// the field, the arrow keys move the highlight, Enter picks it and one Tab leaves the field (#319, #320, #372).
 
 export type SuggestionOption = { key: string; title: string; detail: string; pick: () => void }
 
@@ -96,16 +96,19 @@ export function useSuggestionList(options: SuggestionOption[], open: boolean, qu
 }
 
 // The popup: a status line above the options (matching, or "No match yet"), the options, then an optional footnote.
+// `inline` puts each option's detail beside its title, as the top-bar search has since #319.
 export function SuggestionList({
   list,
   label,
   status,
-  footnote
+  footnote,
+  inline = false
 }: {
   list: ReturnType<typeof useSuggestionList>
   label: string
   status?: ReactNode
   footnote?: ReactNode
+  inline?: boolean
 }) {
   return (
     <div
@@ -133,13 +136,16 @@ export function SuggestionList({
               onClick={option.pick}
               className={cn(
                 // The scroll margin keeps the highlighted row clear of the floating Ask Kopi button.
-                'flex min-h-11 w-full min-w-0 scroll-mb-(--ask-kopi-clearance) cursor-pointer flex-col items-start justify-center gap-1 rounded-sm border-[1.5px] px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out',
+                'flex min-h-11 w-full min-w-0 scroll-mb-(--ask-kopi-clearance) cursor-pointer rounded-sm border-[1.5px] px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out',
+                inline ? 'items-center justify-between gap-3' : 'flex-col items-start justify-center gap-1',
                 // Yellow on white gets an ink outline (DESIGN.md colour rules), so the highlight doesn't rely on colour alone.
                 index === list.active ? 'on-accent border-text-primary bg-accent-box' : 'border-transparent'
               )}
             >
               <span className="w-full break-words text-label-l">{option.title}</span>
-              <span className="font-mono text-mono-s text-text-muted">{option.detail}</span>
+              <span className={cn('font-mono text-mono-s', inline ? 'shrink-0' : 'text-text-muted')}>
+                {option.detail}
+              </span>
             </li>
           ))}
         </ul>
