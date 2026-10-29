@@ -24,9 +24,7 @@ export const GuestSessionSchema = z
     tts_muted: z.boolean(),
     active_snapshot_id: SnapshotIdSchema,
     // Who the user is, from the intake (#284); sessions saved before it start empty.
-    profile: ProfileSchema.default(() => ProfileSchema.parse({})),
-    // Seeds the scenario options' shuffle (#352), so a reload keeps their order; sessions saved before it share 0.
-    scenario_seed: z.number().int().min(0).max(0xffffffff).default(0)
+    profile: ProfileSchema.default(() => ProfileSchema.parse({}))
   })
   .strict()
 
