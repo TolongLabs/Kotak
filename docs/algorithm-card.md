@@ -35,6 +35,8 @@ Each corner of a role gets three inputs:
 
 The user rates 12 can-do statements from 1 (Not yet) to 4 (Yes, on my own): a basic and an advanced statement for each of 6 corners. Five slots carry reversed wording once a corner has it, and those ratings count as 5 minus the rating.
 
+A role with a "what would you do" scenario for every slot asks those instead (#352; the question screen for them is #354): four options, shuffled by a seed from the session and the slot so a reload keeps the order, each with a hidden score from 1 to 4. The picked option's score is the slot's rating, never reversed. A role without them keeps the statements.
+
 ```text
 corner level = (basic rating + advanced rating − 2) ÷ 2      0 to 3, in steps of 0.5
 ```

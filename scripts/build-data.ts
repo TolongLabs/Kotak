@@ -26,6 +26,7 @@ import {
   roleVerdicts,
   SnapshotIdSchema,
   transferAnswers,
+  usesScenarios,
   type AeiSnapshot,
   type BundleRole,
   type Source
@@ -271,7 +272,8 @@ const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`
 const total = sizes.reduce((a, b) => a + b, 0)
 const roleSizes = sizes.slice(3).sort((a, b) => a - b)
 console.info(
-  `Corners: ${JSON.stringify(manifest.corners)}; questions ready for ${index.roles.filter((r) => r.questions_ready).length} roles`
+  `Corners: ${JSON.stringify(manifest.corners)}; questions ready for ${index.roles.filter((r) => r.questions_ready).length} roles, ` +
+    `scenarios for ${[...roles.values()].filter(usesScenarios).length}`
 )
 for (const d of manifest.demo.roles) {
   const { checks, diff } = d

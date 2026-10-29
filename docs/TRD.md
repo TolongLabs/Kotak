@@ -383,6 +383,8 @@ The cat asks 2 can-do questions for each of the 6 corners: 12 in all, the corner
 
 Questions 2, 4, 7, 10 and 12 are reversed once their corner has reversed wording: agreeing means less skill, so the rating counts as 5 minus the rating (#238).
 
+A role with a scenario for every slot in `data/generated/scenarios.json` asks "what would you do" questions instead (#352; the question screen for them is #354). The build merges them into each corner as `scenarios.basic` and `scenarios.advanced`; `slotQuestion` in `packages/shared` shows the four options in an order seeded by the session's `scenario_seed` and the slot, so a reload keeps it. The picked option's hidden score from 1 to 4 is the slot's rating, never reversed, and is never shown. A role without them keeps the statements.
+
 A corner's level runs from 0 to 3 in steps of 0.5: (basic rating + advanced rating − 2) ÷ 2. Both at 1 give 0; both at 4 give 3.
 
 The radar labels these levels "self-reported" (#61).
