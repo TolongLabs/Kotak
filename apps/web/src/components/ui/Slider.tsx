@@ -12,6 +12,8 @@ export interface SliderProps extends Omit<
   value: number
   onChange: (value: number) => void
   unit: string
+  /** Formats the shown value, such as rounding an unset default; the slider still holds the exact value. */
+  formatValue?: (value: number) => string
 }
 
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
@@ -23,6 +25,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
     value,
     onChange,
     unit,
+    formatValue = String,
     id: providedId,
     className,
     disabled,
@@ -43,7 +46,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
           {label}
         </label>
         <output htmlFor={id} className="font-mono text-mono-m text-text-primary">
-          {value} {unit}
+          {formatValue(value)} {unit}
         </output>
       </div>
       <input
@@ -56,7 +59,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
         step={step}
         value={value}
         disabled={disabled}
-        aria-valuetext={value + ' ' + unit}
+        aria-valuetext={formatValue(value) + ' ' + unit}
         aria-invalid={ariaInvalid}
         onChange={(event) => onChange(Number(event.currentTarget.value))}
         style={{

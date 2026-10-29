@@ -1,7 +1,14 @@
 import { accessFor } from '@kotak/sdk'
-import { DEFAULT_SCENARIO, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS, needsQualification } from '@kotak/shared'
-import { Check, Clock3 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  addDays,
+  DEFAULT_SCENARIO,
+  MAX_WEEKLY_HOURS,
+  MIN_WEEKLY_HOURS,
+  needsQualification,
+  REFRESHER_ID
+} from '@kotak/shared'
+import { Gauge } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { AccessNotice } from '../components/kotak/AccessNotice'
@@ -34,6 +41,7 @@ import { hasAnswers, updateGuestSession, useGuestSession } from '../session/stor
 import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
+import { PaceMathsCard } from './roadmap/PaceMathsCard'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
 import { type TimelineStep } from './roadmap/planSupport'
 import { startAgain } from './checkup/startAgain'
@@ -55,6 +63,12 @@ function formatDate(value: string) {
     .replace(',', '')
 }
 
+function formatDayMonth(value: string) {
+  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
+    new Date(`${value}T00:00:00Z`)
+  )
+}
+
 function formatEstimate(value: number) {
   return new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 }).format(value)
 }
@@ -73,98 +87,6 @@ interface LessImportantItem {
   id: string
   verdict?: VerdictType
   text: string
-}
-
-function RoadmapStepToggle({
-  step,
-  onChange,
-  children,
-  partial = false
-}: {
-  step: RoadmapStep
-  onChange: (checked: boolean) => void
-  children: ReactNode
-  partial?: boolean
-}) {
-  return (
-    <div className="relative">
-      <input
-        type="checkbox"
-        disabled={partial}
-        checked={step.state === 'done'}
-        aria-label={`Mark ${step.skill} ${step.state === 'done' ? 'Incomplete' : 'Complete'}`}
-        onChange={(event) => onChange(event.currentTarget.checked)}
-        className="absolute left-0 top-0 z-20 h-7 w-7 cursor-pointer appearance-none rounded-full border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2"
-      />
-      {children}
-    </div>
-  )
-}
-
-function RoadmapStepWithoutResource({
-  step,
-  index,
-  last,
-  highlighted,
-  selected,
-  onSelect,
-  stepRef
-}: {
-  step: RoadmapStep
-  index: number
-  last: boolean
-  highlighted: boolean
-  selected: boolean
-  onSelect: () => void
-  stepRef: (element: HTMLElement | null) => void
-}) {
-  const border = step.conditional
-    ? 'border-[1.5px] border-dashed border-border-control bg-bg-panel'
-    : step.state === 'next'
-      ? 'border-[1.5px] border-text-primary bg-bg-default'
-      : 'border border-border-subtle bg-bg-default'
-
-  return (
-    <div className={`relative flex gap-3 sm:gap-4 ${last ? '' : 'pb-3'}`}>
-      <div className="relative flex w-7 shrink-0 justify-center">
-        {!last && <span className="absolute bottom-0 top-7 w-px bg-border-subtle" aria-hidden="true" />}
-        <span
-          className={`relative z-10 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-[1.5px] font-mono text-mono-s ${
-            step.state === 'next'
-              ? 'on-accent border-text-primary bg-accent-box text-text-primary'
-              : step.state === 'done'
-                ? 'border-state-success bg-state-success text-bg-default'
-                : 'border-border-control bg-bg-default text-text-primary'
-          }`}
-          aria-hidden="true"
-        >
-          {step.state === 'done' ? <Check className="h-4 w-4 stroke-current" /> : index + 1}
-        </span>
-      </div>
-      <article
-        ref={stepRef}
-        aria-current={selected ? 'true' : undefined}
-        onClick={onSelect}
-        className={`min-w-0 flex-1 cursor-pointer space-y-2 rounded-md p-4 ${border} ${
-          highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
-        } ${selected ? 'outline outline-2 outline-offset-2 outline-text-primary' : ''}`}
-      >
-        <p className="font-mono text-mono-s text-text-muted">{formatStepWhen(step.when)}</p>
-        <h3 className="text-title-s text-text-primary">{step.title || step.skill}</h3>
-        {step.description && <p className="text-body-s text-text-primary">{step.description}</p>}
-        <p className="text-body-s text-text-primary">{step.gain}</p>
-        <p className="flex items-center gap-2 text-body-s text-text-primary">
-          <Clock3 className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-          <span>{step.hoursPerWeek} h a Week</span>
-        </p>
-        <div className="flex flex-wrap gap-2 pt-1">
-          {step.sdgs.map((goal) => (
-            <SdgChip key={goal} goal={goal} />
-          ))}
-        </div>
-      </article>
-    </div>
-  )
 }
 
 export function RoadmapView() {
@@ -204,7 +126,10 @@ export function RoadmapView() {
   // Clicking a step bar or a readiness point scrolls its Step Details card into view.
   useEffect(() => {
     if (!selectedStepId) return
-    cardRefs.current.get(selectedStepId)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    cardRefs.current
+      .get(selectedStepId)
+      ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' })
   }, [selectedStepId])
 
   // The Weekly Hours after applying the AI dividend, with the readiness week it would bring.
@@ -293,6 +218,29 @@ export function RoadmapView() {
     session.ticked_milestones,
     planWeeks
   )
+  const pace = checkup.roadmap.pace
+  const refresherDone = session.ticked_milestones.includes(REFRESHER_ID)
+  const refresherWeeks = pace.refresher
+    ? pace.refresher.weeks[0] === pace.refresher.weeks[1]
+      ? `Week ${pace.refresher.weeks[0]}`
+      : `Weeks ${pace.refresher.weeks[0]}–${pace.refresher.weeks[1]}`
+    : ''
+  const refresherStep: RoadmapStep | null = pace.refresher && {
+    id: REFRESHER_ID,
+    // Never 'next': the first skill step keeps the yellow strip and the refresher its dashed look.
+    state: refresherDone ? 'done' : 'todo',
+    weeks: pace.refresher.weeks,
+    when: `${refresherWeeks} · ${formatDayMonth(addDays(checkup.roadmap.start_date, (pace.refresher.weeks[0] - 1) * 7))}–${formatDayMonth(addDays(checkup.roadmap.start_date, pace.refresher.weeks[1] * 7 - 1))}`,
+    skill: pace.refresher.title,
+    title: pace.refresher.title,
+    description: pace.refresher.description,
+    gain: '',
+    hoursPerWeek:
+      Math.round((pace.refresher.hours / (pace.refresher.weeks[1] - pace.refresher.weeks[0] + 1)) * 10) / 10,
+    resource: { label: '', href: '' },
+    sdgs: []
+  }
+  const listSteps = refresherStep ? [refresherStep, ...steps] : steps
   const timelineSteps: TimelineStep[] = steps.map((step) => ({ ...step, totalHours: stepHours.get(step.id) ?? 0 }))
   const readinessPoints = toReadinessWindow(fullReadiness, planWeeks)
   const impactAreaGoals = [...new Set(steps.flatMap((step) => step.sdgs))].sort((left, right) => left - right)
@@ -395,6 +343,21 @@ export function RoadmapView() {
     updateGuestSession({ custom_weekly_hours: projection.proposed })
   }
 
+  // On desktop the right column sticks, and when it is taller than the screen the browser's own jump stops where See
+  // the Maths sits while stuck, below the fold. Scroll to where the column's end has pushed the card up instead.
+  function showPaceMaths(event: MouseEvent<HTMLAnchorElement>) {
+    const card = document.getElementById('pace-maths')
+    const column = card?.parentElement
+    const columns = column?.parentElement
+    if (!card || !column || !columns || getComputedStyle(column).position !== 'sticky') return
+    event.preventDefault()
+    const columnsEnd = columns.getBoundingClientRect().bottom + window.scrollY
+    const top = columnsEnd - column.offsetHeight + card.offsetTop - parseFloat(getComputedStyle(card).scrollMarginTop)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' })
+    card.focus({ preventScroll: true })
+  }
+
   function selectStep(stepId: string) {
     setSelectedStepId(stepId)
   }
@@ -487,6 +450,7 @@ export function RoadmapView() {
               value={session.custom_weekly_hours ?? checkup.roadmap.weekly_hours}
               onChange={(value) => updateGuestSession({ custom_weekly_hours: value })}
               unit="h"
+              formatValue={formatEstimate}
             />
           </div>
           <DatePicker
@@ -564,42 +528,40 @@ export function RoadmapView() {
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-6">
           <section
             aria-labelledby="step-details-title"
-            className="space-y-4 rounded-md border border-border-subtle bg-bg-default p-5"
+            className="space-y-4 rounded-md border border-border-subtle bg-bg-default p-5 max-[479px]:border-0 max-[479px]:bg-transparent max-[479px]:p-0"
           >
             <h2 id="step-details-title" className="text-title-s text-text-primary">
               Step Details
             </h2>
-            {steps.length > 0 ? (
+            <div className="flex gap-3 rounded-md border border-border-subtle bg-bg-panel px-4 py-3 text-body-s text-text-primary">
+              <Gauge className="mt-0.5 h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
+              <p>
+                <b>Pace set for you.</b> {pace.note}{' '}
+                <a
+                  href="#pace-maths"
+                  onClick={showPaceMaths}
+                  className="font-semibold underline underline-offset-[3px]"
+                >
+                  See the Maths
+                </a>
+              </p>
+            </div>
+            {listSteps.length > 0 ? (
               <div className="space-y-0">
-                {steps.map((step, index) => (
-                  <RoadmapStepToggle
-                    partial={partialIds.has(step.id)}
+                {listSteps.map((step, index) => (
+                  <RoadmapStepCard
                     key={step.id}
-                    step={step}
-                    onChange={(checked) => toggleMilestone(step.id, checked)}
-                  >
-                    {step.resource.href && step.resource.label ? (
-                      <RoadmapStepCard
-                        step={{ ...step, when: formatStepWhen(step.when) }}
-                        index={index}
-                        last={index === steps.length - 1}
-                        highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
-                        selected={selectedStepId === step.id}
-                        onSelect={() => selectStep(step.id)}
-                        stepRef={recordRef(step.id)}
-                      />
-                    ) : (
-                      <RoadmapStepWithoutResource
-                        step={step}
-                        index={index}
-                        last={index === steps.length - 1}
-                        highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
-                        selected={selectedStepId === step.id}
-                        onSelect={() => selectStep(step.id)}
-                        stepRef={recordRef(step.id)}
-                      />
-                    )}
-                  </RoadmapStepToggle>
+                    step={{ ...step, when: formatStepWhen(step.when) }}
+                    index={refresherStep ? index - 1 : index}
+                    last={index === listSteps.length - 1}
+                    totalHours={step.id === REFRESHER_ID ? pace.refresher?.hours : stepHours.get(step.id)}
+                    highlighted={selectedImpactArea !== null && step.sdgs.includes(selectedImpactArea)}
+                    selected={selectedStepId === step.id}
+                    onSelect={() => selectStep(step.id)}
+                    stepRef={recordRef(step.id)}
+                    onToggle={(checked) => toggleMilestone(step.id, checked)}
+                    toggleDisabled={partialIds.has(step.id)}
+                  />
                 ))}
               </div>
             ) : (
@@ -659,7 +621,9 @@ export function RoadmapView() {
                     className="flex items-center gap-2.5 rounded-md border border-border-subtle bg-bg-default px-4 py-3"
                   >
                     {item.verdict && <VerdictChip verdict={item.verdict} size="sm" />}
-                    <p className="min-w-0 text-body-s text-text-primary">{renderCited(item.text)}</p>
+                    <p className="min-w-0 text-body-s text-text-primary [overflow-wrap:anywhere]">
+                      {renderCited(item.text)}
+                    </p>
                   </div>
                 ))
               ) : (
@@ -668,6 +632,7 @@ export function RoadmapView() {
                 </div>
               )}
             </div>
+            <PaceMathsCard pace={pace} />
           </div>
         </div>
 

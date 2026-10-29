@@ -628,7 +628,7 @@ export function RoadmapTimeline({
                 <th scope="row">{rowLabels[index]}</th>
                 <td>{step.weeks[0]}</td>
                 <td>{step.weeks[1]}</td>
-                <td>{step.hoursPerWeek}</td>
+                <td>{fmt(step.hoursPerWeek)}</td>
                 <td>{step.sdgs.join(', ')}</td>
               </tr>
             ))}
