@@ -56,9 +56,12 @@
     --color-text-muted: var(--k-color-accent-on-box-muted);
   }
 
-  /* Chips and tracks on yellow keep their light-mode white too; in dark mode they would put ink on near-black. */
+  /* Chips and tracks on yellow keep their light-mode white, green and red too; in dark mode they would put ink on
+     near-black, and Rising and Declining under 2.5:1 on a light chip (#137). */
   :root[data-theme='dark'] .on-accent {
-    --color-bg-default: var(--k-color-text-primary);
+    --color-bg-default: var(--k-color-accent-on-box-bg);
+    --color-state-success: var(--k-color-accent-on-box-success);
+    --color-state-error: var(--k-color-accent-on-box-error);
   }
 
   /* The Strengths quadrant's dark fill is too dark for muted ink (1.9:1), so muted text stays ink (4.7:1). */
@@ -68,7 +71,9 @@
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) .on-accent {
-      --color-bg-default: var(--k-color-text-primary);
+      --color-bg-default: var(--k-color-accent-on-box-bg);
+      --color-state-success: var(--k-color-accent-on-box-success);
+      --color-state-error: var(--k-color-accent-on-box-error);
     }
 
     :root:not([data-theme='light']) .on-you-fill {

@@ -33,29 +33,32 @@ Contents:
 
 ### Semantic colour tokens
 
-| Token                       | Light            | Dark             | Use                                         |
-| --------------------------- | ---------------- | ---------------- | ------------------------------------------- |
-| `color/bg/default`          | `#FFFFFF`        | `#10100B`        | Page background                             |
-| `color/bg/panel`            | `#F8F7F2`        | `#1B1A13`        | Panels, sidebar, quiet cards                |
-| `color/text/primary`        | `#191812`        | `#F3F2ED`        | Text, lines and icons ("ink")               |
-| `color/text/muted`          | `#595851`        | `#ACABA3`        | Secondary text                              |
-| `color/border/subtle`       | `#D8D8D2`        | `#37362F`        | Card borders and dividers                   |
-| `color/border/control`      | `#828078`        | `#6A6961`        | Input and control borders                   |
-| `color/accent/box`          | `#F6D732`        | `#EFD127`        | Primary actions                             |
-| `color/accent/box-hover`    | `#E2C21F`        | `#F6D732`        | Hover on primary actions                    |
-| `color/accent/on-box`       | `#191812`        | `#191812`        | Text on the yellow accent                   |
-| `color/accent/on-box-muted` | `#595851`        | `#595851`        | Muted text on yellow surfaces               |
-| `color/state/success`       | `#1D7D3E`        | `#5AC576`        | Success messages                            |
-| `color/state/warning`       | `#B15300`        | `#F39E4C`        | Warnings                                    |
-| `color/state/error`         | `#C9302D`        | `#F66D62`        | Errors                                      |
-| `color/focus/ring`          | `#191812`        | `#EFD127`        | Focus rings                                 |
-| `color/radar/role`          | `#191812`        | `#F3F2ED`        | The dashed "needed by 2027" line            |
-| `color/radar/you`           | `#F6D732`        | `#EFD127`        | The user's line on the radar                |
-| `color/radar/you-fill`      | `#FAE784`        | `#96841C`        | The user's shape and the Strengths quadrant |
-| `color/swot/weak`           | `#FBE4E1`        | `#3A1F1C`        | Weaknesses quadrant tint                    |
-| `color/swot/opp`            | `#E0EBFA`        | `#182A40`        | Opportunities quadrant tint                 |
-| `color/swot/threat`         | `#EBE2F7`        | `#2B2040`        | Threats quadrant tint                       |
-| `color/surface/glass`       | `#FFFFFF` at 72% | `#10100B` at 72% | Glass islands, always with background blur  |
+| Token                         | Light            | Dark             | Use                                         |
+| ----------------------------- | ---------------- | ---------------- | ------------------------------------------- |
+| `color/bg/default`            | `#FFFFFF`        | `#10100B`        | Page background                             |
+| `color/bg/panel`              | `#F8F7F2`        | `#1B1A13`        | Panels, sidebar, quiet cards                |
+| `color/text/primary`          | `#191812`        | `#F3F2ED`        | Text, lines and icons ("ink")               |
+| `color/text/muted`            | `#595851`        | `#ACABA3`        | Secondary text                              |
+| `color/border/subtle`         | `#D8D8D2`        | `#37362F`        | Card borders and dividers                   |
+| `color/border/control`        | `#828078`        | `#6A6961`        | Input and control borders                   |
+| `color/accent/box`            | `#F6D732`        | `#EFD127`        | Primary actions                             |
+| `color/accent/box-hover`      | `#E2C21F`        | `#F6D732`        | Hover on primary actions                    |
+| `color/accent/on-box`         | `#191812`        | `#191812`        | Text on the yellow accent                   |
+| `color/accent/on-box-muted`   | `#595851`        | `#595851`        | Muted text on yellow surfaces               |
+| `color/accent/on-box-bg`      | `#FFFFFF`        | `#FFFFFF`        | Chips and tracks on yellow surfaces         |
+| `color/accent/on-box-success` | `#1D7D3E`        | `#1D7D3E`        | Rising chips on yellow surfaces             |
+| `color/accent/on-box-error`   | `#C9302D`        | `#C9302D`        | Declining chips on yellow surfaces          |
+| `color/state/success`         | `#1D7D3E`        | `#5AC576`        | Success messages                            |
+| `color/state/warning`         | `#B15300`        | `#F39E4C`        | Warnings                                    |
+| `color/state/error`           | `#C9302D`        | `#F66D62`        | Errors                                      |
+| `color/focus/ring`            | `#191812`        | `#EFD127`        | Focus rings                                 |
+| `color/radar/role`            | `#191812`        | `#F3F2ED`        | The dashed "needed by 2027" line            |
+| `color/radar/you`             | `#F6D732`        | `#EFD127`        | The user's line on the radar                |
+| `color/radar/you-fill`        | `#FAE784`        | `#96841C`        | The user's shape and the Strengths quadrant |
+| `color/swot/weak`             | `#FBE4E1`        | `#3A1F1C`        | Weaknesses quadrant tint                    |
+| `color/swot/opp`              | `#E0EBFA`        | `#182A40`        | Opportunities quadrant tint                 |
+| `color/swot/threat`           | `#EBE2F7`        | `#2B2040`        | Threats quadrant tint                       |
+| `color/surface/glass`         | `#FFFFFF` at 72% | `#10100B` at 72% | Glass islands, always with background blur  |
 
 ### SDG colours
 
