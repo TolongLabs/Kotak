@@ -155,6 +155,17 @@ describe('explanation verifier', () => {
     expect(result.fallback_reason).toBe('verifier_rejected')
   })
 
+  // A first check-up sends no previous verdicts, so nothing changed, and the summary must still cite (#396).
+  test('replaces a summary with no citation when no verdict changed', () => {
+    const firstVisit = { ...request, corners: request.corners.map(({ previous_verdict, ...corner }) => corner) }
+    const uncited = 'No verdict changed, since no previous verdict is given for any corner.'
+    const result = buildExplanations(firstVisit, draft({}, uncited))
+    expect(result.what_changed_source).toBe('template')
+    expect(result.fallback_reason).toBe('verifier_rejected')
+    const cited = 'No verdict changed in this snapshot (Anthropic Economic Index, 2026-04-01).'
+    expect(buildExplanations(firstVisit, draft({}, cited)).what_changed_source).toBe('claude')
+  })
+
   test('replaces a corner that negates its verdict label', () => {
     const result = buildExplanations(
       request,
@@ -198,6 +209,20 @@ describe('explanation verifier', () => {
       })
     )
     expect(result.explanations[0]).toEqual(templateExplanation(cornerOf('problem-solving'), request.snapshot_id))
+  })
+
+  test('replaces a corner that names a source without its date', () => {
+    const result = buildExplanations(
+      request,
+      draft({
+        'problem-solving': [
+          'Problem Solving is Rising as AI use on its tasks grows (Anthropic Economic Index, 2026-04-01).',
+          'Job ads from DOSM Job Market Insights keep asking for it (DOSM Job Market Insights, 2026-03-15), and your level is below the target.'
+        ]
+      })
+    )
+    expect(result.explanations[0]).toEqual(templateExplanation(cornerOf('problem-solving'), request.snapshot_id))
+    expect(sourceOf(result, 'communication')).toBe('claude')
   })
 
   test('replaces a corner whose fields hold more than one sentence each', () => {
