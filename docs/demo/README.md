@@ -4,9 +4,14 @@ How the team makes the submission media: the pitching video and the pitch deck. 
 
 Contents:
 
+1.  [Final pitch](#final-pitch)
 1.  [Demo video](#demo-video)
 1.  [Example deck](#example-deck)
 1.  [See also](#see-also)
+
+## Final pitch
+
+[`final-pitch.md`](final-pitch.md) is the skeleton for the live final pitch on 1 November 2026: the run of show with timings, the live demo path through the six must-haves, the checked problem data, who answers which questions, and the pitch-day checklist.
 
 ## Demo video
 
