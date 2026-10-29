@@ -1,22 +1,20 @@
-import { Diamond, Star, TrendingDown, TrendingUp } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { Link } from '../../app/router'
+import { ArrowUpRight } from 'lucide-react'
+import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import {
-  BOX_NAMES,
-  placeLabel,
   placePoints,
   type BoxId,
   type Placed,
+  type PointKind,
   type QuadrantPoint,
   type Trend
 } from '../../engine/quadrant'
-import { VerdictChip } from '../ui/VerdictChip'
+import { Link } from '../../app/router'
 import { cn } from '../ui/cn'
 
 export interface QuadrantMapProps {
   points: QuadrantPoint[]
-  /** Tint the box the You dot sits in. */
-  highlightBox?: boolean
+  /** The job this page is about (the job page): drawn as the star labelled "This job", and with no fit its trend band is drawn. */
+  focusId?: string
   /** Heading and one-line description; the default is the radar page's. */
   title?: string
   description?: string
@@ -25,83 +23,232 @@ export interface QuadrantMapProps {
   className?: string
 }
 
-// Box positions in the plot: [left, top] cell of the 2x2 grid, plus the verb under the name.
-const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; verb: string }[] = [
-  { id: 'plan', col: 0, row: 0, verb: 'Train for it' },
-  { id: 'best', col: 1, row: 0, verb: 'Go for it' },
-  { id: 'rethink', col: 0, row: 1, verb: 'Avoid' },
-  { id: 'push', col: 1, row: 1, verb: 'Move soon' }
+// The four boxes in the plot: [left, top] cell of the 2x2 grid, the name, its line and its SWOT tint.
+const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; name: string; line: string; tint: string; divider: string }[] = [
+  {
+    id: 'plan',
+    col: 0,
+    row: 0,
+    name: 'Plan',
+    line: 'Growing, not ready yet. Train for it.',
+    tint: 'bg-swot-opp',
+    divider: 'border-r border-b'
+  },
+  {
+    id: 'best',
+    col: 1,
+    row: 0,
+    name: 'Best',
+    line: 'Ready and growing. Go for it.',
+    tint: 'bg-radar-you-fill',
+    divider: 'border-b'
+  },
+  {
+    id: 'rethink',
+    col: 0,
+    row: 1,
+    name: 'Rethink',
+    line: 'Not ready, shrinking. Avoid.',
+    tint: 'bg-swot-weak',
+    divider: 'border-r'
+  },
+  {
+    id: 'push',
+    col: 1,
+    row: 1,
+    name: 'Push',
+    line: 'Ready, shrinking. Move soon.',
+    tint: 'bg-swot-threat',
+    divider: ''
+  }
 ]
 
-const RING: Record<Trend | 'none', string> = {
-  rising: 'border-state-success',
-  declining: 'border-state-error',
-  steady: 'border-text-primary',
-  none: 'border-text-primary'
-}
+const KIND_LABEL: Record<PointKind, string> = { you: 'Your job', target: 'Your target', suggested: 'Kotak suggests' }
+// Stacking on the plot: the star on top, then the red targets, then the blue suggestions.
+const STACK: Record<PointKind, number> = { suggested: 0, target: 1, you: 2 }
 
-/**
- * Keeps dots inside their own box and moves a dot to the nearest free spot when it would sit on an earlier one.
- * A dot never crosses the 50% line or the middle line: rising dots stay above the line, declining below it, steady only move sideways.
- */
-const NUDGES = [0, -9, 9, -18, 18].flatMap((dx) => [0, 6, -6, 12, -12].map((dy) => [dx, dy] as const))
-function spread(placed: Placed[], narrow: boolean) {
-  // Rows kept clear for the box names and tags: a taller strip on phones, where the boxes are narrow.
-  const [lo, hi] = narrow ? [30, 78] : [22, 78]
-  const seen: { x: number; y: number }[] = []
-  return placed.map((point) => {
-    if (point.x === null || point.y === null) return { point, left: 0, top: 0 }
-    const ready = point.x >= 50
-    const [min, max] = ready ? [57, 88] : [12, 43]
-    const rising = point.y > 50
-    const top = 100 - point.y
-    const at = ([ox, oy]: readonly [number, number]) => ({
-      x: Math.min(max, Math.max(min, point.x! + ox)),
-      y: point.y === 50 ? top : Math.min(rising ? 46 : hi, Math.max(rising ? lo : 54, top + oy))
-    })
-    const [offset] = NUDGES.map((n) => [n, at(n)] as const).filter(
-      ([, p]) => !seen.some((s) => Math.abs(s.x - p.x) < 8 && Math.abs(s.y - p.y) < 8)
-    )[0] ?? [NUDGES[0]]
-    const spot = at(offset)
-    seen.push(spot)
-    return { point, left: spot.x, top: spot.y }
-  })
-}
+// Lucide's star path, the same shape as the star icon elsewhere in the app.
+const STAR =
+  'M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z'
 
-function Dot({ point, index }: { point: Placed; index: number }) {
-  const label = `${point.label}: fit ${point.fit}%, ${placeLabel(point)}`
-  const shape =
-    point.kind === 'you'
-      ? 'h-[30px] w-[30px] rounded-full border-[3px] border-radar-you bg-text-primary text-label-s font-semibold text-bg-default outline outline-2 outline-offset-1 outline-text-primary'
-      : point.kind === 'target'
-        ? 'h-5 w-5 rotate-45 rounded-sm border-2 bg-bg-default'
-        : point.kind === 'job'
-          ? 'h-5 w-5 rounded-full border-2 border-text-primary bg-text-primary outline outline-2 outline-offset-2 outline-text-primary'
-          : cn(
-              'h-5 w-5 rounded-full border-2 bg-bg-default text-label-s text-text-primary',
-              RING[point.trend ?? 'none']
-            )
+// The marker by shape and colour; the words always sit beside it, so colour is never the only cue.
+// On the chart the job star is larger; legends and tables use 12 px for all three.
+function Marker({ kind, chart = false, className }: { kind: PointKind; chart?: boolean; className?: string }) {
+  // Stroke width that shows a 2 px ring outside the shape at this marker's size (24 units span 12 or 18 px).
+  const ring = 96 / (chart && kind === 'you' ? 18 : 12)
   return (
-    <>
-      <span
-        className={cn(
-          'inline-flex shrink-0 items-center justify-center leading-none',
-          shape,
-          point.kind === 'target' && RING[point.trend ?? 'none']
-        )}
-        aria-hidden="true"
-      >
-        {point.kind === 'you' ? (
-          'You'
-        ) : point.kind === 'target' ? (
-          <Diamond className="h-2.5 w-2.5 -rotate-45" />
-        ) : (
-          index
-        )}
-      </span>
-      <span className="sr-only">{label}</span>
-    </>
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={cn(chart && kind === 'you' ? 'h-[18px] w-[18px]' : 'h-3 w-3', 'shrink-0 overflow-visible', className)}
+    >
+      {/* A 2 px page-colour ring: the ring is drawn under the shape, so only its outer 2 px shows. */}
+      {kind === 'you' ? (
+        <>
+          <path
+            d={STAR}
+            fill="var(--color-bg-default)"
+            stroke="var(--color-bg-default)"
+            strokeWidth={ring}
+            strokeLinejoin="round"
+          />
+          <path
+            d={STAR}
+            fill="var(--color-radar-you)"
+            stroke="var(--color-text-primary)"
+            strokeWidth={1.6}
+            strokeLinejoin="round"
+          />
+        </>
+      ) : kind === 'target' ? (
+        <rect
+          x={3}
+          y={3}
+          width={18}
+          height={18}
+          rx={3}
+          className="fill-map-target"
+          stroke="var(--color-bg-default)"
+          strokeWidth={ring}
+          paintOrder="stroke"
+        />
+      ) : (
+        <circle
+          cx={12}
+          cy={12}
+          r={9}
+          className="fill-map-suggested"
+          stroke="var(--color-bg-default)"
+          strokeWidth={ring}
+          paintOrder="stroke"
+        />
+      )}
+    </svg>
   )
+}
+
+// The job page's own job is drawn as the star; the star is "This job" there, or "Your job" when it is the user's own.
+const markOf = (point: Placed, focusId?: string): PointKind =>
+  point.id === focusId && point.kind === 'suggested' ? 'you' : point.kind
+const wordOf = (point: Placed, focusId?: string) =>
+  point.id === focusId && point.kind === 'suggested' ? 'This job' : KIND_LABEL[point.kind]
+
+// The table's Marker column uses short words so it wraps less on a phone.
+const SHORT_LABEL: Record<PointKind, string> = { you: 'Your job', target: 'Target', suggested: 'Suggests' }
+const shortWordOf = (point: Placed, focusId?: string) =>
+  point.id === focusId && point.kind === 'suggested' ? 'This job' : SHORT_LABEL[point.kind]
+
+const trendWord = (trend: Trend | null) => (trend ? trend[0].toUpperCase() + trend.slice(1) : 'No trend data')
+const fitWord = (fit: number | null) => (fit === null ? 'fit unknown' : `fit ${fit}%`)
+const BOX_NAME = Object.fromEntries(BOXES.map(({ id, name }) => [id, name])) as Record<BoxId, string>
+// Where a dot sits, in words: its box, the steady middle line, or not placed (no fit or no trend).
+const placeWord = (point: Placed) =>
+  point.box ? BOX_NAME[point.box] : point.x !== null && point.y !== null ? 'Middle line' : 'Not placed'
+
+// Spreads spots on one line in their given order: each lands at least `gap` after the one before, inside [from, to], as
+// close to where it wants to be as it can. Taking i gaps off the i-th spot turns "a gap apart" into "in order", which
+// pooling adjacent out-of-order spots solves; a line too short for the gaps shrinks them to fit.
+function spreadInOrder(wanted: number[], from: number, to: number, gap: number): number[] {
+  const step = wanted.length > 1 ? Math.min(gap, (to - from) / (wanted.length - 1)) : 0
+  const pools: { sum: number; count: number }[] = []
+  wanted.forEach((at, i) => {
+    pools.push({ sum: at - i * step, count: 1 })
+    while (
+      pools.length > 1 &&
+      pools[pools.length - 2].sum * pools[pools.length - 1].count >
+        pools[pools.length - 1].sum * pools[pools.length - 2].count
+    ) {
+      const last = pools.pop()!
+      pools[pools.length - 1].sum += last.sum
+      pools[pools.length - 1].count += last.count
+    }
+  })
+  const end = to - (wanted.length - 1) * step
+  return pools
+    .flatMap(({ sum, count }) => Array<number>(count).fill(sum / count))
+    .map((at, i) => Math.min(end, Math.max(from, at)) + i * step)
+}
+
+// Marker centres are kept apart: 16 px on desktop, 14 px on a phone. Rising and declining dots keep their fit across and
+// stack up and down inside their box's dot band (height carries no meaning): below the top boxes' names, above the bottom
+// boxes' names, and that gap or more from the middle line. Dots on the steady middle line stay on it and spread sideways
+// in fit order, so a higher fit is never left of a lower one. Nothing crosses the middle line or a box edge.
+interface PlotSize {
+  width: number
+  height: number
+  /** Where the top boxes' names end and the bottom boxes' names start, in px from the plot's top. */
+  namesEnd: number
+  namesStart: number
+}
+// A band keeps a dot centre half a marker hit box clear of the box names.
+const NAMES_CLEARANCE_PX = 12
+function spread(placed: Placed[], narrow: boolean, { width, height, namesEnd, namesStart }: PlotSize) {
+  const minGap = narrow ? 14 : 16
+  const middle = height / 2
+  const rising = [Math.min(namesEnd + NAMES_CLEARANCE_PX, middle - minGap), middle - minGap] as const
+  const declining = [middle + minGap, Math.max(middle + minGap, namesStart - NAMES_CLEARANCE_PX)] as const
+  const spots = placed.flatMap((point) => {
+    if (point.x === null || point.y === null) return []
+    const box = point.x >= 50 ? ([53, 94] as const) : ([6, 47] as const)
+    const band = point.y === 50 ? null : point.y > 50 ? rising : declining
+    const top = ((100 - point.y) * height) / 100
+    const x = (Math.min(box[1], Math.max(box[0], point.x)) * width) / 100
+    return [{ point, x, y: band ? Math.min(band[1], Math.max(band[0], top)) : top, box, band }]
+  })
+  // Steady dots, each half on its own: one pass in fit order, so equal fits (and fits held at the box edge) keep the
+  // list order and never share a pixel.
+  for (const [from, to] of [
+    [6, 47],
+    [53, 94]
+  ]) {
+    const line = spots.filter((spot) => !spot.band && spot.box[0] === from).sort((a, b) => a.point.x! - b.point.x!)
+    const xs = spreadInOrder(
+      line.map((spot) => spot.x),
+      (from * width) / 100,
+      (to * width) / 100,
+      minGap
+    )
+    line.forEach((spot, i) => (spot.x = xs[i]))
+  }
+  // Boxed dots, each box on its own, left to right: dots closer than minGap across form a stack. Each takes the height
+  // nearest the stack's first dot that clears the dots before it; the stack is then centred on its trend's height and
+  // kept inside the band, squeezed evenly when the band is too short.
+  const stack = (dots: typeof spots) => {
+    const offsets: number[] = []
+    dots.forEach((dot) => {
+      const need = (j: number) => Math.sqrt(Math.max(0, minGap ** 2 - (dot.x - dots[j].x) ** 2))
+      const clear = (offset: number) => offsets.every((other, j) => Math.abs(offset - other) >= need(j) - 1e-6)
+      const options = [0, ...offsets.flatMap((other, j) => [other - need(j), other + need(j)])].filter(clear)
+      offsets.push(options.sort((a, b) => Math.abs(a) - Math.abs(b) || a - b)[0])
+    })
+    const [from, to] = dots[0].band!
+    const [low, high] = [Math.min(...offsets), Math.max(...offsets)]
+    const squeeze = high - low > to - from ? (to - from) / (high - low) : 1
+    const shift = Math.min(
+      to - high * squeeze,
+      Math.max(from - low * squeeze, dots[0].y - ((low + high) / 2) * squeeze)
+    )
+    dots.forEach((dot, i) => (dot.y = offsets[i] * squeeze + shift))
+  }
+  for (const id of ['plan', 'best', 'rethink', 'push']) {
+    const inBox = spots
+      .filter((spot) => spot.band && spot.point.box === id)
+      .sort((a, b) => a.x - b.x || a.point.x! - b.point.x!)
+    let start = 0
+    for (let end = 1; end <= inBox.length; end++) {
+      if (end < inBox.length && inBox[end].x - inBox[end - 1].x < minGap) continue
+      stack(inBox.slice(start, end))
+      start = end
+    }
+  }
+  return spots.map((spot) => ({ point: spot.point, left: (spot.x * 100) / width, top: (spot.y * 100) / height }))
+}
+
+// The popover sits beside its dot and stays inside the plot: below the dot in the lower half, to the side near the edges.
+function popoverAt(left: number, top: number): CSSProperties {
+  const x = left < 15 ? '0%' : left > 85 ? '-100%' : '-50%'
+  const y = top < 45 ? '28px' : 'calc(-100% - 28px)'
+  return { left: `${left}%`, top: `${top}%`, transform: `translate(${x}, ${y})` }
 }
 
 // Roughly square on wide screens, taller on phones so the box names keep clear of the dots.
@@ -118,7 +265,7 @@ function useNarrow() {
 
 export function QuadrantMap({
   points,
-  highlightBox = true,
+  focusId,
   title = 'Where You Stand',
   description = 'Each dot is a job. Across: how ready you are for it. Up: it is growing.',
   bare = false,
@@ -126,16 +273,74 @@ export function QuadrantMap({
 }: QuadrantMapProps) {
   const narrow = useNarrow()
   const placed = useMemo(() => placePoints(points), [points])
-  const you = placed.find((point) => point.kind === 'you')
-  const job = placed.find((point) => point.kind === 'job')
-  // The box to tint: the You dot's, else the job's own on the job page.
-  const hereBox = highlightBox ? ((you ?? job)?.box ?? null) : null
-  const hereTag = you ? 'You are here' : 'This job is here'
+  const focused = focusId ? placed.find((point) => point.id === focusId) : undefined
   // A lone job with no fit: no x position, so the plot shows its trend row as a band.
-  const band = !you && job && job.fit === null && job.y !== null ? job : null
-  const dots = spread(placed, narrow).filter(({ point }) => point.x !== null && point.y !== null)
-  // Suggested dots are numbered in list order; You and target carry their own mark.
-  const numbered = new Map(placed.filter((p) => p.kind === 'suggested').map((p, i) => [p.id, i + 1]))
+  const band = focused && focused.fit === null && focused.y !== null ? focused : null
+  const plotRef = useRef<HTMLDivElement>(null)
+  const namesRef = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState<PlotSize>({ width: 340, height: 340, namesEnd: 64, namesStart: 276 })
+  useLayoutEffect(() => {
+    const el = plotRef.current
+    const names = [...(namesRef.current?.querySelectorAll('span') ?? [])]
+    if (!el) return
+    // The names wrap with the width and the font, so the dot bands follow their measured edges.
+    const update = () => {
+      const height = el.clientHeight || 340
+      const top = el.getBoundingClientRect().top
+      const rects = names.map((name) => name.getBoundingClientRect())
+      setSize({
+        width: el.clientWidth || 340,
+        height,
+        namesEnd: Math.max(0, ...rects.filter((r) => r.top - top < height / 2).map((r) => r.bottom - top)),
+        namesStart: Math.min(height, ...rects.filter((r) => r.top - top >= height / 2).map((r) => r.top - top))
+      })
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    names.forEach((name) => observer.observe(name))
+    return () => observer.disconnect()
+  }, [])
+  const dots = spread(placed, narrow, size)
+    .filter(({ point }) => point.x !== null && point.y !== null)
+    .sort((a, b) => STACK[markOf(a.point, focusId)] - STACK[markOf(b.point, focusId)])
+  // The legend lists only the marks that appear on this chart.
+  const marksShown = new Set(dots.map(({ point }) => markOf(point, focusId)))
+  const starPoint = dots.find(({ point }) => markOf(point, focusId) === 'you')?.point
+
+  // A dot's popover opens on hover, keyboard focus, or a tap that pins it; Escape or a tap outside closes it.
+  const [hovered, setHovered] = useState<string | null>(null)
+  const [focusedDot, setFocusedDot] = useState<string | null>(null)
+  const [pinned, setPinned] = useState<string | null>(null)
+  const openId = hovered ?? focusedDot ?? pinned
+  const popoverId = useId()
+  const close = () => {
+    setHovered(null)
+    setFocusedDot(null)
+    setPinned(null)
+  }
+
+  useEffect(() => {
+    const onPointer = (event: PointerEvent) => {
+      // A press on a dot or inside the open popover keeps it; anywhere else closes it.
+      const inside = (event.target as Element).closest?.('button[aria-label], [data-popover]')
+      if (!inside || !plotRef.current?.contains(inside)) close()
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      // Escape from inside the pinned popover hands focus back to its dot before the popover goes.
+      const active = document.activeElement
+      if (active?.closest('[data-popover]') && plotRef.current?.contains(active))
+        plotRef.current.querySelector<HTMLElement>('[aria-expanded="true"]')?.focus()
+      close()
+    }
+    document.addEventListener('pointerdown', onPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [])
 
   return (
     <section
@@ -149,68 +354,40 @@ export function QuadrantMap({
             {title}
           </h2>
           <p className="text-body-s text-text-muted">{description}</p>
-          <p className="flex items-center gap-2 text-label-m text-text-primary">
-            <TrendingUp className="h-4 w-4 shrink-0" aria-hidden="true" />
-            Aim for the top-right box: ready and growing.
-          </p>
         </header>
       )}
 
-      <div className="flex gap-2">
-        <div className="flex w-14 shrink-0 flex-col justify-between py-1 text-label-s" aria-hidden="true">
-          <span className="flex items-center gap-1 text-state-success">
-            <TrendingUp className="h-3.5 w-3.5 shrink-0" />
-            Growing
-          </span>
-          <span className="text-text-muted">Steady</span>
-          <span className="flex items-center gap-1 text-state-error">
-            <TrendingDown className="h-3.5 w-3.5 shrink-0" />
-            Shrinking
-          </span>
-        </div>
-        <div className="min-w-0 flex-1">
-          <div
-            role="img"
-            aria-label="Map of jobs by how ready you are for them and whether they are growing. The list below names every dot."
-            className={cn(
-              narrow ? 'aspect-[10/16]' : 'aspect-square',
-              'relative w-full overflow-hidden rounded-sm border-[1.5px] border-text-primary'
-            )}
-          >
-            <div className="absolute inset-0 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_minmax(0,1fr)]">
-              {BOXES.map(({ id, col, row, verb }) => {
-                const best = id === 'best'
-                const mine = hereBox === id
-                return (
-                  <div
-                    key={id}
-                    className={cn(
-                      col === 0 ? 'col-start-1' : 'col-start-2',
-                      row === 0 ? 'row-start-1' : 'row-start-2',
-                      'flex flex-col justify-between p-2 text-text-primary',
-                      row === 1 ? 'justify-end' : 'justify-start',
-                      col === 1 ? 'items-end text-right' : 'items-start',
-                      mine ? 'bg-radar-you-fill' : best ? 'bg-bg-panel' : 'bg-bg-default',
-                      best && 'z-[1] border-[3px] border-text-primary'
-                    )}
-                  >
-                    {best && (
-                      <span className="inline-flex items-center gap-1 rounded-sm bg-accent-box px-2 text-label-s text-accent-on-box">
-                        <Star className="h-3 w-3" aria-hidden="true" />
-                        Best box
-                      </span>
-                    )}
-                    {mine && (
-                      <span className="rounded-sm bg-text-primary px-2 text-label-s text-bg-default">{hereTag}</span>
-                    )}
-                    <span className="text-label-m">{BOX_NAMES[id]}</span>
-                    <span className="hidden text-label-s text-text-muted @lg:inline">{verb}</span>
-                  </div>
-                )
-              })}
+      <div className="min-w-0">
+        <p className="mb-1 flex items-center justify-end gap-1 text-label-s text-text-primary" aria-hidden="true">
+          Higher is better
+          <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+        </p>
+        <div ref={plotRef} className={cn(narrow ? 'h-[340px]' : 'aspect-square', 'relative w-full')}>
+          <div className="absolute inset-0 overflow-hidden rounded-[12px] border border-text-primary">
+            <div
+              ref={namesRef}
+              className="grid h-full w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_minmax(0,1fr)]"
+            >
+              {BOXES.map(({ id, col, row, name, line, tint, divider }) => (
+                <div
+                  key={id}
+                  className={cn(
+                    col === 0 ? 'col-start-1' : 'col-start-2',
+                    row === 0 ? 'row-start-1' : 'row-start-2',
+                    // Ink on the Best tint in both themes: light text on its dark-mode fill is 3.3:1.
+                    'flex flex-col p-2.5 text-left',
+                    id === 'best' ? 'text-accent-on-box' : 'text-text-primary',
+                    row === 1 ? 'justify-end' : 'justify-start',
+                    tint,
+                    divider,
+                    'border-text-primary'
+                  )}
+                >
+                  <span className="text-label-m">{name}</span>
+                  <span className="text-label-s">{line}</span>
+                </div>
+              ))}
             </div>
-            <div className="pointer-events-none absolute inset-x-0 top-1/2 border-t border-dashed border-text-muted" />
-            <div className="pointer-events-none absolute inset-y-0 left-1/2 border-l border-dashed border-text-muted" />
             {band && (
               <div
                 className="pointer-events-none absolute inset-x-0 z-[1] flex items-center justify-center border-y border-text-primary"
@@ -223,69 +400,110 @@ export function QuadrantMap({
                 }}
               >
                 <span className="rounded-full border-[1.5px] border-text-primary bg-accent-box px-3 text-label-s text-accent-on-box">
-                  This job: {band.trend![0].toUpperCase() + band.trend!.slice(1)}
+                  This job: {trendWord(band.trend)}
                 </span>
               </div>
             )}
-            {dots.map(({ point, left, top }) => (
-              <Link
-                key={point.id}
-                to={`/app/jobs/${point.id}`}
-                aria-label={`${point.label}: ${placeLabel(point)}`}
-                style={{ left: `${left}%`, top: `${top}%` }}
-                className="group absolute z-[2] inline-flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus-ring"
-              >
-                <Dot point={point} index={numbered.get(point.id) ?? 0} />
-                {point.kind === 'target' && (
-                  <span className="pointer-events-none absolute right-full mr-0.5 rounded-sm bg-bg-default px-1 text-label-s text-text-primary">
-                    Target
-                  </span>
+          </div>
+          {dots.map(({ point, left, top }) => {
+            // A pinned popover takes the pointer and the keyboard: it follows its dot in the tab order and links to the
+            // job's page. A hover or focus preview stays out of the way.
+            const open = point.id === openId
+            const interactive = open && pinned === point.id
+            return (
+              <Fragment key={point.id}>
+                <button
+                  type="button"
+                  aria-label={`${point.label}, ${wordOf(point, focusId)}, ${fitWord(point.fit)}, ${trendWord(point.trend)}, ${placeWord(point)}${point.box ? ' box' : ''}${point.gap ? `, Needed first: ${point.gap}` : ''}`}
+                  onPointerEnter={() => setHovered(point.id)}
+                  onPointerLeave={() => setHovered(null)}
+                  onFocus={() => setFocusedDot(point.id)}
+                  onBlur={() => setFocusedDot(null)}
+                  aria-expanded={pinned === point.id}
+                  aria-controls={interactive ? popoverId : undefined}
+                  onClick={(event) => {
+                    if (pinned !== point.id) return setPinned(point.id)
+                    setHovered(null)
+                    setFocusedDot(null)
+                    setPinned(null)
+                    // A click or tap leaves focus on the dot, which would keep it open; Enter or Space (detail 0) keeps focus.
+                    if (event.detail > 0) event.currentTarget.blur()
+                  }}
+                  style={{ left: `${left}%`, top: `${top}%` }}
+                  // The focus ring sits on a 2 px page-colour halo inside and out, so it keeps 3:1 on every box tint
+                  // (the dark-mode yellow ring alone is 2.5:1 on the dark Best tint).
+                  className="group absolute z-[2] inline-flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:shadow-[0_0_0_7px_var(--color-bg-default)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                >
+                  <Marker
+                    kind={markOf(point, focusId)}
+                    chart
+                    className="transition-transform duration-150 group-hover:scale-[1.15]"
+                  />
+                </button>
+                {open && (
+                  <div
+                    id={interactive ? popoverId : undefined}
+                    data-popover
+                    aria-hidden={interactive ? undefined : true}
+                    style={popoverAt(left, top)}
+                    className={cn(
+                      'absolute z-[3] w-[min(230px,calc(100%-16px))] space-y-1 rounded-md border border-text-primary bg-bg-default p-3 text-body-s text-text-primary shadow-popover',
+                      !interactive && 'pointer-events-none'
+                    )}
+                  >
+                    <p className="font-semibold">{point.label}</p>
+                    <p className="flex items-center gap-1.5 text-label-s">
+                      <Marker kind={markOf(point, focusId)} />
+                      {wordOf(point, focusId)} · {point.fit === null ? 'Fit unknown' : `Fit ${point.fit}%`} ·{' '}
+                      {trendWord(point.trend)}
+                    </p>
+                    {point.gap && <p className="text-label-s">Needed first: {point.gap}</p>}
+                    {interactive && point.id !== focusId && (
+                      <Link
+                        to={`/app/jobs/${point.id}`}
+                        onClick={close}
+                        className="inline-flex min-h-6 items-center text-label-m text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                      >
+                        Open Job Page<span className="sr-only">: {point.label}</span>
+                      </Link>
+                    )}
+                  </div>
                 )}
-              </Link>
-            ))}
-          </div>
-          <div className="mt-1 flex justify-between text-label-s text-text-muted" aria-hidden="true">
-            <span>0%</span>
-            <span>Fit 50%</span>
-            <span>100%</span>
-          </div>
-          <p className="text-center text-label-s text-text-primary">How ready you are (fit %)</p>
+              </Fragment>
+            )
+          })}
+        </div>
+        <div className="mt-1 flex justify-between text-label-s text-text-muted" aria-hidden="true">
+          <span>0% fit</span>
+          <span>How ready you are</span>
+          <span>100%</span>
+        </div>
+        <div className="mt-2 flex flex-wrap justify-end gap-x-4 gap-y-1 text-label-s text-text-primary">
+          {marksShown.has('you') && (
+            <span className="inline-flex items-center gap-1.5">
+              <Marker kind="you" />
+              {starPoint && starPoint.id === focusId ? wordOf(starPoint, focusId) : 'You'}
+            </span>
+          )}
+          {marksShown.has('target') && (
+            <span className="inline-flex items-center gap-1.5">
+              <Marker kind="target" />
+              Your targets
+            </span>
+          )}
+          {marksShown.has('suggested') && (
+            <span className="inline-flex items-center gap-1.5">
+              <Marker kind="suggested" />
+              Kotak suggests
+            </span>
+          )}
         </div>
       </div>
 
-      <ol className="space-y-2">
-        {placed.map((point) => {
-          const mine = point.kind === 'you'
-          return (
-            <li
-              key={point.id}
-              className={cn(
-                'flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border-subtle px-3 py-2',
-                mine && 'border-text-primary bg-radar-you-fill text-text-primary'
-              )}
-            >
-              <span className="min-w-[9rem] flex-1 text-label-m">
-                {point.kind === 'you'
-                  ? 'You: '
-                  : point.kind === 'target'
-                    ? 'Target: '
-                    : point.kind === 'job'
-                      ? 'This job: '
-                      : `${numbered.get(point.id)}. `}
-                {point.label}
-              </span>
-              {point.trend ? (
-                <VerdictChip verdict={point.trend} size="sm" className={mine ? 'text-text-primary' : undefined} />
-              ) : null}
-              <span className="font-mono text-mono-s">{point.fit === null ? 'Fit unknown' : `Fit ${point.fit}%`}</span>
-              {point.fit !== null && <span className="text-label-s">{placeLabel(point)}</span>}
-            </li>
-          )
-        })}
-      </ol>
-
-      <details className="border-t border-border-subtle pt-3">
-        <summary className="min-h-11 cursor-pointer text-label-m text-text-primary">See the Maths</summary>
+      <details open className="border-t border-border-subtle pt-3">
+        <summary className="min-h-11 cursor-pointer text-label-m text-text-primary">
+          Text version (See the Maths table)
+        </summary>
         <p className="py-2 text-body-s text-text-muted">
           Across is your fit % (50 or more counts as ready). Up is the job&apos;s trend: Rising above the middle line,
           Declining below, Steady on it, in no box.
@@ -294,22 +512,39 @@ export function QuadrantMap({
           <table className="w-full text-left text-body-s">
             <thead>
               <tr className="text-label-s text-text-muted">
-                <th className="py-1 pr-4">Job</th>
-                <th className="py-1 pr-4 text-right">Fit</th>
-                <th className="py-1 pr-4">Trend</th>
+                <th className="py-1 pr-1.5 sm:pr-4">Role</th>
+                <th className="py-1 pr-1.5 sm:pr-4">Marker</th>
+                <th className="py-1 pr-1.5 sm:pr-4 text-right">Fit</th>
+                <th className="py-1 pr-1.5 sm:pr-4">Trend</th>
                 <th className="py-1">Place</th>
               </tr>
             </thead>
             <tbody>
               {placed.map((point) => (
-                <tr key={point.id} className="border-t border-border-subtle">
-                  <td className="py-1 pr-4">{point.label}</td>
-                  <td className="whitespace-nowrap py-1 pr-4 text-right font-mono">
-                    {point.fit === null ? '-' : `${point.fit}%`}
-                  </td>
-                  <td className="whitespace-nowrap py-1 pr-4">{point.trend ?? 'no trend data'}</td>
-                  <td className="py-1">{placeLabel(point)}</td>
-                </tr>
+                <Fragment key={point.id}>
+                  <tr className="border-t border-border-subtle">
+                    <td className="py-1 pr-1.5 sm:pr-4">{point.label}</td>
+                    <td className="py-1 pr-1.5 sm:pr-4">
+                      {/* On a phone the column shows the shape only (the legend names it), so the table fits. */}
+                      <span className="inline-flex items-center gap-1">
+                        <Marker kind={markOf(point, focusId)} />
+                        <span className="max-sm:sr-only">{shortWordOf(point, focusId)}</span>
+                      </span>
+                    </td>
+                    <td className="whitespace-nowrap py-1 pr-1.5 sm:pr-4 text-right font-mono">
+                      {point.fit === null ? '-' : `${point.fit}%`}
+                    </td>
+                    <td className="whitespace-nowrap py-1 pr-1.5 sm:pr-4">{trendWord(point.trend)}</td>
+                    <td className="py-1">{placeWord(point)}</td>
+                  </tr>
+                  {point.gap && (
+                    <tr>
+                      <td colSpan={5} className="pb-1 text-label-s text-text-muted">
+                        Needed first: {point.gap}
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               ))}
             </tbody>
           </table>

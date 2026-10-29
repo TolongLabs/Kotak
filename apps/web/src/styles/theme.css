@@ -8,6 +8,8 @@
   --color-accent-box: var(--k-color-accent-box);
   --color-accent-box-hover: var(--k-color-accent-box-hover);
   --color-accent-on-box: var(--k-color-accent-on-box);
+  --color-map-target: var(--k-color-map-target);
+  --color-map-suggested: var(--k-color-map-suggested);
   --color-state-success: var(--k-color-state-success);
   --color-state-warning: var(--k-color-state-warning);
   --color-state-error: var(--k-color-state-error);

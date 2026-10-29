@@ -59,6 +59,8 @@ Contents:
 | `color/swot/weak`             | `#FBE4E1`        | `#3A1F1C`        | Weaknesses quadrant tint                    |
 | `color/swot/opp`              | `#E0EBFA`        | `#182A40`        | Opportunities quadrant tint                 |
 | `color/swot/threat`           | `#EBE2F7`        | `#2B2040`        | Threats quadrant tint                       |
+| `color/map/target`            | `#C9302D`        | `#F66D62`        | Your-target markers on the quadrant map     |
+| `color/map/suggested`         | `#1F5FBF`        | `#7DB0FF`        | Kotak-suggests markers on the quadrant map  |
 | `color/surface/glass`         | `#FFFFFF` at 72% | `#10100B` at 72% | Glass islands, always with background blur  |
 
 ### SDG colours
@@ -88,6 +90,7 @@ SDG chips use the official UN colours. The text is ink (`#191812`) or white per 
 ### Colour rules
 
 - Never use yellow for text. On white, give every yellow shape an ink outline, because yellow alone is 1.4:1.
+- Text on `color/radar/you-fill` (the Strengths quadrant and the quadrant map's Best box) uses `color/accent/on-box`, ink in both themes, because light text on the dark fill is 3.3:1.
 - Verdict chips keep their icon and word. Rising uses the success green and Declining the error red (text, border and a light tint over an opaque background); Steady, Split and Unknown stay ink. Decided by the user on 23 October 2026.
 - Use the state colours for messages only: success, warning and error.
 - Every card, container and CTA has a solid or glass background. Never use a see-through or half-transparent one.
@@ -195,6 +198,7 @@ Every component lives on the Components page. Build each one as a custom compone
 
 - Every text pair meets WCAG 2.2 AA: 4.5:1 for text and 3:1 for control borders. Ink on white is 17.7:1.
 - Focus rings use `color/focus/ring`: ink in light mode, yellow in dark mode.
+- A quadrant map dot's focus ring has a 2 px `color/bg/default` halo inside and outside it, so the ring keeps 3:1 against whatever it touches. The yellow ring alone is 2.5:1 on the dark Best box.
 - Disabled fields show a lock icon and the not-allowed cursor, as on the pilot's guest-only Auth page.
 - The Questions page takes the number keys 1 to 4 on desktop.
 - Respect reduced motion, and keep Kopi's mute button one tap away.
