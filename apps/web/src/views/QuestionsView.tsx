@@ -139,8 +139,7 @@ export function QuestionsView() {
       if (next.length === totalQuestions) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
       setAsked(next)
     }
-    // Reduced motion: no pause, answer at once.
-    if (reduced) return advance()
+    // The pink and tick show for the pause with or without motion (#351); only the movement follows reduced motion.
     setChosen(rating)
     thinkingTimer.current = window.setTimeout(() => {
       thinkingTimer.current = null
@@ -170,12 +169,19 @@ export function QuestionsView() {
             </span>
           </div>
         ))}
+        {/* The counter, and the corner when it changes, rise in with each new question (CSS .question-enter). */}
         <div className={cn(TOPIC_ROW, 'self-start')} aria-live="polite">
-          <span className="font-mono text-mono-s text-text-muted">
+          <span
+            key={questionIndex}
+            className={cn('font-mono text-mono-s text-text-muted', !reduced && 'question-enter')}
+          >
             Question {questionIndex + 1} of {totalQuestions}
           </span>
           <span className="inline-flex items-center gap-2 font-mono text-mono-s text-text-primary">
-            {corner.name}
+            {/* Only the name rises in: a transform around the (i) would pin its fixed popover to this span meanwhile. */}
+            <span key={corner.corner_id} className={cn(!reduced && 'question-enter')}>
+              {corner.name}
+            </span>
             <QuestionInfo
               key={questionIndex}
               cornerName={corner.name}
@@ -191,7 +197,7 @@ export function QuestionsView() {
           pose={chosen !== null ? 'happy' : 'asking'}
           speech={statement}
           reserve={statements}
-          hop={chosen !== null}
+          react={chosen !== null}
           centred
         />
 
@@ -208,6 +214,7 @@ export function QuestionsView() {
               fullWidth
               className={cn(
                 'h-auto min-h-[56px] px-1 py-2 !transition-[scale,background-color,color] !duration-[120ms]',
+                chosen === value && '!bg-accent-chosen',
                 chosen === value && !reduced && 'scale-[0.96]'
               )}
               aria-label={`${value} ${caption}`}
