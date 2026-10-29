@@ -1,7 +1,8 @@
+import { biggestGaps } from '@kotak/sdk'
 import type { VerdictId } from '../demo/types'
 
 export type Trend = 'rising' | 'steady' | 'declining'
-export type PointKind = 'you' | 'target' | 'suggested' | 'job'
+export type PointKind = 'you' | 'target' | 'suggested'
 export type BoxId = 'best' | 'plan' | 'push' | 'rethink'
 
 export interface QuadrantPoint {
@@ -12,6 +13,8 @@ export interface QuadrantPoint {
   fit: number | null
   trend: Trend | null
   kind: PointKind
+  /** The skill with the biggest gap for this role, with the levels; shown when the dot is opened. */
+  gap?: string
 }
 
 export interface Placed extends QuadrantPoint {
@@ -22,14 +25,7 @@ export interface Placed extends QuadrantPoint {
   box: BoxId | null
 }
 
-export const BOX_NAMES: Record<BoxId, string> = {
-  best: 'Ready and growing',
-  plan: 'Growing, not ready yet',
-  push: 'Ready, but shrinking',
-  rethink: 'Not ready, shrinking'
-}
-
-const KIND_RANK: Record<PointKind, number> = { you: 0, target: 1, job: 2, suggested: 3 }
+const KIND_RANK: Record<PointKind, number> = { you: 0, target: 1, suggested: 2 }
 const TREND_Y: Record<Trend, number> = { rising: 62, steady: 50, declining: 38 }
 
 /** The engine's outlook as a trend; split and unknown have none. */
@@ -62,10 +58,13 @@ export function placePoints(points: QuadrantPoint[]): Placed[] {
   })
 }
 
-/** Where a point sits in words, for the list and the table. Steady jobs sit on the middle line, in no box. */
-export function placeLabel(point: Placed): string {
-  if (point.fit === null) return 'no fit yet'
-  if (point.trend === null) return 'no trend data'
-  if (point.box) return BOX_NAMES[point.box]
-  return `${point.fit >= 50 ? 'Ready' : 'Not ready'}, steady demand`
+/** The role's biggest gap, named from its corners with its levels: "Name (you 1.0, needed 2.8)". */
+export function topGapLabel(
+  fit: Parameters<typeof biggestGaps>[0],
+  corners: { corner_id: string; name: string }[]
+): string | undefined {
+  const term = biggestGaps(fit)[0]
+  if (!term) return undefined
+  const name = corners.find((corner) => corner.corner_id === term.corner_id)?.name ?? term.corner_id
+  return `${name} (you ${term.user_level.toFixed(1)}, needed ${term.target_level.toFixed(1)})`
 }

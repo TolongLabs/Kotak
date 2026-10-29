@@ -17,10 +17,10 @@ test('duplicates merge by id with You first, and unknown fit is never placed at 
   const placed = placePoints([
     { id: 'a', label: 'A', fit: 70, trend: 'rising', kind: 'suggested' },
     { id: 'a', label: 'A', fit: 70, trend: 'rising', kind: 'you' },
-    { id: 'b', label: 'B', fit: null, trend: 'declining', kind: 'job' }
+    { id: 'b', label: 'B', fit: null, trend: 'declining', kind: 'suggested' }
   ])
   expect(placed.map((p) => [p.id, p.kind, p.x, p.y])).toEqual([
     ['a', 'you', 70, 62],
-    ['b', 'job', null, 38]
+    ['b', 'suggested', null, 38]
   ])
 })

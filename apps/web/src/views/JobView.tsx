@@ -18,7 +18,7 @@ import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
 import type { Corner } from '../demo/types'
 import { loadRoleBundle, useRoleBundle } from '../engine/bundle'
-import { trendOf, type QuadrantPoint } from '../engine/quadrant'
+import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { verdictId } from '../engine/viewModel'
 import { useGuestSession } from '../session/store'
 import { NotFoundView } from './NotFoundView'
@@ -41,12 +41,12 @@ const formatNeeded = (value: number) => (Number.isInteger(value) ? String(value)
  * job or no answer yet) or the roles are still loading. A job outside the check-up's own list is scored the same way
  * as the check-up does, by asking for it as an extra role.
  */
-function useSavedFits(codes: string[]): Map<string, number> | null {
+function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string }> | null {
   const session = useGuestSession()
   const assessed = assessedRoleCode(session)
   const answered = session.answers.some((answer) => answer !== null)
   const key = assessed && answered ? JSON.stringify([assessed, codes]) : null
-  const [state, setState] = useState<{ key: string; fits: Map<string, number> } | null>(null)
+  const [state, setState] = useState<{ key: string; fits: Map<string, { fit: number; gap?: string }> } | null>(null)
 
   useEffect(() => {
     if (!key) return
@@ -64,7 +64,13 @@ function useSavedFits(codes: string[]): Map<string, number> | null {
           profile: session.profile,
           startDate: new Date().toISOString().slice(0, 10)
         })
-        const fits = new Map(checkup.roles.map((role) => [role.onet_code, Math.round(role.fit.score)]))
+        const fits = new Map(
+          checkup.roles.map((role) => {
+            const corners =
+              [bundle.role, ...bundle.related].find((other) => other.onet_code === role.onet_code)?.corners ?? []
+            return [role.onet_code, { fit: Math.round(role.fit.score), gap: topGapLabel(role.fit, corners) }] as const
+          })
+        )
         if (current) setState({ key, fits })
       },
       () => {
@@ -197,11 +203,19 @@ export function JobView({ code }: { code: string }) {
   })
 
   const points: QuadrantPoint[] = [
-    { id: code, label: role.title, fit: fits?.get(code) ?? null, trend: trendOf(outlook), kind: 'job' },
+    {
+      id: code,
+      label: role.title,
+      fit: fits?.get(code)?.fit ?? null,
+      gap: fits?.get(code)?.gap,
+      trend: trendOf(outlook),
+      kind: code === session.role_code ? 'you' : 'suggested'
+    },
     ...related.map((other) => ({
       id: other.onet_code,
       label: other.title,
-      fit: fits?.get(other.onet_code) ?? null,
+      fit: fits?.get(other.onet_code)?.fit ?? null,
+      gap: fits?.get(other.onet_code)?.gap,
       trend: trendOf(outlookOf(other, snapshotId)),
       kind: 'suggested' as const
     }))
@@ -260,7 +274,7 @@ export function JobView({ code }: { code: string }) {
                 : 'Up: the job is growing. We cannot place it across until you do the check-up.'}
             </p>
           </div>
-          <QuadrantMap bare points={points} />
+          <QuadrantMap bare points={points} focusId={code} />
           {!fits && (
             <div className="space-y-3 rounded-md border-[1.5px] border-dashed border-border-control p-4">
               <p className="text-label-m text-text-primary">Do the check-up to see how ready you are.</p>
@@ -285,7 +299,7 @@ export function JobView({ code }: { code: string }) {
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {related.map((other) => {
               const verdict = outlookOf(other, snapshotId)
-              const fit = fits?.get(other.onet_code)
+              const fit = fits?.get(other.onet_code)?.fit
               return (
                 <li key={other.onet_code} className="min-w-0">
                   <Link

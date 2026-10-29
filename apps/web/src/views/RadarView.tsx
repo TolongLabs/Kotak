@@ -20,7 +20,7 @@ import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
-import { trendOf, type QuadrantPoint } from '../engine/quadrant'
+import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useCheckupBundle } from '../engine/bundle'
@@ -217,14 +217,21 @@ export function RadarView() {
           : 'I don’t have a ready skill statement for your first step yet.'
         : 'No rising skill gap stands out for this job yet.'
 
-  // You, the target and up to 5 other jobs from the check-up; the map merges repeats by code.
+  // The role's biggest gap, the same term the roles page names, with its levels.
+  const gapOf = (code: string) => {
+    const fit = checkup.roles.find((candidate) => candidate.onet_code === code)?.fit
+    const corners = [role, ...related].find((candidate) => candidate.onet_code === code)?.corners ?? []
+    return fit ? topGapLabel(fit, corners) : undefined
+  }
   const quadrantOf = (candidate: (typeof roles)[number], kind: QuadrantPoint['kind']): QuadrantPoint => ({
     id: candidate.id,
     label: candidate.title,
     fit: candidate.fit,
     trend: trendOf(candidate.outlook),
-    kind
+    kind,
+    gap: gapOf(candidate.id)
   })
+  // You, the target and up to 5 other jobs from the check-up; the map merges repeats by code.
   const quadrantPoints = [
     ...roles.filter((candidate) => candidate.isCurrentJob).map((candidate) => quadrantOf(candidate, 'you')),
     ...roles
