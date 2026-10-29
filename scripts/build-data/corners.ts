@@ -26,7 +26,12 @@ export type FoundCorners = Pick<BundleRole, 'corners_source' | 'quality' | 'gene
 
 async function read<T>(path: string, schema: { parse: (value: unknown) => T }): Promise<T | null> {
   const file = Bun.file(path)
-  return (await file.exists()) ? schema.parse(await file.json()) : null
+  if (!(await file.exists())) return null
+  try {
+    return schema.parse(await file.json())
+  } catch (error) {
+    throw new Error(`${path} failed to load: ${error instanceof Error ? error.message : error}`)
+  }
 }
 
 /** Corners by O*NET code. Throws when a batch role fails the #74 post-validator or the groups file is missing. */
@@ -39,6 +44,7 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
   const scenarios = (await read(`${root}/${SCENARIOS_FILE}`, ScenariosFileSchema))?.roles ?? {}
   const unknownRoles = Object.keys(scenarios).filter((code) => !batch?.roles.some((r) => r.onet_code === code))
   if (unknownRoles.length > 0) throw new Error(`${SCENARIOS_FILE}: no batch corners for ${unknownRoles.join(', ')}`)
+  const partial: string[] = []
   const found = new Map<string, FoundCorners>()
   for (const occupation of groups.occupations) {
     found.set(occupation.onet_code, {
@@ -76,6 +82,9 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
       )
     })
     if (scenarioErrors.length > 0) throw new Error(`${SCENARIOS_FILE} ${role.onet_code}: ${scenarioErrors.join('; ')}`)
+    const slots = Object.values(scenariosByCorner).flatMap((levels) => Object.values(levels)).length
+    if (slots > 0 && slots < 2 * role.corners.length)
+      partial.push(`${role.onet_code} (${slots} of ${2 * role.corners.length})`)
     found.set(role.onet_code, {
       corners_source: 'batch',
       quality: role.quality,
@@ -87,6 +96,11 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
       }))
     })
   }
+  if (partial.length > 0)
+    console.warn(
+      `${SCENARIOS_FILE}: ${partial.length} role(s) have some but not all scenarios, so they keep their statements: ` +
+        `${partial.slice(0, 10).join(', ')}${partial.length > 10 ? `, and ${partial.length - 10} more` : ''}`
+    )
   return found
 }
 
