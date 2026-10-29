@@ -63,7 +63,8 @@ const roadmapStepExample: RoadmapStep = {
     label: 'GitHub Skills: Review Pull Requests',
     href: 'https://skills.github.com'
   },
-  sdgs: [8]
+  sdgs: [8],
+  sdgTargets: ['8.2']
 }
 
 function BoxSection() {

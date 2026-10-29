@@ -73,7 +73,9 @@ function SdgReasonChip({ target, compact = false, reason, reasonLabel, un }: Sdg
         popoverTarget={panelId}
         aria-label={`SDG ${target}: ${name}`}
         aria-expanded={open}
-        className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        // On a yellow card (a picked Roles card), the dark-mode yellow ring would vanish, so it sits on a 2 px halo of
+        // the page colour inside and out, as the quadrant map's dots do.
+        className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring in-[.on-accent]:focus-visible:shadow-[0_0_0_6px_var(--k-color-bg-default)]"
       >
         <SdgChip goal={goal} target={target} compact={compact} aria-hidden="true" className="cursor-pointer">
           {!compact && (
@@ -88,6 +90,10 @@ function SdgReasonChip({ target, compact = false, reason, reasonLabel, un }: Sdg
         ref={panelRef}
         id={panelId}
         popover="auto"
+        // A press on its text doesn't pick the Roles card, a label, around the chip either; its link still opens.
+        onClick={(event) => {
+          if (!(event.target as Element).closest('a')) event.preventDefault()
+        }}
         // Its height is known only once it shows, so it stays hidden until the toggle event places it.
         onBeforeToggle={(event) => {
           setOpen(event.newState === 'open')
@@ -98,7 +104,8 @@ function SdgReasonChip({ target, compact = false, reason, reasonLabel, un }: Sdg
           place(buttonRef.current!, event.currentTarget)
           event.currentTarget.style.visibility = ''
         }}
-        className="inset-auto m-0 max-h-[calc(100vh-1.5rem)] w-[min(20rem,calc(100vw-1.5rem))] space-y-3 overflow-y-auto rounded-md border border-border-subtle bg-bg-default p-4 text-left font-sans text-text-primary shadow-popover"
+        // It keeps the page's colours on a yellow card too, whose ink on white would make it a light panel in dark mode.
+        className="inset-auto m-0 max-h-[calc(100vh-1.5rem)] cursor-default [--color-bg-default:var(--k-color-bg-default)] [--color-text-muted:var(--k-color-text-muted)] [--color-text-primary:var(--k-color-text-primary)] w-[min(20rem,calc(100vw-1.5rem))] space-y-3 overflow-y-auto rounded-md border border-border-subtle bg-bg-default p-4 text-left font-sans text-text-primary shadow-popover"
       >
         <p className="text-label-m">
           SDG {target} · {name}

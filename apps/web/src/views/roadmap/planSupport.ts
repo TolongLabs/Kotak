@@ -5,6 +5,21 @@ export interface TimelineStep extends RoadmapStep {
   totalHours: number
 }
 
+/**
+ * The plan's SDG targets with the steps and hours that build each, most hours first: the rows of the roadmap's What
+ * This Path Contributes To card, and the order of the Dashboard's plan chips.
+ */
+export function pathTargetTotals(steps: TimelineStep[]) {
+  const totals = new Map<string, { steps: number; hours: number }>()
+  for (const step of steps) {
+    for (const target of new Set(step.sdgTargets ?? [])) {
+      const total = totals.get(target) ?? { steps: 0, hours: 0 }
+      totals.set(target, { steps: total.steps + 1, hours: total.hours + step.totalHours })
+    }
+  }
+  return [...totals].sort(([, left], [, right]) => right.hours - left.hours || right.steps - left.steps)
+}
+
 const DAY_MS = 24 * 60 * 60 * 1000
 
 /** One decimal at most: no unrounded float reaches the screen. */

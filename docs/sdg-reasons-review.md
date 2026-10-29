@@ -1,6 +1,6 @@
 # SDG reasons review
 
-Kotak shows the UN text and a one-line reason for every SDG target chip on the radar and the roadmap, and in the roadmap's What This Path Contributes To card (#391). This page lists the 58 targets beside the UN's official text so a reviewer can check them. 46 are on skill tags and 8 more only on the radar's job chips; the other 4 lost their skill tags in #408's retag. The source of truth is [`data/sdg-reasons.json`](/data/sdg-reasons.json) for the targets and [`occupationSdg.ts`](/apps/web/src/engine/occupationSdg.ts) for the job chips; this page copies both.
+Kotak shows the UN text and a one-line reason for every SDG target chip: on the radar and the roadmap, and in the roadmap's What This Path Contributes To card (#391), and on the Dashboard, the Roles cards and the landing page's sample step (#407). This page lists the 58 targets beside the UN's official text so a reviewer can check them. 46 are on skill tags and 8 more only on the job chips; the other 4 lost their skill tags in #408's retag. The source of truth is [`data/sdg-reasons.json`](/data/sdg-reasons.json) for the targets and [`occupationSdg.ts`](/apps/web/src/engine/occupationSdg.ts) for the job chips; this page copies both.
 
 Contents:
 
@@ -91,7 +91,7 @@ The UN text is copied word for word from the [UN SDG API's target list][api], re
 
 ## Job chip reasons
 
-The radar's Linked SDG Targets row names the targets a job's work rests on. It opens the job's own reason beside the target's UN text, under "Why This Work Counts". The most specific row wins: a detailed occupation, then its minor group, then its major group.
+The job chips name the targets a job's work rests on: the Linked SDG Targets row on the radar and on each Roles card, and Your Work Supports on the Dashboard. Each opens the job's own reason beside the target's UN text, under "Why This Work Counts". The most specific row wins: a detailed occupation, then its minor group, then its major group.
 
 | Jobs                                                                                                                                                            | Targets    | Reason                                                                                                                         |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------ |

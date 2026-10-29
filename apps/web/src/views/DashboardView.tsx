@@ -4,20 +4,27 @@ import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type Sn
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
+import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { StatCard } from '../components/kotak/StatCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { SdgChip } from '../components/ui/SdgChip'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { deriveSwot } from '../demo/swot'
 import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
-import { planWeeksFor, toReadinessPoints, toReadinessWindow, toRoadmapSteps } from '../engine/roadmapModel'
+import {
+  planWeeksFor,
+  toReadinessPoints,
+  toReadinessWindow,
+  toRoadmapSteps,
+  toRoadmapWindow
+} from '../engine/roadmapModel'
 import { hasAnswers, useGuestSession } from '../session/store'
 import { startAgain } from './checkup/startAgain'
+import { pathTargetTotals } from './roadmap/planSupport'
 
 const beforeSnapshot: SnapshotId = '2026-04'
 const afterSnapshot: SnapshotId = '2026-05'
@@ -221,19 +228,19 @@ export function DashboardView() {
     [role, ...bundle.data.related].find((entry) => entry.onet_code === currentCheckup.planRoleCode) ?? role
   const steps = toRoadmapSteps(currentCheckup, planBundleRole, session.ticked_milestones)
   const nextStep = steps.find((step) => step.state === 'next')
-  const nextStepGoals = (nextStep?.sdgs ?? []).slice(0, 2)
-  const sdgCounts = new Map<number, number>()
-  for (const step of steps) {
-    for (const goal of new Set(step.sdgs)) sdgCounts.set(goal, (sdgCounts.get(goal) ?? 0) + 1)
-  }
-  const topPlanGoals = [...sdgCounts.entries()]
-    .sort((left, right) => right[1] - left[1] || left[0] - right[0])
+  const nextStepTargets = (nextStep?.sdgTargets ?? []).slice(0, 2)
+  // The roadmap's own window and step hours, so these rank as its What This Path Contributes To card does.
+  const roadmapWeeks = planWeeksFor(toReadinessPoints(currentCheckup, planBundleRole), (point) => point.plan)
+  const roadmapWindow = toRoadmapWindow(currentCheckup, planBundleRole, session.ticked_milestones, roadmapWeeks)
+  const topPlanTargets = pathTargetTotals(
+    roadmapWindow.steps.map((step) => ({ ...step, totalHours: roadmapWindow.stepHours.get(step.id) ?? 0 }))
+  )
     .slice(0, 3)
-    .map(([goal]) => goal)
+    .map(([target]) => target)
   const workSdgs = occupationSdgs(planRoleCodeOf(session))
-  const workGoals = workSdgs?.goals ?? []
-  const workGoalSet = new Set(workGoals)
-  const planGoals = topPlanGoals.filter((goal) => !workGoalSet.has(goal))
+  const workTargets = workSdgs?.targets ?? []
+  const workTargetSet = new Set(workTargets)
+  const planTargets = topPlanTargets.filter((target) => !workTargetSet.has(target))
   const fitRoleCode = planRoleCodeOf(session)
   const fitRole = currentCheckup.roles.find((entry) => entry.onet_code === fitRoleCode)
   const fitBundleRole = [role, ...bundle.data.related].find((entry) => entry.onet_code === fitRoleCode) ?? role
@@ -315,21 +322,21 @@ export function DashboardView() {
       <header className="space-y-1.5">
         <h1 className="text-title-m text-text-primary lg:text-title-l">{greeting(new Date().getHours())}, Guest</h1>
         <p className="text-body-s text-text-muted">{role.title}</p>
-        {(workGoals.length > 0 || planGoals.length > 0) && (
+        {(workTargets.length > 0 || planTargets.length > 0) && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {workGoals.length > 0 && (
+            {workTargets.length > 0 && (
               <span className="inline-flex flex-wrap items-center gap-2">
                 <span className="text-label-s text-text-muted">Your Work Supports</span>
-                {workGoals.map((goal) => (
-                  <SdgChip key={goal} goal={goal} title={workSdgs?.reason} />
+                {workTargets.map((target) => (
+                  <SdgTargetChip key={target} target={target} workReason={workSdgs?.reason} />
                 ))}
               </span>
             )}
-            {planGoals.length > 0 && (
+            {planTargets.length > 0 && (
               <span className="inline-flex flex-wrap items-center gap-2">
                 <span className="text-label-s text-text-muted">Your Plan Supports</span>
-                {planGoals.map((goal) => (
-                  <SdgChip key={goal} goal={goal} />
+                {planTargets.map((target) => (
+                  <SdgTargetChip key={target} target={target} />
                 ))}
               </span>
             )}
@@ -349,8 +356,8 @@ export function DashboardView() {
             {nextStep?.title || nextStep?.skill || (steps.length > 0 ? 'Plan Complete' : 'No Roadmap Steps')}
           </h2>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            {nextStepGoals.map((goal) => (
-              <SdgChip key={goal} goal={goal} />
+            {nextStepTargets.map((target) => (
+              <SdgTargetChip key={target} target={target} />
             ))}
             <p className="text-body-s text-text-muted">{nextStepDescription}</p>
           </div>

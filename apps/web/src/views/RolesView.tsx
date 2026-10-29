@@ -6,12 +6,12 @@ import { CatDialogue } from '../components/kotak/CatDialogue'
 import { payLabel, popularityLabel } from '../components/kotak/JobMarketCard'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
+import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SourceList } from '../components/kotak/SourceList'
 import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Citation } from '../components/ui/Citation'
-import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
@@ -315,7 +315,7 @@ export function RolesView() {
       <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         {displayRoles.map((displayRole) => {
           const occupation = occupationSdgs(displayRole.id)
-          const goals = occupation?.goals.slice(0, 3) ?? []
+          const targets = occupation?.targets.slice(0, 3) ?? []
           const market = markets.get(displayRole.id)
           return (
             <RoleCard
@@ -326,7 +326,7 @@ export function RolesView() {
               note={displayRole.id === selected?.id && selectionReason ? selectionNote(selectionReason) : undefined}
               onSelect={() => setSelectedId(displayRole.id)}
               footer={
-                (market || goals.length > 0 || displayRole.access || displayRole.reasons?.length) && (
+                (market || targets.length > 0 || displayRole.access || displayRole.reasons?.length) && (
                   <span className="flex flex-col gap-2">
                     {displayRole.access && displayRole.access.status !== 'open' && (
                       <AccessChip access={displayRole.access} className="self-start" />
@@ -341,11 +341,11 @@ export function RolesView() {
                         {payLabel(market, level) && ` · ${payLabel(market, level)}`}
                       </span>
                     )}
-                    {goals.length > 0 && (
+                    {targets.length > 0 && (
                       <span className="flex flex-wrap items-center gap-1.5">
-                        <span className="font-mono text-mono-s text-text-muted">This Work Supports</span>
-                        {goals.map((goal) => (
-                          <SdgChip key={goal} goal={goal} compact title={occupation?.reason} />
+                        <span className="font-mono text-mono-s text-text-muted">Linked SDG Targets</span>
+                        {targets.map((target) => (
+                          <SdgTargetChip key={target} target={target} workReason={occupation?.reason} />
                         ))}
                       </span>
                     )}
