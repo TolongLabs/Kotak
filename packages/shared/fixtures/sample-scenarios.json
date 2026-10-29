@@ -1,0 +1,336 @@
+{
+  "meta": {
+    "model": "hand-written sample (#352)",
+    "reviewers": [],
+    "generated_at": "2026-10-29",
+    "quality": "auto-generated"
+  },
+  "roles": {
+    "23-1011.00": {
+      "legal-research": {
+        "basic": {
+          "situation": "A partner asks you to find which regulations apply to a client's new food delivery business. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Search online for articles on food delivery rules and summarise what they say.",
+              "score": 2
+            },
+            {
+              "id": "b",
+              "text": "Search the statutes and regulations by topic, note the sections that apply, and check gaps with the partner.",
+              "score": 4
+            },
+            {
+              "id": "c",
+              "text": "Wait for the partner to send the regulations they want you to read first.",
+              "score": 1
+            },
+            {
+              "id": "d",
+              "text": "Search the statute database by keyword and send the partner every section you find.",
+              "score": 3
+            }
+          ],
+          "task_ids": [3783, 3780]
+        },
+        "advanced": {
+          "situation": "A client's case turns on two appeal decisions that point in opposite directions. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Ask a senior lawyer which decision to follow.",
+              "score": 1
+            },
+            {
+              "id": "b",
+              "text": "Pick the more recent decision and build the argument on it.",
+              "score": 3
+            },
+            {
+              "id": "c",
+              "text": "Compare both decisions' facts and reasoning, then argue why ours matches the stronger one.",
+              "score": 4
+            },
+            {
+              "id": "d",
+              "text": "Search for a few more cases until one clearly settles it.",
+              "score": 2
+            }
+          ],
+          "task_ids": [3775, 3777]
+        }
+      },
+      "court-representation": {
+        "basic": {
+          "situation": "Your senior lawyer has a court hearing tomorrow and asks you to help prepare. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Print the documents your senior names and bring them to court.",
+              "score": 2
+            },
+            {
+              "id": "b",
+              "text": "Put the bundle in order and flag any missing exhibits for your senior to chase.",
+              "score": 3
+            },
+            {
+              "id": "c",
+              "text": "Ask your senior what preparing for a hearing involves before you start.",
+              "score": 1
+            },
+            {
+              "id": "d",
+              "text": "Put the bundle in order, check every exhibit is there, and list questions for your senior.",
+              "score": 4
+            }
+          ],
+          "task_ids": [3779]
+        },
+        "advanced": {
+          "situation": "The other side offers a settlement an hour before a hearing, well below what your client wants. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Weigh the offer against the likely ruling, advise the client, and counter with a figure you can justify.",
+              "score": 4
+            },
+            {
+              "id": "b",
+              "text": "Ask a senior partner to take over the negotiation before the hearing.",
+              "score": 1
+            },
+            {
+              "id": "c",
+              "text": "Advise the client on the risks and ask the other side for more time to consider.",
+              "score": 3
+            },
+            {
+              "id": "d",
+              "text": "Pass the offer to the client and let them decide whether to accept it.",
+              "score": 2
+            }
+          ],
+          "task_ids": [3786, 3779]
+        }
+      },
+      "evidence-gathering": {
+        "basic": {
+          "situation": "You sit in on a client interview to record the facts of a workplace accident. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Note the main events in order and check the spelling of names at the end.",
+              "score": 3
+            },
+            {
+              "id": "b",
+              "text": "Note dates, names and events in the client's words, and mark points the lawyer should follow up.",
+              "score": 4
+            },
+            {
+              "id": "c",
+              "text": "Write a short summary of the meeting from memory afterwards.",
+              "score": 2
+            },
+            {
+              "id": "d",
+              "text": "Listen closely and leave the note-taking to the lawyer leading the interview.",
+              "score": 1
+            }
+          ],
+          "task_ids": [3778]
+        },
+        "advanced": {
+          "situation": "A property dispute depends on who owned a plot of land in 1985, and the land office file is incomplete. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Ask the land office to search again and wait for their reply.",
+              "score": 2
+            },
+            {
+              "id": "b",
+              "text": "Tell the client the records are incomplete and ask what they remember.",
+              "score": 1
+            },
+            {
+              "id": "c",
+              "text": "Plan a search across old title deeds, court records and gazettes, and assign who checks each source.",
+              "score": 4
+            },
+            {
+              "id": "d",
+              "text": "Search the old title deeds and court records yourself until you find the owner.",
+              "score": 3
+            }
+          ],
+          "task_ids": [3788, 3778]
+        }
+      },
+      "legal-drafting": {
+        "basic": {
+          "situation": "A client needs a simple one-year lease for a shop lot. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Ask the senior to draft it while you watch how it is done.",
+              "score": 1
+            },
+            {
+              "id": "b",
+              "text": "Find a free lease online and send it to the senior to adapt.",
+              "score": 2
+            },
+            {
+              "id": "c",
+              "text": "Draft from the firm's lease template, fill in the client's terms, and send it for senior review.",
+              "score": 4
+            },
+            {
+              "id": "d",
+              "text": "Copy a lease from a past file, change the names and dates, and send it for review.",
+              "score": 3
+            }
+          ],
+          "task_ids": [20877]
+        },
+        "advanced": {
+          "situation": "Junior lawyers keep drafting share sale agreements with different warranty clauses. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Write a standard warranty clause and add it to the firm's template.",
+              "score": 3
+            },
+            {
+              "id": "b",
+              "text": "Fix the clauses yourself whenever an agreement reaches you for review.",
+              "score": 2
+            },
+            {
+              "id": "c",
+              "text": "Agree a standard clause with the corporate partners and walk the juniors through when to change it.",
+              "score": 4
+            },
+            {
+              "id": "d",
+              "text": "Ask a corporate partner to remind the juniors to be more consistent.",
+              "score": 1
+            }
+          ],
+          "task_ids": [20877, 3787]
+        }
+      },
+      "practice-management": {
+        "basic": {
+          "situation": "A legal assistant asks you how to file a new case in the firm's records system. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Show them the filing steps you use, then check their first entry with them.",
+              "score": 4
+            },
+            {
+              "id": "b",
+              "text": "File the case yourself so it is done correctly this time.",
+              "score": 2
+            },
+            {
+              "id": "c",
+              "text": "Show them the filing steps you use and let them try on their own.",
+              "score": 3
+            },
+            {
+              "id": "d",
+              "text": "Send them to the office manager, who looks after the records system.",
+              "score": 1
+            }
+          ],
+          "task_ids": [3790, 3789]
+        },
+        "advanced": {
+          "situation": "Your team keeps missing court filing deadlines because each lawyer tracks dates their own way. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Raise the problem with the managing partner and wait for a decision.",
+              "score": 1
+            },
+            {
+              "id": "b",
+              "text": "Set up one shared deadline calendar and ask every lawyer to use it.",
+              "score": 3
+            },
+            {
+              "id": "c",
+              "text": "Remind the team by email before each important deadline.",
+              "score": 2
+            },
+            {
+              "id": "d",
+              "text": "Set up one shared deadline calendar, assign who checks it each week, and review misses monthly.",
+              "score": 4
+            }
+          ],
+          "task_ids": [3790, 3789]
+        }
+      },
+      "client-advice": {
+        "basic": {
+          "situation": "A client asks whether they must give a month's notice to leave their rented flat. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Tell them a month's notice is usual and that they should check their agreement.",
+              "score": 2
+            },
+            {
+              "id": "b",
+              "text": "Tell them what their tenancy agreement says and ask a lawyer to confirm the law.",
+              "score": 3
+            },
+            {
+              "id": "c",
+              "text": "Tell the client a lawyer will call them back with an answer.",
+              "score": 1
+            },
+            {
+              "id": "d",
+              "text": "Check their tenancy agreement and the law, then explain their notice duty with a lawyer confirming.",
+              "score": 4
+            }
+          ],
+          "task_ids": [3774, 3773]
+        },
+        "advanced": {
+          "situation": "A large retailer asks whether a vague new data rule makes them liable for a supplier's data leak. What do you do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Read the rule and its guidance, then advise on the reading you find most likely.",
+              "score": 3
+            },
+            {
+              "id": "b",
+              "text": "Refer them to a data protection specialist outside the firm.",
+              "score": 1
+            },
+            {
+              "id": "c",
+              "text": "Read the rule against its purpose and guidance, set out the likely readings, and advise on the safer course.",
+              "score": 4
+            },
+            {
+              "id": "d",
+              "text": "Tell them the rule is unclear and that they should wait for the regulator to clarify it.",
+              "score": 2
+            }
+          ],
+          "task_ids": [3773, 3774]
+        }
+      }
+    }
+  }
+}
