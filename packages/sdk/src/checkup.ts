@@ -1,5 +1,6 @@
 import {
   buildRoadmap,
+  type PaceProfile,
   cornerLevel,
   engineInputs,
   fitScore,
@@ -35,6 +36,8 @@ export interface CheckupInput {
   startDate: string
   /** The role the roadmap plans for; null, or a role outside `related`, plans for `role`. */
   planRoleCode?: string | null
+  /** The user's situation, years and qualification, for the pace rule (#356); absent means all unknown. */
+  profile?: PaceProfile | null
 }
 
 export interface CheckupCorner {
@@ -158,7 +161,8 @@ export function computeCheckup(input: CheckupInput): Checkup {
       })),
       start_date: input.startDate,
       scenario,
-      weekly_hours: input.weeklyHours
+      weekly_hours: input.weeklyHours,
+      profile: input.profile
     })
   }
 }

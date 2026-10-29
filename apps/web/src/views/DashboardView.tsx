@@ -64,7 +64,7 @@ function completedHoursForWeek(checkup: Checkup, steps: ReturnType<typeof toRoad
   const weeklyHours = checkup.roadmap.weekly_hours
   const weekStart = (week - 1) * weeklyHours
   const weekEnd = week * weeklyHours
-  let plannedHours = 0
+  let plannedHours = checkup.roadmap.pace.refresher?.hours ?? 0 // a returner's refresher comes first (#356)
   let completedHours = 0
 
   for (const item of [...checkup.roadmap.items].sort((left, right) => left.rank - right.rank)) {

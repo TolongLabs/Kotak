@@ -73,6 +73,7 @@ function roadmapReport(roadmap: Roadmap, role: BundleRole, access: RoleAccess): 
     start_date: roadmap.start_date,
     finish_date: roadmap.finish_date,
     dividend: roadmap.dividend,
+    pace: roadmap.pace,
     access,
     tools: role.tools
   }

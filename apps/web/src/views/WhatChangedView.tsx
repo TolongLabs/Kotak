@@ -94,6 +94,7 @@ export function WhatChangedView() {
     snapshotId: beforeSnapshot,
     scenario: DEFAULT_SCENARIO,
     weeklyHours: session.custom_weekly_hours,
+    profile: session.profile,
     startDate: today
   })
   const after = computeCheckup({
@@ -103,6 +104,7 @@ export function WhatChangedView() {
     snapshotId: afterSnapshot,
     scenario: DEFAULT_SCENARIO,
     weeklyHours: session.custom_weekly_hours,
+    profile: session.profile,
     startDate: today
   })
   const engine = engineInputs(role, [role, ...related])

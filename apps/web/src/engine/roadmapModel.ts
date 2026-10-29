@@ -5,6 +5,8 @@ import type { Checkup } from './checkup'
 
 export const ROADMAP_WEEKS = 12
 
+const round1 = (hours: number) => Math.round(hours * 10) / 10 // scaled hours drift in floats; show and compare at 0.1
+
 type RoleFit = Checkup['roles'][number]
 type PlanReadinessPoint = { week: number; plan: number }
 type ScenarioReadinessPoint = PlanReadinessPoint & { fast: number }
@@ -92,11 +94,11 @@ export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: stri
   const stepHours = new Map<string, number>()
   const later: RoadmapStep[] = []
   const steps: RoadmapStep[] = []
-  let used = 0
+  let used = checkup.roadmap.pace.refresher?.hours ?? 0 // a returner's refresher takes the first hours (#356)
   for (const step of fullSteps) {
     const hours = hoursById.get(step.id)!
-    const allocated = Math.max(0, Math.min(hours, budget - used))
-    used += hours
+    const allocated = round1(Math.max(0, Math.min(hours, budget - used)))
+    used = round1(used + hours)
     if (allocated < hours) later.push(step)
     if (allocated === 0) continue
     stepHours.set(step.id, allocated)
@@ -116,7 +118,13 @@ export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: stri
       gain: `Target after the full milestone: ${step.gain}`
     })
   }
-  return { steps, stepHours, partialIds, later, remainingHours: Math.max(0, checkup.roadmap.total_hours - budget) }
+  return {
+    steps,
+    stepHours,
+    partialIds,
+    later,
+    remainingHours: round1(Math.max(0, checkup.roadmap.total_hours - budget))
+  }
 }
 
 /** Carry the last completed milestone's fit to the window's last week; never credit a clipped milestone. */

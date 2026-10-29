@@ -176,7 +176,8 @@ export const RoadmapReportSchema = RoadmapSchema.pick({
   weeks: true,
   start_date: true,
   finish_date: true,
-  dividend: true // the hours AI saves, to suggest as weekly hours
+  dividend: true, // the hours AI saves, to suggest as weekly hours
+  pace: true // the personal pace factor and its inputs; a returner's refresher comes before the steps
 })
   .extend({
     ...RoleRefSchema.shape,

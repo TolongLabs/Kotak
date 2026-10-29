@@ -54,9 +54,10 @@ export function useCheckup({ scenario }: { scenario: Scenario }): Loaded<LoadedC
         scenario,
         weeklyHours,
         startDate: today,
-        planRoleCode: session.plan_role_code
+        planRoleCode: session.plan_role_code,
+        profile: session.profile
       }),
-    [data, answers, snapshotId, scenario, weeklyHours, today, session.plan_role_code]
+    [data, answers, snapshotId, scenario, weeklyHours, today, session.plan_role_code, session.profile]
   )
 
   if (bundle.status !== 'ready') return bundle
