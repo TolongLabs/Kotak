@@ -4,6 +4,7 @@ import type { Verdict } from '../engine'
 import { uniqueSources } from './citations'
 import { DEFAULT_SCENARIO, DIVIDEND_SHARE, LESS_IMPORTANT_TAG, MIN_WEEKLY_HOURS, WORK_WEEK_HOURS } from './constants'
 import { addDays } from './dates'
+import { paceFor, type PaceProfile } from './pace'
 import type {
   AiDividend,
   CornerGap,
@@ -136,10 +137,16 @@ export function buildRoadmap(input: {
   start_date: string
   scenario?: Scenario
   weekly_hours?: number | null // the user's own figure; null or absent uses the AI dividend
+  profile?: PaceProfile | null // situation, years and qualification (#356); absent = all unknown, factor 1
 }): Roadmap {
   const scenario = input.scenario ?? DEFAULT_SCENARIO
   const gaps = cornerGaps(input.verdicts, input.corners, scenario)
-  const items = roadmapItems(input.verdicts, input.corners, scenario)
+  const pace = paceFor(input.profile)
+  // Hours scale by the pace factor; a uniform scale keeps the order. shortcut: 0.1 h rounding, fine for a stated estimate.
+  const items = roadmapItems(input.verdicts, input.corners, scenario).map((item) => ({
+    ...item,
+    hours: pace.factor === 1 ? item.hours : Math.max(0.1, Math.round(item.hours * pace.factor * 10) / 10)
+  }))
   const dividend = aiDividend(input.verdicts, input.corners)
   const userHours = input.weekly_hours ?? null
   const weekly_hours = userHours ?? dividend.default_weekly_hours
@@ -149,12 +156,17 @@ export function buildRoadmap(input: {
       : DIVIDEND_SHARE * dividend.weekly_hours_saved >= MIN_WEEKLY_HOURS
         ? 'ai_dividend'
         : 'minimum'
-  const total_hours = items.reduce((sum, item) => sum + item.hours, 0)
+  const refresherHours = pace.refresher?.hours ?? 0
+  // Round to 0.1 so float drift cannot add a week; with factor 1 and no refresher the sum stays exact, as before.
+  const rawTotal = items.reduce((sum, item) => sum + item.hours, 0) + refresherHours
+  const total_hours = pace.factor === 1 && !pace.refresher ? rawTotal : Math.round(rawTotal * 10) / 10
   const weeks = total_hours / weekly_hours
+  if (pace.refresher) pace.refresher.weeks = [1, Math.max(1, Math.ceil(refresherHours / weekly_hours))]
   return {
     scenario,
     gaps,
     items,
+    pace,
     total_hours,
     dividend,
     weekly_hours,

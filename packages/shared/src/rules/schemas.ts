@@ -3,6 +3,7 @@ import { MilestoneHoursSchema } from '../data/role-corners'
 import { TrendDirectionSchema } from '../data/sources'
 import { SignalSchema, SnapshotIdSchema, SourceSchema, VerdictSchema } from '../engine'
 import { LESS_IMPORTANT_TAG } from './constants'
+import { PACE_MAX, PACE_MIN } from './pace'
 
 const DateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 // 0 to 3 in steps of 0.5 for a corner the user rated; a transferred estimate is rounded down to a whole level.
@@ -316,11 +317,38 @@ export const AiDividendSchema = z
   })
   .strict()
 
+export const PaceInputSchema = z
+  .object({ label: z.string().min(1), value: z.string().min(1), factor: z.number().positive() })
+  .strict()
+
+/** The refresher step a returning worker starts with (#356). Its id is never a corner id. */
+export const RefresherStepSchema = z
+  .object({
+    id: z.literal('refresher'),
+    hours: z.number().positive(),
+    weeks: z.tuple([z.number().int().positive(), z.number().int().positive()]),
+    title: z.string().min(1),
+    description: z.string().min(1)
+  })
+  .strict()
+
+/** The personal pace (#356): a stated estimate from situation, years of work and qualification. */
+export const PaceSchema = z
+  .object({
+    factor: z.number().min(PACE_MIN).max(PACE_MAX),
+    inputs: z.array(PaceInputSchema).length(3),
+    note: z.string().min(1),
+    maths: z.array(z.string().min(1)),
+    refresher: RefresherStepSchema.nullable()
+  })
+  .strict()
+
 export const RoadmapSchema = z
   .object({
     scenario: ScenarioSchema,
     gaps: z.array(CornerGapSchema),
     items: z.array(RoadmapItemSchema),
+    pace: PaceSchema,
     total_hours: z.number().nonnegative(),
     dividend: AiDividendSchema,
     weekly_hours: z.number().positive(),
@@ -429,6 +457,9 @@ export type RoadmapCorner = z.infer<typeof RoadmapCornerSchema>
 export type CornerGap = z.infer<typeof CornerGapSchema>
 export type RoadmapItem = z.infer<typeof RoadmapItemSchema>
 export type AiDividend = z.infer<typeof AiDividendSchema>
+export type PaceInput = z.infer<typeof PaceInputSchema>
+export type RefresherStep = z.infer<typeof RefresherStepSchema>
+export type Pace = z.infer<typeof PaceSchema>
 export type Roadmap = z.infer<typeof RoadmapSchema>
 export type SnapshotSignals = z.infer<typeof SnapshotSignalsSchema>
 export type CornerState = z.infer<typeof CornerStateSchema>

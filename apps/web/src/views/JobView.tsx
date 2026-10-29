@@ -61,6 +61,7 @@ function useSavedFits(codes: string[]): Map<string, number> | null {
           snapshotId: session.active_snapshot_id,
           scenario: DEFAULT_SCENARIO,
           weeklyHours: session.custom_weekly_hours,
+          profile: session.profile,
           startDate: new Date().toISOString().slice(0, 10)
         })
         const fits = new Map(checkup.roles.map((role) => [role.onet_code, Math.round(role.fit.score)]))

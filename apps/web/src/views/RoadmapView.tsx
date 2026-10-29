@@ -187,6 +187,7 @@ export function RoadmapView() {
       snapshotId: session.active_snapshot_id,
       scenario: DEFAULT_SCENARIO,
       weeklyHours: session.custom_weekly_hours,
+      profile: session.profile,
       startDate,
       planRoleCode: session.plan_role_code
     })
@@ -196,6 +197,7 @@ export function RoadmapView() {
     session.custom_weekly_hours,
     session.active_snapshot_id,
     session.plan_role_code,
+    session.profile,
     startDate
   ])
 
@@ -223,12 +225,13 @@ export function RoadmapView() {
       snapshotId: checkup.snapshotId,
       scenario: checkup.scenario,
       weeklyHours: proposed,
+      profile: session.profile,
       startDate,
       planRoleCode: checkup.planRoleCode
     })
     const readyWeek = toReadinessPoints(checkupWithHours, role).find((point) => point.plan >= 80)?.week ?? null
     return { proposed, readyWeek }
-  }, [checkup, bundle, session.answers, session.custom_weekly_hours, startDate])
+  }, [checkup, bundle, session.answers, session.custom_weekly_hours, session.profile, startDate])
 
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (

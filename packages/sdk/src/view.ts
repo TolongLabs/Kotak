@@ -77,12 +77,13 @@ export function biggestGaps(fit: FitScore): FitScore['terms'] {
 export function roadmapSchedule(
   roadmap: Roadmap
 ): { item: RoadmapItem; weeks: [number, number]; start_date: string; end_date: string }[] {
-  let cumulativeHours = 0
+  let cumulativeHours = roadmap.pace.refresher?.hours ?? 0 // the refresher comes first (#356)
   return [...roadmap.items]
     .sort((left, right) => left.rank - right.rank)
     .map((item) => {
       const previousHours = cumulativeHours
       cumulativeHours += item.hours
+      if (roadmap.pace.factor !== 1 || roadmap.pace.refresher) cumulativeHours = Math.round(cumulativeHours * 10) / 10 // no float drift
       const startWeek = Math.floor(previousHours / roadmap.weekly_hours) + 1
       const endWeek = Math.max(startWeek, Math.ceil(cumulativeHours / roadmap.weekly_hours))
       return {

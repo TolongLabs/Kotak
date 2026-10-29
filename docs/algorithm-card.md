@@ -117,7 +117,17 @@ weeks = total hours ÷ weekly hours
 
 - **Order**: Rising gaps first, largest first; then Steady, Split and Unknown; Declining last, tagged "less important by 2027".
 - **Steps**: each is the next can-do statement, with an AI-drafted hour estimate and one free resource. A partial step earns no projected level gain.
-- **Weekly hours**: the app starts at 4 hours a week, from 1 to 10, and the user can change it. Without a figure, the SDK uses one hour in five of the time AI could save the user on declining corners.
+- **Weekly hours**: the app starts at 4 hours a week, from 1 to 20, and the user can change it. Without a figure, the SDK uses one hour in five of the time AI could save the user on declining corners.
+- **Personal pace** (a stated estimate, not a measurement): each step's hours are multiplied by one factor, `situation × years of work × qualification`, kept between 0.80 and 1.30 and rounded to 2 decimals; each scaled step is rounded to 0.1 hour. A missing or "Prefer Not to Say" answer counts as 1, so with all three unknown the plan is unchanged.
+
+  | Input         | Factor                                                                                                            |
+  | ------------- | ----------------------------------------------------------------------------------------------------------------- |
+  | Situation     | working 0.95, studying 0.95, graduated 1.00, between jobs 1.05, returning 1.10                                    |
+  | Years of work | none yet 1.10, under 2 years 1.10, 2 to 3 years 1.05, 4 to 5 years 1.05, 6 to 9 years 1.00, 10 years or more 0.95 |
+  | Qualification | SPM or below 1.05, certificate 1.03, diploma 1.00, bachelor's 0.95, master's 0.93, doctorate 0.92                 |
+
+  A user returning to work also starts with a fixed 4-hour refresher step (id `refresher`), which the factor does not scale; the steps start after it. The web app, the SDK and the MCP server's `run_checkup` all pace this way from the profile, and the roadmap carries the factor and its three inputs as `pace`, for the roadmap's See the Maths card (#357).
+
 - **Window**: the page shows the next 12 weeks and the week fit passes 80%; the hours left after Week 12 are listed.
 
 ## What changed

@@ -249,7 +249,7 @@ const PARTS_RAW: Part[] = [
     clips: track('D5', [
       { cue: 'roadmap-title', at: 0.3 },
       { cue: 'step-list', at: d5('most') },
-      // Back up to the readiness line: "80% Fit by Week 35" at 10 hours a week.
+      // Back up to the readiness line: "80% Fit by Week 34" at 10 hours a week.
       { cue: 'readiness', at: d5('ten'), pre: 0.4 },
       { cue: 'free-link', at: D5_FREE, pre: 1.5 },
       // Step 1 ticked: its number turns into a green check.

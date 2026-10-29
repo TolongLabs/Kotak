@@ -127,7 +127,8 @@ export function createKotak({ source }: { source: BundleSource }): Kotak {
         scenario: params.scenario,
         weeklyHours: params.weekly_hours,
         startDate: params.start_date,
-        planRoleCode: params.plan_role_code
+        planRoleCode: params.plan_role_code,
+        profile: params.profile
       })
       return checkupReport(params, roles, checkup, unavailable, loaded)
     },
