@@ -3,8 +3,10 @@ import { useSyncExternalStore } from 'react'
 
 // The guest's check-up state, kept in this browser only (TRD.md "Client runtime"). Same key as the #136 stand-in.
 const GUEST_SESSION_KEY = 'kotak:guest-session'
+// The scenario options' shuffle seed (#352), kept apart from the session so the session's schema is unchanged.
+const SCENARIO_SEED_KEY = 'kotak:scenario-seed'
 
-const cleanSession: Omit<GuestSession, 'scenario_seed'> = {
+const cleanSession: GuestSession = {
   is_guest: false,
   role_code: null,
   goal: null,
@@ -22,14 +24,9 @@ const cleanSession: Omit<GuestSession, 'scenario_seed'> = {
   profile: ProfileSchema.parse({})
 }
 
-// Each new session shuffles the scenario options its own way (#352).
-const newSession = (): GuestSession => ({
-  ...cleanSession,
-  scenario_seed: crypto.getRandomValues(new Uint32Array(1))[0]!
-})
-
 const listeners = new Set<() => void>()
 let session: GuestSession | undefined
+let seed: number | undefined
 
 function parseJson(raw: string): unknown {
   try {
@@ -58,7 +55,7 @@ function withoutOldAnswers(saved: unknown): unknown {
 function load(): GuestSession {
   try {
     const raw = localStorage.getItem(GUEST_SESSION_KEY)
-    if (raw === null) return newSession()
+    if (raw === null) return cleanSession
     const parsed = GuestSessionSchema.safeParse(withoutOldAnswers(parseJson(raw)))
     if (parsed.success) return parsed.data
     console.warn('The saved guest session was invalid, so Kotak reset it.')
@@ -66,7 +63,7 @@ function load(): GuestSession {
   } catch {
     // Storage is blocked (private windows): the session lives in memory for this page.
   }
-  return newSession()
+  return cleanSession
 }
 
 function commit(next: GuestSession, persist: () => void) {
@@ -101,7 +98,32 @@ export function startGuestSession() {
 }
 
 export function resetGuestSession() {
-  commit(newSession(), () => localStorage.removeItem(GUEST_SESSION_KEY))
+  seed = undefined
+  commit(cleanSession, () => {
+    localStorage.removeItem(GUEST_SESSION_KEY)
+    localStorage.removeItem(SCENARIO_SEED_KEY)
+  })
+}
+
+/**
+ * The seed of this session's scenario option order (#352), for `slotQuestion`: made on first use, sessions saved
+ * before it included, and kept until the session is reset, so a reload keeps the order.
+ */
+export function scenarioSeed(): number {
+  if (seed !== undefined) return seed
+  try {
+    const saved = localStorage.getItem(SCENARIO_SEED_KEY)
+    if (saved !== null && /^\d{1,10}$/.test(saved) && Number(saved) <= 0xffffffff) return (seed = Number(saved))
+  } catch {
+    // Blocked storage: the seed lives in memory for this page, like the session.
+  }
+  seed = crypto.getRandomValues(new Uint32Array(1))[0]!
+  try {
+    localStorage.setItem(SCENARIO_SEED_KEY, String(seed))
+  } catch {
+    // As above.
+  }
+  return seed
 }
 
 function subscribe(listener: () => void) {
