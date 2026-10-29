@@ -1,12 +1,5 @@
 import { accessFor } from '@kotak/sdk'
-import {
-  addDays,
-  DEFAULT_SCENARIO,
-  MAX_WEEKLY_HOURS,
-  MIN_WEEKLY_HOURS,
-  needsQualification,
-  REFRESHER_ID
-} from '@kotak/shared'
+import { addDays, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS, needsQualification, REFRESHER_ID } from '@kotak/shared'
 import { Gauge } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { navigate } from '../app/router'
@@ -15,6 +8,7 @@ import { AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoadmapStepCard } from '../components/kotak/RoadmapStepCard'
+import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { SourceList } from '../components/kotak/SourceList'
 import { ToolsCard } from '../components/kotak/ToolsCard'
 import { renderCited } from '../components/kotak/renderCited'
@@ -37,6 +31,7 @@ import {
 } from '../engine/roadmapModel'
 import { cornerReasoning, isEstimatedLevel } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
+import { useScenario } from '../session/scenario'
 import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
 import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
@@ -93,7 +88,7 @@ interface LessImportantItem {
 export function RoadmapView() {
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
-  const scenario = DEFAULT_SCENARIO
+  const [scenario, setScenario] = useScenario()
   const [today] = useState(() => toIsoDate(new Date()))
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null)
   const [selectedStepId, setSelectedStepId] = useState<string | null>(null)
@@ -108,7 +103,7 @@ export function RoadmapView() {
       related: bundle.data.related,
       answers: session.answers,
       snapshotId: session.active_snapshot_id,
-      scenario: DEFAULT_SCENARIO,
+      scenario,
       weeklyHours: session.custom_weekly_hours,
       profile: session.profile,
       startDate,
@@ -121,7 +116,8 @@ export function RoadmapView() {
     session.active_snapshot_id,
     session.plan_role_code,
     session.profile,
-    startDate
+    startDate,
+    scenario
   ])
 
   // Clicking a step bar or a readiness point scrolls its Step Details card into view.
@@ -211,6 +207,8 @@ export function RoadmapView() {
   const role =
     [bundle.data.role, ...bundle.data.related].find((candidate) => candidate.onet_code === checkup?.planRoleCode) ??
     bundle.data.role
+  // The fast future's multiplier, quoted from the data in See the Maths (#389).
+  const scenarioAnchors = role.signals[checkup.snapshotId]?.anchors
   const fullReadiness = toReadinessPoints(checkup, role)
   const planWeeks = planWeeksFor(fullReadiness, (point) => point.plan)
   const { steps, stepHours, partialIds, later, remainingHours } = toRoadmapWindow(
@@ -417,6 +415,8 @@ export function RoadmapView() {
             </Button>
           </div>
         </header>
+
+        <ScenarioControl scenario={scenario} onChange={setScenario} className="roadmap-print-actions" />
 
         {planAccess.status !== 'open' && (
           <div className="space-y-2">
@@ -635,7 +635,7 @@ export function RoadmapView() {
                 </div>
               )}
             </div>
-            <PaceMathsCard pace={pace} />
+            <PaceMathsCard pace={pace} scenarioAnchors={scenarioAnchors} />
           </div>
         </div>
 

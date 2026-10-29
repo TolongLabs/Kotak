@@ -1,5 +1,5 @@
 import { accessFor } from '@kotak/sdk'
-import { DEFAULT_SCENARIO, jobMarketLevelForYears, needsQualification, yearsOfWork } from '@kotak/shared'
+import { jobMarketLevelForYears, needsQualification, yearsOfWork } from '@kotak/shared'
 import { Info } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
@@ -13,6 +13,7 @@ import { JobMarketCard } from '../components/kotak/JobMarketCard'
 import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
+import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { SourceList } from '../components/kotak/SourceList'
 import { ToolsCard } from '../components/kotak/ToolsCard'
 import { Banner } from '../components/ui/Banner'
@@ -27,6 +28,7 @@ import { useCheckupBundle } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { hasAnswers, useGuestSession } from '../session/store'
+import { useScenario } from '../session/scenario'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
 import { deriveSwot } from '../demo/swot'
 import type { ExplanationResponse } from '@kotak/shared'
@@ -56,6 +58,7 @@ function latestSourceVintageDate(checkup: Checkup): string | null {
 export function RadarView() {
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
+  const [scenario, setScenario] = useScenario()
   const roleData = bundle.status === 'ready' ? bundle.data : null
   const [today] = useState(() => new Date().toISOString().slice(0, 10))
   const checkup = useMemo(
@@ -66,14 +69,13 @@ export function RadarView() {
             related: roleData.related,
             answers: session.answers,
             snapshotId: '2026-05',
-            scenario: DEFAULT_SCENARIO,
+            scenario,
             weeklyHours: session.custom_weekly_hours,
             startDate: today
           })
         : null,
-    [roleData, session.answers, session.custom_weekly_hours, today]
+    [roleData, session.answers, session.custom_weekly_hours, scenario, today]
   )
-  const scenario = DEFAULT_SCENARIO
   // Explanations come from the AI route (#43). Until it exists, ?ai=off shows the paused state for demos.
   const [explanationsPaused, setExplanationsPaused] = useState(
     () => new URLSearchParams(window.location.search).get('ai') === 'off'
@@ -342,6 +344,7 @@ export function RadarView() {
           Where the job is heading, and where you stand. Targets and dates are estimates; every verdict comes from fixed
           rules over dated public data.
         </p>
+        <ScenarioControl scenario={scenario} onChange={setScenario} />
       </header>
 
       <AccessNotice

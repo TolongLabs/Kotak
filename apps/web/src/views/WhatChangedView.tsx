@@ -1,4 +1,4 @@
-import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
+import { diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { RefreshCw } from 'lucide-react'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { SourceList } from '../components/kotak/SourceList'
@@ -11,6 +11,7 @@ import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { sourceRefs, toCorners } from '../engine/viewModel'
 import { hasAnswers, useGuestSession } from '../session/store'
+import { useScenario } from '../session/scenario'
 import { useActiveSnapshot } from '../session/snapshot'
 import { whatChangedItems } from './changes/whatMoved'
 import { WhatChangedRadar } from './changes/WhatChangedRadar'
@@ -54,6 +55,7 @@ function changeSpeech(
 export function WhatChangedView() {
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
+  const [scenario] = useScenario()
   const [activeSnapshot, setActiveSnapshot] = useActiveSnapshot()
   const isMay = activeSnapshot === afterSnapshot
   const beforeLabel = snapshotMonthLabel(beforeSnapshot)
@@ -92,7 +94,7 @@ export function WhatChangedView() {
     related,
     answers,
     snapshotId: beforeSnapshot,
-    scenario: DEFAULT_SCENARIO,
+    scenario,
     weeklyHours: session.custom_weekly_hours,
     profile: session.profile,
     startDate: today
@@ -102,7 +104,7 @@ export function WhatChangedView() {
     related,
     answers,
     snapshotId: afterSnapshot,
-    scenario: DEFAULT_SCENARIO,
+    scenario,
     weeklyHours: session.custom_weekly_hours,
     profile: session.profile,
     startDate: today
@@ -114,7 +116,7 @@ export function WhatChangedView() {
     transferredAnswers,
     engine.snapshots[beforeSnapshot],
     engine.snapshots[afterSnapshot],
-    DEFAULT_SCENARIO
+    scenario
   )
   const beforeSources = sourceRefs(before)
   const afterSources = sourceRefs(after)

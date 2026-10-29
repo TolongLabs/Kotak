@@ -1,4 +1,4 @@
-import { GuestSessionSchema, ProfileSchema, type GuestSession, type Rating } from '@kotak/shared'
+import { DEFAULT_SCENARIO, GuestSessionSchema, ProfileSchema, type GuestSession, type Rating } from '@kotak/shared'
 import { useSyncExternalStore } from 'react'
 
 // The guest's check-up state, kept in this browser only (TRD.md "Client runtime"). Same key as the #136 stand-in.
@@ -21,6 +21,7 @@ const cleanSession: GuestSession = {
   // Kopi starts muted, as every view did before this store (#133); one tap on the speech box unmutes.
   tts_muted: false,
   active_snapshot_id: '2026-05',
+  scenario: DEFAULT_SCENARIO,
   profile: ProfileSchema.parse({})
 }
 

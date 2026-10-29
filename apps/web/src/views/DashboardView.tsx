@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
-import { DEFAULT_SCENARIO, diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
+import { diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { Link, navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
@@ -23,6 +23,7 @@ import {
   toRoadmapWindow
 } from '../engine/roadmapModel'
 import { hasAnswers, useGuestSession } from '../session/store'
+import { useScenario } from '../session/scenario'
 import { startAgain } from './checkup/startAgain'
 import { pathTargetTotals } from './roadmap/planSupport'
 
@@ -133,8 +134,9 @@ function withoutEndingPunctuation(value: string) {
 export function DashboardView() {
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
-  const checkup = useCheckup({ scenario: DEFAULT_SCENARIO })
-  const otherScenario = useCheckup({ scenario: DEFAULT_SCENARIO === 'slow' ? 'fast' : 'slow' })
+  const [scenario] = useScenario()
+  const checkup = useCheckup({ scenario })
+  const otherScenario = useCheckup({ scenario: scenario === 'slow' ? 'fast' : 'slow' })
 
   useEffect(() => {
     if (session.is_guest) return
@@ -184,8 +186,8 @@ export function DashboardView() {
 
   const { role } = bundle.data
   const currentCheckup = checkup.data.checkup
-  const slowCheckup = DEFAULT_SCENARIO === 'slow' ? currentCheckup : otherScenario.data.checkup
-  const fastCheckup = DEFAULT_SCENARIO === 'fast' ? currentCheckup : otherScenario.data.checkup
+  const slowCheckup = scenario === 'slow' ? currentCheckup : otherScenario.data.checkup
+  const fastCheckup = scenario === 'fast' ? currentCheckup : otherScenario.data.checkup
 
   if (!currentCheckup.questionsReady) {
     return (
@@ -244,7 +246,7 @@ export function DashboardView() {
   const fitRoleCode = planRoleCodeOf(session)
   const fitRole = currentCheckup.roles.find((entry) => entry.onet_code === fitRoleCode)
   const fitBundleRole = [role, ...bundle.data.related].find((entry) => entry.onet_code === fitRoleCode) ?? role
-  const readinessKey = DEFAULT_SCENARIO === 'fast' ? 'fast' : 'plan'
+  const readinessKey = scenario === 'fast' ? 'fast' : 'plan'
   const fullReadiness = toReadinessPoints(slowCheckup, fastCheckup, fitBundleRole)
   const planWeeks = planWeeksFor(fullReadiness, (point) => point[readinessKey])
   const readinessPoints = toReadinessWindow(fullReadiness, planWeeks)
@@ -271,9 +273,7 @@ export function DashboardView() {
   const aprilSnapshot = engine.snapshots[beforeSnapshot]
   const maySnapshot = engine.snapshots[afterSnapshot]
   const snapshotDiff =
-    aprilSnapshot && maySnapshot
-      ? diffSnapshots(engine.role, answers, aprilSnapshot, maySnapshot, DEFAULT_SCENARIO)
-      : null
+    aprilSnapshot && maySnapshot ? diffSnapshots(engine.role, answers, aprilSnapshot, maySnapshot, scenario) : null
   const changedSkills = snapshotDiff?.corners.length ?? 0
   const exampleChange =
     snapshotDiff?.corners.find((item) => item.changes.includes('verdict')) ?? snapshotDiff?.corners[0]
