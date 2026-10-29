@@ -24,6 +24,7 @@ import { KopiAside } from './checkup/KopiDialogue'
 import { QuestionInfo } from './checkup/QuestionInfo'
 import { startAgain } from './checkup/startAgain'
 import { AnswerKeys } from './checkup/useAnswerKeys'
+import { useQuestionFonts } from './checkup/useQuestionFonts'
 
 // Answers arrive in asking order (rising corners first); the session stores them by the corner's place in the
 // role's batch order: [2i] is corner i's basic rating, [2i + 1] its advanced rating (see engine/checkup.ts).
@@ -57,6 +58,8 @@ export function QuestionsView() {
   const [chosen, setChosen] = useState<Rating | null>(null)
   const thinkingTimer = useRef<number | null>(null)
   const { reduced } = useReducedMotion()
+  // The questions wait on the loading line for their fonts, so a font swap can't move the answers (#394).
+  const fontsReady = useQuestionFonts()
 
   useEffect(
     () => () => {
@@ -76,7 +79,7 @@ export function QuestionsView() {
     )
   }
 
-  if (bundle.status !== 'ready') {
+  if (bundle.status !== 'ready' || !fontsReady) {
     return (
       <QuestionsFrame>
         {bundle.status === 'error' ? (

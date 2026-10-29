@@ -126,7 +126,7 @@ The smallest text is 12 px.
 - Spacing sits on a 4 px grid: 4, 8, 12, 16, 24, 32, 48 and 64 (`space/1` to `space/16`).
 - Radius: `radius/sm` (6) for controls, `radius/md` (12) for cards and the speech box, `radius/full` for chips, pills and the phone top bar. The landing's large showcase cards use a 24 px radius.
 - Use borders, not shadows. Cards get a 1 px `color/border/subtle` line. Only popovers get `Elevation/Popover`: 0 8 24, ink at 12%. Popovers are menus, the date picker, tooltips and the data chip's About This Data.
-- Kopi's speech box has a 2 px ink frame, like a game dialogue. On the Questions page it keeps one size for all 12 questions, the size of the session's longest line, and the topic line above it keeps the height of the session's longest topic, so the answers never move. On phones its gaps are 16 px (8 px inside the question card), so even the tallest sessions fit one screen.
+- Kopi's speech box has a 2 px ink frame, like a game dialogue. On the Questions page it keeps one size for all 12 questions, the size of the session's longest line, and the topic line above it keeps the height of the session's longest topic, so the answers never move. On a first visit the questions wait on Kopi's loading line until their fonts arrive (3 s at most), so a font swap can't move the answers either. On phones its gaps are 16 px (8 px inside the question card), so even the tallest sessions fit one screen.
 
 ## Layout
 
