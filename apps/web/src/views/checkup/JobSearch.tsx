@@ -105,7 +105,7 @@ export function JobSearch({
     picks,
     accept
   )
-  const list = useSuggestionList(options, listOpen, key)
+  const list = useSuggestionList(options, listOpen, key, () => setOpen(true))
 
   return (
     <div
