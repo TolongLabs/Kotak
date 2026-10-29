@@ -171,3 +171,15 @@
 .kopi-hop {
   animation: kopi-hop 300ms ease-out;
 }
+
+/* Each new question's counter rises in after an answer (QuestionsView). */
+@keyframes question-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.question-enter {
+  animation: question-enter 200ms ease-out;
+}

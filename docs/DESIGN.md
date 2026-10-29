@@ -48,6 +48,7 @@ Contents:
 | `color/accent/on-box-bg`      | `#FFFFFF`        | `#FFFFFF`        | Chips and tracks on yellow surfaces         |
 | `color/accent/on-box-success` | `#1D7D3E`        | `#1D7D3E`        | Rising chips on yellow surfaces             |
 | `color/accent/on-box-error`   | `#C9302D`        | `#C9302D`        | Declining chips on yellow surfaces          |
+| `color/accent/chosen`         | `#EB4799`        | `#F288BD`        | The answer just picked, with ink text       |
 | `color/state/success`         | `#1D7D3E`        | `#5AC576`        | Success messages                            |
 | `color/state/warning`         | `#B15300`        | `#F39E4C`        | Warnings                                    |
 | `color/state/error`           | `#C9302D`        | `#F66D62`        | Errors                                      |
@@ -186,6 +187,7 @@ Every component lives on the Components page. Build each one as a custom compone
 - Kopi's entrance: once per page visit, Kopi assembles from ASCII glyphs sampled from the pose art. Rows rise from the bottom over about 0.6 s, each glyph scrambling in the text colour before it settles in the art's colour. Live2D's files download during the rise and it mounts once the glyphs settle; the settled glyphs hold until it is ready, then fade away over the live cat, fitted to the art's frame. The still art shows only with reduced motion (at once, no entrance) or when Live2D can't load.
 - The live demo moment: when the newer data loads, verdict chips change, the dashed radar line moves, SWOT items change quadrant and the roadmap reorders. Animate each change so a judge can follow it.
 - Theme switch: a ring of live ASCII sweeps out from the toggle over about 1.1 s, with the old theme ahead and the new theme behind. Inside the ring the page renders as ASCII in its own colours (text as dense glyphs, borders as `+-|` boxes, media as mid-density fill), re-rolling 20 times a second along a 70-step ramp, and the theme flips along a dithered seam marked in yellow. With reduced motion, the theme swaps at once.
+- Answering a question: the chosen answer turns `color/accent/chosen` pink with a tick and presses in, and Kopi reacts with Live2D's React motion, one of Hijiki's two cheerful Tap motions (the still art hops instead when Live2D isn't running). After 300 ms the next question's counter rises in while the reaction plays on. With reduced motion, the pink and tick still show for the same pause, without movement.
 - Footer wordmark: it holds still in the text colour. Under a mouse, nearby glyphs scramble in the accent and settle back over 0.7 s. Touch and reduced motion get no effect.
 - Keep all other motion to hover and focus states.
 

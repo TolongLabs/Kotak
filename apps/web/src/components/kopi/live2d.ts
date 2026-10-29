@@ -3,8 +3,10 @@ import type { KopiPose } from './poses'
 // Kopi is Live2D's sample model Hijiki (© Live2D Inc.): its Cubism 3 runtime files from Live2D's sample page go in
 // apps/web/public/kopi/live2d/hijiki/, with the settings file named hijiki.model3.json. Kopi plays the motion group
 // named after the pose ("Idle", "Asking", "Thinking", "Happy", "Worried", "Explaining"), so map Hijiki's motions to
-// poses by naming the groups under "Motions" in that file. A missing group keeps Kopi idling.
+// poses by naming the groups under "Motions" in that file. A missing group keeps Kopi idling. The "React" group is
+// Kopi's reply to an answer: Hijiki's two cheerful Tap motions (03 and 07; Tap 06 is a slow paw-lick that looks away).
 const KOPI_MODEL_URL = '/kopi/live2d/hijiki/hijiki.model3.json'
+const REACT_GROUP = 'React'
 
 // Cubism Core is Live2D's proprietary runtime, so it loads from Live2D instead of shipping in the repository.
 const CUBISM_CORE_URL = 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js'
@@ -18,6 +20,8 @@ type Box = { left: number; top: number; right: number; bottom: number }
 
 export interface KopiStage {
   setPose: (pose: KopiPose) => void
+  // Plays one of the React motions at once, over whatever is playing.
+  react: () => void
   destroy: () => void
 }
 
@@ -182,9 +186,19 @@ async function drawKopi(host: HTMLElement, pose: KopiPose, signal: AbortSignal):
   fit()
 
   const groups = Object.keys(settings.FileReferences.Motions ?? {})
+  const motions = model.internalModel.motionManager
+  // The playing group shows on the host as data-kopi-motion, so a check can see Kopi react.
+  motions.on('motionStart', (group: string) => {
+    host.dataset.kopiMotion = group
+  })
   const setPose = (next: KopiPose) => {
     const group = motionGroup(next)
+    // A pose change mid-reaction (the next question's) would cut it short; Kopi idles once it ends.
+    if (motions.state.currentGroup === REACT_GROUP || motions.state.reservedGroup === REACT_GROUP) return
     if (groups.includes(group)) void model.motion(group, undefined, MotionPriority.FORCE)
+  }
+  const react = () => {
+    if (groups.includes(REACT_GROUP)) void model.motion(REACT_GROUP, undefined, MotionPriority.FORCE)
   }
   setPose(pose)
   // Measure after the first motion frame has posed the model, before the caller shows it.
@@ -199,6 +213,7 @@ async function drawKopi(host: HTMLElement, pose: KopiPose, signal: AbortSignal):
 
   return {
     setPose,
+    react,
     destroy: () => {
       resizeObserver.disconnect()
       destroyApp()

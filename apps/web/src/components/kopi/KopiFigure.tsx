@@ -19,6 +19,9 @@ if (typeof window !== 'undefined') {
 
 export interface KopiFigureProps {
   pose: KopiPose
+  // Turning it on makes Kopi react once: the live cat plays a React motion, the still art or glyphs hop (CSS
+  // .kopi-hop). Reduced motion does neither.
+  react?: boolean
   // Size the figure with a height class; the width follows the pose art's aspect ratio.
   className?: string
 }
@@ -26,7 +29,7 @@ export interface KopiFigureProps {
 // Kopi arrives as ASCII (KopiAscii). Live2D's files download during the rise, and it mounts once the glyphs have settled
 // so its setup can't stutter them; the settled glyphs hold until the live cat is ready, then fade with it underneath. The pose art shows only under reduced
 // motion, or as the fallback when Live2D is missing, fails, or another Kopi on the page holds the stage.
-export function KopiFigure({ pose, className }: KopiFigureProps) {
+export function KopiFigure({ pose, react = false, className }: KopiFigureProps) {
   const { reduced } = useReducedMotion()
   const host = useRef<HTMLDivElement>(null)
   const stage = useRef<KopiStage | null>(null)
@@ -45,6 +48,11 @@ export function KopiFigure({ pose, className }: KopiFigureProps) {
   const [instant] = useState(enteredThisVisit)
   const handedOver = entrance === 'handover' || entrance === 'done'
   const startLive = !reduced && entrance !== 'playing'
+
+  // Runs before the pose effect, so the pose change that comes with an answer can't cut the reaction short (setPose).
+  useEffect(() => {
+    if (react) stage.current?.react()
+  }, [react])
 
   useEffect(() => {
     poseRef.current = pose
@@ -99,7 +107,14 @@ export function KopiFigure({ pose, className }: KopiFigureProps) {
   }, [entrance])
 
   return (
-    <div className={cn('relative aspect-[561/731] shrink-0', className)} data-kopi-pose={pose}>
+    <div
+      className={cn(
+        'relative aspect-[561/731] shrink-0',
+        className,
+        react && !reduced && !(live && handedOver) && 'kopi-hop'
+      )}
+      data-kopi-pose={pose}
+    >
       {(reduced || fallback) && (
         <PoseArt
           pose={pose}

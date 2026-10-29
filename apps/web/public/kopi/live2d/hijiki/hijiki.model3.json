@@ -68,6 +68,14 @@
         {
           "File": "motion/01.motion3.json"
         }
+      ],
+      "React": [
+        {
+          "File": "motion/03.motion3.json"
+        },
+        {
+          "File": "motion/07.motion3.json"
+        }
       ]
     }
   },

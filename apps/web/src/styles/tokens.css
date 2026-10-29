@@ -20,6 +20,7 @@
   --k-color-swot-weak: #fbe4e1;
   --k-color-swot-opp: #e0ebfa;
   --k-color-swot-threat: #ebe2f7;
+  --k-color-accent-chosen: #eb4799;
   --k-color-surface-glass: rgb(255 255 255 / 72%);
   /* Light-mode white, green and red for chips on yellow, kept in both themes (base.css .on-accent). */
   --k-color-accent-on-box-bg: #ffffff;
@@ -107,6 +108,7 @@
   --k-color-swot-weak: #3a1f1c;
   --k-color-swot-opp: #182a40;
   --k-color-swot-threat: #2b2040;
+  --k-color-accent-chosen: #f288bd;
   --k-color-surface-glass: rgb(16 16 11 / 72%);
 }
 
@@ -131,6 +133,7 @@
     --k-color-swot-weak: #3a1f1c;
     --k-color-swot-opp: #182a40;
     --k-color-swot-threat: #2b2040;
+    --k-color-accent-chosen: #f288bd;
     --k-color-surface-glass: rgb(16 16 11 / 72%);
   }
 }
