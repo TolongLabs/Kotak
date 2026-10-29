@@ -21,6 +21,10 @@
   --k-color-swot-opp: #e0ebfa;
   --k-color-swot-threat: #ebe2f7;
   --k-color-surface-glass: rgb(255 255 255 / 72%);
+  /* Light-mode white, green and red for chips on yellow, kept in both themes (base.css .on-accent). */
+  --k-color-accent-on-box-bg: #ffffff;
+  --k-color-accent-on-box-success: #1d7d3e;
+  --k-color-accent-on-box-error: #c9302d;
 
   /* SDG colours */
   --k-color-sdg-1: #e5243b;
