@@ -13,11 +13,14 @@ const WORD_MS = 45
 export interface KopiSpeechBoxProps {
   // Kopi's line. Write [n] where a source number goes; it becomes a citation link.
   speech: string
+  // Every line this box will show in turn (the questions page's 12). The box keeps the size of the tallest, so it
+  // doesn't grow and shrink as `speech` changes among them.
+  reserve?: string[]
   className?: string
 }
 
 // Kopi's game-style speech box (DESIGN.md): types the line out, reads it aloud unless muted, and links citations.
-export function KopiSpeechBox({ speech, className }: KopiSpeechBoxProps) {
+export function KopiSpeechBox({ speech, reserve, className }: KopiSpeechBoxProps) {
   const { tts_muted: muted } = useGuestSession()
   const motion = useReducedMotion()
   const [owner] = useState(() => ({}))
@@ -73,13 +76,26 @@ export function KopiSpeechBox({ speech, className }: KopiSpeechBoxProps) {
           <VoiceToggle muted={muted} onToggle={toggleVoice} />
         </div>
       </div>
-      <p aria-live="polite" aria-atomic="true" className="font-speech text-speech text-text-primary">
-        {words.map((word, index) => (
-          <span key={index} className={cn(index >= shownWords && 'opacity-0')}>
-            {renderCited(word)}
-          </span>
+      {/* The reserved lines sit hidden in the same grid cell as the shown line, so the cell takes the tallest one's height
+          at any width. They're invisible, so screen readers read only the shown line. */}
+      <div className="grid">
+        {reserve?.map((line, index) => (
+          <p key={index} aria-hidden="true" className="invisible col-start-1 row-start-1 font-speech text-speech">
+            {renderCited(line)}
+          </p>
         ))}
-      </p>
+        <p
+          aria-live="polite"
+          aria-atomic="true"
+          className="col-start-1 row-start-1 font-speech text-speech text-text-primary"
+        >
+          {words.map((word, index) => (
+            <span key={index} className={cn(index >= shownWords && 'opacity-0')}>
+              {renderCited(word)}
+            </span>
+          ))}
+        </p>
+      </div>
     </div>
   )
 }

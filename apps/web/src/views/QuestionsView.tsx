@@ -37,6 +37,9 @@ function toSessionAnswers(role: BundleRole, order: string[], asked: Rating[]) {
   return answers
 }
 
+// The question counter and topic row, shown once and hidden once per topic to hold the tallest topic's height.
+const TOPIC_ROW = 'col-start-1 row-start-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1'
+
 const RATINGS: { value: Rating; caption: string }[] = [
   { value: 1, caption: 'Not yet' },
   { value: 2, caption: 'A little' },
@@ -117,13 +120,17 @@ export function QuestionsView() {
     )
   }
 
+  const slot = (index: number) => {
+    const corner = role.corners.find((item) => item.corner_id === order[Math.floor(index / 2)])!
+    const level = index % 2 === 0 ? ('basic' as const) : ('advanced' as const)
+    // A reversed slot shows the reversed wording once the corner has it; until then it reads and scores as normal.
+    const reversedText = REVERSED_SLOTS.includes(index) ? corner.reversed_statements?.[level] : undefined
+    return { corner, level, reversedText, statement: reversedText ?? corner.statements![level] }
+  }
   const questionIndex = asked.length
-  const cornerId = order[Math.floor(questionIndex / 2)]!
-  const corner = role.corners.find((item) => item.corner_id === cornerId)!
-  const level = questionIndex % 2 === 0 ? 'basic' : 'advanced'
-  // A reversed slot shows the reversed wording once the corner has it; until then it reads and scores as normal.
-  const reversedText = REVERSED_SLOTS.includes(questionIndex) ? corner.reversed_statements?.[level] : undefined
-  const statement = reversedText ?? corner.statements![level]
+  const { corner, level, reversedText, statement } = slot(questionIndex)
+  // Kopi's speech box keeps room for the longest of this session's lines, so the answers never move (#350).
+  const statements = Array.from({ length: totalQuestions }, (_, index) => slot(index).statement)
 
   const onAnswer = (rating: Rating) => {
     if (chosen !== null) return
@@ -147,23 +154,46 @@ export function QuestionsView() {
       <AnswerKeys onAnswer={onAnswer} />
       <h2 className="text-title-s text-text-primary">Testing You Against {role.title}</h2>
 
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" aria-live="polite">
-        <span className="font-mono text-mono-s text-text-muted">
-          Question {questionIndex + 1} of {totalQuestions}
-        </span>
-        <span className="inline-flex items-center gap-2 font-mono text-mono-s text-text-primary">
-          {corner.name}
-          <QuestionInfo
-            key={questionIndex}
-            cornerName={corner.name}
-            explainer={corner.explainers?.[level]}
-            tasks={corner.task_ids.flatMap((id) => role.tasks.find((task) => task.task_id === id)?.statement ?? [])}
-          />
-        </span>
+      {/* Every topic's row sits hidden in one grid cell with the shown row, so a long topic that wraps on a phone can't
+          move the answers (#350). The hidden rows keep the counter's and the info button's footprints. */}
+      <div className="grid">
+        {role.corners.map(({ corner_id, name }) => (
+          <div key={corner_id} aria-hidden="true" className={cn(TOPIC_ROW, 'invisible')}>
+            {/* The widest counter's footprint without its text (mono glyphs are 1ch each), so only the shown row reads. */}
+            <span
+              className="inline-block h-4 font-mono text-mono-s"
+              style={{ width: `${`Question ${totalQuestions} of ${totalQuestions}`.length}ch` }}
+            />
+            <span className="inline-flex items-center gap-2 font-mono text-mono-s">
+              {name}
+              <span className="-my-1.5 inline-flex h-7 w-7" />
+            </span>
+          </div>
+        ))}
+        <div className={cn(TOPIC_ROW, 'self-start')} aria-live="polite">
+          <span className="font-mono text-mono-s text-text-muted">
+            Question {questionIndex + 1} of {totalQuestions}
+          </span>
+          <span className="inline-flex items-center gap-2 font-mono text-mono-s text-text-primary">
+            {corner.name}
+            <QuestionInfo
+              key={questionIndex}
+              cornerName={corner.name}
+              explainer={corner.explainers?.[level]}
+              tasks={corner.task_ids.flatMap((id) => role.tasks.find((task) => task.task_id === id)?.statement ?? [])}
+            />
+          </span>
+        </div>
       </div>
 
-      <section className="space-y-3" aria-label="Question Card">
-        <KopiAside pose={chosen !== null ? 'happy' : 'asking'} speech={statement} hop={chosen !== null} centred />
+      <section className="space-y-2 sm:space-y-3" aria-label="Question Card">
+        <KopiAside
+          pose={chosen !== null ? 'happy' : 'asking'}
+          speech={statement}
+          reserve={statements}
+          hop={chosen !== null}
+          centred
+        />
 
         <p className="text-center text-body-s text-text-muted">
           Answer for real work, not tutorials. Not sure? Choose 1 or 2.
@@ -215,9 +245,11 @@ export function QuestionsView() {
   )
 }
 
+// Phones get tighter gaps here and in the question card, so the tallest sessions (long titles and lines, held at full
+// size by #350) still fit one screen at 390x844 (#230).
 function QuestionsFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-5 lg:gap-6">
+    <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-4 sm:gap-5 lg:gap-6">
       <h1 className="sr-only">Check-Up Questions</h1>
       <Stepper step={2} labels={checkUpSteps} />
       {children}

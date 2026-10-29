@@ -7,6 +7,8 @@ import { cn } from '../../components/ui/cn'
 export interface KopiDialogueProps {
   pose: KopiPose
   speech: string
+  // The lines the speech box keeps room for (see KopiSpeechBox).
+  reserve?: string[]
 }
 
 // Kopi sits beside the speech box on the start and no-match screens, at both widths.
@@ -15,6 +17,7 @@ export interface KopiDialogueProps {
 export function KopiAside({
   pose,
   speech,
+  reserve,
   hop = false,
   centred = false
 }: KopiDialogueProps & { hop?: boolean; centred?: boolean }) {
@@ -22,7 +25,7 @@ export function KopiAside({
   return (
     <div className={cn('flex min-w-0 items-end gap-4', centred && 'max-[479px]:items-center')}>
       <KopiFigure pose={pose} className={cn('h-28 max-[479px]:h-20', hop && !reduced && 'kopi-hop')} />
-      <KopiSpeechBox speech={speech} />
+      <KopiSpeechBox speech={speech} reserve={reserve} />
     </div>
   )
 }
