@@ -93,7 +93,7 @@ Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
-Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works.
+Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
 
 ### Team Information
 
