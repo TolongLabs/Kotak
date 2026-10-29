@@ -6,8 +6,8 @@
     "notes": [
       "Each text is the target's official UN wording, copied verbatim from the API's title field.",
       "Checked against the sdgs.un.org goal pages on 2026-10-29: all match, except typography: curly apostrophes in 4.7, 9.2 and 11.4, and 'transborder' in 9.1.",
-      "40 targets come from the skill tags and 18 more from the job chips' mapping in apps/web/src/engine/occupationSdg.ts; build:data checks both are covered.",
-      "12.8: its only tagged skill (Farmers, Sales and customer advice) has nothing on sustainability; the row stays while the tag does, and #408 removes the tag.",
+      "After #408's retag, 46 targets are on skill tags and 8 more only on the job chips' mapping in apps/web/src/engine/occupationSdg.ts; build:data checks both are covered. 1.1, 1.2, 9.4 and 14.2 lost all their skill tags in the retag and no job chip uses them, so no screen shows them now.",
+      "12.8: #408 removed its only tag, Farmers' Sales and customer advice, which has nothing on sustainability. It now tags Chief Sustainability Officers' Sustainability Strategy, whose campaigns and outreach build public awareness.",
       "Reviewed twice by an AI model standing in for a teammate (PR #405), not by a person, so quality stays auto-generated."
     ],
     "reasons_by": "Claude Opus 5.5 (coding agent), for #391",
