@@ -1,16 +1,17 @@
 # SDC Hackathon 2026 brief
 
-What our team must build and submit for Domain 1 of SDC Hackathon 2026, by when, and which rules can cost us points or our place. It condenses the organisers' documents in [`docs/sources/`](/docs/sources/), as captured on 19 and 20 October 2026, and cites each point. Where sources disagree it takes the stricter rule. The sources, and above them the [Terms and Conditions][tc], win over this brief ([slide 13]).
+What our team, T010NG, must build and submit for the Domain 1 final of SDC Hackathon 2026, by when, and which rules can cost us points or our place. It condenses the organisers' documents in [`docs/sources/`](/docs/sources/), as captured from 19 to 29 October 2026, and cites each point. Where sources disagree it takes the stricter rule. The sources, and above them the [Terms and Conditions][tc], win over this brief ([slide 13]).
 
 Contents:
 
 1.  [Our challenge](#our-challenge)
 1.  [Deadlines](#deadlines)
-1.  [Preliminary deliverables](#preliminary-deliverables)
+1.  [Final deliverables](#final-deliverables)
     1.  [Repository requirements](#repository-requirements)
     1.  [How to submit](#how-to-submit)
 1.  [Judging](#judging)
 1.  [Rules that can cost us](#rules-that-can-cost-us)
+1.  [At the venue](#at-the-venue)
 1.  [Support and contacts](#support-and-contacts)
 1.  [See also](#see-also)
 
@@ -19,181 +20,249 @@ Contents:
 
 ## Our challenge
 
-SDC (Sustainably Developing Code) is a two-week hybrid AI hackathon on the UN Sustainable Development Goals, run by the XMUM AI Club with the XMUM Rotaract Club ([overview]). We are one of 123 teams in Domain 1, sponsored by Aiversecity ([slide 63]). Its [problem statement][d1]:
+SDC (Sustainably Developing Code) is a two-week hybrid AI hackathon on the UN Sustainable Development Goals, run by the XMUM AI Club with the XMUM Rotaract Club ([overview]). We were one of 123 teams in Domain 1, sponsored by Aiversecity ([slide 63]), and are one of its 15 finalists, "Listed alphabetically — not a ranking" ([finalists]). Its [problem statement][d1]:
 
 > How might we build an AI-powered solution that continuously tracks AI advancement to predict which skills and jobs will emerge or decline, matches today’s workforce and tomorrow’s talent to the right future roles, and generates personalised reskilling pathways, while showing how each role and skill connects to the 17 UN Sustainable Development Goals?
 
-The [domain file][d1] has the target users, the user journey and the optional features. The final product needs all six must-haves, and the preliminary proposal explains how each will be delivered ([section 4][d1-must]):
+The final keeps the problem statement but judges the complete product, running live, against a new rubric, and the preliminary score doesn't carry forward ([finalist guide 3][fg3]). Judges expect to watch one synthetic user move through six stages in a single live session ([section 4][fg4]). Each stage is a must-have, and one that is missing or only described caps the Problem-Solution Fit score ([section 5][fg5]):
 
-1.  **Skills profile intake** by CV upload, form or questionnaire, with sample profiles in place of real CVs.
-2.  **AI-trend signal layer** fed by at least one updatable source of AI and job-market trends, showing the source and its date. Hard-coded lists alone don't count.
-3.  **Future-role matching** with an explainable match score and a clear skills gap.
-4.  **Personalised reskilling pathway**: an ordered plan with time estimates, using free or low-cost resources.
-5.  **SDG mapping** of every role and skill to at least one SDG.
-6.  **Handling uncertainty** with more than one future scenario, and predictions labelled as estimates.
+1.  **Skills profile intake** by CV upload, form or questionnaire, with the captured skills driving the matching. A single hard-coded demo user isn't enough.
+2.  **AI-trend signal layer** fed by at least one updatable source, with its name and date on screen, and results that change when the data changes. Judges may ask us to change the trend data during the demo.
+3.  **Future-role matching**: ranked roles, each with an explainable match score, its reasons and a skills gap. Expect "why this score, and what would raise it?"
+4.  **Personalised reskilling pathway**: ordered steps with time estimates, through real free or low-cost resources such as online courses or HRD Corp-claimable programmes. Judges may check that a course is real.
+5.  **SDG mapping**: every role and skill tagged to at least one SDG with a reason, and the chosen path's contribution shown.
+6.  **Handling uncertainty**: at least two scenarios, such as moderate and fast AI disruption, with recommendations that shift between them, labelled as estimates.
 
-Across all six: public, open or synthetic data only; name any language model used; every recommendation cites a source; the system never invents jobs, courses or statistics; humans make the career decisions ([section 6][d1-rules]). Aiversecity's picture of success adds that the output "visibly changes when the trend data changes" and the SDG link is "meaningful rather than decorative" ([section 7][d1-success]).
+Under Technical Execution, judges probe what sits behind them: each snapshot stored with its fetch date and a refresh possible during the demo; a decomposable score, such as skill overlap weighted by trend momentum; recommendations built from our own sourced tables, saying so when no source exists; scenarios driven by explicit parameters, not hand-written alternatives; a one-line reason for every SDG link, added up into the path's contribution; no crash on a thin profile, an unknown skill or a dead source, falling back to the last good snapshot; and a deployed app with an organised repository and steady commits ([section 6][fg6]). The preliminary rules still hold: public, open or synthetic data only; name any language model used; every recommendation cites a source; the system never invents jobs, courses or statistics; humans make the career decisions; and full course content, payment systems and real recruitment integrations are out of scope ([section 9][fg9]; [preliminary guide 6][d1-rules]).
 
-The preliminary demo must show the most important feature running live, for Domain 1 "the trend signal layer feeding the role matching system" ([briefing transcript][transcript], 00:41:22). Asked about the audience, the organisers said Domain 1 must target "a mix of businesses and government" ([transcript], 01:21:52), though the domain file's users also include individuals: working adults, fresh graduates and career switchers ([section 2][d1-users]).
+Optional features earn credit inside the criteria but never make up for a missing must-have: an employer or HR view with a workforce skills-gap heatmap, automatic re-planning when the trend data changes, English, Bahasa Malaysia and Chinese, low-bandwidth and mobile design, progress tracking, fairness checks, and an SDG view for a person, a company or a region ([section 7][fg7]). At the briefing the organisers said Domain 1 must target "a mix of businesses and government" ([transcript], 01:21:52), and the finalist guide names career centres, TVET providers and HR teams as channels ([section 8][fg8]).
+
+Each domain pays RM 8,000, from RM 3,000 for the champion to RM 150 for each finalist outside the top five ([prizes]).
 
 [overview]: /docs/sources/sdchack.my/overview.md
 [slide 63]: /docs/sources/opening-briefing/slides.md#slide-63-domain-assignment-lists
+[finalists]: /docs/sources/sdchack.my/finalists.md#domain-1---aiversecity
 [d1]: /docs/sources/drive.google.com/domain-1-aiversecity.md
-[d1-must]: /docs/sources/drive.google.com/domain-1-aiversecity.md#4-must-have-features
+[fg3]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#3-what-changes-at-the-final
+[fg4]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#4-the-final-demo-journey
+[fg5]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#5-must-have-features-final-standard
+[fg6]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#6-technical-expectations
+[fg7]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#7-good-to-have-features-optional
+[fg8]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#8-impact--evidence
+[fg9]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#9-rules-and-boundaries
 [d1-rules]: /docs/sources/drive.google.com/domain-1-aiversecity.md#6-rules-and-boundaries
-[d1-success]: /docs/sources/drive.google.com/domain-1-aiversecity.md#7-what-success-looks-like
 [transcript]: /docs/sources/opening-briefing/transcript.md
-[d1-users]: /docs/sources/drive.google.com/domain-1-aiversecity.md#2-who-you-are-building-for
+[prizes]: /docs/sources/sdchack.my/overview.md#prizes
 
 ## Deadlines
 
 All times are MYT (UTC+8).
 
-| When                   | What                                                                                                                         |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 21–23 Oct              | Mentor session windows ([team portal][tp-mentors])                                                                           |
-| **25 Oct, 7:59:59 AM** | **Preliminary submission closes and the repository freezes** ([slide 47])                                                    |
-| 25 Oct                 | Mentor booking closes ([team portal][tp-mentors])                                                                            |
-| 28 Oct, 8 PM           | Up to 15 finalists per domain announced ([slide 47]; [Terms and Conditions 4.4][tc44])                                       |
-| 29 Oct, 12 PM          | Finalists confirm attendance; missing it counts as withdrawal ([Terms and Conditions 8.2][tc82])                             |
-| 28–30 Oct              | Upgrade round, online, finalists only ([slide 11])                                                                           |
-| 31 Oct – 1 Nov         | Grand final at XMUM, Sepang: a 24-hour hackathon, then a 10-minute pitch and 5 minutes of questions ([slide 11]; [slide 49]) |
+| When                  | What                                                                                                                                                                                                                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 28 Oct, 8:32 PM       | Finalists announced ([Discord][disc-finalists])                                                                                                                                                                                                                                        |
+| **29 Oct, 12 PM**     | **Confirm attendance with the attendance form and visitor pass; missing it counts as withdrawal** ([Terms and Conditions 8.2][tc82]). Also the last time to register a car ([participant handbook 6.6.11][ph66]) and to give notice of not attending ([official handbook 4.3.6][hb43]) |
+| 28–30 Oct             | Upgrade round, online ([participant handbook 6.5][ph65])                                                                                                                                                                                                                               |
+| 31 Oct, 8 AM          | Registration at XMUM, then the opening briefing at 9:30 AM and hacking from 10:30 AM ([participant handbook 7.2][ph72])                                                                                                                                                                |
+| 31 Oct, 9 AM to 1 PM  | Booking for the offline mentoring session; sessions run from 1:35 PM ([final round page][tp-mentoring])                                                                                                                                                                                |
+| **1 Nov, 7:59:59 AM** | **Final submission closes and the repository freezes** ([participant handbook 6.6.3][ph66]); the portal says 8 AM ([finalist submission][tp-final])                                                                                                                                    |
+| 1 Nov, 9:40 AM        | Pitching in two parallel domain tracks until 3:40 PM, with lunch from 12:40 to 1:40 PM ([participant handbook 7.2][ph72])                                                                                                                                                              |
+| 1 Nov, 4 PM           | Closing ceremony and results, until 6:30 PM ([participant handbook 7.2][ph72])                                                                                                                                                                                                         |
 
-The website and the submission page say 25 October, 11:59 PM, but the briefing slides and the participant handbook say 7:59:59 AM, the morning of Sunday 25 October: "Not Sunday night, not midnight" ([slide 47]; [known conflicts][conflicts]). Plan for the morning.
+The sprint runs under 23 hours, from 9:30 AM on 31 October, though the report template calls it "the 48-hour physical sprint" and the website says 24 hours ([known conflicts][conflicts]). Plan for 7:59:59 AM on 1 November.
 
-[tp-mentors]: /docs/sources/sdchack.my/team-portal.md#mentor-booking
-[slide 47]: /docs/sources/opening-briefing/slides.md#slide-47-deadline
-[tc44]: /docs/sources/sdchack.my/terms-and-conditions.md#44-finalist-selection
+[disc-finalists]: /docs/sources/discord.com/announcements.md#finalists-announced
 [tc82]: /docs/sources/sdchack.my/terms-and-conditions.md#82-finalist-confirmation
-[slide 11]: /docs/sources/opening-briefing/slides.md#slide-11-event-timeline
-[slide 49]: /docs/sources/opening-briefing/slides.md#slide-49-presentation-format
+[ph66]: /docs/sources/drive.google.com/participant-handbook.md#66-final-round-physical-hackathon
+[hb43]: /docs/sources/sdchack.my/handbook.md#43-commitment-fee-and-refund-policy
+[ph65]: /docs/sources/drive.google.com/participant-handbook.md#65-phase-2-online-upgrading-round
+[ph72]: /docs/sources/drive.google.com/participant-handbook.md#72-final-phase-rundown
+[tp-mentoring]: /docs/sources/sdchack.my/team-portal.md#offline-mentoring-session
+[tp-final]: /docs/sources/sdchack.my/team-portal.md#finalist-submission
 [conflicts]: /docs/sources/drive.google.com/README.md#conflicts-between-sources
 
-## Preliminary deliverables
+## Final deliverables
 
-Six items, one official submission per team ([slide 45]; [participant handbook 6.3.5][ph63]):
+The sources disagree on what the final takes. The portal asks only for the repository link ([finalist submission][tp-final]), the report template asks for the report "together with your pitch deck and a working deployment link" ([report template][fr]), and the participant handbook lists seven items ([participant handbook 6.6.4][ph66]). The Drive tour asks for new copies of both templates ([tour], 1:28). This brief takes all of them. No source says where the files go, so keep them in the repository's `submission/` folder, as in the preliminary round ([known conflicts][conflicts]):
 
-| #   | Item                          | What it must be                                                                                                                                                                                                                                                                                                                                                               |
-| --- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Product Requirement Doc       | The [Submission Template][st] as one PDF, `SDC2026_TeamName_Preliminary.pdf`, with every field filled, including the IP and originality declaration and the leader's signature. Section 2.1 takes at most 250 words, 2.2 at most 300 and 3.2 at most 200. Incomplete submissions may not be eligible for review.                                                              |
-| 2   | Pitch deck                    | Problem, solution, technical approach and expected impact, telling the same story as the video. The organisers asked for PPTX ([transcript], 01:14:47).                                                                                                                                                                                                                       |
-| 3   | Live prototype link           | A deployed link or accessible build that judges can use. A video or static mock-up doesn't count.                                                                                                                                                                                                                                                                             |
-| 4   | Technical & Tools Declaration | The [declaration template][td] as one PDF, `SDC2026_TeamName_TechDeclaration.pdf`, listing every API, cloud service, AI tool, dataset, model, sponsor resource and piece of pre-existing code, with its compliance checklist and the leader's signature. "No" or "None", never blank. Word limits: 2.1 at most 200, 4.3 and 5 at most 100 each, 6.1 and 6.2 at most 150 each. |
-| 5   | GitHub repository link        | Public, and reflecting what we demo. See [repository requirements](#repository-requirements).                                                                                                                                                                                                                                                                                 |
-| 6   | Pitching video                | 5–7 minutes on YouTube, public rather than unlisted, with the prototype demo inside ([slide 49]; [transcript], 01:17:22). Each 30 seconds over costs 1 point ([slide 50]).                                                                                                                                                                                                    |
+| #   | Item                          | What it must be                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Phase 2 final report          | The [report template][fr] as one PDF, `SDC2026_T010NG_Final.pdf`, with every field filled, the IP declaration and the leader's signature. Section 2 takes at most 250 words, 3.2 at most 300 and 5 at most 250. It covers the handbook's final solution report: features, architecture, SDG impact and how the build evolved ([participant handbook 6.6.4.3][ph66]).                                                                                                                                                                     |
+| 2   | Updated PRD                   | What changed since the preliminary submission and why, based on judge and mentor feedback ([participant handbook 6.6.4.1][ph66]). No template exists. Section 3.2 of the report asks a similar question, but the handbook lists this item separately, so add a short updated PRD as well.                                                                                                                                                                                                                                                |
+| 3   | Technical & Tools Declaration | The [finalist copy][td-final] as one PDF under the same name, `SDC2026_T010NG_TechDeclaration.pdf`, replacing the preliminary copy. Complete every section again, adding what we took up since the preliminary, such as the KrackedDevs keys, with the Replit and RunPod proof of use ([participant handbook 6.6.4.2][ph66]; [participant handbook 10][ph10]). "No" or "None", never blank, no keys in the document, and the leader's signature. Word limits: 2.1 at most 200, 4.3 and 5 at most 100 each, 6.1 and 6.2 at most 150 each. |
+| 4   | Pitch deck                    | Problem, solution, technical implementation, SDG relevance, impact, feasibility and the demo ([participant handbook 6.6.4.6][ph66]). The handbook wants `.pptx` ([participant handbook 6.7.5][ph67]) and the report checklist a flattened PDF ([report template 6][fr6]), so submit both, and check the deck opens on our laptop before the slot.                                                                                                                                                                                        |
+| 5   | Live demo                     | A working deployment link, with any files, accounts or test credentials the demo needs ([participant handbook 6.6.4.7][ph66]), and a backup, an offline build or a recording, in case the connection fails ([how judging works][fg-judging]).                                                                                                                                                                                                                                                                                            |
+| 6   | Backup pitch video            | A pre-recorded demo on YouTube, played only if the live demo can't go ahead ([participant handbook 6.6.4.4][ph66]).                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 7   | GitHub repository             | The preliminary repository, improved and public. See [repository requirements](#repository-requirements).                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
-A valid submission is complete: "Every file there, every link opens, every declaration done" ([slide 47]). One without a working prototype, a functional UI and a pitch is incomplete, which "can lead to negative marking or disqualification" ([slide 27]; [transcript], 00:39:13).
+A valid submission has every required file, every link accessible, every declaration complete and arrives on time ([Terms and Conditions 6.5][tc65]). It needs a working prototype, a functional user interface and a live pitch, and is incomplete if any one is missing ([official handbook 7.4.3][hb74]). Content that "exaggerates, fabricates, or misrepresents" what the solution can do is barred ([Terms and Conditions 6.1.5][tc61]).
 
-[slide 45]: /docs/sources/opening-briefing/slides.md#slide-45-preliminary-submission
-[ph63]: /docs/sources/drive.google.com/participant-handbook.md#63-phase-1-online-preliminary-round
-[st]: /docs/sources/drive.google.com/submission-template.md#cover-page-and-submission-rules
-[td]: /docs/sources/drive.google.com/technical-tools-declaration-template.md#cover-page-and-submission-rules
-[slide 50]: /docs/sources/opening-briefing/slides.md#slide-50-penalties
-[slide 27]: /docs/sources/opening-briefing/slides.md#slide-27-rules-for-both-domains
+[fr]: /docs/sources/drive.google.com/final-report-template.md#cover-and-submission-rules
+[tour]: /docs/sources/drive.google.com/finalist-drive-tour.md#transcript
+[td-final]: /docs/sources/drive.google.com/technical-tools-declaration-template.md#finalist-copy
+[ph10]: /docs/sources/drive.google.com/participant-handbook.md#10-submission-guideline
+[ph67]: /docs/sources/drive.google.com/participant-handbook.md#67-pitching-session
+[fr6]: /docs/sources/drive.google.com/final-report-template.md#6-final-submission-checklist
+[fg-judging]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#how-judging-works
+[tc65]: /docs/sources/sdchack.my/terms-and-conditions.md#65-valid-submission
+[tc61]: /docs/sources/sdchack.my/terms-and-conditions.md#61-general-submission-requirements
+[hb74]: /docs/sources/sdchack.my/handbook.md#74-scope-and-constraints
 
 ### Repository requirements
 
-- **A fresh repository**: create it after 19 October, 8 PM, and don't recycle an older one without the organiser's prior written approval ([Terms and Conditions 5.5][tc55]). This repository was created on 24 October, and its history starts after 19 October, 8 PM.
-- **Visibility**: private while building, public before submitting ([slide 46]), and public until judging ends ([participant handbook 10][ph10]).
-- **Licence**: a `LICENSE` file with the Apache License 2.0 ([participant handbook 10][ph10]; [licence tutorials][vt-licence]).
-- **README**: team name, domain, the demo and pitch video links, how to run the project, its structure, and how we used Replit and RunPod ([slide 35]). The README template adds the SDG track and the deck ([slide 42]; [sample repository][gh]). Preliminary judges set the project up themselves, so the run steps matter ([transcript], 01:14:47).
-- **`submission/` folder**: the Submission Template PDF and the Replit and RunPod proof of use, also as PDFs ([transcript], 00:47:18; [sample file tree][gh-tree]).
-- **Commit history**: genuine and continuous. A near-complete codebase landing in one big commit gets reviewed and may be disqualified as pre-built ([slide 46]; [participant handbook 6.3.5][ph63]).
-- **Secrets**: no API keys or passwords in the repository ([slide 46]).
-- **Collaborators**: add the committee's GitHub accounts ([slide 46]), which no source names yet (issue #18).
-- **Freeze**: no commits of any kind after the deadline ([Terms and Conditions 6.6][tc66]). The briefing called a commit after 8 AM on 25 October "immediate disqualification" ([transcript], 00:53:54).
+- **The same repository**: "Don't start a new repository; keep improving the one from your preliminary round" ([tour], 1:28), which for us is [TolongLabs/Kotak](https://github.com/TolongLabs/Kotak), created on 24 October. The preliminary freeze holds "Unless otherwise instructed by the Organiser" ([Terms and Conditions 6.6][tc66]), and we read the tour as that instruction. The 25 October closure notice called any later commit "immediate disqualification" ([Discord][disc-closed]), so confirm in `#ask-the-organizers` before the first push.
+- **Visibility**: private while hacking ([participant handbook 6.1.2][ph61]), public when we submit, which the portal checks ([finalist submission][tp-final]), and public until judging ends; a private link may affect our eligibility ([participant handbook 10][ph10]). The repository was private on 29 October.
+- **Commit history**: incremental updates "throughout the official live hacking window" ([report template 6][fr6]). A near-complete codebase pushed in one large commit shortly before the deadline "will result in disqualification" if it looks pre-built, where the preliminary rule said "may" ([participant handbook 6.6.4.5][ph66]). No source defines the window; the upgrade round runs online from 28 October ([participant handbook 6.5][ph65]) and the sprint from 9:30 AM on 31 October ([participant handbook 6.6.1][ph66]), so commit steadily through both rather than land the upgrade in one push at the venue.
+- **README**: clean and well documented, with installation instructions ([report template 6][fr6]). The preliminary list still applies: team name, domain, the demo and video links, run steps, structure, and how we used Replit and RunPod ([slide 35]; [sample repository][gh]).
+- **Licence**: a `LICENSE` file with the Apache License 2.0 ([participant handbook 10][ph10]).
+- **Secrets**: no API keys or passwords in the repository; keep the KrackedDevs and RunPod keys in environment variables ([participant handbook 6.1.6][ph61]; [credits guide][credits]).
+- **Collaborators**: add the committee's GitHub accounts before the deadline ([participant handbook 6.6.4.5][ph66]). No source names them, and the briefing said "if required" ([transcript], 00:51:46), so ask the organisers which accounts, if any.
+- **Freeze**: no commits, fixes or changes of any kind after the deadline. The organiser inspects repository activity afterwards ([Terms and Conditions 6.6][tc66]), and a commit after the deadline means deductions or disqualification ([slide 50]).
 
-[tc55]: /docs/sources/sdchack.my/terms-and-conditions.md#55-github-repository-requirements
-[slide 46]: /docs/sources/opening-briefing/slides.md#slide-46-tools-and-github-rules
-[ph10]: /docs/sources/drive.google.com/participant-handbook.md#10-submission-guideline
-[vt-licence]: /docs/sources/drive.google.com/video-tutorials.md#apache-20-licence-tutorial-a-direct
-[slide 35]: /docs/sources/opening-briefing/slides.md#slide-35-repo-step-what-the-readme-must-include
-[slide 42]: /docs/sources/opening-briefing/slides.md#slide-42-repo-step-fill-in-the-readme
-[gh]: /docs/sources/drive.google.com/github-submission-template.md#readme-template
-[gh-tree]: /docs/sources/drive.google.com/github-submission-template.md#file-tree
 [tc66]: /docs/sources/sdchack.my/terms-and-conditions.md#66-repository-freeze
+[ph61]: /docs/sources/drive.google.com/participant-handbook.md#61-pre-event-preparation-requirements
+[slide 35]: /docs/sources/opening-briefing/slides.md#slide-35-repo-step-what-the-readme-must-include
+[gh]: /docs/sources/drive.google.com/github-submission-template.md#readme-template
+[credits]: /docs/sources/drive.google.com/finalist-credits-guide.md
+[disc-closed]: /docs/sources/discord.com/announcements.md#preliminary-round-closed
 
 ### How to submit
 
-The team leader submits the deliverables ([official handbook 4.2][hb42]) on the [submission page][tp-submit] ([summary submission video][vt-submit]):
+The team leader submits ([official handbook 4.2][hb42]) on the [final round page][tp-final-page], which is "separate from your preliminary submission, which stays as it was" ([finalist submission][tp-final]):
 
-1.  Sign in at [sdchack.my](https://sdchack.my/) with the team leader's account.
-2.  Open **Go to submission** and paste the public repository URL. The page checks that it is public.
+1.  Sign in at [sdchack.my](https://sdchack.my/) with the team leader's account and open **Book mentoring & submit**.
+2.  Paste the public repository URL. The page checks that it is public.
 3.  Tick the checkbox: "Our project integrates our API Premium sponsor's technology — mandatory for both rounds. Submissions without it are disqualified."
-4.  Submit. Resubmitting is allowed until the deadline.
+4.  Submit. Resubmitting is allowed until 1 November, 8 AM.
 
-The page takes only the GitHub link, so the other five items have to be reachable from the repository. Submit early, then open every link in an incognito window ([slide 47]).
+No source names the API Premium sponsor. The briefing called Alpha Red, RunPod, Replit and KrackedDevs "tech premium sponsors" ([transcript], 00:22:05 to 00:28:34), and a false tick would misrepresent the solution ([Terms and Conditions 6.1.5][tc61]).
+
+The page takes only the GitHub link, so every other item has to be reachable from the repository. As the briefing advised for the preliminary, submit early, then open every link in an incognito window ([slide 47]).
 
 [hb42]: /docs/sources/sdchack.my/handbook.md#42-team-eligibility
-[tp-submit]: /docs/sources/sdchack.my/team-portal.md#submission-page
-[vt-submit]: /docs/sources/drive.google.com/video-tutorials.md#summary-submission
+[tp-final-page]: /docs/sources/sdchack.my/team-portal.md#final-round-page
+[slide 47]: /docs/sources/opening-briefing/slides.md#slide-47-deadline
 
 ## Judging
 
-The [preliminary rubric][d1-rubric], with what judges look for in Domain 1:
+The [final rubric][fg11] scores each criterion from 1 to 10 and multiplies it by its weight:
 
-- **Innovation & Creativity, 30%**: a specific user and moment of need, and more than "upload a CV and ask a chatbot for jobs".
-- **Problem-Solution Fit, 25%**: the whole chain from tracking AI advancement to the SDG connection, with all six must-haves explained and humans in charge.
-- **Feasibility of Build, 25%**: the most important feature working live and backed by the repository, with the hardest risk named and a fallback.
-- **Clarity of Proposal, 20%**: problem, then approach, then expected outcome, clear to a cold listener and within the format and length limits.
+- **Innovation & Creativity, 25%**: trend tracking that keeps updating, explains itself and shows uncertainty, with SDG links that change a user's choices. Name the job sites and course platforms that exist and show what makes ours different; "Not a fixed list, a basic course recommender or a CV chatbot."
+- **Technical Execution, 25%**: the full journey running live. It passes the change test, spot-checked jobs, courses and numbers are real, and it is "Mostly a real pipeline rather than mocked", deployed, with organised code.
+- **Impact & Feasibility, 20%**: who we would reach and how, how the trend data stays fresh and what that costs, free or low-cost learning such as HRD Corp, protected personal data, and SDG impact measured against our Phase 1 baseline. Fairness checks, more languages and low-data design earn credit.
+- **Problem-Solution Fit, 15%**: every part of the problem statement answered and all six must-haves shown live. The SDG test: "if the tag were removed, would the user lose anything?" AI helps people decide and never makes hiring decisions.
+- **Presentation & Pitch, 10%**: a clear story from "who I am now" to "where I could be", honest that predictions are estimates and about data limits, within time, with more than one teammate answering.
+- **Design & UX, 5%**: a first-time user gets from profile to ranked roles and a learning plan in minutes, without being told how. "Judged on the product, not the slides."
 
-The briefing named both Feasibility, because judges don't want a mock-up, and Innovation, because teams over-depend on AI, as "where many teams shall lose marks" ([transcript], 00:41:22 and 01:11:02).
+What else decides the score:
 
-- **Impact numbers**: section 4 of the Submission Template (SDG sub-target, baseline, KPI and Phase 2 target, with citations) feeds the Innovation and Feasibility scores, and vague or unsupported projections "may weaken your case" ([template section 4][st4]).
-- **Verification**: judges review documents, inspect code, run demos and interview teams ([Terms and Conditions 7.3][tc73]). Any member can be asked about any part, AI-assisted parts included ([slide 29]).
-- **After the round**: the preliminary score doesn't carry forward, and the final uses a different rubric ([rubric][d1-rubric]). No appeal or re-evaluation is entertained ([Terms and Conditions 7.4][tc74]).
+- **Live checks**: judges may change the trend data, verify a job, course or number, or ask why a score is what it is ([how judging works][fg-judging]). The guide's sample questions add how we keep the data current and what it costs, what happens if AI moves faster or slower, and how we stop the system inventing a job or a course ([section 12][fg12]).
+- **Impact evidence**: section 4 of the report feeds the Impact, Technical Execution and Innovation scores, and "Vague claims or missing verification will weaken your score" ([report template 4][fr4]). The cover says "Unsupported claims will not be credited" and points to section 3 for the evidence ([report template][fr]), so put evidence in both 3.2 and 4. It compares results with our Phase 1 KPI, the sourced-roadmap rate, and its Phase 2 target: all 20 seeded test profiles reach a sourced roadmap in under 3 minutes with no uncited recommendation, and the April-to-May 2026 snapshot swap changes at least one verdict on every hand-checked demo role ([our preliminary PDF][prelim], section 4). The guide also asks for reach, refresh frequency, cost per user or per month, the free share of a pathway, PDPA protection and bias checks ([section 8][fg8]). The proof in section 4.1 is optional but earns bonus marks, and must reflect what we built ([report template 4.1][fr41]).
+- **Time**: a 10-minute pitch and 5 minutes of questions in the handbook ([participant handbook 6.7.3][ph67]), though the finalist guide says the limit "will be confirmed by the organizers". Each 30 seconds over costs 1 point ([participant handbook 6.7.4][ph67]).
+- **Common mistakes**: fixed trend lists, a model inventing jobs, courses or numbers, one prediction shown as certain, SDG tags that change nothing, and pre-recorded or hard-coded output presented as live ([section 13][fg13]).
+- **Ties** go to the higher sub-score in this order: Technical Execution, Problem-Solution Fit, Impact & Feasibility, Innovation & Creativity, Presentation & Pitch, then Design & UX ([participant handbook 6.8.3][ph68]).
+- **Verification**: judges review documents, inspect code, run demos and interview teams ([Terms and Conditions 7.3][tc73]), and before the awards the organiser may disqualify a team for any violation "regardless of its judging score" ([Terms and Conditions 7.5][tc75]). No appeal or re-evaluation is entertained ([Terms and Conditions 7.4][tc74]).
 
-[d1-rubric]: /docs/sources/drive.google.com/domain-1-aiversecity.md#8-marking-rubric--preliminary-round
-[st4]: /docs/sources/drive.google.com/submission-template.md#4-preliminary-environmental--sdg-impact-framework
+[fg11]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#11-marking-rubric--final-round
+[fg12]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#12-prepare-for-qa
+[fg13]: /docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md#13-common-mistakes
+[fr4]: /docs/sources/drive.google.com/final-report-template.md#4-environmental--sdg-impact-verification
+[fr41]: /docs/sources/drive.google.com/final-report-template.md#41-mathematical-proof--code-logic-snippet
+[prelim]: /submission/SDC2026_T010NG_Preliminary.pdf
+[ph68]: /docs/sources/drive.google.com/participant-handbook.md#68-judging-and-results
 [tc73]: /docs/sources/sdchack.my/terms-and-conditions.md#73-evaluation-process
-[slide 29]: /docs/sources/opening-briefing/slides.md#slide-29-ai-usage-policy
+[tc75]: /docs/sources/sdchack.my/terms-and-conditions.md#75-verification-before-awarding
 [tc74]: /docs/sources/sdchack.my/terms-and-conditions.md#74-judges-decision
 
 ## Rules that can cost us
 
 Penalties run from a warning through deductions, cancelled finalist status and disqualification to a ban from future editions ([slide 50]).
 
-- **Replit is compulsory**: it must be part of the solution ([participant handbook 9][ph9]). Proof, from our own account, is a live Replit deployment URL, a project link with its history, or finished credit ([participant handbook 10][ph10]). Missing proof means deductions or ineligibility ([slide 50]).
+- **Replit is compulsory**: it must be part of the solution ([participant handbook 9][ph9]), and teams that don't redeem and use it "won't be eligible for judging" ([Discord][disc-replit]). Proof, from our own account, is a live Replit deployment URL, a project link with its history, or finished credit ([participant handbook 10][ph10]). In the Replit workshop the publish panel read "Invite only" ([Replit workshop slide 47][w2-publish]), so check the deployment is public before judging.
 - **RunPod for any GPU work**: training, fine-tuning or GPU inference must run on RunPod ([participant handbook 9][ph9]), proved by a screenshot of the Pod ID or endpoint URL, the GPU type and the runtime ([participant handbook 10][ph10]).
-- **Declare everything**: any other language, framework or AI tool is allowed if declared, and declaring AI tools doesn't lower the score ([slide 51]; [declaration template 4.3][td43]). Undeclared use can mean deductions or disqualification ([slide 29]).
-- **AI as an assistant**: the idea must be ours, unedited wholesale AI output isn't acceptable, and a team that can't explain a core feature may be flagged ([slide 29]).
-- **Built during the hackathon**: pre-built projects, or ones entered elsewhere, aren't eligible. Small pre-existing code such as login modules or utilities is allowed as supporting parts only; the core idea and major features must be new ([slide 30]; [Terms and Conditions 5.3 and 5.4][tc54]). The official handbook wanted pre-existing work declared at registration, now closed ([official handbook 8.2][hb82]), so the safe course is to reuse little and declare all of it.
-- **Our own work, honestly described**: only registered members build, mentors advise but never build, and outsourcing is "strictly prohibited" ([slide 30]; [Terms and Conditions 5.10][tc510]). Exaggerating or fabricating capabilities is itself a violation ([slide 30]), and plagiarism or false information means immediate disqualification ([Terms and Conditions 11][tc11]).
-- **No real personal data**: use public, open or self-collected data and credit the sources ([slide 51]).
-- **Discord is official**: "I didn't see it" isn't accepted for a missed announcement ([slide 51]).
-- **Late is never**: a late submission isn't accepted ([slide 50]).
-- **Deposit**: the RM 25 deposit comes back only for a valid, complete submission. A finalist that doesn't show without notice before 29 October 2026, 12:00 PM MYT forfeits it ([official handbook 4.3.6](/docs/sources/sdchack.my/handbook.md#43-commitment-fee-and-refund-policy), revised 23 October; [slide 50] said 48 hours).
+- **Declare everything**: every API, model, dataset and AI tool, because undeclared use can mean deductions or disqualification ([slide 29]; [finalist guide 9][fg9]). Declaring AI tools doesn't lower the score ([declaration template 4.3][td43]).
+- **AI as an assistant**: the idea must be ours, unedited wholesale AI output isn't acceptable, and any member can be asked about any part, AI-assisted parts included ([slide 29]).
+- **Built during the hackathon**: pre-built projects, or ones entered elsewhere, aren't eligible. Small pre-existing code such as login modules or utilities is allowed as supporting parts only ([slide 30]; [Terms and Conditions 5.3 and 5.4][tc54]). The report asks again about pre-existing work and third-party code, with "No change from Phase 1 declaration" as an option ([report template 7][fr7]). The official handbook wanted pre-existing work declared at registration and approved ([official handbook 8.2][hb82]), so reuse little and declare all of it.
+- **Our own work, honestly described**: only registered members build. Mentors advise but never build, write documentation or decide for us ([participant handbook 11.4][ph114]), and outsourcing is "strictly prohibited" ([Terms and Conditions 5.10][tc510]). Plagiarism or false information means immediate disqualification ([Terms and Conditions 11][tc11]).
+- **No real personal data**: use public, open or self-collected data and credit the sources ([slide 51]), and say how personal data would be protected under the PDPA ([finalist guide 8][fg8]).
+- **All of us, at every compulsory activity**: attendance is mandatory for finalist teams, all members are expected, and the organiser decides whether a team with an absent member stays eligible ([Terms and Conditions 4.6 and 8.3][tc83]). Compulsory activities include registration, briefings, mentoring, technical inspections, checkpoint reviews, pitching and the award ceremony; an unauthorised absence can be penalised ([Terms and Conditions 14.2][tc142]).
+- **Discord is official**: "I didn't see it" isn't accepted for a missed announcement ([slide 51]), so keep its notifications on ([Terms and Conditions 8.2][tc82]).
+- **Late is never**: a late submission isn't accepted ([Terms and Conditions 6.4][tc64]).
+- **Deposit**: the RM 25 deposit comes back only for a valid, complete preliminary submission, and is forfeited by a finalist that doesn't attend without notice before 29 October, 12 PM ([official handbook 4.3.6][hb43]), or by a team that didn't redeem and use Replit ([Discord][disc-replit]). The organiser may also withhold it from a team that is disqualified or misses a participation requirement ([Terms and Conditions 3.4.3][tc34]).
 
+[slide 50]: /docs/sources/opening-briefing/slides.md#slide-50-penalties
 [ph9]: /docs/sources/drive.google.com/participant-handbook.md#9-official-tools-and-resources
+[disc-replit]: /docs/sources/discord.com/announcements.md#replit-core-access
+[w2-publish]: /docs/sources/workshop-2-replit/slides.md#slide-47-publishing-the-app
 [slide 51]: /docs/sources/opening-briefing/slides.md#slide-51-faqs
 [td43]: /docs/sources/drive.google.com/technical-tools-declaration-template.md#43-ai-assisted-development-tools
+[slide 29]: /docs/sources/opening-briefing/slides.md#slide-29-ai-usage-policy
 [slide 30]: /docs/sources/opening-briefing/slides.md#slide-30-academic-integrity
 [tc54]: /docs/sources/sdchack.my/terms-and-conditions.md#54-pre-existing-code
-[hb82]: /docs/sources/sdchack.my/handbook.md#82-use-of-pre-existing-code-and-materials
+[fr7]: /docs/sources/drive.google.com/final-report-template.md#7-ip--originality-declaration
+[ph114]: /docs/sources/drive.google.com/participant-handbook.md#114-what-mentor-cannot-do
 [tc510]: /docs/sources/sdchack.my/terms-and-conditions.md#510-external-assistance
 [tc11]: /docs/sources/sdchack.my/terms-and-conditions.md#11-cheating--misconduct
+[tc83]: /docs/sources/sdchack.my/terms-and-conditions.md#83-physical-attendance
+[tc142]: /docs/sources/sdchack.my/terms-and-conditions.md#142-attendance-and-participation
+[tc64]: /docs/sources/sdchack.my/terms-and-conditions.md#64-late-submission
+[hb82]: /docs/sources/sdchack.my/handbook.md#82-use-of-pre-existing-code-and-materials
+[tc34]: /docs/sources/sdchack.my/terms-and-conditions.md#34-deposit-refund
+
+## At the venue
+
+The final runs at Xiamen University Malaysia ([participant handbook 5][ph5]):
+
+| Activity               | Room                                           |
+| ---------------------- | ---------------------------------------------- |
+| Briefing               | A4#G07                                         |
+| Hacking                | A3#506, A3#508, A3#509, A3#511, A3#517, A3#518 |
+| Mentoring and sleeping | A3#512 and A3#505                              |
+| Pitching               | A4#113 and A5#119                              |
+| Ceremony               | A1, Tan Hua Choon Auditorium                   |
+| Meals                  | A3, ground floor                               |
+
+- **Bring**: our own laptops, which must drive HDMI directly or through an adapter such as USB-C to HDMI, with chargers, multi-plug adapters, backup equipment and signed-in accounts ([participant handbook 6.1][ph61]; [participant handbook 6.7][ph67]), plus an extension cord, a sleeping bag or blanket, a jacket, clothes, toiletries and towels ([participant handbook 15.12][ph1512]). Bring student ID and wear the event badge at all times ([Terms and Conditions 14.1 and 14.3][tc14]).
+- **Download first**: models, datasets and other heavy resources must be ready before we arrive, because heavy scraping and multi-gigabyte downloads on the campus Wi-Fi aren't allowed ([participant handbook 6.6.7][ph66]).
+- **Getting there**: enter by the Southern or Eastern Gate and park in the A3 basement, with the car registered by 29 October, 12 PM ([participant handbook 6.6][ph66]). The Finalist Drive's directory videos show the routes, the prayer room on A3's fifth floor and the showers in B1 ([directory videos][tour-dir]).
+- **Pitch day**: pitch preparation runs from 8 AM on 1 November on A3's sixth floor ([participant handbook 7.2][ph72]), and the organisers assign the pitching order ([Terms and Conditions 4.7][tc47]), so watch Discord for our slot. Wear smart casual or formal clothes for the pitch and the ceremony ([participant handbook 15.18][ph1518]).
+- **Help**: a help desk on A3's fifth floor, alongside Discord ([participant handbook 8][ph8]).
+- **Overnight**: follow the sleeping and quiet-hours rules, and bring no alcohol, weapons or other prohibited items ([Terms and Conditions 14][tc14]). The organisers aren't liable for lost or damaged belongings ([participant handbook 6.6.8][ph66]).
+
+[ph5]: /docs/sources/drive.google.com/participant-handbook.md#5-venue
+[ph1512]: /docs/sources/drive.google.com/participant-handbook.md#1512-what-should-participants-bring-for-the-physical-final-phase
+[tc47]: /docs/sources/sdchack.my/terms-and-conditions.md#47-pitching-session
+[ph1518]: /docs/sources/drive.google.com/participant-handbook.md#1518-is-there-a-dress-code-for-the-event
+[tc14]: /docs/sources/sdchack.my/terms-and-conditions.md#14-physical-final-round
+[tour-dir]: /docs/sources/drive.google.com/finalist-drive-tour.md#directory-videos
+[ph8]: /docs/sources/drive.google.com/participant-handbook.md#8-physical-help-desk
 
 ## Support and contacts
 
-- **Mentors**: one 15-minute Zoom session per team, booked on the [team portal][tp-mentors] at least 24 hours ahead, first come, first served ([booking rules][disc-mentor]). The six mentors and their windows, which end on Friday 23 October, are listed there ([mentors][tp-mentor-list]). Mentors give feedback only, and outside mentors are off limits ([transcript], 01:17:22). Our booking is issue #96.
-- **Discord** is the official channel and every member must join ([participant handbook 15.2][ph152]). Use `#ask-the-organizers` for general questions, `#ask-tech` for platform problems and `#open-ticket` for a private channel ([slide 56]; [slide 57]; [slide 58]).
+- **Mentors**: our online session was with Ravenna Chen Yaohui, CEO of Intrinsic SEA, on 23 October ([team portal][tp-mentorship]). At the final, each team gets one 15-minute session in A3#512, presenting to a panel of several Domain 1 mentors. Booking opens for every team at 9 AM on 31 October and closes at 1 PM sharp, first come, first served, with a slot for every team ([final round page][tp-mentoring]). The slots run to 6:50 PM, past the rundown's 6:30 PM dinner break ([known conflicts][conflicts]). Mentors give feedback only ([participant handbook 11.4][ph114]).
+- **Discord** is the official channel. Use `#ask-the-organizers` for general questions, `#ask-tech` for platform problems and `#open-ticket` for a private channel ([slide 56]; [slide 57]; [slide 58]).
 - **Formal questions**: the official Discord or [sdc.xmumhack@gmail.com](mailto:sdc.xmumhack@gmail.com) ([slide 51]).
-- **Credits**: Replit Core (worth US$20) for each participant and US$25 of RunPod credit per team ([participant handbook 9][ph9]). The team portal issues RunPod vouchers per participant; at capture only the leader's had arrived ([team portal][tp-runpod]). The portal also shows the Replit Core code; redeem it with the organisers' guide, which turns off auto-reload to avoid charges ([team portal][tp-replit]; [guide][replit-guide]). On 22 October the code had expired and a refresh was pending with Replit; issue #99 tracks it, with the free Starter app as the fallback.
+- **Credits**: up to US$225 for each finalist team ([credits guide][credits]):
+  - **Replit**: US$100 in credits or a Pro plan. Redeem it with the promo code, then switch off auto-reload and cancel auto-renewal straight away, so nothing is charged to the card ([Replit][credits-replit]).
+  - **RunPod**: US$25 for the team. Stop pods after each session, because a stopped pod's disk still bills, and running pods stop when the credit runs out ([RunPod][credits-runpod]). Serverless bills from worker start, model load included ([RunPod workshop slide 19][w3-billing]). The credit also covers the GLM-5.3 public endpoint ([Discord][disc-glm]).
+  - **KrackedDevs**: US$100 as five personal US$20 keys for any OpenAI-compatible tool. Every teammate must join the guild and RSVP to the event to get one, and the budget doesn't reset ([KrackedDevs][credits-kd]).
 
-[disc-mentor]: /docs/sources/discord.com/announcements.md#mentorship-booking-rules
-[tp-mentor-list]: /docs/sources/sdchack.my/team-portal.md#mentors
-[ph152]: /docs/sources/drive.google.com/participant-handbook.md#152-is-joining-the-discord-server-compulsory
+[tp-mentorship]: /docs/sources/sdchack.my/team-portal.md#mentorship-session
 [slide 56]: /docs/sources/opening-briefing/slides.md#slide-56-discord-tour-announcements
 [slide 57]: /docs/sources/opening-briefing/slides.md#slide-57-discord-tour-ask-tech
 [slide 58]: /docs/sources/opening-briefing/slides.md#slide-58-discord-tour-open-a-ticket
-[tp-runpod]: /docs/sources/sdchack.my/team-portal.md#runpod-vouchers
-[tp-replit]: /docs/sources/sdchack.my/team-portal.md#replit-core
-[replit-guide]: /docs/sources/docs.google.com/replit-core-subscription-guide.md
+[credits-replit]: /docs/sources/drive.google.com/finalist-credits-guide.md#1-replit
+[credits-runpod]: /docs/sources/drive.google.com/finalist-credits-guide.md#2-runpod
+[w3-billing]: /docs/sources/workshop-3-runpod/slides.md#slide-19-you-pay-from-worker-start-including-model-load
+[disc-glm]: /docs/sources/discord.com/announcements.md#glm-53-on-runpod
+[credits-kd]: /docs/sources/drive.google.com/finalist-credits-guide.md#3-krackeddevs
 
 ## See also
 
-- [Domain 1 problem statement and rubric](/docs/sources/drive.google.com/domain-1-aiversecity.md)
-- [Participant Drive sources](/docs/sources/drive.google.com/README.md), with the known conflicts between sources
-- [Opening briefing slides](/docs/sources/opening-briefing/slides.md), [transcript](/docs/sources/opening-briefing/transcript.md) and [chat](/docs/sources/opening-briefing/chat.md)
+- [Domain 1 finalist guide](/docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md) and the [preliminary problem statement](/docs/sources/drive.google.com/domain-1-aiversecity.md)
+- [Phase 2 report template](/docs/sources/drive.google.com/final-report-template.md) and the [Technical Tools Declaration template](/docs/sources/drive.google.com/technical-tools-declaration-template.md)
+- [Participant and finalist Drive sources](/docs/sources/drive.google.com/README.md), with the known conflicts between sources
+- [Team portal](/docs/sources/sdchack.my/team-portal.md), with the final round page, and the [finalists](/docs/sources/sdchack.my/finalists.md)
 - [Participant handbook](/docs/sources/drive.google.com/participant-handbook.md), [official handbook](/docs/sources/sdchack.my/handbook.md) and [Terms and Conditions](/docs/sources/sdchack.my/terms-and-conditions.md)
-- [Team portal](/docs/sources/sdchack.my/team-portal.md)
+- [Opening briefing slides](/docs/sources/opening-briefing/slides.md), [transcript](/docs/sources/opening-briefing/transcript.md) and [chat](/docs/sources/opening-briefing/chat.md)
+- Workshop write-ups: [Alpha Red](/docs/sources/workshop-1-alphared/transcript.md), [Replit](/docs/sources/workshop-2-replit/transcript.md), [RunPod](/docs/sources/workshop-3-runpod/transcript.md), [Favoriot](/docs/sources/workshop-4-favoriot/transcript.md) and [KrackedDevs](/docs/sources/workshop-5-krackeddevs/transcript.md)
