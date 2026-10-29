@@ -4,10 +4,12 @@ import {
   BundlePathwaysSchema,
   BundleRoleIndexSchema,
   BundleRoleSchema,
+  SdgReasonsFileSchema,
   type BundleManifest,
   type BundlePathways,
   type BundleRole,
-  type BundleRoleIndex
+  type BundleRoleIndex,
+  type SdgReasonsFile
 } from '@kotak/shared'
 
 // The static client bundle (#88), read through a bundle source, checked with its Zod schema and kept in memory for
@@ -100,12 +102,14 @@ export interface Bundle {
   roleIndex: () => Promise<BundleRoleIndex>
   /** Fields of study, interest areas, regulated professions and each occupation's preparation (#284). */
   pathways: () => Promise<BundlePathways>
+  /** The UN text and Kotak's one-line reason for each SDG target a skill is tagged with (#391). */
+  sdgReasons: () => Promise<SdgReasonsFile>
   role: (onetCode: string) => Promise<BundleRole>
   /** The role, every related role and the `extra` roles, which the check-up ranks it against. */
   roleBundle: (onetCode: string, extra?: string[]) => Promise<RoleBundle>
 }
 
-/** Role files kept at most; the least recently read goes first. The manifest, index and pathways always stay. */
+/** Role files kept at most; the least recently read goes first. Every other file always stays. */
 const MAX_CACHED_ROLES = 200
 
 /** The bundle's files, each read once and kept; a failed file is read again on the next try. */
@@ -141,6 +145,7 @@ export function createBundle(source: BundleSource): Bundle {
     manifest: () => load(BUNDLE_PATHS.manifest, BundleManifestSchema),
     roleIndex: () => load(BUNDLE_PATHS.roles, BundleRoleIndexSchema),
     pathways: () => load(BUNDLE_PATHS.pathways, BundlePathwaysSchema),
+    sdgReasons: () => load(BUNDLE_PATHS.sdgReasons, SdgReasonsFileSchema),
     role,
     async roleBundle(onetCode, extra = []) {
       const main = await role(onetCode)

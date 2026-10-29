@@ -40,6 +40,7 @@ import type { RoadmapStep } from '../demo/types'
 import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
 import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
+import { PathContributionCard } from './roadmap/PathContributionCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
 import { PaceMathsCard } from './roadmap/PaceMathsCard'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
@@ -515,6 +516,8 @@ export function RoadmapView() {
             </div>
           </section>
         )}
+
+        <PathContributionCard steps={timelineSteps} impactArea={selectedImpactArea} />
 
         <RoadmapTimeline
           steps={timelineSteps}

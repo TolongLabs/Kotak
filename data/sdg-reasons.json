@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "source_name": "UN Statistics Division, SDG API: Target List",
+    "source_url": "https://unstats.un.org/sdgs/UNSDGAPIV5/v1/sdg/Target/List",
+    "retrieved_date": "2026-10-29",
+    "notes": [
+      "Each text is the target's official UN wording, copied verbatim from the API's title field.",
+      "Checked against the sdgs.un.org goal pages on 2026-10-29: all match, except typography: curly apostrophes in 4.7, 9.2 and 11.4, and 'transborder' in 9.1.",
+      "40 targets come from the skill tags and 18 more from the job chips' mapping in apps/web/src/engine/occupationSdg.ts; build:data checks both are covered.",
+      "12.8: its only tagged skill (Farmers, Sales and customer advice) has nothing on sustainability; the row stays while the tag does, and #408 removes the tag.",
+      "Reviewed twice by an AI model standing in for a teammate (PR #405), not by a person, so quality stays auto-generated."
+    ],
+    "reasons_by": "Claude Opus 5.5 (coding agent), for #391",
+    "reviewers": ["Claude Sonnet 5.5 review, 2026-10-29", "Claude Sonnet 5.5 re-review, 2026-10-29"],
+    "quality": "auto-generated"
+  },
+  "targets": {
+    "1.1": {
+      "text": "By 2030, eradicate extreme poverty for all people everywhere, currently measured as people living on less than $1.25 a day",
+      "reason": "Social service work that supports clients can help people living in extreme poverty get the help they need."
+    },
+    "1.2": {
+      "text": "By 2030, reduce at least by half the proportion of men, women and children of all ages living in poverty in all its dimensions according to national definitions",
+      "reason": "Planning resources well and responding to setbacks can help protect the incomes that keep people out of poverty."
+    },
+    "2.3": {
+      "text": "By 2030, double the agricultural productivity and incomes of small-scale food producers, in particular women, indigenous peoples, family farmers, pastoralists and fishers, including through secure and equal access to land, other productive resources and inputs, knowledge, financial services, markets and opportunities for value addition and non-farm employment",
+      "reason": "Biological and crop research and field inspection add to the farming knowledge that can help small-scale food producers grow more."
+    },
+    "2.4": {
+      "text": "By 2030, ensure sustainable food production systems and implement resilient agricultural practices that increase productivity and production, that help maintain ecosystems, that strengthen capacity for adaptation to climate change, extreme weather, drought, flooding and other disasters and that progressively improve land and soil quality",
+      "reason": "Good crop, livestock and land practices help make farming more productive and resilient while protecting soil and ecosystems."
+    },
+    "3.3": {
+      "text": "By 2030, end the epidemics of AIDS, tuberculosis, malaria and neglected tropical diseases and combat hepatitis, water-borne diseases and other communicable diseases",
+      "reason": "Tracking, preventing and treating infectious diseases helps fight the communicable diseases this target covers."
+    },
+    "3.8": {
+      "text": "Achieve universal health coverage, including financial risk protection, access to quality essential health-care services and access to safe, effective, quality and affordable essential medicines and vaccines for all",
+      "reason": "Skilled health, care and support work helps people get quality essential health services, which universal health coverage needs."
+    },
+    "3.9": {
+      "text": "By 2030, substantially reduce the number of deaths and illnesses from hazardous chemicals and air, water and soil pollution and contamination",
+      "reason": "Collecting samples for lab testing helps find chemical residues and contamination early, which can help prevent illness from them."
+    },
+    "3.b": {
+      "text": "Support the research and development of vaccines and medicines for the communicable and non-communicable diseases that primarily affect developing countries, provide access to affordable essential medicines and vaccines, in accordance with the Doha Declaration on the TRIPS Agreement and Public Health, which affirms the right of developing countries to use to the full the provisions in the Agreement on Trade-Related Aspects of Intellectual Property Rights regarding flexibilities to protect public health, and, in particular, provide access to medicines for all",
+      "reason": "Research skills in medicine can contribute to developing new vaccines and medicines."
+    },
+    "4.1": {
+      "text": "By 2030, ensure that all girls and boys complete free, equitable and quality primary and secondary education leading to relevant and effective learning outcomes",
+      "reason": "Teaching and running schools helps children complete quality primary and secondary education."
+    },
+    "4.2": {
+      "text": "By 2030, ensure that all girls and boys have access to quality early childhood development, care and pre-primary education so that they are ready for primary education",
+      "reason": "Early childhood care and teaching help young children get ready for primary school."
+    },
+    "4.3": {
+      "text": "By 2030, ensure equal access for all women and men to affordable and quality technical, vocational and tertiary education, including university",
+      "reason": "Teaching and running colleges and training programmes can help widen access to quality technical, vocational and tertiary education."
+    },
+    "4.4": {
+      "text": "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship",
+      "reason": "Building a skill this job uses gives you relevant skills for employment and decent jobs, which this target wants more youth and adults to have."
+    },
+    "4.7": {
+      "text": "By 2030, ensure that all learners acquire the knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship and appreciation of cultural diversity and of culture's contribution to sustainable development",
+      "reason": "Explaining science to the public helps people gain the knowledge and skills needed to promote sustainable development."
+    },
+    "4.c": {
+      "text": "By 2030, substantially increase the supply of qualified teachers, including through international cooperation for teacher training in developing countries, especially least developed countries and small island developing States",
+      "reason": "Building teaching skills adds to the supply of qualified teachers."
+    },
+    "5.4": {
+      "text": "Recognize and value unpaid care and domestic work through the provision of public services, infrastructure and social protection policies and the promotion of shared responsibility within the household and the family as nationally appropriate",
+      "reason": "Providing care services, such as childcare, helps share the unpaid care work that families do."
+    },
+    "6.1": {
+      "text": "By 2030, achieve universal and equitable access to safe and affordable drinking water for all",
+      "reason": "Designing water storage and tracking water levels and flows supports the systems that provide safe drinking water."
+    },
+    "6.2": {
+      "text": "By 2030, achieve access to adequate and equitable sanitation and hygiene for all and end open defecation, paying special attention to the needs of women and girls and those in vulnerable situations",
+      "reason": "Cleaning and sanitation work helps keep toilets, washrooms and buildings hygienic."
+    },
+    "6.3": {
+      "text": "By 2030, improve water quality by reducing pollution, eliminating dumping and minimizing release of hazardous chemicals and materials, halving the proportion of untreated wastewater and substantially increasing recycling and safe reuse globally",
+      "reason": "Testing and treating water helps find and reduce pollution, which improves water quality."
+    },
+    "6.4": {
+      "text": "By 2030, substantially increase water-use efficiency across all sectors and ensure sustainable withdrawals and supply of freshwater to address water scarcity and substantially reduce the number of people suffering from water scarcity",
+      "reason": "Measuring and studying water, and planning how it is moved and used, support more efficient and sustainable use of freshwater."
+    },
+    "6.6": {
+      "text": "By 2020, protect and restore water-related ecosystems, including mountains, forests, wetlands, rivers, aquifers and lakes",
+      "reason": "Studying and reducing environmental impacts helps protect and restore rivers, lakes, wetlands and other water-related ecosystems."
+    },
+    "7.1": {
+      "text": "By 2030, ensure universal access to affordable, reliable and modern energy services",
+      "reason": "Installing and checking energy systems such as solar helps bring reliable, modern energy to homes and businesses."
+    },
+    "7.2": {
+      "text": "By 2030, increase substantially the share of renewable energy in the global energy mix",
+      "reason": "Planning, building and running renewable energy systems helps raise the share of energy that comes from renewables."
+    },
+    "7.3": {
+      "text": "By 2030, double the global rate of improvement in energy efficiency",
+      "reason": "Insulating and sealing buildings cuts the energy they waste, which improves energy efficiency."
+    },
+    "8.2": {
+      "text": "Achieve higher levels of economic productivity through diversification, technological upgrading and innovation, including through a focus on high-value added and labour-intensive sectors",
+      "reason": "Learning better tools and methods for this work can help raise productivity through technology and innovation."
+    },
+    "8.3": {
+      "text": "Promote development-oriented policies that support productive activities, decent job creation, entrepreneurship, creativity and innovation, and encourage the formalization and growth of micro-, small- and medium-sized enterprises, including through access to financial services",
+      "reason": "Skills that start or grow businesses, or shape policy for them, support productive activity and job creation."
+    },
+    "8.5": {
+      "text": "By 2030, achieve full and productive employment and decent work for all women and men, including for young people and persons with disabilities, and equal pay for work of equal value",
+      "reason": "Building this skill helps you stay in, or move into, productive and decent work."
+    },
+    "8.8": {
+      "text": "Protect labour rights and promote safe and secure working environments for all workers, including migrant workers, in particular women migrants, and those in precarious employment",
+      "reason": "Working safely and keeping equipment and work areas in order helps keep workplaces safe and secure for the people who work there."
+    },
+    "8.10": {
+      "text": "Strengthen the capacity of domestic financial institutions to encourage and expand access to banking, insurance and financial services for all",
+      "reason": "Finance and insurance skills help banks and insurers serve customers, including people new to financial services."
+    },
+    "9.1": {
+      "text": "Develop quality, reliable, sustainable and resilient infrastructure, including regional and trans-border infrastructure, to support economic development and human well-being, with a focus on affordable and equitable access for all",
+      "reason": "Keeping equipment and monitoring stations working, with accurate data, supports reliable and resilient infrastructure."
+    },
+    "9.2": {
+      "text": "Promote inclusive and sustainable industrialization and, by 2030, significantly raise industry's share of employment and gross domestic product, in line with national circumstances, and double its share in least developed countries",
+      "reason": "Production skills are part of the industry this target wants to grow inclusively and sustainably."
+    },
+    "9.4": {
+      "text": "By 2030, upgrade infrastructure and retrofit industries to make them sustainable, with increased resource-use efficiency and greater adoption of clean and environmentally sound technologies and industrial processes, with all countries taking action in accordance with their respective capabilities",
+      "reason": "Upgrading infrastructure and industry to be cleaner and more efficient needs people who can install, repair and improve it."
+    },
+    "9.5": {
+      "text": "Enhance scientific research, upgrade the technological capabilities of industrial sectors in all countries, in particular developing countries, including, by 2030, encouraging innovation and substantially increasing the number of research and development workers per 1 million people and public and private research and development spending",
+      "reason": "Research and technical skills add to the scientific research and technological capability this target aims to grow."
+    },
+    "10.2": {
+      "text": "By 2030, empower and promote the social, economic and political inclusion of all, irrespective of age, sex, disability, race, ethnicity, origin, religion or economic or other status",
+      "reason": "Reaching out to and assisting people of every age and ability helps include them in social and economic life."
+    },
+    "11.2": {
+      "text": "By 2030, provide access to safe, affordable, accessible and sustainable transport systems for all, improving road safety, notably by expanding public transport, with special attention to the needs of those in vulnerable situations, women, children, persons with disabilities and older persons",
+      "reason": "Directing traffic and enforcing road rules helps make roads safer."
+    },
+    "11.3": {
+      "text": "By 2030, enhance inclusive and sustainable urbanization and capacity for participatory, integrated and sustainable human settlement planning and management in all countries",
+      "reason": "Planning skills help towns and cities grow in a sustainable, well-managed way."
+    },
+    "11.4": {
+      "text": "Strengthen efforts to protect and safeguard the world's cultural and natural heritage",
+      "reason": "Recording, conserving and sharing culture helps protect cultural and natural heritage."
+    },
+    "11.5": {
+      "text": "By 2030, significantly reduce the number of deaths and the number of people affected and substantially decrease the direct economic losses relative to global gross domestic product caused by disasters, including water-related disasters, with a focus on protecting the poor and people in vulnerable situations",
+      "reason": "Planning and coordinating emergency response helps reduce the deaths, harm and losses that disasters cause."
+    },
+    "11.6": {
+      "text": "By 2030, reduce the adverse per capita environmental impact of cities, including by paying special attention to air quality and municipal and other waste management",
+      "reason": "Meeting environmental standards and managing waste and pollution helps reduce the environmental impact of cities."
+    },
+    "11.7": {
+      "text": "By 2030, provide universal access to safe, inclusive and accessible, green and public spaces, in particular for women and children, older persons and persons with disabilities",
+      "reason": "Designing and looking after parks and other green and public spaces helps keep them safe and usable for everyone."
+    },
+    "12.2": {
+      "text": "By 2030, achieve the sustainable management and efficient use of natural resources",
+      "reason": "Planning how natural resources are used helps manage them sustainably and use them efficiently."
+    },
+    "12.3": {
+      "text": "By 2030, halve per capita global food waste at the retail and consumer levels and reduce food losses along production and supply chains, including post-harvest losses",
+      "reason": "Inspecting farm produce and how it is handled in transport can find disease and damage early, which can reduce food losses after harvest."
+    },
+    "12.4": {
+      "text": "By 2020, achieve the environmentally sound management of chemicals and all wastes throughout their life cycle, in accordance with agreed international frameworks, and significantly reduce their release to air, water and soil in order to minimize their adverse impacts on human health and the environment",
+      "reason": "Developing pest and weed control methods and testing samples for pollution can help manage chemicals and spot what reaches air, water and soil."
+    },
+    "12.5": {
+      "text": "By 2030, substantially reduce waste generation through prevention, reduction, recycling and reuse",
+      "reason": "Using materials carefully, repairing things and tracking waste helps prevent and reduce what gets thrown away."
+    },
+    "12.6": {
+      "text": "Encourage companies, especially large and transnational companies, to adopt sustainable practices and to integrate sustainability information into their reporting cycle",
+      "reason": "Preparing sustainability reports helps companies share clear information on their environmental and social impact in their regular reporting."
+    },
+    "12.8": {
+      "text": "By 2030, ensure that people everywhere have the relevant information and awareness for sustainable development and lifestyles in harmony with nature",
+      "reason": "Giving customers clear advice on sustainable products and practices can help them make informed, sustainable choices."
+    },
+    "13.1": {
+      "text": "Strengthen resilience and adaptive capacity to climate-related hazards and natural disasters in all countries",
+      "reason": "Measuring, studying and planning for climate and water risks helps communities prepare for and adapt to climate hazards."
+    },
+    "13.2": {
+      "text": "Integrate climate change measures into national policies, strategies and planning",
+      "reason": "Assessing and monitoring climate and environmental risks helps give climate policies and plans the evidence they need."
+    },
+    "14.2": {
+      "text": "By 2020, sustainably manage and protect marine and coastal ecosystems to avoid significant adverse impacts, including by strengthening their resilience, and take action for their restoration in order to achieve healthy and productive oceans",
+      "reason": "Raising fish responsibly and assessing pollution risks to water can help reduce harm that flows on to coasts and seas."
+    },
+    "14.4": {
+      "text": "By 2020, effectively regulate harvesting and end overfishing, illegal, unreported and unregulated fishing and destructive fishing practices and implement science-based management plans, in order to restore fish stocks in the shortest time feasible, at least to levels that can produce maximum sustainable yield as determined by their biological characteristics",
+      "reason": "Fishing within the rules and managing fish stocks help protect stocks and let them recover."
+    },
+    "15.1": {
+      "text": "By 2020, ensure the conservation, restoration and sustainable use of terrestrial and inland freshwater ecosystems and their services, in particular forests, wetlands, mountains and drylands, in line with obligations under international agreements",
+      "reason": "Surveying, planning and managing land and forests helps conserve and restore land and freshwater ecosystems."
+    },
+    "15.2": {
+      "text": "By 2020, promote the implementation of sustainable management of all types of forests, halt deforestation, restore degraded forests and substantially increase afforestation and reforestation globally",
+      "reason": "Planning restoration work helps restore degraded forests and other natural areas."
+    },
+    "15.3": {
+      "text": "By 2030, combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world",
+      "reason": "Conserving soil and managing land and vegetation helps restore degraded land and soil."
+    },
+    "15.5": {
+      "text": "Take urgent and significant action to reduce the degradation of natural habitats, halt the loss of biodiversity and, by 2020, protect and prevent the extinction of threatened species",
+      "reason": "Surveying wildlife and planning its management helps protect habitats and threatened species."
+    },
+    "16.1": {
+      "text": "Significantly reduce all forms of violence and related death rates everywhere",
+      "reason": "Skills that prevent violence and keep people safe help reduce violence and the deaths it causes."
+    },
+    "16.3": {
+      "text": "Promote the rule of law at the national and international levels and ensure equal access to justice for all",
+      "reason": "Fair, consistent sentencing helps uphold the rule of law and equal treatment under it."
+    },
+    "16.6": {
+      "text": "Develop effective, accountable and transparent institutions at all levels",
+      "reason": "Keeping accurate records, checking facts and reporting openly are everyday parts of running effective, accountable and transparent institutions."
+    },
+    "16.10": {
+      "text": "Ensure public access to information and protect fundamental freedoms, in accordance with national legislation and international agreements",
+      "reason": "Helping people find and use information supports public access to information."
+    },
+    "17.17": {
+      "text": "Encourage and promote effective public, public-private and civil society partnerships, building on the experience and resourcing strategies of partnerships",
+      "reason": "Building community partnerships helps bring public bodies, businesses and community groups together to work on shared goals."
+    }
+  }
+}

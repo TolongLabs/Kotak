@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import type { RoadmapStep } from '../../demo/types'
 import { fmt } from '../../views/roadmap/planSupport'
 import { Citation } from '../ui/Citation'
-import { SdgChip } from '../ui/SdgChip'
+import { SdgTargetChip } from './SdgReasonChip'
 
 export interface RoadmapStepCardProps {
   step: RoadmapStep
@@ -223,12 +223,12 @@ export function RoadmapStepCard({
                 </dd>
               </div>
             )}
-            {step.sdgs.length > 0 && (
+            {(step.sdgTargets ?? []).length > 0 && (
               <div className="flex items-center">
-                <dt className="sr-only">Goals</dt>
+                <dt className="sr-only">SDG Targets</dt>
                 <dd className="flex flex-wrap gap-2">
-                  {step.sdgs.map((goal) => (
-                    <SdgChip key={goal} goal={goal} />
+                  {step.sdgTargets!.map((target) => (
+                    <SdgTargetChip key={target} target={target} />
                   ))}
                 </dd>
               </div>

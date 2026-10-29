@@ -11,12 +11,12 @@ import { GapCard } from '../components/kotak/GapCard'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { JobMarketCard } from '../components/kotak/JobMarketCard'
 import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
+import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { SourceList } from '../components/kotak/SourceList'
 import { ToolsCard } from '../components/kotak/ToolsCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { SdgChip } from '../components/ui/SdgChip'
 import { checkUpSteps, Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
@@ -32,14 +32,6 @@ import { deriveSwot } from '../demo/swot'
 import type { ExplanationResponse } from '@kotak/shared'
 import { buildExplanationRequest } from './roles/derived'
 import { startAgain } from './checkup/startAgain'
-
-function sdgGoals(targets: string[] | undefined, limit: number) {
-  const goals = (targets ?? []).flatMap((target) => {
-    const goal = Number(target.split('.')[0])
-    return Number.isInteger(goal) && goal >= 1 && goal <= 17 ? [goal] : []
-  })
-  return [...new Set(goals)].slice(0, limit)
-}
 
 function gapFor(corner: Corner, scenario: Scenario) {
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
@@ -259,7 +251,7 @@ export function RadarView() {
       return source ? [source] : []
     })
     const explanationSource = explanationByCorner.get(corner.id)?.source ?? 'template'
-    const goals = sdgGoals(sdgByCorner.get(corner.id), 2)
+    const targets = sdgByCorner.get(corner.id) ?? []
 
     return (
       <ExplanationSourceProvider key={corner.id} source={explanationSource}>
@@ -271,11 +263,11 @@ export function RadarView() {
             neededLabel={neededLabel}
             paused={explanationsPaused}
           />
-          {goals.length > 0 && (
+          {targets.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-label-s text-text-muted">Closing This Supports</span>
-              {goals.map((goal) => (
-                <SdgChip key={goal} goal={goal} />
+              {targets.map((target) => (
+                <SdgTargetChip key={target} target={target} />
               ))}
             </div>
           )}
@@ -338,11 +330,11 @@ export function RadarView() {
             </button>
           </Tooltip>
         </div>
-        {workSdgs && workSdgs.goals.length > 0 && (
+        {workSdgs && workSdgs.targets.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-label-s text-text-muted">This Work Supports</span>
-            {workSdgs.goals.map((goal) => (
-              <SdgChip key={goal} goal={goal} title={workSdgs.reason} />
+            <span className="text-label-s text-text-muted">Linked SDG Targets</span>
+            {workSdgs.targets.map((target) => (
+              <SdgTargetChip key={target} target={target} workReason={workSdgs.reason} />
             ))}
           </div>
         )}

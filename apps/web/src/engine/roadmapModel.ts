@@ -73,6 +73,7 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
               .filter((goal) => Number.isFinite(goal))
           )
         ],
+        sdgTargets: corner?.sdg_targets ?? [],
         ...(conditional ? { conditional } : {})
       }
     }

@@ -58,6 +58,8 @@ export type RoadmapStep = {
   hoursPerWeek: number
   resource: { label: string; href: string; citation?: number; kind?: FreeResource['kind'] }
   sdgs: number[]
+  /** The skill's SDG targets, such as `4.4`; each has a reason in /data/sdg-reasons.json (#391). */
+  sdgTargets?: string[]
   conditional?: string
 }
 

@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { Minus, Plus } from 'lucide-react'
+import { SdgTargetChip } from '../../components/kotak/SdgReasonChip'
 import { SdgChip } from '../../components/ui/SdgChip'
+import { useSdgReasons } from '../../engine/bundle'
 import { Button } from '../../components/ui/Button'
 import { IconButton } from '../../components/ui/IconButton'
 import { fmt, type TimelineStep } from './planSupport'
@@ -21,6 +23,10 @@ const DRAG_PX = 5
 const PAN_PX = 96
 const DESKTOP_LABEL_W = 236
 const TOOLTIP_W = 264
+// The hover card is up to about 364 px tall with three SDG targets and their reasons (#391); it opens above its bar
+// only when that much fits on screen below the 96 px the top bar takes.
+const TOOLTIP_MAX_H = 370
+const TOP_BAR_CLEARANCE = 96
 // Mono/S and Label/S glyphs are about 7 px wide; used to keep axis and bar labels whole instead of truncating them.
 const MONO_CHAR_PX = 7.3
 const LABEL_CHAR_PX = 6.8
@@ -46,6 +52,8 @@ interface HoverState {
 }
 
 function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }) {
+  const reasons = useSdgReasons()
+  const targets = reasons.status === 'ready' ? reasons.data.targets : {}
   return (
     <div className="space-y-1.5">
       <p className="text-label-m text-text-primary">{step.skill}</p>
@@ -70,13 +78,12 @@ function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }
           <p>{step.resource.kind === 'search' ? 'Search suggestion, not checked' : 'Free'}</p>
         </div>
       )}
-      {step.sdgs.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 pt-0.5">
-          {step.sdgs.map((goal) => (
-            <SdgChip key={goal} goal={goal} compact />
-          ))}
-        </div>
-      )}
+      {(step.sdgTargets ?? []).map((target) => (
+        <p key={target} className="text-label-s text-text-primary">
+          <SdgChip goal={Number(target.split('.')[0])} target={target} compact className="mr-1.5" />
+          {targets[target]?.reason}
+        </p>
+      ))}
       {tapHint && <p className="text-label-s text-text-muted">Tap again to see its step details.</p>}
     </div>
   )
@@ -323,7 +330,7 @@ export function RoadmapTimeline({
       left,
       top,
       bottom: top + bar.height,
-      below: top < 170,
+      below: bar.top < TOOLTIP_MAX_H + TOP_BAR_CLEARANCE,
       tapped
     })
   }
@@ -469,8 +476,8 @@ export function RoadmapTimeline({
                           <>
                             <p className="truncate pr-2 text-label-m text-text-primary">{rowLabels[index]}</p>
                             <div className="hidden flex-wrap gap-1 pt-1 lg:flex">
-                              {step.sdgs.map((goal) => (
-                                <SdgChip key={goal} goal={goal} compact />
+                              {(step.sdgTargets ?? []).map((target) => (
+                                <SdgTargetChip key={target} target={target} compact />
                               ))}
                             </div>
                           </>
@@ -619,7 +626,7 @@ export function RoadmapTimeline({
               <th scope="col">Start Week</th>
               <th scope="col">End Week</th>
               <th scope="col">Hours per Week</th>
-              <th scope="col">SDG Goals</th>
+              <th scope="col">SDG Targets</th>
             </tr>
           </thead>
           <tbody>
@@ -629,7 +636,7 @@ export function RoadmapTimeline({
                 <td>{step.weeks[0]}</td>
                 <td>{step.weeks[1]}</td>
                 <td>{fmt(step.hoursPerWeek)}</td>
-                <td>{step.sdgs.join(', ')}</td>
+                <td>{(step.sdgTargets ?? []).join(', ')}</td>
               </tr>
             ))}
           </tbody>

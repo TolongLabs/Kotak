@@ -12,7 +12,8 @@ export const BUNDLE_PATHS = {
   manifest: '/data/manifest.json',
   roles: '/data/roles.json',
   role: (onetCode: string) => `/data/roles/${onetCode}.json`,
-  pathways: '/data/pathways.json'
+  pathways: '/data/pathways.json',
+  sdgReasons: '/data/sdg-reasons.json'
 } as const
 
 /**
