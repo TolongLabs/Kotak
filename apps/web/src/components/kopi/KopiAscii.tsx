@@ -15,6 +15,10 @@ const SCRAMBLE_MS = 120
 const GLYPH_MS = 80 // a scrambling glyph holds ~12 frames a second, well under flicker rates
 const END_MS = RISE_MS + JITTER_MS + SCRAMBLE_MS
 const FONT = '"Atkinson Hyperlegible Mono", ui-monospace, monospace'
+// A font request that never answers (a stalled connection) counts as failed after the questions' font cap (#394). The
+// wait is shared, so a Kopi that mounts after the cap (the questions' own, once the loading line goes) doesn't wait again.
+const FONT_WAIT_MS = 3000
+let fontWait: Promise<unknown> | undefined
 
 interface Cell {
   x: number
@@ -53,7 +57,11 @@ export function KopiAscii({ pose, instant = false, onSettled }: KopiAsciiProps) 
 
     const image = new Image()
     image.src = `/kopi/${pose}.png`
-    Promise.all([image.decode(), document.fonts.load(`500 ${CELL_PX}px ${FONT}`).catch(() => [])])
+    fontWait ??= Promise.race([
+      document.fonts.load(`500 ${CELL_PX}px ${FONT}`).catch(() => []),
+      new Promise((resolve) => window.setTimeout(resolve, FONT_WAIT_MS))
+    ])
+    Promise.all([image.decode(), fontWait])
       .then(() => {
         if (cancelled) return
         try {
