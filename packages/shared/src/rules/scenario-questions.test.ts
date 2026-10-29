@@ -11,9 +11,11 @@ const corners = Object.entries(scenarios).map(([corner_id, cornerScenarios]) => 
   reversed_statements: { basic: `${corner_id} reversed basic`, advanced: `${corner_id} reversed advanced` },
   scenarios: cornerScenarios
 }))
-// The 12 slots in asking order: each corner's basic question, then its advanced one.
-const slots = corners.flatMap(({ corner_id }, i) =>
-  (['basic', 'advanced'] as QuestionLevel[]).map((level, k) => ({ corner_id, level, index: 2 * i + k, seed: 7 }))
+// An asking order unlike the corners' own order, as when Rising corners come first.
+const order = corners.map((c) => c.corner_id).reverse()
+// The 12 questions in asking order: each corner's basic question, then its advanced one.
+const asked = order.flatMap((corner_id) =>
+  (['basic', 'advanced'] as QuestionLevel[]).map((level) => ({ order, corner_id, level, seed: 7 }))
 )
 
 describe('slotQuestion', () => {
@@ -25,14 +27,14 @@ describe('slotQuestion', () => {
     expect(usesScenarios({ corners })).toBe(true)
     for (const role of [none, partial]) {
       expect(usesScenarios(role)).toBe(false)
-      for (const slot of slots) {
-        const reversed = REVERSED_SLOTS.includes(slot.index)
+      asked.forEach((slot, index) => {
+        const reversed = REVERSED_SLOTS.includes(index)
         expect(slotQuestion(role, slot)).toMatchObject({
           kind: 'statement',
           statement: `${slot.corner_id} ${reversed ? 'reversed ' : ''}${slot.level}`,
           reversed
         })
-      }
+      })
     }
   })
 })

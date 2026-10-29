@@ -2,7 +2,6 @@
 // today's can-do statement. Pure: the same session seed and slot always give the same option order.
 
 import type { BundleCorner } from '../bundle/schemas'
-import type { ScenarioOptionId } from '../data/scenarios'
 import type { Rating } from '../session'
 import { REVERSED_SLOTS, reversedRating } from './scoring'
 
@@ -14,10 +13,10 @@ export type SlotQuestion =
   | {
       kind: 'scenario'
       situation: string
-      /** In this session's order for the slot, without the scores: never show one. */
-      options: { id: ScenarioOptionId; text: string }[]
-      /** The rating to store for the picked option: its hidden score, never reversed. */
-      rate: (id: ScenarioOptionId) => Rating
+      /** The options' texts in this session's order for the slot; label them by position. No ids, no scores. */
+      options: string[]
+      /** The rating to store for the option at `position` in `options`: its hidden score, never reversed. */
+      rate: (position: number) => Rating
     }
   | {
       kind: 'statement'
@@ -34,14 +33,17 @@ export function usesScenarios(role: { corners: Pick<BundleCorner, 'scenarios'>[]
 }
 
 /**
- * The question for one corner and level at asking-order position `index` (0 to 11). `seed` is the session's
- * `scenario_seed`; the options' order depends only on it, the corner and the level, so a reload keeps it.
+ * The question for a corner's basic or advanced statement. `order` is the asking order of the corner IDs, as
+ * `questionOrder` gives it, which places the question among the 12 for the reversed wording. `seed` is the session's
+ * scenario seed; the options' order depends only on it, the corner and the level, so a reload keeps it.
  */
 export function slotQuestion(
   role: { corners: AskedCorner[] },
-  slot: { corner_id: string; level: QuestionLevel; index: number; seed: number }
+  slot: { order: readonly string[]; corner_id: string; level: QuestionLevel; seed: number }
 ): SlotQuestion {
-  const corner = role.corners.find((c) => c.corner_id === slot.corner_id)!
+  const asked = slot.order.indexOf(slot.corner_id)
+  const corner = role.corners.find((c) => c.corner_id === slot.corner_id)
+  if (asked < 0 || !corner) throw new Error(`${slot.corner_id} is not in the asking order and the role's corners`)
   const scenario = usesScenarios(role) ? corner.scenarios![slot.level]! : undefined
   if (scenario) {
     const random = seededRandom(`${slot.seed}:${slot.corner_id}:${slot.level}`)
@@ -53,11 +55,12 @@ export function slotQuestion(
     return {
       kind: 'scenario',
       situation: scenario.situation,
-      options: options.map(({ id, text }) => ({ id, text })),
-      rate: (id) => scenario.options.find((o) => o.id === id)!.score
+      options: options.map((o) => o.text),
+      rate: (position) => options[position]!.score
     }
   }
-  const reversedText = REVERSED_SLOTS.includes(slot.index) ? corner.reversed_statements?.[slot.level] : undefined
+  const index = 2 * asked + (slot.level === 'advanced' ? 1 : 0)
+  const reversedText = REVERSED_SLOTS.includes(index) ? corner.reversed_statements?.[slot.level] : undefined
   return {
     kind: 'statement',
     statement: reversedText ?? corner.statements![slot.level],
