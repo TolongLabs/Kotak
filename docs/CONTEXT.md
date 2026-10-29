@@ -81,7 +81,7 @@ Recommendations, not decisions: the team decides. They are for the final, judged
 
 ## The other finalists
 
-The 14 other Domain 1 finalists' repositories, as cloned on 28 and 29 October ([finalist repositories][fin]). They can keep building until 1 November, so treat this as a floor. Paths below are under that folder.
+The 14 other Domain 1 finalists' repositories, as cloned on 28 and 29 October ([finalist repositories][fin]). They can keep building until 1 November, so treat this as a floor. Paths below are under that folder. The [finalist analyses](/docs/analyses/finalists/README.md) go deeper, with a file per rival, estimated scores and corrections to these notes.
 
 The four strongest builds:
 
@@ -281,6 +281,7 @@ Issue #20 checked every open claim against primary sources, and the findings abo
 - [Our brief][brief]: the challenge, deadlines, deliverables, rubric and rules
 - [Domain 1 finalist guide](/docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md), with the final rubric, and the [preliminary problem statement](/docs/sources/drive.google.com/domain-1-aiversecity.md)
 - [Finalist repositories](/docs/sources/finalists/README.md), the other Domain 1 finalists' code
+- [Finalist analyses](/docs/analyses/finalists/README.md), each rival compared with Kotak from its code
 - [Opening briefing transcript][transcript], with the organisers' answers on judging
 - [Team portal](/docs/sources/sdchack.my/team-portal.md), with the final round page, and the website's [mentors and judges](/docs/sources/sdchack.my/overview.md#mentors-and-judges)
 - Workshop write-ups by [Alpha Red](/docs/sources/workshop-1-alphared/transcript.md), [Replit](/docs/sources/workshop-2-replit/transcript.md), [RunPod](/docs/sources/workshop-3-runpod/transcript.md) and [KrackedDevs](/docs/sources/workshop-5-krackeddevs/transcript.md)
