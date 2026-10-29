@@ -1,27 +1,24 @@
 import { MAX_TARGETS, type BundleRoleIndexEntry, type Occupation, type RoleMatchResponse } from '@kotak/shared'
 import { X } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { cn } from '../../components/ui/cn'
 import { fetchRoleMatch, type ApiResult, type RoleAlias } from '../../engine/api'
 import {
   closestRoles,
-  getRoleCodeLine,
   getRoleDisplayTitle,
   getSuggestedRoles,
   hasExactMatch,
   normalizeJobQuery,
   searchRoles
 } from './roleSearch'
+import { SuggestionList, roleOptions, useSuggestionList } from './SuggestionList'
 
 // Up to three roles the user wants (#284). The first is the one the 12 questions test them against; Roles That Fit
 // compares the others beside it. Like the job field, a title in any language that the local list doesn't know goes
 // to Kopi's match, and a title nobody can match shows "No match yet" with three picks.
 
 type Role = Pick<Occupation, 'onet_code' | 'title'>
-
-const optionClass =
-  'flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-sm px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-2'
 
 export function TargetPicker({
   roles,
@@ -39,7 +36,6 @@ export function TargetPicker({
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [match, setMatch] = useState<{ key: string; result: ApiResult<RoleMatchResponse> | null } | null>(null)
-  const listId = useId()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const key = normalizeJobQuery(query)
@@ -96,6 +92,16 @@ export function TargetPicker({
     onChange(targets.filter((other) => other.onet_code !== role.onet_code))
     requestAnimationFrame(() => inputRef.current?.focus())
   }
+
+  const options = roleOptions(
+    remote && allowed(remote.onet_code) && settled?.status === 'available'
+      ? { role: remote, source: settled.data.match_source }
+      : null,
+    suggestions,
+    picks,
+    add
+  )
+  const list = useSuggestionList(options, listOpen, key)
 
   return (
     <div
@@ -156,65 +162,18 @@ export function TargetPicker({
               setQuery(event.currentTarget.value)
               setOpen(true)
             }}
+            onKeyDown={list.onKeyDown}
             onFocus={() => setOpen(true)}
-            aria-controls={listOpen ? listId : undefined}
-            aria-expanded={listOpen}
+            {...list.inputProps}
           />
           {listOpen && (
-            <ul
-              id={listId}
-              aria-label="Target Role Suggestions"
-              // Picking an option keeps focus in the field, so Safari does not blur and drop the click.
-              onMouseDown={(event) => event.preventDefault()}
-              className="absolute inset-x-0 top-full z-20 mt-1 max-h-[60vh] space-y-0.5 overflow-y-auto rounded-md border border-border-subtle bg-bg-default p-1 shadow-popover"
-            >
-              {waiting && (
-                <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
-                  Kopi is matching your title…
-                </li>
-              )}
-              {remote && allowed(remote.onet_code) && settled?.status === 'available' && (
-                <li>
-                  <button type="button" onClick={() => add(remote)} className={cn(optionClass, 'bg-bg-panel')}>
-                    <span className="w-full break-words text-label-l">
-                      Kopi thinks you mean {getRoleDisplayTitle(remote)}
-                    </span>
-                    <span className="font-mono text-mono-s text-text-muted">
-                      {getRoleCodeLine(remote)}
-                      {settled.data.match_source === 'claude' && ' · Matched by Claude'}
-                      {settled.data.match_source === 'title_search' && ' · Matched by Title Search'}
-                    </span>
-                  </button>
-                </li>
-              )}
-              {suggestions.map((suggestion, index) => (
-                <li key={suggestion.key}>
-                  <button
-                    type="button"
-                    onClick={() => add(suggestion.role)}
-                    className={cn(optionClass, index === 0 && 'bg-bg-panel')}
-                  >
-                    <span className="w-full break-words text-label-l">{suggestion.label}</span>
-                    <span className="font-mono text-mono-s text-text-muted">{suggestion.codeLine}</span>
-                  </button>
-                </li>
-              ))}
-              {noMatch && (
-                <>
-                  <li aria-live="polite" className="px-3 py-2 text-body-s text-text-muted">
-                    No match yet. Try a simpler title, or pick one:
-                  </li>
-                  {picks.map((role) => (
-                    <li key={role.onet_code}>
-                      <button type="button" onClick={() => add(role)} className={optionClass}>
-                        <span className="w-full break-words text-label-l">{getRoleDisplayTitle(role)}</span>
-                        <span className="font-mono text-mono-s text-text-muted">{getRoleCodeLine(role)}</span>
-                      </button>
-                    </li>
-                  ))}
-                </>
-              )}
-            </ul>
+            <SuggestionList
+              list={list}
+              label="Target Role Suggestions"
+              status={
+                waiting ? 'Kopi is matching your title…' : noMatch && 'No match yet. Try a simpler title, or pick one:'
+              }
+            />
           )}
         </div>
       )}
