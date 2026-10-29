@@ -18,7 +18,7 @@
             },
             {
               "id": "b",
-              "text": "Search the statutes and regulations by topic, note the sections that apply, and check gaps with the partner.",
+              "text": "Search the statutes by topic, list the sections that apply, and ask the partner about gaps.",
               "score": 4
             },
             {
@@ -28,7 +28,7 @@
             },
             {
               "id": "d",
-              "text": "Search the statute database by keyword and send the partner every section you find.",
+              "text": "Search the statute database by keyword and send the partner every section that mentions food delivery.",
               "score": 3
             }
           ],
@@ -54,7 +54,7 @@
             },
             {
               "id": "d",
-              "text": "Search for a few more cases until one clearly settles it.",
+              "text": "Keep searching for more appeal decisions until one of them clearly settles the point for us.",
               "score": 2
             }
           ],
@@ -93,7 +93,7 @@
           "options": [
             {
               "id": "a",
-              "text": "Weigh the offer against the likely ruling, advise the client, and counter with a figure you can justify.",
+              "text": "Weigh the offer against the likely ruling, advise the client, and counter with a justified figure.",
               "score": 4
             },
             {
@@ -108,7 +108,7 @@
             },
             {
               "id": "d",
-              "text": "Pass the offer to the client and let them decide whether to accept it.",
+              "text": "Pass the offer to the client with your notes on the hearing and let them decide whether to accept it.",
               "score": 2
             }
           ],
@@ -136,7 +136,7 @@
             },
             {
               "id": "d",
-              "text": "Listen closely and leave the note-taking to the lawyer leading the interview.",
+              "text": "Listen closely and leave the note-taking to the lawyer leading the interview, so you don't interrupt.",
               "score": 1
             }
           ],
@@ -190,7 +190,7 @@
             },
             {
               "id": "d",
-              "text": "Copy a lease from a past file, change the names and dates, and send it for review.",
+              "text": "Copy a lease from a past file for a similar shop, change the names, dates and rent, and send it for review.",
               "score": 3
             }
           ],
@@ -234,7 +234,7 @@
             },
             {
               "id": "b",
-              "text": "File the case yourself so it is done correctly this time.",
+              "text": "File the case yourself this time so it is done correctly, and tell them which screen you used.",
               "score": 2
             },
             {
@@ -288,7 +288,7 @@
             },
             {
               "id": "b",
-              "text": "Tell them what their tenancy agreement says and ask a lawyer to confirm the law.",
+              "text": "Read their tenancy agreement, tell them what its notice clause says, and ask a lawyer to confirm the law.",
               "score": 3
             },
             {
