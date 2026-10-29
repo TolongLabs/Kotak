@@ -225,6 +225,20 @@ describe('explanation verifier', () => {
     expect(sourceOf(result, 'communication')).toBe('claude')
   })
 
+  test('replaces a corner that names a source which never gets a date', () => {
+    const result = buildExplanations(
+      request,
+      draft({
+        'problem-solving': [
+          'Problem Solving is Rising as AI use on its tasks grows (Anthropic Economic Index, 2026-04-01).',
+          'Job ads from DOSM Job Market Insights keep asking for it, and your level is below the target.'
+        ]
+      })
+    )
+    expect(result.explanations[0]).toEqual(templateExplanation(cornerOf('problem-solving'), request.snapshot_id))
+    expect(sourceOf(result, 'communication')).toBe('claude')
+  })
+
   test('replaces a corner whose fields hold more than one sentence each', () => {
     const result = buildExplanations(
       request,
