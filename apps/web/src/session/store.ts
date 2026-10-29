@@ -4,7 +4,7 @@ import { useSyncExternalStore } from 'react'
 // The guest's check-up state, kept in this browser only (TRD.md "Client runtime"). Same key as the #136 stand-in.
 const GUEST_SESSION_KEY = 'kotak:guest-session'
 
-const cleanSession: GuestSession = {
+const cleanSession: Omit<GuestSession, 'scenario_seed'> = {
   is_guest: false,
   role_code: null,
   goal: null,
@@ -21,6 +21,12 @@ const cleanSession: GuestSession = {
   active_snapshot_id: '2026-05',
   profile: ProfileSchema.parse({})
 }
+
+// Each new session shuffles the scenario options its own way (#352).
+const newSession = (): GuestSession => ({
+  ...cleanSession,
+  scenario_seed: crypto.getRandomValues(new Uint32Array(1))[0]!
+})
 
 const listeners = new Set<() => void>()
 let session: GuestSession | undefined
@@ -52,7 +58,7 @@ function withoutOldAnswers(saved: unknown): unknown {
 function load(): GuestSession {
   try {
     const raw = localStorage.getItem(GUEST_SESSION_KEY)
-    if (raw === null) return cleanSession
+    if (raw === null) return newSession()
     const parsed = GuestSessionSchema.safeParse(withoutOldAnswers(parseJson(raw)))
     if (parsed.success) return parsed.data
     console.warn('The saved guest session was invalid, so Kotak reset it.')
@@ -60,7 +66,7 @@ function load(): GuestSession {
   } catch {
     // Storage is blocked (private windows): the session lives in memory for this page.
   }
-  return cleanSession
+  return newSession()
 }
 
 function commit(next: GuestSession, persist: () => void) {
@@ -95,7 +101,7 @@ export function startGuestSession() {
 }
 
 export function resetGuestSession() {
-  commit(cleanSession, () => localStorage.removeItem(GUEST_SESSION_KEY))
+  commit(newSession(), () => localStorage.removeItem(GUEST_SESSION_KEY))
 }
 
 function subscribe(listener: () => void) {

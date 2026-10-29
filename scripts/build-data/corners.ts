@@ -1,10 +1,12 @@
 // Each occupation's corners (#88), from the best source present: the AI batch in data/generated/role-corners.json
 // (#77), which has can-do statements, hours, SDG tags and resources; else the deterministic task groups in
 // data/generated/corner-groups.json (#74), which have none. Statements come only from the batch, never from here.
+// Batch corners also get their explainers (#249) and their scenarios (#352), when those files have them.
 
 import {
   CornerGroupsFileSchema,
   RoleCornersSchema,
+  ScenariosFileSchema,
   StatementExplainersSchema,
   cornerIwaErrors,
   foreignTaskErrors,
@@ -18,6 +20,7 @@ import {
 export const BATCH_FILE = 'data/generated/role-corners.json'
 export const EXPLAINERS_FILE = 'data/generated/statement-explainers.json'
 export const GROUPS_FILE = 'data/generated/corner-groups.json'
+export const SCENARIOS_FILE = 'data/generated/scenarios.json'
 
 export type FoundCorners = Pick<BundleRole, 'corners_source' | 'quality' | 'generated' | 'corners'>
 
@@ -33,6 +36,9 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
   if (!groups) throw new Error(`${GROUPS_FILE} is missing: run bun run build:corner-groups`)
 
   const explainers = (await read(`${root}/${EXPLAINERS_FILE}`, StatementExplainersSchema)) ?? {}
+  const scenarios = (await read(`${root}/${SCENARIOS_FILE}`, ScenariosFileSchema))?.roles ?? {}
+  const unknownRoles = Object.keys(scenarios).filter((code) => !batch?.roles.some((r) => r.onet_code === code))
+  if (unknownRoles.length > 0) throw new Error(`${SCENARIOS_FILE}: no batch corners for ${unknownRoles.join(', ')}`)
   const found = new Map<string, FoundCorners>()
   for (const occupation of groups.occupations) {
     found.set(occupation.onet_code, {
@@ -58,11 +64,27 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
     const orphans = Object.keys(byCorner).filter((id) => !role.corners.some((c) => c.corner_id === id))
     if (orphans.length > 0)
       throw new Error(`${EXPLAINERS_FILE} ${role.onet_code}: unknown corner ${orphans.join(', ')}`)
+    const scenariosByCorner = scenarios[role.onet_code] ?? {}
+    // A scenario draws only on its own corner's tasks; the generator's validator checks them against O*NET too.
+    const scenarioErrors = Object.entries(scenariosByCorner).flatMap(([id, levels]) => {
+      const corner = role.corners.find((c) => c.corner_id === id)
+      if (!corner) return [`unknown corner ${id}`]
+      return Object.entries(levels).flatMap(([level, scenario]) =>
+        scenario.task_ids
+          .filter((t) => !corner.task_ids.includes(t))
+          .map((t) => `${id} ${level}: task ${t} is not the corner's`)
+      )
+    })
+    if (scenarioErrors.length > 0) throw new Error(`${SCENARIOS_FILE} ${role.onet_code}: ${scenarioErrors.join('; ')}`)
     found.set(role.onet_code, {
       corners_source: 'batch',
       quality: role.quality,
       generated: { generated_by: role.generated_by, model: role.model, generated_date: role.generated_date },
-      corners: role.corners.map((c) => (byCorner[c.corner_id] ? { ...c, explainers: byCorner[c.corner_id] } : c))
+      corners: role.corners.map((c) => ({
+        ...c,
+        ...(byCorner[c.corner_id] && { explainers: byCorner[c.corner_id] }),
+        ...(scenariosByCorner[c.corner_id] && { scenarios: scenariosByCorner[c.corner_id] })
+      }))
     })
   }
   return found

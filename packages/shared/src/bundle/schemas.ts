@@ -18,6 +18,7 @@ import {
   RoleQualitySchema,
   SdgTargetSchema
 } from '../data/role-corners'
+import { CornerScenariosSchema } from '../data/scenarios'
 import { SnapshotIdSchema, SourceSchema, VerdictSchema } from '../engine'
 import { RoleSignalsSchema, ScenarioSchema, SnapshotDiffSchema, TransferLinksSchema } from '../rules/schemas'
 
@@ -56,6 +57,8 @@ export const BundleCornerSchema = z
     statements: CanDoStatementsSchema.nullable(),
     reversed_statements: ReversedStatementsSchema.nullish(),
     explainers: CornerExplainersSchema.optional(),
+    /** "What would you do" questions (#352); the check-up asks them only when every corner has both. */
+    scenarios: CornerScenariosSchema.optional(),
     hours: MilestoneHoursSchema.nullable(),
     sdg_targets: z.array(SdgTargetSchema),
     resources: z.array(FreeResourceSchema)
