@@ -6,6 +6,7 @@
 import { rm } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { sampleCheckups } from '../apps/api/db/sample-checkups'
+import { OCCUPATION_SDG_TARGETS } from '../apps/web/src/engine/occupationSdg'
 import {
   AeiSnapshotSchema,
   BUNDLE_PATHS,
@@ -24,6 +25,7 @@ import {
   OnetWorkActivitiesFileSchema,
   resolveRoleSignals,
   roleVerdicts,
+  SdgReasonsFileSchema,
   SnapshotIdSchema,
   transferAnswers,
   usesScenarios,
@@ -52,14 +54,15 @@ async function load<T>(path: string, schema: Schema<T>): Promise<T> {
   if (!result.success) throw new Error(`build:data input ${path} failed validation: ${describe(result.error.issues)}`)
   return result.data
 }
-const [occupations, tasks, activities, april, may, jmi, demoRoles] = await Promise.all([
+const [occupations, tasks, activities, april, may, jmi, demoRoles, sdgReasons] = await Promise.all([
   load('data/onet/occupations.json', OnetOccupationsFileSchema),
   load('data/onet/tasks.json', OnetTasksFileSchema),
   load('data/onet/work-activities.json', OnetWorkActivitiesFileSchema),
   load('data/snapshots/aei/2026-04.json', AeiSnapshotSchema),
   load('data/snapshots/aei/2026-05.json', AeiSnapshotSchema),
   load('data/snapshots/dosm-jmi.json', DosmDemandSchema),
-  load('data/demo-roles.json', DemoRolesFileSchema)
+  load('data/demo-roles.json', DemoRolesFileSchema),
+  load('data/sdg-reasons.json', SdgReasonsFileSchema)
 ])
 const corners = await loadCorners(ROOT, tasks.tasks)
 const pathwaysInputs = await loadPathwaysInputs(ROOT)
@@ -142,6 +145,15 @@ const index = check(BUNDLE_PATHS.roles, BundleRoleIndexSchema, {
     questions_ready: r.questions_ready
   }))
 })
+
+// 2a. Every SDG target a corner is tagged with, or a job chip names, has its UN text and reason (#391).
+const unexplained = [
+  ...new Set([
+    ...[...roles.values()].flatMap((r) => r.corners.flatMap((c) => c.sdg_targets)),
+    ...OCCUPATION_SDG_TARGETS
+  ])
+].filter((target) => !sdgReasons.targets[target])
+if (unexplained.length > 0) failures.push(`data/sdg-reasons.json: no reason for SDG ${unexplained.join(', ')}`)
 
 // 2b. Pathways (#284): fields of study, interest areas, regulated professions and each role's preparation.
 const pathways = buildPathways(pathwaysInputs, roles, failures)
@@ -263,6 +275,7 @@ const files: [string, unknown][] = [
   [BUNDLE_PATHS.manifest, manifest],
   [BUNDLE_PATHS.roles, index],
   [BUNDLE_PATHS.pathways, pathways],
+  [BUNDLE_PATHS.sdgReasons, sdgReasons],
   ...[...roles.values()].map((r): [string, unknown] => [BUNDLE_PATHS.role(r.onet_code), r])
 ]
 await rm(`${PUBLIC}${dirname(BUNDLE_PATHS.manifest)}`, { recursive: true, force: true })
@@ -270,7 +283,7 @@ const sizes = await Promise.all(files.map(([path, value]) => Bun.write(`${PUBLIC
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`
 const total = sizes.reduce((a, b) => a + b, 0)
-const roleSizes = sizes.slice(3).sort((a, b) => a - b)
+const roleSizes = sizes.slice(4).sort((a, b) => a - b)
 console.info(
   `Corners: ${JSON.stringify(manifest.corners)}; questions ready for ${index.roles.filter((r) => r.questions_ready).length} roles, ` +
     `scenarios for ${[...roles.values()].filter(usesScenarios).length}`
@@ -284,7 +297,7 @@ for (const d of manifest.demo.roles) {
 }
 console.info(
   `Wrote ${files.length} files (${(total / 1024 / 1024).toFixed(1)} MB) to apps/web/public${dirname(BUNDLE_PATHS.manifest)}: ` +
-    `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, pathways ${kb(sizes[2]!)}, ${roleSizes.length} role files ` +
+    `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, pathways ${kb(sizes[2]!)}, SDG reasons ${kb(sizes[3]!)}, ${roleSizes.length} role files ` +
     `(median ${kb(roleSizes[roleSizes.length >> 1]!)}, largest ${kb(roleSizes.at(-1)!)})`
 )
 console.info(`build:data finished in ${((performance.now() - started) / 1000).toFixed(1)} s`)

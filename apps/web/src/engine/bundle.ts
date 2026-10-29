@@ -23,6 +23,7 @@ export const loadRoleIndex = () => bundle.roleIndex()
 export const loadRole = (onetCode: string) => bundle.role(onetCode)
 export const loadRoleBundle = (onetCode: string, extra?: string[]) => bundle.roleBundle(onetCode, extra)
 export const loadPathways = () => bundle.pathways()
+export const loadSdgReasons = () => bundle.sdgReasons()
 
 /** The session's check-up inputs as a key: the same key loads the same roles. */
 export function checkupBundleKey(session: GuestSession): string | null {
@@ -78,6 +79,7 @@ export const useManifest = () => useLoaded('manifest', loadManifest)
 export const useRoleIndex = () => useLoaded('roles', loadRoleIndex)
 export const useRoleBundle = (onetCode: string | null) => useLoaded(onetCode, loadRoleBundle)
 export const usePathways = () => useLoaded('pathways', loadPathways)
+export const useSdgReasons = () => useLoaded('sdg-reasons', loadSdgReasons)
 export const useSuggestions = (profile: Profile | null, currentCode: string | null) =>
   useLoaded(profile ? JSON.stringify({ profile, current_role_code: currentCode }) : null, loadSuggestionsFor)
 /** The check-up's roles for the session: the assessed role first, then the roles it is ranked against. */

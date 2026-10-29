@@ -5,6 +5,8 @@ export type SdgGoal = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
 
 export interface SdgChipProps extends ComponentPropsWithoutRef<'span'> {
   goal: SdgGoal | number
+  /** Shows this target of the goal, such as `4.4`, in place of the goal number. */
+  target?: string
   compact?: boolean
 }
 
@@ -29,11 +31,11 @@ export const SDG_NAMES: Record<number, string> = {
 }
 
 export const SdgChip = forwardRef<HTMLSpanElement, SdgChipProps>(function SdgChip(
-  { goal, compact = false, className, style, ...props },
+  { goal, target, compact = false, className, style, children, ...props },
   ref
 ) {
   const name = SDG_NAMES[goal] ?? `Goal ${goal}`
-  const fullLabel = `SDG ${goal}: ${name}`
+  const fullLabel = `SDG ${target ?? goal}: ${name}`
   const known = Number.isInteger(goal) && goal >= 1 && goal <= 17
 
   return (
@@ -53,8 +55,9 @@ export const SdgChip = forwardRef<HTMLSpanElement, SdgChipProps>(function SdgChi
       }
       {...props}
     >
-      <strong className="font-bold">SDG {goal}</strong>
+      <strong className="font-bold">SDG {target ?? goal}</strong>
       {!compact && <span>{name}</span>}
+      {children}
     </span>
   )
 })
