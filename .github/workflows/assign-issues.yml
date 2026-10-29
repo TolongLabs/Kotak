@@ -1,0 +1,38 @@
+# Every issue has an owner. One opened or reopened with no assignee goes to whoever
+# opened it, or to AlaskanTuna when GitHub can't assign the author here. Whoever opens an
+# issue still picks the right person (docs/agents/issue-tracker.md); this only catches a miss.
+name: Assign issues
+
+on:
+  issues:
+    types: [opened, reopened]
+
+permissions: {}
+
+jobs:
+  assign:
+    if: ${{ !github.event.issue.assignees[0] }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Assign the author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          # Someone may have assigned it since the event fired.
+          if [ "$(gh issue view "$NUMBER" --json assignees --jq '.assignees | length')" != 0 ]; then
+            echo "already assigned"
+            exit 0
+          fi
+          if gh api "repos/$GH_REPO/assignees/$AUTHOR" --silent 2>/dev/null; then
+            owner="$AUTHOR"
+          else
+            owner=AlaskanTuna
+          fi
+          gh issue edit "$NUMBER" --add-assignee "$owner"
+          echo "assigned $owner"
