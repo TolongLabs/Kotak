@@ -6,13 +6,12 @@
 export interface OccupationSdg {
   /** The SDG targets the reason rests on, such as `8.5`; each has its UN text in /data/sdg-reasons.json (#391). */
   targets: string[]
-  goals: number[]
   reason: string
 }
 
 // The most specific key wins: the detailed occupation ("29-1141"), then the minor group ("13-2"), then the major group
 // ("29").
-const MAPPING: Record<string, Omit<OccupationSdg, 'goals'>> = {
+const MAPPING: Record<string, OccupationSdg> = {
   '11': { targets: ['8.5'], reason: 'Managers organise the work that provides productive employment (SDG 8.5).' },
   '13': { targets: ['8.2'], reason: 'Business operations work helps organisations run productively (SDG 8.2).' },
   '15': {
@@ -230,6 +229,5 @@ export const OCCUPATION_SDG_TARGETS = [...new Set(Object.values(MAPPING).flatMap
 /** The SDGs a job's work serves, or null for an unknown code. */
 export function occupationSdgs(onetCode: string | null | undefined): OccupationSdg | null {
   if (!onetCode) return null
-  const found = MAPPING[onetCode.slice(0, 7)] ?? MAPPING[onetCode.slice(0, 4)] ?? MAPPING[onetCode.slice(0, 2)]
-  return found ? { ...found, goals: [...new Set(found.targets.map((target) => Number(target.split('.')[0])))] } : null
+  return MAPPING[onetCode.slice(0, 7)] ?? MAPPING[onetCode.slice(0, 4)] ?? MAPPING[onetCode.slice(0, 2)] ?? null
 }

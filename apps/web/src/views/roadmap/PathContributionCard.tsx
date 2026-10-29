@@ -1,6 +1,6 @@
 import { SdgTargetChip } from '../../components/kotak/SdgReasonChip'
 import { useSdgReasons } from '../../engine/bundle'
-import { fmt, type TimelineStep } from './planSupport'
+import { fmt, pathTargetTotals, type TimelineStep } from './planSupport'
 
 // What This Path Contributes To (#391): the plan's SDG targets summed over its steps, each with how many steps and
 // estimated hours build it and its one-line reason. It is worked out from the plan's own steps, so it changes with
@@ -9,15 +9,8 @@ import { fmt, type TimelineStep } from './planSupport'
 
 export function PathContributionCard({ steps, impactArea }: { steps: TimelineStep[]; impactArea: number | null }) {
   const reasons = useSdgReasons()
-  const totals = new Map<string, { steps: number; hours: number }>()
-  for (const step of steps) {
-    for (const target of new Set(step.sdgTargets ?? [])) {
-      const total = totals.get(target) ?? { steps: 0, hours: 0 }
-      totals.set(target, { steps: total.steps + 1, hours: total.hours + step.totalHours })
-    }
-  }
-  if (totals.size === 0) return null
-  const rows = [...totals].sort(([, left], [, right]) => right.hours - left.hours || right.steps - left.steps)
+  const rows = pathTargetTotals(steps)
+  if (rows.length === 0) return null
   const planHours = steps.reduce((sum, step) => sum + step.totalHours, 0)
   const shared = steps.some((step) => (step.sdgTargets?.length ?? 0) > 1)
 
