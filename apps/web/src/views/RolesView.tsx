@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
-import { DEFAULT_SCENARIO, jobMarketLevelForYears, yearsOfWork } from '@kotak/shared'
+import { jobMarketLevelForYears, yearsOfWork } from '@kotak/shared'
 import { AccessChip, AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { payLabel, popularityLabel } from '../components/kotak/JobMarketCard'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoleCard } from '../components/kotak/RoleCard'
+import { ScenarioControl } from '../components/kotak/ScenarioControl'
+import { ScenarioMathsNote } from '../components/kotak/ScenarioMathsNote'
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SourceList } from '../components/kotak/SourceList'
 import { Accordion } from '../components/ui/Accordion'
@@ -19,6 +21,7 @@ import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { toRoles } from '../engine/viewModel'
+import { useScenario } from '../session/scenario'
 import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
 import {
   deriveRoleEvidence,
@@ -116,7 +119,8 @@ function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated:
 
 export function RolesView() {
   const session = useGuestSession()
-  const loaded = useCheckup({ scenario: DEFAULT_SCENARIO })
+  const [scenario, setScenario] = useScenario()
+  const loaded = useCheckup({ scenario })
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
   const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
@@ -155,6 +159,8 @@ export function RolesView() {
 
   const pool = loaded.data.bundle
   const { role, related } = pool
+  // The fast future's multiplier, quoted from the data in See the Maths (#389).
+  const scenarioAnchors = role.signals[checkup.snapshotId]?.anchors
   const bundleRoles = [role, ...related]
   const ranked = toRoles(checkup, bundleRoles, session.role_code, { bundle: pool, session })
 
@@ -238,6 +244,11 @@ export function RolesView() {
   const mathsAnswer = (
     <>
       <p className="pb-3">{mathsFormula}</p>
+      {scenarioAnchors && (
+        <div className="pb-3">
+          <ScenarioMathsNote anchors={scenarioAnchors} />
+        </div>
+      )}
       <div role="region" tabIndex={0} aria-label="Fit by skill" className="overflow-x-auto">
         <table className="w-full text-body-s text-text-primary">
           <caption className="sr-only">Your level, needed level and counted level per skill</caption>
@@ -310,6 +321,7 @@ export function RolesView() {
             </>
           )}
         </p>
+        <ScenarioControl scenario={scenario} onChange={setScenario} />
       </header>
 
       <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 xl:grid-cols-3">

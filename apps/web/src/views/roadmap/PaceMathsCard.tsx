@@ -1,7 +1,8 @@
-import { PACE_MAX, PACE_MIN, type Pace } from '@kotak/shared'
+import { PACE_MAX, PACE_MIN, type Pace, type UsageAnchors } from '@kotak/shared'
+import { ScenarioMathsNote } from '../../components/kotak/ScenarioMathsNote'
 
 /** The pace rule in plain rows: three inputs, each with its multiplier, and the bounded product. */
-export function PaceMathsCard({ pace }: { pace: Pace }) {
+export function PaceMathsCard({ pace, scenarioAnchors }: { pace: Pace; scenarioAnchors?: UsageAnchors }) {
   return (
     <section
       id="pace-maths"
@@ -37,6 +38,11 @@ export function PaceMathsCard({ pace }: { pace: Pace }) {
           Refresher step added because you are returning to work: {pace.refresher.hours} fixed hours, not scaled by the
           factor.
         </p>
+      )}
+      {scenarioAnchors && (
+        <div className="border-t border-border-subtle pt-3">
+          <ScenarioMathsNote anchors={scenarioAnchors} />
+        </div>
       )}
     </section>
   )

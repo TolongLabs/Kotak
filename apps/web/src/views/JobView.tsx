@@ -1,18 +1,12 @@
 import { assessedRoleCode, computeCheckup, roleOutlook } from '@kotak/sdk'
-import {
-  addMonths,
-  DEFAULT_SCENARIO,
-  HORIZON_MONTHS,
-  roleVerdicts,
-  type BundleRole,
-  type SnapshotId
-} from '@kotak/shared'
+import { addMonths, HORIZON_MONTHS, roleVerdicts, type BundleRole, type Scenario, type SnapshotId } from '@kotak/shared'
 import { ArrowUpRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
 import { jobPath, routes } from '../app/routes'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
+import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { Button } from '../components/ui/Button'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
@@ -21,6 +15,7 @@ import { loadRoleBundle, useRoleBundle } from '../engine/bundle'
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { verdictId } from '../engine/viewModel'
 import { useGuestSession } from '../session/store'
+import { useScenario } from '../session/scenario'
 import { NotFoundView } from './NotFoundView'
 
 /** Related roles that have a file, in O*NET's order, each once and never the job itself. */
@@ -43,9 +38,10 @@ const formatNeeded = (value: number) => (Number.isInteger(value) ? String(value)
  */
 function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string }> | null {
   const session = useGuestSession()
+  const [scenario] = useScenario()
   const assessed = assessedRoleCode(session)
   const answered = session.answers.some((answer) => answer !== null)
-  const key = assessed && answered ? JSON.stringify([assessed, codes]) : null
+  const key = assessed && answered ? JSON.stringify([assessed, codes, scenario]) : null
   const [state, setState] = useState<{ key: string; fits: Map<string, { fit: number; gap?: string }> } | null>(null)
 
   useEffect(() => {
@@ -59,7 +55,7 @@ function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string 
           related: bundle.related,
           answers: session.answers,
           snapshotId: session.active_snapshot_id,
-          scenario: DEFAULT_SCENARIO,
+          scenario,
           weeklyHours: session.custom_weekly_hours,
           profile: session.profile,
           startDate: new Date().toISOString().slice(0, 10)
@@ -80,20 +76,20 @@ function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string 
     return () => {
       current = false
     }
-  }, [key, session.answers, session.active_snapshot_id, session.custom_weekly_hours])
+  }, [key, session.answers, session.active_snapshot_id, session.custom_weekly_hours, scenario])
 
   return state && state.key === key ? state.fits : null
 }
 
 const cardClass = 'surface-card min-w-0 space-y-4 p-4 sm:p-6'
 
-function NeedsCard({ role, snapshotId }: { role: BundleRole; snapshotId: SnapshotId }) {
+function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotId: SnapshotId; scenario: Scenario }) {
   const names = new Map(role.corners.map((corner) => [corner.corner_id, corner.name]))
   const rows = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => ({
     id: corner.corner_id,
     name: names.get(corner.corner_id) ?? corner.corner_id,
     verdict: verdictId(corner.status),
-    needed: corner.scenarios[DEFAULT_SCENARIO].target.value
+    needed: corner.scenarios[scenario].target.value
   }))
   return (
     <section aria-labelledby="job-needs" className={cardClass}>
@@ -168,6 +164,7 @@ function useNarrow() {
 
 export function JobView({ code }: { code: string }) {
   const session = useGuestSession()
+  const [scenario, setScenario] = useScenario()
   const narrow = useNarrow()
   const bundle = useRoleBundle(code)
   const related = useMemo(
@@ -189,7 +186,7 @@ export function JobView({ code }: { code: string }) {
   const outlook = outlookOf(role, snapshotId)
   const neededBy = `Needed by ${monthLabel(addMonths(`${snapshotId}-01`, HORIZON_MONTHS))}`
   const corners: Corner[] = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => {
-    const needed = Math.min(3, Math.max(1, Math.round(corner.scenarios[DEFAULT_SCENARIO].target.value))) as 1 | 2 | 3
+    const needed = Math.min(3, Math.max(1, Math.round(corner.scenarios[scenario].target.value))) as 1 | 2 | 3
     return {
       id: corner.corner_id,
       name: role.corners.find((c) => c.corner_id === corner.corner_id)?.name ?? corner.corner_id,
@@ -241,11 +238,12 @@ export function JobView({ code }: { code: string }) {
         >
           Check My Fit
         </Button>
+        <ScenarioControl scenario={scenario} onChange={setScenario} />
       </header>
 
       <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
         <div className="min-w-0 space-y-6">
-          <NeedsCard role={role} snapshotId={snapshotId} />
+          <NeedsCard role={role} snapshotId={snapshotId} scenario={scenario} />
           <section aria-labelledby="job-radar" className={cardClass}>
             <div className="space-y-1">
               <h2 id="job-radar" className="text-title-m text-text-primary">
@@ -255,7 +253,7 @@ export function JobView({ code }: { code: string }) {
             </div>
             <FutureSkillsRadar
               corners={corners}
-              scenario={DEFAULT_SCENARIO}
+              scenario={scenario}
               neededLabel={neededBy}
               showYou={false}
               outerRadius={narrow ? '44%' : '62%'}

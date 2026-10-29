@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { SnapshotIdSchema } from './engine'
 import { ProfileSchema } from './pathways/schemas'
-import { MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from './rules/constants'
+import { DEFAULT_SCENARIO, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from './rules/constants'
+import { ScenarioSchema } from './rules/schemas'
 
 /** One answer on the 1 to 4 scale (1 "Not yet" to 4 "Yes, on my own"); a reversed question is stored already flipped. */
 export const RatingSchema = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)])
@@ -23,6 +24,8 @@ export const GuestSessionSchema = z
     pasted_job_ad_quotes: z.array(z.string()),
     tts_muted: z.boolean(),
     active_snapshot_id: SnapshotIdSchema,
+    // Which AI future the screens show (#389): the same choice on every screen. Sessions saved before it start slow.
+    scenario: ScenarioSchema.default(DEFAULT_SCENARIO),
     // Who the user is, from the intake (#284); sessions saved before it start empty.
     profile: ProfileSchema.default(() => ProfileSchema.parse({}))
   })
