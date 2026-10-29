@@ -6,6 +6,7 @@ import { CatDialogue } from '../../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../../components/kotak/FutureSkillsRadar'
 import { KopiFigure } from '../../components/kopi/KopiFigure'
 import { KopiSpeechBox } from '../../components/kopi/KopiSpeechBox'
+import { hasAnswers, useGuestSession } from '../../session/store'
 import { routes } from '../../app/routes'
 import { LandingActionLink } from './LandingActionLink'
 import { LandingExampleCard } from './LandingExampleCard'
@@ -25,12 +26,16 @@ function subscribeWide(listener: () => void) {
 export function LandingHero() {
   const loaded = useLandingExample()
   const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE_QUERY).matches)
+  const session = useGuestSession()
+  // Signed-in visitors skip sign-in (to the radar once the check-up is answered); everyone else signs in first.
+  const signedInTo = hasAnswers(session) ? routes.radar : routes.checkUp
+  const startTo = session.is_guest ? signedInTo : `${routes.signIn}?next=${routes.checkUp}`
 
   const exampleState =
     loaded.status === 'idle' ? (
       <div className="flex w-full max-w-2xl flex-col items-center gap-4">
         <CatDialogue pose="idle" speech="Choose a job to open your check-up." />
-        <LandingActionLink to={routes.checkUp} variant="primary" showArrow>
+        <LandingActionLink to={startTo} variant="primary" showArrow>
           Choose A Job
         </LandingActionLink>
       </div>
@@ -72,7 +77,7 @@ export function LandingHero() {
             a step-by-step plan to 80% fit. Every verdict cites its source.
           </p>
           <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 xl:col-span-5 xl:justify-end">
-            <LandingActionLink to={routes.checkUp} variant="primary" showArrow className="w-full sm:w-auto">
+            <LandingActionLink to={startTo} variant="primary" showArrow className="w-full sm:w-auto">
               Start
             </LandingActionLink>
             <a

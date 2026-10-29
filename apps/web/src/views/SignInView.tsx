@@ -1,11 +1,11 @@
 import { Check, Lock, Mail } from 'lucide-react'
 import { Link, navigate } from '../app/router'
-import { routes } from '../app/routes'
+import { appNext, routes } from '../app/routes'
 import { Logo } from '../components/brand/Logo'
 import { Button } from '../components/ui/Button'
 import { PasswordField } from '../components/ui/PasswordField'
 import { TextField } from '../components/ui/TextField'
-import { startGuestSession } from '../session/guest'
+import { getGuestSession, hasAnswers, startGuestSession } from '../session/store'
 
 const benefits = [
   'Verdicts from public data, with every source shown',
@@ -18,7 +18,8 @@ const footer = 'SDC Hackathon 2026 · Domain 1 · Built in Malaysia'
 export function SignInView() {
   function signInAsGuest() {
     startGuestSession()
-    navigate(routes.home)
+    const next = appNext(new URLSearchParams(window.location.search).get('next'))
+    navigate(next ?? (hasAnswers(getGuestSession()) ? routes.radar : routes.checkUp))
   }
 
   return (
