@@ -1,6 +1,5 @@
 import { Info } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { cn } from '../../components/ui/cn'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 
 interface QuestionInfoProps {
   cornerName: string
@@ -9,12 +8,43 @@ interface QuestionInfoProps {
   tasks: string[]
 }
 
-/** The (i) beside a question: a popover from sm up, a bottom sheet below. Key it on the question so it closes on change. */
+const GAP = 8
+const EDGE = 12
+/** With less room than this above the (i), opening scrolls the page back first so the popover is readable. */
+const MIN_ROOM = 160
+
+/** Opens above the (i), right-aligned to it and as tall as the room there. The answers always sit below the (i), so
+ * the popover never covers them (#323). */
+function placeAbove(trigger: HTMLElement): CSSProperties {
+  const rect = trigger.getBoundingClientRect()
+  const viewportWidth = document.documentElement.clientWidth
+  const width = Math.min(384, viewportWidth - 2 * EDGE)
+  // `-translate-y-full` lifts the popover by its own height, so `top` is where its bottom edge sits.
+  return {
+    top: rect.top - GAP,
+    left: Math.max(EDGE, Math.min(rect.right - width, viewportWidth - width - EDGE)),
+    width,
+    maxHeight: Math.max(0, rect.top - GAP - EDGE)
+  }
+}
+
+/** The (i) beside a question and its popover. Key it on the question so it closes on change. */
 export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps) {
   const [open, setOpen] = useState(false)
+  const [placement, setPlacement] = useState<CSSProperties>()
   const root = useRef<HTMLSpanElement>(null)
   const button = useRef<HTMLButtonElement>(null)
   const dialog = useRef<HTMLDivElement>(null)
+
+  // Placed before it renders, so it is never focused or painted out of place.
+  const toggle = () => {
+    if (!open) {
+      const room = button.current!.getBoundingClientRect().top - GAP - EDGE
+      if (room < MIN_ROOM) window.scrollBy(0, room - MIN_ROOM)
+      setPlacement(placeAbove(button.current!))
+    }
+    setOpen(!open)
+  }
 
   useEffect(() => {
     if (!open) return
@@ -27,23 +57,29 @@ export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps
       setOpen(false)
       button.current?.focus()
     }
+    // Stays on the (i) when the page scrolls or resizes.
+    const place = () => setPlacement(placeAbove(button.current!))
     document.addEventListener('pointerdown', onPointerDown)
     document.addEventListener('keydown', onKeyDown)
+    window.addEventListener('scroll', place, { passive: true })
+    window.addEventListener('resize', place)
     return () => {
       document.removeEventListener('pointerdown', onPointerDown)
       document.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('scroll', place)
+      window.removeEventListener('resize', place)
     }
   }, [open])
 
   return (
-    <span ref={root} className="relative -my-1.5 inline-flex">
+    <span ref={root} className="-my-1.5 inline-flex">
       <button
         ref={button}
         type="button"
         aria-label="About this question"
         aria-expanded={open}
         aria-controls={open ? 'question-info' : undefined}
-        onClick={() => setOpen((value) => !value)}
+        onClick={toggle}
         className="inline-flex h-7 w-7 items-center justify-center rounded-full text-text-primary hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
       >
         <Info className="h-4 w-4" aria-hidden="true" />
@@ -55,11 +91,8 @@ export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps
           tabIndex={-1}
           role="dialog"
           aria-label="About this question"
-          className={cn(
-            'z-50 max-h-[40svh] overflow-y-auto border-[1.5px] border-text-primary bg-bg-default p-4 text-left shadow-popover focus:outline-none sm:max-h-[70svh]',
-            'fixed inset-x-0 bottom-0 rounded-t-md',
-            'sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[min(24rem,80vw)] sm:rounded-md'
-          )}
+          style={placement}
+          className="fixed z-50 -translate-y-full overflow-y-auto overscroll-contain rounded-md border-[1.5px] border-text-primary bg-bg-default p-4 text-left shadow-popover focus:outline-none"
         >
           <button
             type="button"
