@@ -20,6 +20,7 @@ Contents:
     1.  [6.2. Third-party code, datasets, or models](#62-third-party-code-datasets-or-models)
     1.  [6.3. Employment-related IP conflicts](#63-employment-related-ip-conflicts)
 1.  [7. Declaration](#7-declaration)
+1.  [8. Changes for the final](#8-changes-for-the-final)
 
 ## 1. Team and project overview
 
@@ -214,3 +215,25 @@ The team leader signs and dates the declaration in the exported PDF.
 [hiring]: /docs/research/hiring-bar-evidence.md
 [trend]: /docs/research/trend-data.md
 [tts]: /docs/research/deploy-and-tts.md
+
+## 8. Changes for the final
+
+What changed after the preliminary round, and which feedback asked for each change.
+
+| Change                                                                                                                | Why                                                                                                  | Feedback behind it                         | Pull request                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Every SDG chip names its target, gives a one-line reason and the UN text, and the roadmap totals the plan's targets   | A bare "SDG 4" told the user nothing, and a badge that changes no choice is the guide's "not enough" | Finalist guide must-have 5                 | [#405](https://github.com/TolongLabs/Kotak-dev/pull/405), [#413](https://github.com/TolongLabs/Kotak-dev/pull/413)                                                           |
+| 1,838 of 5,520 skill corners were judged against each target's UN text, then retagged or kept                         | Some reasons shown were not true of the skill under them                                             | Team review                                | [#414](https://github.com/TolongLabs/Kotak-dev/pull/414)                                                                                                                     |
+| The roadmap scales each step's hours by the user's situation, experience and qualification                            | Two people with the same answers got the same plan                                                   | Team review                                | [#363](https://github.com/TolongLabs/Kotak-dev/pull/363), [#364](https://github.com/TolongLabs/Kotak-dev/pull/364)                                                           |
+| The Where You Stand card shows four named boxes, dots that open on tap, and a table version                           | The dots crowded one box and needed the list below to decode                                         | Team review                                | [#365](https://github.com/TolongLabs/Kotak-dev/pull/365)                                                                                                                     |
+| The questions page holds still: one speech box size, a pink chosen answer, no jump while a font loads                 | The answers moved between questions and on a cold first visit                                        | Team review                                | [#371](https://github.com/TolongLabs/Kotak-dev/pull/371), [#402](https://github.com/TolongLabs/Kotak-dev/pull/402), [#404](https://github.com/TolongLabs/Kotak-dev/pull/404) |
+| Arrow keys move through the job, target-role and top-bar search suggestions                                           | Each suggestion was its own Tab stop, so leaving took up to 13 presses                               | Team review                                | [#370](https://github.com/TolongLabs/Kotak-dev/pull/370), [#388](https://github.com/TolongLabs/Kotak-dev/pull/388)                                                           |
+| Kopi keeps Claude's cited summary when no verdict changed, not the fixed template                                     | The guardrail rejected drafts the prompt allowed                                                     | Team review                                | [#399](https://github.com/TolongLabs/Kotak-dev/pull/399)                                                                                                                     |
+| A published cost: about 7 US cents per check-up, about US$1,900 to US$7,000 a month at 100,000 users                  | "How will Kotak keep running?" had no figure behind it                                               | Mentor point 1: explain the business model | [#393](https://github.com/TolongLabs/Kotak-dev/pull/393)                                                                                                                     |
+| Smaller fixes: sign in before the check-up, readable verdict chips on the yellow card, an (i) popover off the answers | Each was a break a user could see                                                                    | Team review                                | [#362](https://github.com/TolongLabs/Kotak-dev/pull/362), [#367](https://github.com/TolongLabs/Kotak-dev/pull/367), [#374](https://github.com/TolongLabs/Kotak-dev/pull/374) |
+
+**Not changed, and why**
+
+- **The employer team view.** Not built. The team presents it as the next step, never as a working feature (#279, decision 2).
+- **Testing Kotak on 3 to 5 real people.** Not done. It needs people outside the team, not code (#279, package B).
+- **"What suits the company you want to join."** Out of scope. It stays with the paste-a-job-ad issue, closed as not planned (#279; #105).
