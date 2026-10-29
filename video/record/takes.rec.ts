@@ -183,7 +183,12 @@ test('D1 @D1 check-up start', async ({ page }) => {
   await onClock(page)
   await page.goto(url('/'))
   await page.getByRole('link', { name: 'Start', exact: true }).first().click()
-  await expect(page.getByRole('heading', { name: 'Tell Kopi About You' })).toBeVisible()
+  // Since #362, Start takes a new visitor through sign-in first; Sign In as Guest goes on to the check-up.
+  const intake = page.getByRole('heading', { name: 'Tell Kopi About You' })
+  const signIn = page.getByRole('heading', { name: 'Sign In to Kotak' })
+  await expect(intake.or(signIn)).toBeVisible()
+  if (await signIn.isVisible()) await page.getByRole('button', { name: 'Sign In as Guest' }).click()
+  await expect(intake).toBeVisible()
   await waitForKopi(page)
   await park(page)
   await recordTake(page, 'D1', async (take) => {

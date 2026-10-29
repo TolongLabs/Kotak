@@ -10,11 +10,17 @@ export const KEYS = SHOTS.sample_profile.answer_keys_in_asking_order
 // The intake from shots.json: Working; "web developer", pick Web Developers; Stay Strong in My Job.
 // Each choice is a card: a label around a visually hidden radio, so the card is what a person clicks.
 const card = (page: Page, group: string, name: RegExp) =>
-  page.getByRole('radiogroup', { name: group }).locator('label').filter({ has: page.getByRole('radio', { name }) })
+  page
+    .getByRole('radiogroup', { name: group })
+    .locator('label')
+    .filter({ has: page.getByRole('radio', { name }) })
 export const situation = (page: Page) => card(page, 'Right Now, I’m', /^Working/)
-export const jobField = (page: Page) => page.getByRole('searchbox', { name: 'Your Job Title' })
+export const jobField = (page: Page) => page.getByRole('combobox', { name: 'Your Job Title' })
 export const jobOption = (page: Page) =>
-  page.getByRole('list', { name: 'Your Job Title Suggestions' }).getByRole('button', { name: /^Web Developers\b/ }).first()
+  page
+    .getByRole('listbox', { name: 'Your Job Title Suggestions' })
+    .getByRole('option', { name: /^Web Developers\b/ })
+    .first()
 export const goal = (page: Page) => card(page, 'What Do You Want?', /^Stay Strong in My Job/)
 export const startQuestions = (page: Page) => page.getByRole('button', { name: 'Start the 12 Questions' })
 export const questionCounter = (page: Page, n: number) => page.getByText(`Question ${n} of 12`, { exact: true })
