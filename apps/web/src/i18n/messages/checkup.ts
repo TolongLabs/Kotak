@@ -684,6 +684,8 @@ export const checkupText = defineText(
       testing: (title: string) => `Testing You Against ${title}`,
       counter: (current: number, total: number) => `Question ${current} of ${total}`,
       cardLabel: 'Question Card',
+      scenarioHint: 'Pick what you would really do.',
+      scenarioOptionLabels: ['A', 'B', 'C', 'D'],
       answerHint: (from: number, to: number) =>
         `Answer for real work, not tutorials. Not sure? Choose ${from} or ${to}.`,
       ratings: { 1: 'Not yet', 2: 'A little', 3: 'Mostly', 4: 'Yes, on my own' },
@@ -878,6 +880,8 @@ export const checkupText = defineText(
       testing: (title: string) => `Menguji Anda untuk ${title}`,
       counter: (current: number, total: number) => `Soalan ${current} daripada ${total}`,
       cardLabel: 'Kad Soalan',
+      scenarioHint: 'Pilih tindakan yang akan anda ambil.',
+      scenarioOptionLabels: ['A', 'B', 'C', 'D'],
       answerHint: (from: number, to: number) =>
         `Jawab berdasarkan kerja sebenar, bukan latihan. Tidak pasti? Pilih ${from} atau ${to}.`,
       ratings: { 1: 'Belum', 2: 'Sedikit', 3: 'Kebanyakannya', 4: 'Ya, sendiri' },
@@ -1059,6 +1063,8 @@ export const checkupText = defineText(
       testing: (title: string) => `正在检测你与 ${title} 的匹配度`,
       counter: (current: number, total: number) => `第 ${current} 题，共 ${total} 题`,
       cardLabel: '问题卡片',
+      scenarioHint: '选出你真正会采取的做法。',
+      scenarioOptionLabels: ['A', 'B', 'C', 'D'],
       answerHint: (from: number, to: number) =>
         `根据实际工作情况作答，不要以教程为准。不确定？请选择 ${from} 或 ${to}。`,
       ratings: { 1: '还不会', 2: '会一点', 3: '大多会', 4: '能独立完成' },

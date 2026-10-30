@@ -509,5 +509,373 @@
       "reason": "Kemahiran penyelidikan dan teknikal menambah penyelidikan saintifik dan keupayaan teknologi yang disasarkan untuk berkembang.",
       "text": "Memperkukuh penyelidikan saintifik, menaik taraf keupayaan teknologi sektor perindustrian di semua negara, khususnya negara membangun, termasuk menjelang 2030 menggalakkan inovasi dan meningkatkan dengan ketara bilangan pekerja penyelidikan dan pembangunan bagi setiap 1 juta orang serta perbelanjaan penyelidikan dan pembangunan awam dan swasta"
     }
+  },
+  "scenarios": {
+    "15-1254.00": {
+      "web-site-building": {
+        "basic": {
+          "situation": "Ketua anda meminta anda menambah borang hubungan pada laman klinik kecil di Klang. Satu projek lama mempunyai cebisan kod borang yang hampir sesuai.",
+          "options": {
+            "a": "Tampal cebisan lama itu, namakan semula medannya untuk klinik, dan uji satu penghantaran.",
+            "b": "Minta rakan yang menulis cebisan mengesahkan ia berfungsi, kemudian gunakannya.",
+            "c": "Salin cebisan lama ke laman tanpa ubah, memandangkan ia pernah berfungsi.",
+            "d": "Bina borang berdasarkan medan yang diperlukan klinik, guna semula baris cebisan lama yang jelas sesuai."
+          }
+        },
+        "advanced": {
+          "situation": "Sebuah kedai di Penang mahukan laman katalog yang boleh dikemas kini setiap hari oleh dua kakitangan bukan teknikal mereka. Anda mesti memilih platform dan alatan untuk membinanya.",
+          "options": {
+            "a": "Padankan sistem pengurusan kandungan dengan tugasan harian kakitangan dan jangkaan perkembangan katalog.",
+            "b": "Bina laman pentadbir ringkas dalam rangka kerja biasa anda supaya staf boleh mengedit produk.",
+            "c": "Kod sendiri katalog tersebut sebagai laman teks biasa, supaya laman kekal ringan dan pantas.",
+            "d": "Pilih pembina laman web popular, kerana staf mudah mengedit laman dan ada pengehosan."
+          }
+        }
+      },
+      "web-testing-and-updates": {
+        "basic": {
+          "situation": "Anda baru sahaja menukar pautan pengaki pada laman web syarikat. Senarai semak anda menetapkan supaya menguji halaman sebelum memberitahu pasukan bahawa kemas kini telah selesai.",
+          "options": {
+            "a": "Semak halaman utama dalam satu pelayar, kerana setiap halaman berkongsi templat pengaki yang sama.",
+            "b": "Klik setiap pautan pengaki dalam dua pelayar dan pada telefon anda, kemudian tandakan senarai semak.",
+            "c": "Klik setiap pautan pengaki dalam pelayar biasa anda, tanda senarai semak, dan beritahu pasukan.",
+            "d": "Tanya rakan sekerja jika pengaki elok pada skrin mereka, kemudian laporkan ia selesai."
+          }
+        },
+        "advanced": {
+          "situation": "Agensi anda sedang memindahkan tiga laman klien ke pelayan baharu yang foldernya perlu anda sediakan. Pelayan lama menyimpan semuanya dalam satu folder, tetapi fail klien mesti diasingkan.",
+          "options": {
+            "a": "Bina folder klien dengan nama yang jelas berserta subfolder sepadan supaya pasukan mudah mencari fail.",
+            "b": "Bina folder klien bernama jelas berserta subfolder sepadan, lalu hadkan akses kepada penggunanya.",
+            "c": "Berikan folder tersendiri kepada klien terbesar dan kekalkan dua lagi bersama-sama buat masa ini.",
+            "d": "Kekalkan satu folder kongsi dan guna awalan nama fail setiap klien, seperti dahulu."
+          }
+        }
+      },
+      "technical-documentation": {
+        "basic": {
+          "situation": "Anda selesai menguji halaman log masuk baharu dan mendapati dua masalah paparan pada telefon bimbit. Ketua anda mahu keputusan tersebut didokumenkan untuk pasukan.",
+          "options": {
+            "a": "Mesej pembangun tentang dua masalah itu di ruang sembang supaya mereka boleh mula membaikinya.",
+            "b": "Catat setiap masalah bersama model telefon, pelayar, langkah untuk mengulanginya dan tangkap layar.",
+            "c": "Catatkan setiap masalah berserta nama halaman dan penerangan ringkas untuk ketua anda.",
+            "d": "Tulis bahawa halaman log masuk lulus dengan isu kecil, kerana membaikinya hanya ambil beberapa minit."
+          }
+        },
+        "advanced": {
+          "situation": "Kedai dalam talian seorang klien menjadi perlahan semasa jualan murah. Pengurus anda meminta anda mendokumenkan faktor teknikal untuk semakan pengehosan minggu depan.",
+          "options": {
+            "a": "Tampal laporan ringkasan penyedia pengehosan ke dalam dokumen, memandangkan ia menyenaraikan angka pelayan.",
+            "b": "Rekod purata bulanan beban pelayan dan lebar jalur, serta catatkan tarikh pelanggan membuat aduan.",
+            "c": "Rekod beban pelayan, lebar jalur dan masa halaman pada waktu puncak jualan, bersama pelayar dan peranti pelanggan.",
+            "d": "Terangkan kelembapan itu dengan kata-kata mudah dan serahkan urusan angka kepada pasukan pengehosan."
+          }
+        }
+      },
+      "web-design-and-databases": {
+        "basic": {
+          "situation": "Pemilik kedai roti di Kuching mahukan halaman pesanan dalam talian dan meminta sesuatu yang mudah untuk pelanggan. Anda mesti menukarnya kepada senarai pendek keperluan teknikal.",
+          "options": {
+            "a": "Senaraikan ciri pesanan biasa seperti menu, troli dan pembayaran, kemudian minta kelulusannya.",
+            "b": "Catat keperluan sebagai pesanan mudah dan terus mereka bentuk, supaya dia boleh menilai draf awal.",
+            "c": "Kaji cara dua laman kedai roti lain menerima pesanan dan salin ciri mereka ke dalam senarai.",
+            "d": "Tanya cara pelanggan memesan kini dan bilangan pesanan harian, kemudian senaraikan keperluan."
+          }
+        },
+        "advanced": {
+          "situation": "Sebuah kumpulan klinik mahukan satu sistem janji temu untuk lima cawangan. Sebelum pengekodan bermula, anda mesti menyediakan model yang menunjukkan bagaimana data dan skrin saling berpadanan.",
+          "options": {
+            "a": "Bina skrin tempahan yang berfungsi untuk satu cawangan dahulu, kemudian lakarkan model daripadanya.",
+            "b": "Asaskan skrin dan model data pada cara kakitangan membuat tempahan sekarang, kemudian uji prototaip.",
+            "c": "Lakarkan model data pesakit, doktor dan janji temu serta kongsikannya dengan pembangun.",
+            "d": "Lakarkan model data dan skrin daripada borang tempahan klinik serta kongsikannya dengan pembangun."
+          }
+        }
+      },
+      "web-specifications-and-standards": {
+        "basic": {
+          "situation": "Ketua pasukan anda menyatakan bahawa kemas kini pelayar yang akan datang akan mengubah cara sesetengah ciri halaman berfungsi. Anda mempunyai satu jam terluang minggu ini untuk membacanya.",
+          "options": {
+            "a": "Imbas tajuk tentang kemas kini itu dan beritahu pasukan bahawa semakan halaman tidak perlu.",
+            "b": "Minta rakan sekerja yang sudah membaca tentangnya menerangkan pada mesyuarat akan datang.",
+            "c": "Baca siaran blog pembangun yang popular tentang perubahan itu dan kongsi dengan pasukan.",
+            "d": "Baca nota rasmi pembuat pelayar dan tandakan halaman anda yang terkesan oleh perubahan tersebut."
+          }
+        },
+        "advanced": {
+          "situation": "Kakitangan sering mengedit laman web syarikat secara terus, dan minggu lepas satu harga lapuk telah disiarkan. Anda diminta menetapkan cara pengendalian perubahan laman web pada masa hadapan.",
+          "options": {
+            "a": "Kekalkan susunan sedia ada dan betulkan kesilapan apabila dilaporkan, kerana kakitangan lebih tahu kandungan mereka.",
+            "b": "E-mel staf peringatan untuk semak harga sebelum simpan dan lapor sebarang kesilapan.",
+            "c": "Aktifkan sejarah versi dan sandaran supaya sebarang halaman terdahulu boleh dipulihkan dengan cepat.",
+            "d": "Lakukan perubahan pada salinan ujian, disemak oleh rakan sekerja, kemudian disiarkan dan direkodkan."
+          }
+        }
+      },
+      "web-performance-and-support": {
+        "basic": {
+          "situation": "Seorang pelanggan menghantar e-mel menyatakan dia dicaj dua kali untuk satu pesanan di laman web syarikat. Penyelia anda memberi templat balasan standard untuk soalan pembayaran.",
+          "options": {
+            "a": "Majukan e-mel itu kepada bahagian kewangan dan anggap ia selesai, kerana pembayaran adalah bidang mereka.",
+            "b": "Hantar balasan templat, maklumkan kewangan akan susul, dan beri butiran pesanan kepadanya.",
+            "c": "Hantar balasan templat dan maklumkan bahawa kewangan akan susul tindakan caj berganda itu.",
+            "d": "Balas bahawa bayaran balik akan tiba dalam masa tiga hari, kerana caj berganda biasanya adalah kesilapan."
+          }
+        },
+        "advanced": {
+          "situation": "Halaman sebuah kedai dalam talian memuatkan dengan perlahan setiap hujung minggu. Pengurus meminta anda mengesyorkan penambahbaikan pelayan dalam lingkungan belanjawan beberapa ribu ringgit.",
+          "options": {
+            "a": "Guna rekod beban dan masa hujung minggu lalu untuk cari punca kelembapan, lalu syor pembaikan.",
+            "b": "Semak papan pemuka pengehosan untuk lonjakan sumber dan syorkan peningkatan ke pelan seterusnya.",
+            "c": "Mampatkan imej laman tersebut dan laporkan ia selesai, memandangkan imej biasanya menjadi punca.",
+            "d": "Dapatkan sebut harga dua penyedia pengehosan untuk pelayan lebih besar dan syor yang lebih murah."
+          }
+        }
+      }
+    },
+    "15-1255.00": {
+      "user-research-and-testing": {
+        "basic": {
+          "situation": "Anda mengumpul maklum balas daripada lima pengguna mengenai halaman tempahan. Tiga orang menyatakan butang sahkan sukar dicari. Ketua anda meminta anda mendokumenkan keperluan reka bentuk.",
+          "options": {
+            "a": "Susun maklum balas ikut tema, catat 3 daripada 5 pengguna hadapi kesukaran, dan cadang kedudukan butang lebih jelas.",
+            "b": "Ubah sendiri warna butang pada laman langsung dan maklumkan kepada ketua mengenainya selepas itu.",
+            "c": "Catatkan bahawa sesetengah pengguna mendapati butang sukar dilihat dan cadangkan untuk membesarkannya.",
+            "d": "Rekod maklum balas tetapi ketepikan isu butang, memandangkan lima pengguna adalah contoh yang kecil."
+          }
+        },
+        "advanced": {
+          "situation": "Anda merangka jadual ujian untuk kedai dalam talian baharu. Pasukan mahu menguji pada tiga pelayar yang digunakan pembangun. Analitis menunjukkan 30 peratus pelawat menggunakan pelayar lain, kebanyakannya telefon.",
+          "options": {
+            "a": "Tambah pelayar telefon yang paling lazim ke dalam pelan dan ujinya sekali sebelum pelancaran.",
+            "b": "Bina pelan ujian daripada analitis, meliputi pelayar utama serta telefon, dan uji semula selepas perubahan.",
+            "c": "Uji pada tiga pelayar pembangun dan minta pengguna melaporkan masalah pada peranti lain.",
+            "d": "Tandakan kedai sebagai telah diuji pada semua peranti kerana ketiga-tiga pelayar berkongsi enjin yang sama."
+          }
+        }
+      },
+      "web-development-and-coding": {
+        "basic": {
+          "situation": "Ketua anda meminta anda membina halaman acara ringkas menggunakan alat pembina halaman pasukan. Ia memerlukan tajuk, tarikh, peta dan pautan pendaftaran untuk acara bulan ini.",
+          "options": {
+            "a": "Bina halaman daripada templat dan semak bahawa tajuk, tarikh serta peta dipaparkan.",
+            "b": "Salin halaman acara lama berserta pautan pendaftarannya dan tukar tajuk serta tarikh.",
+            "c": "Bina halaman daripada templat, semak pautan pendaftaran berfungsi, dan pratonton pada telefon.",
+            "d": "Bina halaman dari awal dengan kod anda sendiri, memandangkan ia memberi anda lebih kawalan."
+          }
+        },
+        "advanced": {
+          "situation": "Anda sedang memilih bahasa pengaturcaraan untuk aplikasi web yang besar. Pasukan mahir dalam satu bahasa, tetapi bahasa lain mempunyai pustaka yang lebih baik untuk ciri pembayaran.",
+          "options": {
+            "a": "Pilih bahasa terbaharu yang sedang hangat diperkatakan dalam talian dan pelajari sambil membina.",
+            "b": "Pilih bahasa dengan pustaka pembayaran yang lebih baik dan rancang latihan untuk pasukan.",
+            "c": "Pilih bahasa yang mahir diketahui pasukan, kerana ia memastikan jadual kekal selamat buat masa ini.",
+            "d": "Bandingkan pustaka, kemahiran pasukan dan senggaraan kedua-dua bahasa, lalu uji prototaip kecil."
+          }
+        }
+      },
+      "technical-specifications-and-standards": {
+        "basic": {
+          "situation": "Penyelia anda meminta anda mendokumenkan garis panduan gaya asas untuk siaran blog laman web. Penulis kini menggunakan saiz tajuk dan nada yang berbeza-beza.",
+          "options": {
+            "a": "Tulis peraturan daripada tiga siaran terkini dan kongsikannya dengan penulis.",
+            "b": "Edit sendiri semua siaran yang diterbitkan mengikut gaya anda dan kemas kini tarikhnya.",
+            "c": "Semak siaran terkini, senaraikan saiz tajuk, nada dan peraturan imej, kemudian minta penyelia menyemaknya.",
+            "d": "Tulis peraturan berdasarkan pilihan anda sendiri dan kongsikannya dengan penulis untuk maklum balas."
+          }
+        },
+        "advanced": {
+          "situation": "Anda menetapkan standard kebolehcapaian dan privasi untuk laman awam baharu. Bahagian pemasaran mahukan alat penjejakan pelawat dan latar belakang video tanpa kapsyen.",
+          "options": {
+            "a": "Wajibkan kapsyen dan akses papan kekunci, serta minta pemasaran semak privasi dengan perundangan kelak.",
+            "b": "Luluskan kedua-dua ciri untuk pelancaran kerana pesaing menggunakannya, dan tulis standard tersebut selepas itu.",
+            "c": "Wajibkan kapsyen dan akses papan kekunci, tambah notis persetujuan penjejakan, dan terangkan sebabnya.",
+            "d": "Luluskan alat penjejakan dengan notis privasi pada pengaki dan tambah kapsyen kemudian."
+          }
+        }
+      },
+      "visual-design-and-prototyping": {
+        "basic": {
+          "situation": "Anda diminta mencipta templat halaman ringkas untuk blog berita dengan tajuk utama, imej dan teks isi kandungan. Ketua akan menyemaknya.",
+          "options": {
+            "a": "Bina templat dengan jarak yang jelas, uji tajuk utama yang panjang, dan tunjukkan kepada ketua.",
+            "b": "Bina templat dengan jarak yang jelas dan tunjukkan kepada ketua bersama contoh tajuk utama.",
+            "c": "Gunakan templat daripada laman syarikat lain, ubah warna, dan siarkan secara langsung hari ini.",
+            "d": "Bina templat supaya kelihatan elok untuk satu contoh artikel dan hantar untuk semakan."
+          }
+        },
+        "advanced": {
+          "situation": "Anda mengendalikan pra-pengeluaran untuk laman kempen. Klien belum bersetuju dengan hala tuju visual, tetapi pembangun mahu bermula dalam masa dua minggu.",
+          "options": {
+            "a": "Pilih hala tuju sendiri, maklumkan klien bahawa ia adalah muktamad, dan minta pembangun bermula.",
+            "b": "Cipta papan mood dengan dua hala tuju, dapatkan pilihan klien, dan tetapkan garis masa.",
+            "c": "Cipta papan mood mengikut cita rasa anda sendiri dan mulakan papan cerita sementara menunggu maklum balas.",
+            "d": "Minta pembangun mula membina halaman dan kemas kini reka bentuk seiring perkembangannya."
+          }
+        }
+      },
+      "team-collaboration-and-strategy": {
+        "basic": {
+          "situation": "Anda mesti memberitahu pembangun bahagian belakang medan borang yang akan dihantar oleh halaman pendaftaran baharu. Ketua meminta anda berkongsi butiran dengan pasukan.",
+          "options": {
+            "a": "Hantar nama dan jenis medan kepada pembangun, serta sahkan bahawa mereka telah menerimanya.",
+            "b": "Namakan semula medan dalam kod bahagian belakang ikut reka bentuk dan maklumkan mereka kemudian.",
+            "c": "Siarkan senarai medan dalam sembang pasukan dan tunggu soalan daripada pembangun.",
+            "d": "Beritahu pembangun bahawa medannya seperti biasa dan mereka boleh menyemak reka bentuk tersebut."
+          }
+        },
+        "advanced": {
+          "situation": "Pemasaran mahukan tawaran diskaun pop timbul pada halaman utama kedai. Pembangun mengatakan ia akan memperlahankan halaman. Anda mesti menyelesaikannya dan menyelaraskan tawaran dengan laman.",
+          "options": {
+            "a": "Ukur kesan pop timbul pada kelajuan, kongsi angka itu, dan setujui reka bentuk lebih ringan.",
+            "b": "Sokong pemasaran dan tambah pop timbul, kerana jualan lebih utama daripada sedikit kelewatan.",
+            "c": "Tambah pop timbul ke laman langsung malam ini dan beritahu pembangun pada keesokan paginya.",
+            "d": "Minta pembangun mempercepat muatan pop timbul dan masukkannya selepas mereka sahkan."
+          }
+        }
+      },
+      "site-maintenance-and-seo": {
+        "basic": {
+          "situation": "Ketua anda meminta anda menyemak semua pautan pada halaman perkhidmatan syarikat sebelum hari Isnin. Beberapa pautan menuju ke laman rakan kongsi.",
+          "options": {
+            "a": "Buang setiap pautan perlahan daripada halaman supaya pelawat tidak melihat sebarang masalah.",
+            "b": "Jalankan alat semakan pautan, hantar senarai pautan rosak kepada ketua, dan tunggu panduan.",
+            "c": "Semak beberapa pautan terawal pada halaman dan anggap pautan lain masih berfungsi.",
+            "d": "Klik setiap pautan, senaraikan yang gagal, baiki yang anda boleh, dan laporkan bakinya."
+          }
+        },
+        "advanced": {
+          "situation": "Anda mengendalikan kemas kini besar pada navigasi laman, yang akan mengubah banyak alamat halaman. Perniagaan bergantung pada trafik carian, dan pelancaran dijadualkan minggu depan.",
+          "options": {
+            "a": "Lancarkan kemas kini dan harapkan enjin carian mencari alamat baharu secara beransur-ansur.",
+            "b": "Petakan alamat lama ke alamat baharu, tetapkan pengalihan, ujinya, dan serahkan peta laman.",
+            "c": "Padam halaman lama pada hari pelancaran untuk mengelakkan kandungan pendua dalam hasil carian.",
+            "d": "Tetapkan pengalihan untuk halaman utama dan pantau trafik carian selama seminggu selepas pelancaran."
+          }
+        }
+      }
+    },
+    "43-3031.00": {
+      "accounting-software-entry": {
+        "basic": {
+          "situation": "Anda sedang memasukkan 12 invois pembekal ke dalam perisian perakaunan sebelum akhir bulan. Satu invois menunjukkan ejaan nama pembekal yang sedikit berbeza daripada senarai vendor.",
+          "options": {
+            "a": "Ketepikan invois itu, pos 11 invois yang lain, dan tanyakan rakan sekerja mengenainya.",
+            "b": "Semak nombor pendaftaran invois dengan senarai vendor, kemudian poskan kepada vendor tersebut.",
+            "c": "Cipta rekod vendor baharu menggunakan ejaan invois supaya ia boleh diposkan hari ini.",
+            "d": "Poskannya di bawah vendor dengan ejaan paling hampir, kerana berkemungkinan ia adalah sama."
+          }
+        },
+        "advanced": {
+          "situation": "Seorang rakan sekerja baharu sering mengepos sewa pejabat bulanan ke bahagian perbelanjaan am. Anda telah diminta melatihnya menggunakan perisian perakaunan dan carta akaun.",
+          "options": {
+            "a": "Terangkan cara akaun dikumpulkan, kemudian minta dia mengklasifikasikan contoh item dan semak bersama.",
+            "b": "Klasifikasikan semula catatannya sendiri pada akhir bulan supaya lejar kemas untuk akauntan.",
+            "c": "Tunjukkan cara mengepos sewa pada skrin dan berikan senarai kod akaun biasa kepadanya.",
+            "d": "Hantarkan pautan manual perisian kepadanya dan suruh dia membaca bahagian pengeposan."
+          }
+        }
+      },
+      "financial-data-accuracy": {
+        "basic": {
+          "situation": "Anda sedang memadankan invois pembekal dengan pesanan pembelian. Jumlah satu invois ialah RM 4,800, tetapi pesanan pembelian menyatakan RM 4,200, dan barangan telah diterima.",
+          "options": {
+            "a": "Padankan dengan pesanan penghantaran dan luluskan bil tersebut, kerana barangan telah sampai.",
+            "b": "Bandingkan item baris bagi mencari beza RM 600, lalu rujuk bahagian pembelian sebelum pos.",
+            "c": "Pulangkan invois kepada pembekal dan minta invois dipinda yang sepadan dengan pesanan.",
+            "d": "Poskan invois dan tambah nota yang menyatakan ia berbeza daripada pesanan pembelian."
+          }
+        },
+        "advanced": {
+          "situation": "Dua rakan sekerja membuat penyesuaian penyata pembekal dengan cara berbeza, dan angka akhir bulan sering lewat tiba dengan perbezaan kecil yang tidak dapat dijelaskan. Anda diminta membantu menjadikan semakan tersebut konsisten.",
+          "options": {
+            "a": "Letak beza kecil dalam akaun tergantung supaya laporan akhir bulan keluar mengikut jadual.",
+            "b": "Draf senarai semak bersama berserta had toleransi dan langkah pengesahan, kemudian uji cubanya bersama.",
+            "c": "Semak semula sendiri semua penyesuaian mereka sebelum setiap penutupan akhir bulan agar angka kekal boleh diharap.",
+            "d": "Semak kedua-dua kaedah berdasarkan perbezaan bulan lepas dan minta semua orang mengikut kaedah yang lebih kukuh."
+          }
+        }
+      },
+      "regulatory-compliance": {
+        "basic": {
+          "situation": "Seorang pemanggil mengatakan dia ialah abang kepada seorang pelanggan dan meminta baki akaunnya. Dasar syarikat mengehadkan butiran akaun kepada pemegang akaun sahaja.",
+          "options": {
+            "a": "Berikannya baki akaun, kerana ahli keluarga tidak mungkin menyalahgunakannya.",
+            "b": "Terangkan butiran akaun adalah peribadi dan minta dia cadangkan agar wanita itu hubungi pejabat.",
+            "c": "Minta nombor akaun dan namanya, kemudian kongsikan baki jika maklumat tersebut sepadan.",
+            "d": "Terangkan dasar syarikat dan tawar untuk menghubunginya melalui nombor dalam rekod."
+          }
+        },
+        "advanced": {
+          "situation": "Seorang pekerja sambilan baharu menghantar e-mel penyata pelanggan ke peti mel pasukan yang dikongsi untuk kemudahan. Dasar menetapkan penyata dihantar ke alamat e-mel berdaftar pelanggan, dan akhir bulan adalah esok.",
+          "options": {
+            "a": "Hentikan amalan itu, senaraikan penyata yang telah dihantar ke situ, dan laporkan senarai tersebut kepada penyelia.",
+            "b": "Ingatkan pekerja sambilan itu tentang dasar syarikat dan minta dia menggunakan alamat e-mel berdaftar.",
+            "c": "Kekalkan peti mel kongsi untuk tarikh akhir bulan ini, kemudian bangkitkan tentang dasar itu selepasnya.",
+            "d": "Salin e-mel ke peti mel kongsi bagi setiap penyata supaya wujud rekod jika pelanggan bertanya kelak."
+          }
+        }
+      },
+      "financial-calculations": {
+        "basic": {
+          "situation": "Seorang pelanggan membayar RM 2,400 untuk invois RM 2,500, dengan mengambil diskaun bayaran awal 4%. Syarat invois membenarkannya dalam tempoh 14 hari, dan bayaran diterima pada hari ke-16.",
+          "options": {
+            "a": "Hapus kira RM 100 sebagai perbezaan kecil supaya invois boleh ditutup hari ini.",
+            "b": "Rekod terimaan RM 2,400, tunjuk baki RM 100 masih belum jelas kerana hari ke-16 lewat.",
+            "c": "Kira invois selesai sepenuhnya, memandangkan RM 100 kecil dan pelanggan adalah pelanggan tetap.",
+            "d": "Rekod RM 2,400 yang diterima dan tanya penyelia anda sama ada diskaun masih boleh digunakan."
+          }
+        },
+        "advanced": {
+          "situation": "Jadual pinjaman rakan sekerja menunjukkan faedah bulanan sebanyak RM 540 ke atas baki RM 90,000 pada kadar 6% setahun. Anda diminta mengesahkan jadual tersebut sebelum diserahkan kepada pelanggan.",
+          "options": {
+            "a": "Luluskannya kerana jumlah pembayaran balik kelihatan hampir dengan angka tawaran pinjaman.",
+            "b": "Kira semula satu bulan secara manual, kemudian uji formulanya terhadap keputusan itu pada setiap baris.",
+            "c": "Beritahu dia bahawa faedah kelihatan tinggi dan minta dia menyemak semula sebelum menghantarnya.",
+            "d": "Kira semula bulan pertama secara manual, betulkan baris tersebut, dan pulangkan jadual kepadanya."
+          }
+        }
+      },
+      "office-administration": {
+        "basic": {
+          "situation": "Penyelia anda tiada di pejabat. Pembekal menelefon bertanyakan sama ada invois mereka telah dibayar, semasa anda sedang sibuk memfailkan dokumen. Rekod pembayaran berada pada komputer anda.",
+          "options": {
+            "a": "Ambil nombor invois dan nombor telefon pembekal, kemudian hubungi semula sebaik sahaja urusan fail selesai.",
+            "b": "Katakan pembayaran sedang diproses, memandangkan invois biasanya diselesaikan dalam tempoh yang dipersetujui.",
+            "c": "Minta nombor invois, semak rekod pembayaran pada skrin, dan berikan status pembayaran tersebut.",
+            "d": "Minta pembekal menghantar e-mel kepada penyelia, yang biasanya menguruskan pertanyaan pembayaran, apabila dia kembali."
+          }
+        },
+        "advanced": {
+          "situation": "Dua rakan sekerja menggunakan kod pusat kos yang berbeza untuk dokumen pembekal yang sama, menyebabkan pemfailan dan carian tidak konsisten. Anda diminta membimbing mereka mengenai pengekodan.",
+          "options": {
+            "a": "Kod semula dokumen yang tidak sepadan pada setiap hujung minggu supaya carian memberikan hasil yang konsisten.",
+            "b": "Pilih kod yang anda rasa lebih lazim digunakan dan minta kedua-dua rakan sekerja mengikutinya.",
+            "c": "Sediakan senarai kod satu muka untuk pembekal lazim, kongsi ia, dan semak rawak fail minggu depan.",
+            "d": "Minta setiap rakan ikut tatacara kod syarikat dan bawa sebarang kes yang tidak jelas kepada anda."
+          }
+        }
+      },
+      "cash-handling": {
+        "basic": {
+          "situation": "Seorang pelanggan membayar RM 350 secara tunai di kaunter untuk invois tertunggak. Terdapat barisan menunggu di belakangnya, dan penyelia anda sedang menjawab panggilan berdekatan.",
+          "options": {
+            "a": "Kira tunai bersama-sama, keluarkan resit bernombor, dan masukkan rekod ke dalam buku tunai.",
+            "b": "Ambil wang tunai dan beritahunya resit akan menyusul selepas kutipan harian dimasukkan ke bank.",
+            "c": "Simpan RM 350 dalam laci dan rekodkannya sewaktu mengimbangi baki ketika tutup nanti.",
+            "d": "Ambil wang tunai, beri akuan bertulis tangan, dan masukkan rekod pembayaran selepas barisan reda."
+          }
+        },
+        "advanced": {
+          "situation": "Semasa menyemak resit tunai mingguan, anda mendapati tiga nombor resit hilang daripada jujukan. Jumlah buku tunai juga RM 120 lebih rendah daripada slip deposit bank.",
+          "options": {
+            "a": "Laporkan resit di luar jujukan dan perbezaan RM 120 kepada penyelia anda, serta tunggu arahan selanjutnya.",
+            "b": "Tanya juruwang yang membuat deposit untuk menjelaskan perbezaan RM 120 dan jurang resit tersebut.",
+            "c": "Anggap perbezaan RM 120 sebagai perbezaan pemasaan dan teruskan menyemak rekod minggu berikutnya.",
+            "d": "Padankan salinan resit dan slip deposit dengan buku tunai, kemudian laporkan hasil dapatan anda."
+          }
+        }
+      }
+    }
   }
 }

@@ -1,9 +1,8 @@
 import {
   DEFAULT_SCENARIO,
   questionOrder,
-  REVERSED_SLOTS,
-  reversedRating,
   roleVerdicts,
+  slotQuestion,
   type BundleRole,
   type Rating
 } from '@kotak/shared'
@@ -21,9 +20,10 @@ import { checkupBundleKey, loadCheckupBundleFor, useRoleBundle } from '../engine
 import { assessedRoleCode } from '../engine/checkup'
 import { checkupText } from '../i18n/messages/checkup'
 import { useText } from '../i18n/text'
-import { updateGuestSession, useGuestSession } from '../session/store'
+import { scenarioSeed, updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import { QuestionInfo } from './checkup/QuestionInfo'
+import { ScenarioOptions } from './checkup/ScenarioOptions'
 import { startAgain } from './checkup/startAgain'
 import { AnswerKeys } from './checkup/useAnswerKeys'
 import { useQuestionFonts } from './checkup/useQuestionFonts'
@@ -118,27 +118,29 @@ export function QuestionsView() {
     )
   }
 
+  const seed = scenarioSeed()
   const slot = (index: number) => {
     const corner = role.corners.find((item) => item.corner_id === order[Math.floor(index / 2)])!
     const level = index % 2 === 0 ? ('basic' as const) : ('advanced' as const)
-    // A reversed slot shows the reversed wording once the corner has it; until then it reads and scores as normal.
-    const reversedText = REVERSED_SLOTS.includes(index) ? corner.reversed_statements?.[level] : undefined
-    return { corner, level, reversedText, statement: reversedText ?? corner.statements![level] }
+    // A scenario (when the role has them) or the can-do statement; its `rate` gives the stored rating.
+    const question = slotQuestion(role, { order, corner_id: corner.corner_id, level, seed })
+    return { corner, level, question, speech: question.kind === 'scenario' ? question.situation : question.statement }
   }
   const questionIndex = asked.length
-  const { corner, level, reversedText, statement } = slot(questionIndex)
+  const { corner, level, question, speech } = slot(questionIndex)
   // Kopi's speech box keeps room for the longest of this session's lines, so the answers never move (#350).
-  const statements = Array.from({ length: totalQuestions }, (_, index) => slot(index).statement)
+  const lines = Array.from({ length: totalQuestions }, (_, index) => slot(index).speech)
 
-  const onAnswer = (rating: Rating) => {
+  // `position` is the 1 to 4 button or key: a rating for a statement, the n-th option on screen for a scenario.
+  const onAnswer = (position: Rating) => {
     if (chosen !== null) return
     const advance = () => {
-      const next = [...asked, reversedText ? reversedRating(rating) : rating]
+      const next = [...asked, question.kind === 'scenario' ? question.rate(position - 1) : question.rate(position)]
       if (next.length === totalQuestions) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
       setAsked(next)
     }
     // The pink and tick show for the pause with or without motion (#351); only the movement follows reduced motion.
-    setChosen(rating)
+    setChosen(position)
     thinkingTimer.current = window.setTimeout(() => {
       thinkingTimer.current = null
       setChosen(null)
@@ -193,47 +195,55 @@ export function QuestionsView() {
       <section className="space-y-2 sm:space-y-3" aria-label={t.questions.cardLabel}>
         <KopiAside
           pose={chosen !== null ? 'happy' : 'asking'}
-          speech={statement}
-          reserve={statements}
+          speech={speech}
+          reserve={lines}
           react={chosen !== null}
           centred
         />
 
-        <p className="text-center text-body-s text-text-muted">{t.questions.answerHint(1, 2)}</p>
+        <p className="text-center text-body-s text-text-muted">
+          {question.kind === 'scenario' ? t.questions.scenarioHint : t.questions.answerHint(1, 2)}
+        </p>
 
-        <div className="grid grid-cols-4 gap-3">
-          {RATING_VALUES.map((value) => {
-            const caption = t.questions.ratings[value]
-            return (
-              <Button
-                key={value}
-                variant={chosen === value ? 'primary' : 'secondary'}
-                size="lg"
-                fullWidth
-                className={cn(
-                  'h-auto min-h-[56px] px-1 py-2 !transition-[scale,background-color,color] !duration-[120ms]',
-                  chosen === value && '!bg-accent-chosen',
-                  chosen === value && !reduced && 'scale-[0.96]'
-                )}
-                aria-label={t.questions.ratingAria(value, caption)}
-                aria-pressed={chosen === value}
-                onClick={() => onAnswer(value)}
-              >
-                <span className="flex flex-col items-center gap-1">
-                  <span className="flex items-center gap-1">
-                    {value}
-                    {chosen === value && <Check className="h-4 w-4" aria-hidden="true" />}
+        {question.kind === 'scenario' ? (
+          <ScenarioOptions options={question.options} chosen={chosen} reduced={reduced} onPick={onAnswer} />
+        ) : (
+          <div className="grid grid-cols-4 gap-3">
+            {RATING_VALUES.map((value) => {
+              const caption = t.questions.ratings[value]
+              return (
+                <Button
+                  key={value}
+                  variant={chosen === value ? 'primary' : 'secondary'}
+                  size="lg"
+                  fullWidth
+                  className={cn(
+                    'h-auto min-h-[56px] px-1 py-2 !transition-[scale,background-color,color] !duration-[120ms]',
+                    chosen === value && '!bg-accent-chosen',
+                    chosen === value && !reduced && 'scale-[0.96]'
+                  )}
+                  aria-label={t.questions.ratingAria(value, caption)}
+                  aria-pressed={chosen === value}
+                  onClick={() => onAnswer(value)}
+                >
+                  <span className="flex flex-col items-center gap-1">
+                    <span className="flex items-center gap-1">
+                      {value}
+                      {chosen === value && <Check className="h-4 w-4" aria-hidden="true" />}
+                    </span>
+                    <span className="hidden text-label-s font-normal sm:block">{caption}</span>
                   </span>
-                  <span className="hidden text-label-s font-normal sm:block">{caption}</span>
-                </span>
-              </Button>
-            )
-          })}
-        </div>
-        <div className="flex justify-between text-body-s text-text-muted sm:hidden">
-          <span>{t.questions.ratings[1]}</span>
-          <span>{t.questions.ratings[4]}</span>
-        </div>
+                </Button>
+              )
+            })}
+          </div>
+        )}
+        {question.kind === 'statement' && (
+          <div className="flex justify-between text-body-s text-text-muted sm:hidden">
+            <span>{t.questions.ratings[1]}</span>
+            <span>{t.questions.ratings[4]}</span>
+          </div>
+        )}
       </section>
 
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
