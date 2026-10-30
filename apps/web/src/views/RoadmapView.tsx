@@ -17,10 +17,10 @@ import { Button } from '../components/ui/Button'
 import { DatePicker } from '../components/ui/DatePicker'
 import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
-import { checkUpSteps, Stepper } from '../components/ui/Stepper'
+import { Stepper } from '../components/ui/Stepper'
 import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
 import { useCheckupBundle } from '../engine/bundle'
-import { assessedRoleCode, computeCheckup } from '../engine/checkup'
+import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
 import { toIsoDate } from '../engine/dates'
 import {
   planWeeksFor,
@@ -29,7 +29,7 @@ import {
   toRoadmapSources,
   toRoadmapWindow
 } from '../engine/roadmapModel'
-import { cornerReasoning, isEstimatedLevel } from '../engine/viewModel'
+import { isEstimatedLevel } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { useScenario } from '../session/scenario'
 import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
@@ -41,6 +41,10 @@ import { PaceMathsCard } from './roadmap/PaceMathsCard'
 import { RoadmapTimeline } from './roadmap/RoadmapTimeline'
 import { type TimelineStep } from './roadmap/planSupport'
 import { startAgain } from './checkup/startAgain'
+import { commonText } from '../i18n/common'
+import { dateLocale, useLocale } from '../i18n/locale'
+import { roadmapText } from '../i18n/messages/roadmap'
+import { useText } from '../i18n/text'
 
 function fromIsoDate(value: string) {
   const [year, month, day] = value.split('-').map(Number)
@@ -48,7 +52,7 @@ function fromIsoDate(value: string) {
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat(dateLocale(), {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -60,17 +64,58 @@ function formatDate(value: string) {
 }
 
 function formatDayMonth(value: string) {
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
+  return new Intl.DateTimeFormat(dateLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
     new Date(`${value}T00:00:00Z`)
   )
+}
+
+function formatSourceDate(value: string) {
+  return new Intl.DateTimeFormat(dateLocale(), {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  }).format(new Date(`${value}T00:00:00Z`))
 }
 
 function formatEstimate(value: number) {
   return new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 }).format(value)
 }
 
-function formatStepWhen(value: string) {
-  return value.replace(/^Estimated · /, '')
+function formatStepWhen(value: string, estimated: string) {
+  const prefix = `${estimated} · `
+  return value.startsWith(prefix) ? value.slice(prefix.length) : value.replace(/^Estimated · /, '')
+}
+
+function buildRoadmapReason(
+  verdict: Checkup['corners'][number]['verdict'],
+  scenario: Checkup['scenario'],
+  citationNumbers: number[],
+  t: typeof roadmapText.en,
+  common: typeof commonText.en
+) {
+  let reason = ''
+  if (verdict.reason === 'scenarios_disagree' || verdict.reason === 'sources_disagree') {
+    const slow = verdict.futures.find((future) => future.scenario === 'slow')?.status ?? 'Unknown'
+    const fast = verdict.futures.find((future) => future.scenario === 'fast')?.status ?? 'Unknown'
+    const cause = verdict.reason === 'scenarios_disagree' ? t.reasoning.twoFutures : t.reasoning.jobAdSources
+    reason = t.reasoning.disagree(cause, common.verdicts[slow], common.verdicts[fast])
+  } else if (verdict.reason === 'too_few_points') {
+    reason = t.reasoning.tooFewPoints
+  } else if (verdict.reason === 'no_collaboration_split') {
+    reason = t.reasoning.noCollaborationSplit
+  } else if (verdict.reason === 'no_demand') {
+    reason = t.reasoning.noDemand
+  } else {
+    const outcome = verdict.scenarios[scenario]
+    const trend = t.reasoning.aiTrend[outcome.ai_trend === 'not_rising' ? 'notRising' : outcome.ai_trend]
+    const mode = t.reasoning.aiMode[outcome.collaboration_mode]
+    const demand = t.reasoning.demand[outcome.demand]
+    reason = t.reasoning.tableReason(trend, mode, demand)
+  }
+  const status = common.verdicts[verdict.status]
+  const citations = citationNumbers.map((number) => `[${number}]`).join('')
+  return `${reason} ${t.reasoning.skillMark(status)} ${citations}`
 }
 
 function toVerdictType(value: string | undefined): VerdictType | undefined {
@@ -86,6 +131,9 @@ interface LessImportantItem {
 }
 
 export function RoadmapView() {
+  const locale = useLocale()
+  const t = useText(roadmapText)
+  const common = useText(commonText)
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
   const [scenario, setScenario] = useScenario()
@@ -111,6 +159,7 @@ export function RoadmapView() {
     })
   }, [
     bundle,
+    locale,
     session.answers,
     session.custom_weekly_hours,
     session.active_snapshot_id,
@@ -153,15 +202,18 @@ export function RoadmapView() {
     })
     const readyWeek = toReadinessPoints(checkupWithHours, role).find((point) => point.plan >= 80)?.week ?? null
     return { proposed, readyWeek }
-  }, [checkup, bundle, session.answers, session.custom_weekly_hours, session.profile, startDate])
+  }, [checkup, bundle, session.answers, session.custom_weekly_hours, session.profile, startDate, locale])
 
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
+    const next = startAgain(session)
+    const speech = t.startAgain.speech[next.speech as keyof typeof t.startAgain.speech] ?? next.speech
+    const label = t.startAgain.label[next.label as keyof typeof t.startAgain.label] ?? next.label
     return (
       <div className="space-y-5 lg:space-y-6">
-        <Stepper step={5} labels={checkUpSteps} />
-        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can make a roadmap for it.`} />
+        <Stepper step={5} />
+        <CatDialogue pose="worried" speech={t.startAgain.continueSpeech(speech)} />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
-          {startAgain(session).label}
+          {label}
         </Button>
       </div>
     )
@@ -170,10 +222,10 @@ export function RoadmapView() {
   if (bundle.status === 'error') {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <Stepper step={5} labels={checkUpSteps} />
-        <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+        <Stepper step={5} />
+        <Banner type="error" title={t.errors.openJobTitle} body={t.errors.reloadOrChooseJob} />
         <Button variant="secondary" size="lg" fullWidth onClick={bundle.retry}>
-          Try Again
+          {common.tryAgain}
         </Button>
       </div>
     )
@@ -182,8 +234,8 @@ export function RoadmapView() {
   if (!checkup || bundle.status !== 'ready') {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <Stepper step={5} labels={checkUpSteps} />
-        <CatDialogue pose="thinking" speech="Opening the box on your job…" />
+        <Stepper step={5} />
+        <CatDialogue pose="thinking" speech={t.errors.openingJob} />
       </div>
     )
   }
@@ -191,14 +243,10 @@ export function RoadmapView() {
   if (!checkup.questionsReady) {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <Stepper step={5} labels={checkUpSteps} />
-        <Banner
-          type="info"
-          title="Roadmap Skills Are Not Ready"
-          body="Kopi has no can-do statements or learning hours for this job yet. Choose a related job for now."
-        />
+        <Stepper step={5} />
+        <Banner type="info" title={t.errors.skillsNotReadyTitle} body={t.errors.skillsNotReadyBody} />
         <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Another Job
+          {t.errors.chooseAnotherJob}
         </Button>
       </div>
     )
@@ -219,20 +267,19 @@ export function RoadmapView() {
   )
   const pace = checkup.roadmap.pace
   const refresherDone = session.ticked_milestones.includes(REFRESHER_ID)
-  const refresherWeeks = pace.refresher
-    ? pace.refresher.weeks[0] === pace.refresher.weeks[1]
-      ? `Week ${pace.refresher.weeks[0]}`
-      : `Weeks ${pace.refresher.weeks[0]}–${pace.refresher.weeks[1]}`
-    : ''
+  const refresherWeeks = pace.refresher ? t.stepCard.weekRange(...pace.refresher.weeks) : ''
+  const refresherCopy = pace.refresher
+    ? (t.pace.refreshers[pace.refresher.id as keyof typeof t.pace.refreshers] ?? pace.refresher)
+    : null
   const refresherStep: RoadmapStep | null = pace.refresher && {
     id: REFRESHER_ID,
     // Never 'next': the first skill step keeps the yellow strip and the refresher its dashed look.
     state: refresherDone ? 'done' : 'todo',
     weeks: pace.refresher.weeks,
     when: `${refresherWeeks} · ${formatDayMonth(addDays(checkup.roadmap.start_date, (pace.refresher.weeks[0] - 1) * 7))}–${formatDayMonth(addDays(checkup.roadmap.start_date, pace.refresher.weeks[1] * 7 - 1))}`,
-    skill: pace.refresher.title,
-    title: pace.refresher.title,
-    description: pace.refresher.description,
+    skill: refresherCopy?.title ?? pace.refresher.title,
+    title: refresherCopy?.title ?? pace.refresher.title,
+    description: refresherCopy?.description ?? pace.refresher.description,
     gain: '',
     hoursPerWeek:
       Math.round((pace.refresher.hours / (pace.refresher.weeks[1] - pace.refresher.weeks[0] + 1)) * 10) / 10,
@@ -251,13 +298,13 @@ export function RoadmapView() {
     {
       n: fundingSourceNumber,
       name: 'HRD Corp',
-      detail: 'HRD Corp Claimable Courses · accessed 20 Oct 2026',
+      detail: `HRD Corp Claimable Courses · ${t.funding.accessed(formatSourceDate('2026-10-20'))}`,
       href: 'https://hrdcorp.gov.my/hrdcorp-claimable-courses'
     },
     {
       n: fundingSourceNumber + 1,
       name: 'HRD Corp',
-      detail: 'e-LATiH · accessed 20 Oct 2026',
+      detail: `e-LATiH · ${t.funding.accessed(formatSourceDate('2026-10-20'))}`,
       href: 'https://elatih.hrdcorp.gov.my/about-us'
     }
   ]
@@ -306,18 +353,28 @@ export function RoadmapView() {
   const readyPoint = readinessPoints.find((point) => point.plan >= 80)
   const readyCopy = readyPoint
     ? readyPoint.week === 0
-      ? 'Already at least 80% Fit'
-      : `80% Fit by Week ${readyPoint.week}`
+      ? t.fit.already
+      : t.fit.byWeek(readyPoint.week)
     : readinessPoints.length > 0
-      ? `Below 80% Fit Within ${planWeeks} Weeks`
-      : 'No Readiness Estimate Yet'
+      ? t.fit.belowWithin(planWeeks)
+      : t.fit.noEstimate
   const reasonStep = steps[0]
   const reasonCorner = reasonStep && checkup.corners.find((corner) => corner.corner_id === reasonStep.id.split(':')[0])
   const reasonNumbers = reasonCorner ? (sourceRefs.cornerNumbers.get(reasonCorner.corner_id) ?? []) : []
   const reasonText =
     reasonCorner && reasonNumbers.length > 0
-      ? `${cornerReasoning(reasonCorner.verdict, scenario)} Kopi marks this skill ${reasonCorner.verdict.status.toLocaleLowerCase()}. ${reasonNumbers.map((number) => `[${number}]`).join('')}`
+      ? buildRoadmapReason(reasonCorner.verdict, scenario, reasonNumbers, t, common)
       : ''
+  const paceNoteKey =
+    pace.note === 'Faster than typical: your experience should shorten the hours. A stated estimate.'
+      ? 'faster'
+      : pace.note === 'Typical pace. A stated estimate.'
+        ? 'typical'
+        : pace.note ===
+            'Needs more practice time: the hours are lengthened to fit your starting point. A stated estimate.'
+          ? 'morePractice'
+          : null
+  const paceNote = paceNoteKey ? t.pace.notes[paceNoteKey] : pace.note
 
   function recordRef(stepId: string) {
     return (element: HTMLElement | null) => {
@@ -386,32 +443,36 @@ export function RoadmapView() {
         }
       `}</style>
       <div className="roadmap-view space-y-5 lg:space-y-6">
-        <Stepper step={5} labels={checkUpSteps} className="roadmap-print-actions" />
+        <Stepper step={5} className="roadmap-print-actions" />
 
         <CatDialogue
           pose="happy"
           speech={
             steps.length > 0
               ? readyPoint?.week === 0
-                ? `You already meet the 80% fit threshold. These next ${planWeeks} weeks build your remaining skills at ${formatEstimate(checkup.roadmap.weekly_hours)} hours a week.`
-                : `Your next ${planWeeks} weeks are planned at ${formatEstimate(checkup.roadmap.weekly_hours)} hours a week. ${readyCopy}.`
-              : 'There are no learning steps for this snapshot yet.'
+                ? t.fit.speechReady(planWeeks, formatEstimate(checkup.roadmap.weekly_hours))
+                : t.fit.speechPlanned(planWeeks, formatEstimate(checkup.roadmap.weekly_hours), readyCopy)
+              : t.fit.speechNoSteps
           }
         />
 
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1.5">
             <h1 className="text-title-m text-text-primary lg:text-title-l">
-              {steps.length > 0 ? `Your ${planWeeks}-Week Roadmap` : 'Your Roadmap'}
+              {steps.length > 0 ? t.fit.roadmapTitle(planWeeks) : t.fit.roadmapTitleShort}
             </h1>
             <p className="text-body-s text-text-muted">
-              {role.title} · {readyCopy} · {formatEstimate(checkup.roadmap.weekly_hours)} h a Week · Starts{' '}
-              {formatDate(checkup.roadmap.start_date)}
+              {t.fit.summary(
+                role.title,
+                readyCopy,
+                formatEstimate(checkup.roadmap.weekly_hours),
+                formatDate(checkup.roadmap.start_date)
+              )}
             </p>
           </div>
           <div className="roadmap-print-actions hidden shrink-0 items-center gap-3 lg:flex">
             <Button variant="secondary" onClick={printPlan}>
-              Export as PDF
+              {t.controls.exportPdf}
             </Button>
           </div>
         </header>
@@ -429,22 +490,17 @@ export function RoadmapView() {
                   : undefined
               }
             />
-            {qualificationNeeded && (
-              <p className="text-body-s text-text-muted">
-                The steps below build the skills the role uses, so you can test whether the work suits you. To practise
-                it, you’d still need the qualification and the admission above.
-              </p>
-            )}
+            {qualificationNeeded && <p className="text-body-s text-text-muted">{t.qualification}</p>}
           </div>
         )}
 
         <section
-          aria-label="Plan Controls"
+          aria-label={t.controls.planControls}
           className="grid gap-6 rounded-md border border-border-subtle bg-bg-panel p-5 lg:grid-cols-2"
         >
           <div className="space-y-2">
             <Slider
-              label="Hours Per Week"
+              label={t.controls.hoursPerWeek}
               min={MIN_WEEKLY_HOURS}
               max={MAX_WEEKLY_HOURS}
               step={1}
@@ -455,7 +511,7 @@ export function RoadmapView() {
             />
           </div>
           <DatePicker
-            label="Plan Start Date"
+            label={t.controls.planStartDate}
             value={fromIsoDate(checkup.roadmap.start_date)}
             onChange={(date) => setSelectedStartDate(toIsoDate(date))}
             className="w-full"
@@ -478,11 +534,11 @@ export function RoadmapView() {
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 id="impact-area-title" className="text-label-l text-text-primary">
-                Impact Area
+                {t.controls.impactArea}
               </h2>
-              <p className="text-body-s text-text-muted">Highlight Steps By SDG</p>
+              <p className="text-body-s text-text-muted">{t.controls.highlightStepsBySdg}</p>
             </div>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter Steps By SDG Impact Area">
+            <div className="flex flex-wrap gap-2" role="group" aria-label={t.controls.filterStepsByImpact}>
               <button
                 type="button"
                 aria-pressed={selectedImpactArea === null}
@@ -493,7 +549,7 @@ export function RoadmapView() {
                     : 'border-border-control bg-bg-default text-text-primary hover:bg-bg-panel'
                 }`}
               >
-                Show All
+                {t.controls.showAll}
               </button>
               {impactAreaGoals.map((goal) => (
                 <button
@@ -534,18 +590,18 @@ export function RoadmapView() {
             className="space-y-4 rounded-md border border-border-subtle bg-bg-default p-5 max-[479px]:border-0 max-[479px]:bg-transparent max-[479px]:p-0"
           >
             <h2 id="step-details-title" className="text-title-s text-text-primary">
-              Step Details
+              {t.controls.stepDetails}
             </h2>
             <div className="flex gap-3 rounded-md border border-border-subtle bg-bg-panel px-4 py-3 text-body-s text-text-primary">
               <Gauge className="mt-0.5 h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
               <p>
-                <b>Pace set for you.</b> {pace.note}{' '}
+                <b>{t.stepDetails.paceSet}</b> {paceNote}{' '}
                 <a
                   href="#pace-maths"
                   onClick={showPaceMaths}
                   className="font-semibold underline underline-offset-[3px]"
                 >
-                  See the Maths
+                  {t.stepDetails.seeMaths}
                 </a>
               </p>
             </div>
@@ -554,7 +610,7 @@ export function RoadmapView() {
                 {listSteps.map((step, index) => (
                   <RoadmapStepCard
                     key={step.id}
-                    step={{ ...step, when: formatStepWhen(step.when) }}
+                    step={{ ...step, when: formatStepWhen(step.when, t.stepCard.estimated) }}
                     index={refresherStep ? index - 1 : index}
                     last={index === listSteps.length - 1}
                     totalHours={step.id === REFRESHER_ID ? pace.refresher?.hours : stepHours.get(step.id)}
@@ -569,21 +625,17 @@ export function RoadmapView() {
               </div>
             ) : (
               <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
-                No learning steps are needed for this snapshot.
+                {t.stepDetails.noLearningSteps}
               </p>
             )}
             {later.length > 0 && (
               <div className="space-y-2 text-body-s text-text-muted">
-                <h3 className="text-label-l text-text-primary">After Week {planWeeks}</h3>
-                <p>
-                  About {formatEstimate(remainingHours)} learning hours remain after this window. The full path is about{' '}
-                  {Math.ceil(checkup.roadmap.weeks)} weeks at these hours. The 80% fit threshold does not mean every
-                  skill target is met.
-                </p>
+                <h3 className="text-label-l text-text-primary">{t.stepDetails.afterWeek(planWeeks)}</h3>
+                <p>{t.stepDetails.remaining(formatEstimate(remainingHours), Math.ceil(checkup.roadmap.weeks))}</p>
                 <ul className="list-disc pl-5">
                   {later.map((step) => (
                     <li key={step.id}>
-                      {partialIds.has(step.id) ? 'Continue: ' : ''}
+                      {partialIds.has(step.id) ? `${t.controls.continue} ` : ''}
                       {step.title || step.skill}
                     </li>
                   ))}
@@ -595,7 +647,7 @@ export function RoadmapView() {
           <div className="roadmap-sticky-column space-y-4 lg:sticky lg:top-24 lg:self-start">
             <EmployerFundingCard sourceNumber={fundingSourceNumber} />
             {reasonText && (
-              <section aria-label="Roadmap Reasoning" className="[&>section>p:first-of-type]:text-body-s">
+              <section aria-label={t.controls.stepDetailsAria} className="[&>section>p:first-of-type]:text-body-s">
                 <Reasoning text={reasonText} />
               </section>
             )}
@@ -631,23 +683,23 @@ export function RoadmapView() {
                 ))
               ) : (
                 <div className="rounded-md border border-border-subtle bg-bg-default p-3">
-                  <p className="text-body-s text-text-muted">No skills are marked as less important in this plan.</p>
+                  <p className="text-body-s text-text-muted">{t.stepDetails.noLessImportant}</p>
                 </div>
               )}
             </div>
-            <PaceMathsCard pace={pace} scenarioAnchors={scenarioAnchors} />
+            <PaceMathsCard pace={pace} scenarioAnchors={scenarioAnchors} profile={session.profile} />
           </div>
         </div>
 
-        <ToolsCard role={role} sourceNumber={toolsSourceNumber} heading="Tools to Learn With" />
+        <ToolsCard role={role} sourceNumber={toolsSourceNumber} heading={t.tools.learnWith} />
 
-        <SourceList sources={sources} />
+        <SourceList sources={sources} label={common.sources} />
 
         {/* One print action per screen: the header button on desktop, this sticky bar on phones. The plan already stays on
             this device, so nothing here claims to save it. */}
         <div className="roadmap-print-actions surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:hidden">
           <Button variant="primary" size="lg" fullWidth onClick={printPlan}>
-            Export as PDF
+            {t.controls.exportPdf}
           </Button>
         </div>
       </div>

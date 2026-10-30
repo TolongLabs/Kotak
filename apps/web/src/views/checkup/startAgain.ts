@@ -1,6 +1,8 @@
 import { assessedRoleCode } from '@kotak/sdk'
 import type { GuestSession } from '@kotak/shared'
 import { routes } from '../../app/routes'
+import { checkupText } from '../../i18n/messages/checkup'
+import { textNow } from '../../i18n/text'
 import { hasAnswers } from '../../session/store'
 
 /**
@@ -11,10 +13,11 @@ import { hasAnswers } from '../../session/store'
 export function startAgain(
   session: Pick<GuestSession, 'profile' | 'role_code' | 'goal' | 'target_role_code' | 'answers'>
 ) {
+  const t = textNow(checkupText)
   const roleCode = assessedRoleCode(session)
   if (roleCode && !hasAnswers(session))
-    return { route: routes.questions, label: 'Answer the Questions', speech: 'Finish your 12 questions' }
+    return { route: routes.questions, label: t.startAgain.answerQuestions, speech: t.startAgain.finishQuestions(12) }
   return session.profile.situation !== null && !roleCode
-    ? { route: routes.choose, label: 'Pick a Role to Check', speech: 'Pick a role to check first' }
-    : { route: routes.checkUp, label: 'Choose Your Job', speech: 'Tell me your job first' }
+    ? { route: routes.choose, label: t.startAgain.pickRole, speech: t.startAgain.pickRoleSpeech }
+    : { route: routes.checkUp, label: t.startAgain.chooseJob, speech: t.startAgain.tellJob }
 }

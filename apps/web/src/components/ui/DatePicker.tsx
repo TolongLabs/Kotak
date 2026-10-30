@@ -3,12 +3,16 @@ import {
   forwardRef,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type KeyboardEvent
 } from 'react'
+import { dateLocale, useLocale, type Locale } from '../../i18n/locale'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { Button } from './Button'
 import { IconButton } from './IconButton'
 import { cn } from './cn'
@@ -57,8 +61,8 @@ function getMonthDays(month: Date): Date[] {
   })
 }
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-GB', {
+function formatDate(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(dateLocale(locale), {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -68,8 +72,8 @@ function formatDate(date: Date): string {
     .replace(',', '')
 }
 
-function formatPlanDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+function formatPlanDate(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(dateLocale(locale), { weekday: 'short', day: 'numeric', month: 'short' })
     .format(date)
     .replace(',', '')
 }
@@ -91,6 +95,8 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   { label, value, onChange, min, id: providedId, className, disabled, 'aria-invalid': ariaInvalid, ...props },
   forwardedRef
 ) {
+  const locale = useLocale()
+  const t = useText(uiText)
   const generatedId = useId()
   const id = providedId ?? generatedId
   const labelId = id + '-label'
@@ -106,8 +112,12 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({ position: 'fixed', top: 0, left: 0 })
   const invalid = ariaInvalid === true || ariaInvalid === 'true'
   const monthDays = getMonthDays(displayMonth)
-  const monthName = new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(displayMonth)
+  const monthName = new Intl.DateTimeFormat(dateLocale(locale), { month: 'long', year: 'numeric' }).format(displayMonth)
   const today = new Date()
+  const weekdays = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat(dateLocale(locale), { weekday: 'short' })
+    return Array.from({ length: 7 }, (_, index) => formatter.format(new Date(2026, 9, 26 + index)))
+  }, [locale])
 
   const setTriggerRef = (node: HTMLButtonElement | null) => {
     triggerRef.current = node
@@ -259,7 +269,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           className
         )}
       >
-        <span className="min-w-0 truncate">{formatDate(value)}</span>
+        <span className="min-w-0 truncate">{formatDate(value, locale)}</span>
         <Calendar className="h-5 w-5 shrink-0 stroke-current text-text-muted" aria-hidden="true" />
       </button>
       {open && (
@@ -273,7 +283,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <IconButton
-              label="Previous Month"
+              label={t.previousMonth}
               icon={ChevronLeft}
               disabled={Boolean(
                 min && displayMonth.getFullYear() === min.getFullYear() && displayMonth.getMonth() <= min.getMonth()
@@ -283,13 +293,13 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
             <h2 id={titleId} className="text-label-l text-text-primary">
               {monthName}
             </h2>
-            <IconButton label="Next Month" icon={ChevronRight} onClick={() => moveMonth(1)} />
+            <IconButton label={t.nextMonth} icon={ChevronRight} onClick={() => moveMonth(1)} />
           </div>
           <div role="grid" aria-labelledby={titleId}>
             <div role="row" className="grid grid-cols-7">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((weekday) => (
+              {weekdays.map((weekday, index) => (
                 <div
-                  key={weekday}
+                  key={index}
                   role="columnheader"
                   className="flex h-8 items-center justify-center font-mono text-mono-s text-text-muted"
                 >
@@ -315,7 +325,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                       }}
                       type="button"
                       role="gridcell"
-                      aria-label={formatDate(day)}
+                      aria-label={formatDate(day, locale)}
                       aria-selected={selected}
                       tabIndex={isSameDay(day, focusedDate) ? 0 : -1}
                       disabled={!inCurrentMonth || beforeMin}
@@ -344,9 +354,9 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
             ))}
           </div>
           <div className="mt-4 flex items-center justify-between gap-3 border-t border-border-subtle pt-3">
-            <p className="text-body-s text-text-muted">Plan Starts {formatPlanDate(draftDate)}</p>
+            <p className="text-body-s text-text-muted">{t.planStarts(formatPlanDate(draftDate, locale))}</p>
             <Button ref={setDateRef} variant="primary" size="md" onClick={selectDate}>
-              Set Date
+              {t.setDate}
             </Button>
           </div>
         </div>

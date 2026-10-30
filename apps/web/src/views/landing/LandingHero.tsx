@@ -8,6 +8,9 @@ import { KopiFigure } from '../../components/kopi/KopiFigure'
 import { KopiSpeechBox } from '../../components/kopi/KopiSpeechBox'
 import { hasAnswers, useGuestSession } from '../../session/store'
 import { routes } from '../../app/routes'
+import { commonText } from '../../i18n/common'
+import { landingText } from '../../i18n/messages/landing'
+import { useText } from '../../i18n/text'
 import { LandingActionLink } from './LandingActionLink'
 import { LandingExampleCard } from './LandingExampleCard'
 import { LandingNav } from './LandingNav'
@@ -27,6 +30,8 @@ export function LandingHero() {
   const loaded = useLandingExample()
   const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE_QUERY).matches)
   const session = useGuestSession()
+  const t = useText(landingText)
+  const common = useText(commonText)
   // Signed-in visitors skip sign-in (to the radar once the check-up is answered); everyone else signs in first.
   const signedInTo = hasAnswers(session) ? routes.radar : routes.checkUp
   const startTo = session.is_guest ? signedInTo : `${routes.signIn}?next=${routes.checkUp}`
@@ -34,22 +39,18 @@ export function LandingHero() {
   const exampleState =
     loaded.status === 'idle' ? (
       <div className="flex w-full max-w-2xl flex-col items-center gap-4">
-        <CatDialogue pose="idle" speech="Choose a job to open your check-up." />
+        <CatDialogue pose="idle" speech={t.hero.idleSpeech} />
         <LandingActionLink to={startTo} variant="primary" showArrow>
-          Choose A Job
+          {t.hero.chooseAJob}
         </LandingActionLink>
       </div>
     ) : loaded.status === 'loading' ? (
-      <CatDialogue pose="thinking" speech="Kopi is opening the Web Developers example…" />
+      <CatDialogue pose="thinking" speech={t.hero.loadingSpeech} />
     ) : loaded.status === 'error' ? (
       <div className="flex w-full max-w-2xl flex-col items-center gap-4">
-        <Banner
-          type="error"
-          title="Example Not Available"
-          body="Kopi could not open the Web Developers check-up. Try again."
-        />
+        <Banner type="error" title={t.hero.exampleErrorTitle} body={t.hero.exampleErrorBody} />
         <Button variant="secondary" onClick={loaded.retry}>
-          Try Again
+          {common.tryAgain}
         </Button>
       </div>
     ) : null
@@ -58,9 +59,8 @@ export function LandingHero() {
   const featuredCorner = example?.corners[0]
   const cornerCitations = (featuredCorner ? example?.numbers.get(featuredCorner.id) : undefined) ?? []
   const cornerSources = example ? example.sources.filter((source) => cornerCitations.includes(source.n)) : []
-  const speech = featuredCorner
-    ? `${featuredCorner.name} is ${featuredCorner.verdict}. Want to see why?`
-    : 'Kopi will open the example check-up soon.'
+  const verdictText = featuredCorner ? t.hero.verdictSpeech[featuredCorner.verdict] : ''
+  const speech = featuredCorner ? t.hero.speech(featuredCorner.name, verdictText) : t.hero.speechFallback
 
   return (
     <section className="flex min-h-svh flex-col bg-bg-panel px-6 pb-6 pt-3 lg:px-16 lg:pt-6">
@@ -70,21 +70,18 @@ export function LandingHero() {
         {/* Below xl the headline centres over the stacked example; at xl it sets a masthead over the stage. */}
         <div className="flex w-full flex-col items-center gap-4 pt-2 text-center xl:grid xl:grid-cols-12 xl:items-end xl:gap-x-6 xl:gap-y-4 xl:pt-2 xl:text-left">
           <h1 className="max-w-[900px] text-balance font-extrabold text-display-l text-text-primary lg:text-display-xl xl:col-span-12 xl:max-w-none">
-            Open the Box on Your Job.
+            {t.hero.title}
           </h1>
-          <p className="max-w-[660px] text-body-m text-text-muted lg:text-body-l xl:col-span-7">
-            Kotak tracks how AI is changing Malaysian work, shows which of your skills are rising or fading, and builds
-            a step-by-step plan to 80% fit. Every verdict cites its source.
-          </p>
+          <p className="max-w-[660px] text-body-m text-text-muted lg:text-body-l xl:col-span-7">{t.hero.subtitle}</p>
           <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 xl:col-span-5 xl:justify-end">
             <LandingActionLink to={startTo} variant="primary" showArrow className="w-full sm:w-auto">
-              Start
+              {t.hero.start}
             </LandingActionLink>
             <a
               href="#how-it-works"
               className="inline-flex min-h-14 items-center justify-center gap-2 rounded-sm border-[1.5px] border-text-primary bg-bg-default px-6 text-label-l font-semibold text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-panel sm:w-auto"
             >
-              <span>See How It Works</span>
+              <span>{t.hero.seeHowItWorks}</span>
               <ArrowRight className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
             </a>
           </div>
@@ -100,7 +97,7 @@ export function LandingHero() {
                     corners={example.corners}
                     scenario={example.checkup.scenario}
                     size="md"
-                    neededLabel="Needed by 2027"
+                    neededLabel={t.hero.neededBy2027}
                     className="w-full [&_ul]:hidden"
                   />
                 </div>
@@ -111,7 +108,7 @@ export function LandingHero() {
                     sources={cornerSources}
                     maxSources={1}
                     scenario={example.checkup.scenario}
-                    neededLabel="Needed by 2027"
+                    neededLabel={t.hero.neededBy2027}
                   />
                 </div>
 
@@ -127,7 +124,7 @@ export function LandingHero() {
                   corners={example.corners}
                   scenario={example.checkup.scenario}
                   size="sm"
-                  neededLabel="Needed by May 2027"
+                  neededLabel={t.hero.neededByMay2027}
                   className="w-full"
                 />
 
@@ -140,38 +137,37 @@ export function LandingHero() {
                     corner={featuredCorner}
                     sources={cornerSources}
                     scenario={example.checkup.scenario}
-                    neededLabel="Needed by 2027"
+                    neededLabel={t.hero.neededBy2027}
                   />
                 </div>
               </div>
             )}
 
-            <ul className="sr-only" aria-label={`Example radar values for the ${example.checkup.scenario} scenario`}>
+            <ul className="sr-only" aria-label={t.hero.radarAriaLabel(t.hero.radarScenario[example.checkup.scenario])}>
               {example.corners.map((corner) => {
                 const citations = example.numbers.get(corner.id) ?? []
                 return (
                   <li key={corner.id}>
-                    {corner.name}: Example answer {corner.you}; estimated need about {corner.neededSlow}. Sources{' '}
-                    {citations.map((number) => `[${number}]`).join(', ')}.
+                    {t.hero.cornerSummary(
+                      corner.name,
+                      corner.you,
+                      corner.neededSlow,
+                      citations.map((number) => `[${number}]`).join(', ')
+                    )}
                   </li>
                 )
               })}
             </ul>
           </>
         ) : example && !featuredCorner ? (
-          <Banner
-            type="error"
-            title="Example Not Available"
-            body="This Web Developers bundle has no skill corners to display."
-            className="max-w-2xl"
-          />
+          <Banner type="error" title={t.hero.exampleErrorTitle} body={t.hero.noCornersBody} className="max-w-2xl" />
         ) : (
           <div className="flex w-full justify-center">{exampleState}</div>
         )}
 
         {/* At xl the cue sits on the stage's bottom edge. */}
         <p className="relative mt-auto rounded-full border border-border-subtle bg-bg-default px-4 py-2 text-label-s text-text-muted xl:-mt-10">
-          Keep scrolling. Kopi is opening the box.
+          {t.hero.scrollCue}
         </p>
       </div>
     </section>

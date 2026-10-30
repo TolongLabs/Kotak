@@ -1,5 +1,7 @@
 import type { Scenario } from '@kotak/shared'
 import { ScenarioSwitch } from '../ui/ScenarioSwitch'
+import { changesText } from '../../i18n/messages/changes'
+import { useText } from '../../i18n/text'
 import { cn } from '../ui/cn'
 
 /**
@@ -16,10 +18,11 @@ export function ScenarioControl({
   onChange: (scenario: Scenario) => void
   className?: string
 }) {
+  const t = useText(changesText)
   return (
     <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1.5', className)}>
-      <ScenarioSwitch value={scenario} onChange={onChange} aria-label="AI Uptake Scenario" />
-      <p className="text-label-s text-text-muted">Estimate: the targets, fit and levels here follow this choice.</p>
+      <ScenarioSwitch value={scenario} onChange={onChange} aria-label={t.scenarioChoice} />
+      <p className="text-label-s text-text-muted">{t.scenarioNote}</p>
     </div>
   )
 }

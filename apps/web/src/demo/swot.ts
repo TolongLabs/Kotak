@@ -1,6 +1,9 @@
 import type { Corner, Role, Swot, SwotItem } from './types'
+import { radarText } from '../i18n/messages/radar'
+import { textNow } from '../i18n/text'
 
 export function deriveSwot(corners: Corner[], roles: Role[], scenario: 'slow' | 'fast'): Swot {
+  const t = textNow(radarText)
   const strengths: SwotItem[] = []
   const weaknesses: SwotItem[] = []
   const opportunities: SwotItem[] = []
@@ -8,7 +11,7 @@ export function deriveSwot(corners: Corner[], roles: Role[], scenario: 'slow' | 
 
   for (const corner of corners) {
     const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
-    const detail = `You ${corner.you} · Needed ${needed}`
+    const detail = t.swotDetail(corner.you, needed)
 
     if ((corner.verdict === 'rising' || corner.verdict === 'steady') && corner.you >= needed) {
       strengths.push({ label: corner.name, verdict: corner.verdict, detail })
@@ -31,7 +34,7 @@ export function deriveSwot(corners: Corner[], roles: Role[], scenario: 'slow' | 
       opportunities.push({
         label: role.title,
         verdict: role.outlook,
-        detail: `${role.fit}% ${role.fitEstimated ? 'Estimated Fit' : 'Fit'}`
+        detail: t.opportunityDetail(role.fit, role.fitEstimated ?? false)
       })
     }
   }

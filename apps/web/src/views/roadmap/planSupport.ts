@@ -1,4 +1,5 @@
 import type { RoadmapStep } from '../../demo/types'
+import { dateLocale } from '../../i18n/locale'
 
 /** A RoadmapStep plus its own learning hours, straight from the roadmap item. */
 export interface TimelineStep extends RoadmapStep {
@@ -48,7 +49,7 @@ export function planWeekDate(startIso: string, week: number) {
 }
 
 export function formatPlanDay(iso: string) {
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat(dateLocale(), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',

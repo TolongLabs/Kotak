@@ -1,7 +1,10 @@
 import { ExternalLink } from 'lucide-react'
 import type { SourceRef } from '../../demo/types'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 
 export function SourceReference({ source }: { source: SourceRef }) {
+  const t = useText(uiText)
   return (
     <div
       id={`source-${source.n}`}
@@ -18,7 +21,7 @@ export function SourceReference({ source }: { source: SourceRef }) {
         href={source.href}
         target="_blank"
         rel="noreferrer"
-        aria-label={`Open ${source.name}`}
+        aria-label={t.openSource(source.name)}
         className="-my-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-bg-default text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel"
       >
         <ExternalLink className="h-5 w-5 stroke-current" aria-hidden="true" />

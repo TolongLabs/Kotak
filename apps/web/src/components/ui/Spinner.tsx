@@ -1,4 +1,6 @@
 import { forwardRef, type ComponentPropsWithoutRef } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
 export interface SpinnerProps extends ComponentPropsWithoutRef<'span'> {
@@ -13,9 +15,11 @@ const sizeClasses = {
 }
 
 export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
-  { label = 'Loading', size = 'md', className, ...props },
+  { label, size = 'md', className, ...props },
   ref
 ) {
+  const t = useText(uiText)
+  const resolvedLabel = label ?? t.loading
   return (
     <span
       ref={ref}
@@ -37,7 +41,7 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinne
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
-      <span className="sr-only">{label}</span>
+      <span className="sr-only">{resolvedLabel}</span>
     </span>
   )
 })

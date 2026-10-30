@@ -1,6 +1,8 @@
 import type { BaseTickContentProps } from 'recharts'
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts'
 import type { Corner, Scenario } from '../../demo/types'
+import { radarText } from '../../i18n/messages/radar'
+import { useText } from '../../i18n/text'
 import { cn } from '../ui/cn'
 
 export interface FutureSkillsRadarProps {
@@ -78,10 +80,12 @@ export function FutureSkillsRadar({
   scenario,
   size = 'md',
   className,
-  neededLabel = 'Needed by 2027',
+  neededLabel,
   showYou = true,
   outerRadius = '62%'
 }: FutureSkillsRadarProps) {
+  const t = useText(radarText)
+  const needed = neededLabel ?? t.neededByDefault
   const data: RadarDatum[] = corners.map((corner) => ({
     name: corner.name,
     you: corner.you,
@@ -90,7 +94,7 @@ export function FutureSkillsRadar({
 
   return (
     <figure className={cn('mx-auto w-full', figureWidths[size], className)}>
-      <figcaption className="sr-only">Future Skills Radar</figcaption>
+      <figcaption className="sr-only">{t.futureSkillsRadar}</figcaption>
       <div className={cn('w-full', chartHeights[size])}>
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <RadarChart data={data} margin={{ top: 16, right: 24, bottom: 16, left: 24 }} outerRadius={outerRadius}>
@@ -114,7 +118,7 @@ export function FutureSkillsRadar({
             {showYou && (
               <>
                 <Radar
-                  name="You (Self-Reported)"
+                  name={t.youSelfReported}
                   dataKey="you"
                   zIndex={100}
                   stroke="none"
@@ -126,7 +130,7 @@ export function FutureSkillsRadar({
                   isAnimationActive={false}
                 />
                 <Radar
-                  name="You (Self-Reported)"
+                  name={t.youSelfReported}
                   dataKey="you"
                   zIndex={175}
                   stroke="var(--color-text-primary)"
@@ -140,7 +144,7 @@ export function FutureSkillsRadar({
               </>
             )}
             <Radar
-              name={neededLabel}
+              name={needed}
               dataKey="needed"
               zIndex={200}
               stroke="var(--color-radar-role)"
@@ -156,32 +160,30 @@ export function FutureSkillsRadar({
         </ResponsiveContainer>
       </div>
 
-      <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2" aria-label="Radar chart legend">
+      <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2" aria-label={t.radarLegend}>
         {showYou && (
           <li className="flex items-center gap-2 text-label-s text-text-primary">
             <span
               className="h-3.5 w-3.5 shrink-0 rounded-sm border-[1.5px] border-text-primary bg-radar-you-fill"
               aria-hidden="true"
             />
-            You (Self-Reported)
+            {t.youSelfReported}
           </li>
         )}
         <li className="flex items-center gap-2 text-label-s text-text-primary">
           <span className="w-5 shrink-0 border-t-2 border-dashed border-radar-role" aria-hidden="true" />
-          {neededLabel}
+          {needed}
         </li>
       </ul>
 
       <div className="sr-only">
         <table>
-          <caption>
-            Skill levels from 0 to 3. {showYou ? `Values for You and ${neededLabel}` : neededLabel} by skill.
-          </caption>
+          <caption>{t.tableCaption(showYou, needed)}</caption>
           <thead>
             <tr>
-              <th scope="col">Skill</th>
-              {showYou && <th scope="col">You</th>}
-              <th scope="col">{neededLabel}</th>
+              <th scope="col">{t.tableSkill}</th>
+              {showYou && <th scope="col">{t.you}</th>}
+              <th scope="col">{needed}</th>
             </tr>
           </thead>
           <tbody>

@@ -2,6 +2,9 @@ import type { SdgReasonsFile } from '@kotak/shared'
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { useSdgReasons } from '../../engine/bundle'
+import { dateLocale } from '../../i18n/locale'
+import { roadmapText, type SdgReasonKey } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 import { SDG_NAMES, SdgChip } from '../ui/SdgChip'
 import { TextLink } from '../ui/TextLink'
 
@@ -14,7 +17,7 @@ const GAP = 8
 const WIDTH = 320
 
 const readDate = (iso: string) =>
-  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
+  new Intl.DateTimeFormat(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(`${iso}T00:00:00Z`)
   )
 
@@ -46,12 +49,13 @@ interface SdgReasonChipProps {
 const goalOf = (target: string) => Number(target.split('.')[0])
 
 function SdgReasonChip({ target, compact = false, reason, reasonLabel, un }: SdgReasonChipProps) {
+  const t = useText(roadmapText)
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
   const goal = goalOf(target)
-  const name = SDG_NAMES[goal] ?? `Goal ${goal}`
+  const name = t.sdg.names[goal] ?? SDG_NAMES[goal] ?? t.sdg.goal(goal)
 
   useEffect(() => {
     if (!open) return
@@ -116,16 +120,16 @@ function SdgReasonChip({ target, compact = false, reason, reasonLabel, un }: Sdg
             <dd className="text-body-s">{reason}</dd>
           </div>
           <div className="space-y-0.5">
-            <dt className="font-mono text-mono-s text-text-muted">UN Target {target}</dt>
+            <dt className="font-mono text-mono-s text-text-muted">{t.sdg.unTarget(target)}</dt>
             <dd className="text-body-s">{un.text}</dd>
           </div>
         </dl>
         <p className="text-label-s text-text-muted">
-          Target text from the{' '}
+          {t.sdg.sourceCredit.before}
           <TextLink href={un.meta.source_url} external className="text-label-s">
-            UN SDG API
+            {t.sdg.sourceCredit.link}
           </TextLink>
-          , read {readDate(un.meta.retrieved_date)}. The reason is Kotak’s.
+          {t.sdg.sourceCredit.after(readDate(un.meta.retrieved_date))}
         </p>
       </div>
     </span>
@@ -145,6 +149,7 @@ export function SdgTargetChip({
   compact?: boolean
   workReason?: string
 }) {
+  const t = useText(roadmapText)
   const reasons = useSdgReasons()
   const row = reasons.status === 'ready' ? reasons.data.targets[target] : undefined
   if (reasons.status !== 'ready' || !row)
@@ -157,8 +162,8 @@ export function SdgTargetChip({
     <SdgReasonChip
       target={target}
       compact={compact}
-      reason={workReason ?? row.reason}
-      reasonLabel={workReason ? 'Why This Work Counts' : 'Why It Counts'}
+      reason={workReason ?? t.sdg.reasons[target as SdgReasonKey] ?? row.reason}
+      reasonLabel={workReason ? t.sdg.whyWorkCounts : t.sdg.whyItCounts}
       un={{ text: row.text, meta: reasons.data.meta }}
     />
   )

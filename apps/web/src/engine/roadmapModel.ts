@@ -2,6 +2,10 @@ import { roadmapSchedule } from '@kotak/sdk'
 import { addDays, fitScore, uniqueSources, type BundleRole, type Source } from '@kotak/shared'
 import type { RoadmapStep, SourceRef } from '../demo/types'
 import type { Checkup } from './checkup'
+import { commonText } from '../i18n/common'
+import { dateLocale } from '../i18n/locale'
+import { roadmapText } from '../i18n/messages/roadmap'
+import { textNow } from '../i18n/text'
 
 export const ROADMAP_WEEKS = 12
 
@@ -14,7 +18,7 @@ type ScenarioReadinessPoint = PlanReadinessPoint & { fast: number }
 const sourceKey = (source: Source) => [source.source_url, source.vintage_date, source.geo_or_layer].join('|')
 
 function formatDayMonth(date: string) {
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
+  return new Intl.DateTimeFormat(dateLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
     new Date(`${date}T00:00:00Z`)
   )
 }
@@ -29,6 +33,8 @@ function formatDateRange(start: string, end: string) {
 }
 
 export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: string[]): RoadmapStep[] {
+  const t = textNow(roadmapText)
+  const common = textNow(commonText)
   const corners = new Map(role.corners.map((corner) => [corner.corner_id, corner]))
   const tickedIds = new Set(ticked)
   const weeklyHours = checkup.roadmap.weekly_hours
@@ -50,17 +56,17 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
         id,
         state,
         weeks,
-        when: `Estimated · Weeks ${startWeek}–${endWeek} · ${formatDateRange(startDate, endDate)}${conditional ? ` · ${conditional}` : ''}`,
+        when: `${t.stepCard.estimated} · ${t.stepCard.weekSpan(startWeek, endWeek)} · ${formatDateRange(startDate, endDate)}${conditional ? ` · ${common.verdicts[conditional]}` : ''}`,
         skill: corner?.name ?? item.corner_id,
         title: corner?.statements?.[item.statement] ?? '',
-        description: resource ? 'Use the linked resource to practise this skill.' : '',
-        gain: `About Level ${item.to_level} · ${corner?.name ?? item.corner_id}`,
+        description: resource ? t.stepCard.useResource : '',
+        gain: t.stepCard.aboutLevel(item.to_level, corner?.name ?? item.corner_id, t.stepCard.levels[item.statement]),
         hoursPerWeek: weeklyHours,
         resource: resource
           ? {
               label:
                 resource.kind === 'search' && !resource.title.startsWith('Search:')
-                  ? `Search: ${resource.title}`
+                  ? t.stepCard.searchResource(resource.title)
                   : resource.title,
               href: resource.url,
               kind: resource.kind
@@ -88,6 +94,8 @@ export function planWeeksFor<T extends { week: number }>(points: T[], fit: (poin
 
 /** The first `weeks` weeks of the full SDK path. Partial milestones earn no level gain. */
 export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: string[], weeks = ROADMAP_WEEKS) {
+  const t = textNow(roadmapText)
+  const common = textNow(commonText)
   const fullSteps = toRoadmapSteps(checkup, role, ticked)
   const budget = weeks * checkup.roadmap.weekly_hours
   const hoursById = new Map(checkup.roadmap.items.map((item) => [`${item.corner_id}:${item.statement}`, item.hours]))
@@ -113,10 +121,9 @@ export function toRoadmapWindow(checkup: Checkup, role: BundleRole, ticked: stri
     steps.push({
       ...step,
       weeks: [step.weeks[0], weeks],
-      when: `Estimated · Weeks ${step.weeks[0]}–${weeks} · ${formatDateRange(start, end)}${step.conditional ? ` · ${step.conditional}` : ''}`,
-      description:
-        `${step.description} First ${allocated} of ${hours} estimated hours. Continue after Week ${weeks}.`.trim(),
-      gain: `Target after the full milestone: ${step.gain}`
+      when: `${t.stepCard.estimated} · ${t.stepCard.weekSpan(step.weeks[0], weeks)} · ${formatDateRange(start, end)}${step.conditional ? ` · ${step.conditional === 'Split' ? common.verdicts.Split : step.conditional}` : ''}`,
+      description: t.stepCard.partialDescription(step.description, String(allocated), String(hours), weeks).trim(),
+      gain: t.stepCard.fullTarget(step.gain)
     })
   }
   return {

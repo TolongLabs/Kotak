@@ -12,6 +12,10 @@ import { Button } from '../components/ui/Button'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { deriveSwot } from '../demo/swot'
 import { useCheckupBundle } from '../engine/bundle'
+import { dateLocale } from '../i18n/locale'
+import { commonText } from '../i18n/common'
+import { radarText } from '../i18n/messages/radar'
+import { useText } from '../i18n/text'
 import { answeredLevels, assessedRoleCode, planRoleCodeOf, useCheckup, type Checkup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { sourceRefs, toCorners, toRoles, verdictId } from '../engine/viewModel'
@@ -39,7 +43,7 @@ function formatEstimate(value: number) {
 }
 
 function formatSnapshotMonth(snapshotId: SnapshotId) {
-  return new Date(`${snapshotId}-01T00:00:00Z`).toLocaleDateString('en-GB', {
+  return new Date(`${snapshotId}-01T00:00:00Z`).toLocaleDateString(dateLocale(), {
     month: 'long',
     year: 'numeric',
     timeZone: 'UTC'
@@ -47,7 +51,7 @@ function formatSnapshotMonth(snapshotId: SnapshotId) {
 }
 
 function formatVintageDate(date: string) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString(dateLocale(), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -88,8 +92,9 @@ function completedHoursForWeek(checkup: Checkup, steps: ReturnType<typeof toRoad
 }
 
 function ReadinessSparkline({ points }: { points: { week: number; value: number }[] }) {
+  const t = useText(radarText)
   if (points.length === 0) {
-    return <p className="text-body-s text-text-muted">No readiness estimate yet.</p>
+    return <p className="text-body-s text-text-muted">{t.noReadiness}</p>
   }
 
   const coordinates = points.map((point, index) => {
@@ -97,7 +102,7 @@ function ReadinessSparkline({ points }: { points: { week: number; value: number 
     const y = 32 - (Math.min(100, Math.max(0, point.value)) / 100) * 28
     return `${x},${y}`
   })
-  const description = points.map((point) => `Week ${point.week}: ${Math.round(point.value)}%`).join(', ')
+  const description = points.map((point) => t.sparkWeek(point.week, Math.round(point.value))).join(', ')
 
   return (
     <svg
@@ -105,7 +110,7 @@ function ReadinessSparkline({ points }: { points: { week: number; value: number 
       viewBox="0 0 210 36"
       preserveAspectRatio="none"
       role="img"
-      aria-label={`Readiness by week: ${description}`}
+      aria-label={t.sparkLabel(description)}
     >
       {points.length === 1 ? (
         <circle cx={coordinates[0].split(',')[0]} cy={coordinates[0].split(',')[1]} r="2" fill="currentColor" />
@@ -123,16 +128,14 @@ function ReadinessSparkline({ points }: { points: { week: number; value: number 
   )
 }
 
-function greeting(hour: number) {
-  return hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening'
-}
-
 function withoutEndingPunctuation(value: string) {
   return value.trim().replace(/[.!?]+$/u, '')
 }
 
 export function DashboardView() {
   const session = useGuestSession()
+  const t = useText(radarText)
+  const common = useText(commonText)
   const bundle = useCheckupBundle(session)
   const [scenario] = useScenario()
   const checkup = useCheckup({ scenario })
@@ -151,7 +154,7 @@ export function DashboardView() {
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <DashboardState>
-        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can show how it is changing.`} />
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}${t.thenShowChanging}`} />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
           {startAgain(session).label}
         </Button>
@@ -168,9 +171,9 @@ export function DashboardView() {
 
     return (
       <DashboardState>
-        <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+        <Banner type="error" title={t.kopiCouldNotOpenJob.title} body={t.kopiCouldNotOpenJob.body} />
         <Button variant="secondary" size="lg" fullWidth onClick={retry}>
-          Try Again
+          {common.tryAgain}
         </Button>
       </DashboardState>
     )
@@ -179,7 +182,7 @@ export function DashboardView() {
   if (bundle.status !== 'ready' || checkup.status !== 'ready' || otherScenario.status !== 'ready') {
     return (
       <DashboardState>
-        <CatDialogue pose="thinking" speech="Opening the box on your job…" />
+        <CatDialogue pose="thinking" speech={t.openingBox} />
       </DashboardState>
     )
   }
@@ -192,13 +195,9 @@ export function DashboardView() {
   if (!currentCheckup.questionsReady) {
     return (
       <DashboardState>
-        <Banner
-          type="info"
-          title="Skills Are Not Ready"
-          body="Kopi has no can-do statements for this job yet. Choose a related job for now."
-        />
+        <Banner type="info" title={t.skillsNotReady.title} body={t.skillsNotReady.body} />
         <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Another Job
+          {t.chooseAnotherJob}
         </Button>
       </DashboardState>
     )
@@ -208,13 +207,9 @@ export function DashboardView() {
   if (!currentFit) {
     return (
       <DashboardState>
-        <Banner
-          type="info"
-          title="Job Fit Is Unavailable"
-          body="Kopi could not calculate a fit score for this role yet."
-        />
+        <Banner type="info" title={t.jobFitUnavailable.title} body={t.jobFitUnavailable.body} />
         <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Another Job
+          {t.chooseAnotherJob}
         </Button>
       </DashboardState>
     )
@@ -254,19 +249,18 @@ export function DashboardView() {
   const readyPoint = readinessPoints.find((point) => point[readinessKey] >= 80)
   const readinessCaption = readyPoint
     ? readyPoint.week === 0
-      ? 'Already at least 80% fit.'
-      : `80% fit by Week ${readyPoint.week} at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
+      ? t.readinessReady
+      : t.readinessByWeek(readyPoint.week, formatEstimate(currentCheckup.roadmap.weekly_hours))
     : readinessPoints.length > 1
-      ? `Below 80% fit within ${planWeeks} weeks at ${formatEstimate(currentCheckup.roadmap.weekly_hours)} h a week`
-      : 'No readiness estimate yet.'
+      ? t.readinessBelow(planWeeks, formatEstimate(currentCheckup.roadmap.weekly_hours))
+      : t.noReadiness
 
   const totalWeeks = Math.ceil(currentCheckup.roadmap.weeks)
   const planWeek = currentPlanWeek(currentCheckup.roadmap.start_date, totalWeeks)
   const doneHours = completedHoursForWeek(currentCheckup, steps, planWeek)
   const weeklyHours = currentCheckup.roadmap.weekly_hours
   const weekProgress = Math.min(100, Math.round((doneHours / weeklyHours) * 100))
-  const weekCaption =
-    nextStep?.title ?? (steps.length > 0 ? 'All roadmap steps are ticked.' : 'No learning steps are available.')
+  const weekCaption = nextStep?.title ?? (steps.length > 0 ? t.allStepsTicked : t.noLearningSteps)
 
   const engine = engineInputs(role, [role, ...bundle.data.related])
   const answers = transferAnswers(role, answeredLevels(role, session.answers))
@@ -284,8 +278,8 @@ export function DashboardView() {
   ].sort((left, right) => left.localeCompare(right))
   const latestVintage = sourceVintages[sourceVintages.length - 1]
   const freshnessCaption = latestVintage
-    ? `Latest source vintage: ${formatVintageDate(latestVintage)}`
-    : 'Latest source vintage unavailable.'
+    ? t.latestVintage(formatVintageDate(latestVintage))
+    : t.latestVintageUnavailable
 
   const biggestRisingGap = currentCheckup.corners
     .filter((corner) => corner.verdict.status === 'Rising' && corner.target > corner.level.level)
@@ -299,34 +293,41 @@ export function DashboardView() {
       ? role.corners.find((corner) => corner.corner_id === biggestRisingGap.corner_id)?.statements?.working
       : undefined)
   const nextStepDescription = nextStep
-    ? `Weeks ${nextStep.weeks[0]}–${nextStep.weeks[1]} · ${formatEstimate(nextStep.hoursPerWeek)} h a week${nextStep.resource.label ? ` · ${nextStep.resource.label}` : ''}`
+    ? t.nextStepWeeks(
+        nextStep.weeks[0],
+        nextStep.weeks[1],
+        formatEstimate(nextStep.hoursPerWeek),
+        nextStep.resource.label
+      )
     : steps.length > 0
-      ? 'All roadmap steps are ticked.'
-      : 'No learning steps are available for this snapshot.'
+      ? t.allStepsTicked
+      : t.noLearningStepsSnapshot
   // The Next Step card sits right under Kopi, so Kopi points at it instead of repeating its title.
   const kopiSpeech =
     biggestRisingGap && risingGapStep && risingGapStep.id === nextStep?.id
-      ? `Your biggest rising gap is ${biggestRisingGap.name}. Start with the next step below.`
+      ? t.kopiBiggestGapNext(biggestRisingGap.name)
       : biggestRisingGap && risingGapStatement
-        ? `Your biggest rising gap is ${biggestRisingGap.name}. Start here: “${withoutEndingPunctuation(risingGapStatement)}.”`
+        ? t.kopiBiggestGapHere(biggestRisingGap.name, withoutEndingPunctuation(risingGapStatement))
         : biggestRisingGap
-          ? `Your biggest rising gap is ${biggestRisingGap.name}. I don’t have a step for that gap yet.`
+          ? t.kopiBiggestGapNoStep(biggestRisingGap.name)
           : nextStep
-            ? `No rising gap stands out in this snapshot. Your next step is “${withoutEndingPunctuation(nextStep.title)}.”`
+            ? t.kopiNoGapNext(withoutEndingPunctuation(nextStep.title))
             : steps.length > 0
-              ? 'No rising gap stands out in this snapshot. You’ve ticked all your roadmap steps.'
-              : 'No rising gap or roadmap steps stand out in this snapshot.'
+              ? t.kopiNoGapDone
+              : t.kopiNothingStandsOut
 
   return (
     <div className="space-y-5 lg:space-y-6">
       <header className="space-y-1.5">
-        <h1 className="text-title-m text-text-primary lg:text-title-l">{greeting(new Date().getHours())}, Guest</h1>
+        <h1 className="text-title-m text-text-primary lg:text-title-l">
+          {t.greeting(new Date().getHours(), common.guest)}
+        </h1>
         <p className="text-body-s text-text-muted">{role.title}</p>
         {(workTargets.length > 0 || planTargets.length > 0) && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             {workTargets.length > 0 && (
               <span className="inline-flex flex-wrap items-center gap-2">
-                <span className="text-label-s text-text-muted">Your Work Supports</span>
+                <span className="text-label-s text-text-muted">{t.workSupports}</span>
                 {workTargets.map((target) => (
                   <SdgTargetChip key={target} target={target} workReason={workSdgs?.reason} />
                 ))}
@@ -334,7 +335,7 @@ export function DashboardView() {
             )}
             {planTargets.length > 0 && (
               <span className="inline-flex flex-wrap items-center gap-2">
-                <span className="text-label-s text-text-muted">Your Plan Supports</span>
+                <span className="text-label-s text-text-muted">{t.planSupports}</span>
                 {planTargets.map((target) => (
                   <SdgTargetChip key={target} target={target} />
                 ))}
@@ -351,9 +352,9 @@ export function DashboardView() {
         className="flex flex-col gap-4 rounded-md border border-border-subtle bg-bg-panel p-5 md:flex-row md:items-center md:justify-between md:gap-6"
       >
         <div className="min-w-0 space-y-2">
-          <p className="text-label-m text-text-muted">Next Step</p>
+          <p className="text-label-m text-text-muted">{t.nextStep}</p>
           <h2 id="next-step-title" className="break-words text-title-s text-text-primary">
-            {nextStep?.title || nextStep?.skill || (steps.length > 0 ? 'Plan Complete' : 'No Roadmap Steps')}
+            {nextStep?.title || nextStep?.skill || (steps.length > 0 ? t.planComplete : t.noRoadmapSteps)}
           </h2>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             {nextStepTargets.map((target) => (
@@ -366,15 +367,15 @@ export function DashboardView() {
           to={routes.roadmap}
           className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring md:w-auto"
         >
-          {nextStep ? 'Continue My Plan' : 'Open Your Roadmap'}
+          {nextStep ? t.continuePlan : t.openRoadmap}
         </Link>
       </section>
 
-      <section aria-label="Your Progress" className="grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4">
+      <section aria-label={t.yourProgress} className="grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4">
         <div className="flex h-full flex-col [&>section]:flex-1">
           <StatCard
-            label={`Fit for ${fitBundleRole.title}`}
-            value={fitRole ? `${Math.round(fitRole.fit.score)}%` : 'Fit unavailable'}
+            label={t.fitFor(fitBundleRole.title)}
+            value={fitRole ? `${Math.round(fitRole.fit.score)}%` : t.fitUnavailable}
             caption={readinessCaption}
           >
             <ReadinessSparkline points={readinessSeries} />
@@ -382,25 +383,25 @@ export function DashboardView() {
         </div>
         <div className="flex h-full flex-col [&>section]:flex-1">
           <StatCard
-            label="This Week"
-            value={`${formatEstimate(doneHours)} of ${formatEstimate(weeklyHours)} h`}
+            label={t.thisWeek}
+            value={t.thisWeekValue(formatEstimate(doneHours), formatEstimate(weeklyHours))}
             caption={weekCaption}
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-label-m text-text-primary">
-                  {totalWeeks > 0 ? `Week ${planWeek} of ${totalWeeks}` : 'No planned weeks'}
+                  {totalWeeks > 0 ? t.weekOf(planWeek, totalWeeks) : t.noPlannedWeeks}
                 </span>
                 <span className="font-mono text-mono-s text-text-muted">{weekProgress}%</span>
               </div>
               <div
                 className="h-2 w-full overflow-hidden rounded-full bg-border-subtle"
                 role="progressbar"
-                aria-label="This week’s completed roadmap hours"
+                aria-label={t.weekHoursAria}
                 aria-valuenow={weekProgress}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-valuetext={`${weekProgress}% of weekly hours completed`}
+                aria-valuetext={t.weekProgressText(weekProgress)}
               >
                 <div className="h-full rounded-full bg-text-primary" style={{ width: `${weekProgress}%` }} />
               </div>
@@ -408,10 +409,7 @@ export function DashboardView() {
           </StatCard>
         </div>
         <div className="flex h-full flex-col [&>section]:flex-1">
-          <StatCard
-            label="What Changed in May"
-            value={snapshotDiff ? `${changedSkills} Skill${changedSkills === 1 ? '' : 's'}` : 'Not Available'}
-          >
+          <StatCard label={t.whatChangedMay} value={snapshotDiff ? t.changedSkills(changedSkills) : t.notAvailable}>
             {exampleChange ? (
               <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
                 <span className="sr-only">{exampleChange.name}:</span>
@@ -422,26 +420,22 @@ export function DashboardView() {
                 </span>
               </div>
             ) : (
-              <p className="text-body-s text-text-muted">
-                {snapshotDiff
-                  ? 'No skill changes between April and May.'
-                  : 'April and May data are not both available yet.'}
-              </p>
+              <p className="text-body-s text-text-muted">{snapshotDiff ? t.noSkillChanges : t.monthsUnavailable}</p>
             )}
             <p className="text-body-s text-text-muted">
               <Link
                 to={routes.changes}
                 className="font-medium text-text-primary underline decoration-current underline-offset-2 transition-colors hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
               >
-                Open What Changed
+                {t.openWhatChanged.link}
               </Link>{' '}
-              to review April and May.
+              {t.openWhatChanged.after}
             </p>
           </StatCard>
         </div>
         <div className="flex h-full flex-col [&>section]:flex-1">
           <StatCard
-            label="Data Freshness"
+            label={t.dataFreshness}
             value={formatSnapshotMonth(currentCheckup.snapshotId)}
             caption={freshnessCaption}
           />

@@ -3,6 +3,8 @@ import type { ReactNode } from 'react'
 import type { Role } from '../../demo/types'
 import { VerdictChip } from '../ui/VerdictChip'
 import { cn } from '../ui/cn'
+import { rolesText } from '../../i18n/messages/roles'
+import { useText } from '../../i18n/text'
 
 export interface RoleCardProps {
   role: Role
@@ -17,6 +19,7 @@ export interface RoleCardProps {
 }
 
 export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleCardProps) {
+  const t = useText(rolesText)
   return (
     <label
       className={cn(
@@ -31,25 +34,25 @@ export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleC
       <div className="flex min-h-12 items-start justify-between gap-3">
         <span className="min-w-0 hyphens-auto text-title-s text-text-primary [overflow-wrap:anywhere]">
           {role.title}
-          {role.isCurrentJob && ' (Your Job)'}
+          {role.isCurrentJob && ` (${t.card.yourJob})`}
         </span>
         <span className="flex shrink-0 items-start gap-2">
           <span className="flex flex-col items-end">
             <span className="text-title-l tabular-nums text-text-primary">{role.fit}%</span>
             {role.fitEstimated ? (
               <span className="font-mono text-mono-s text-text-muted">
-                <span aria-hidden="true">est. fit</span>
-                <span className="sr-only">estimated fit</span>
+                <span aria-hidden="true">{t.card.estimatedFitShort}</span>
+                <span className="sr-only">{t.card.estimatedFit}</span>
               </span>
             ) : (
-              <span className="font-mono text-mono-s text-text-muted">fit</span>
+              <span className="font-mono text-mono-s text-text-muted">{t.card.fit}</span>
             )}
           </span>
           {selected && <CircleCheck className="mt-1 h-5 w-5 stroke-current" aria-hidden="true" />}
         </span>
       </div>
       <span className="flex items-center gap-2">
-        <span className="font-mono text-mono-s text-text-muted">Outlook</span>
+        <span className="font-mono text-mono-s text-text-muted">{t.card.outlook}</span>
         <VerdictChip verdict={role.outlook} size="sm" />
       </span>
       <span
@@ -59,7 +62,7 @@ export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleC
         <span className="block h-full rounded-full bg-text-primary" style={{ width: `${role.fit}%` }} />
       </span>
       <span className="text-body-s text-text-primary">
-        {role.missing ? `Missing: ${role.missing}` : 'No gaps to close'}
+        {role.missing ? t.card.missing(role.missing) : t.card.noGaps}
       </span>
       {footer && <span className="mt-auto pt-1">{footer}</span>}
     </label>

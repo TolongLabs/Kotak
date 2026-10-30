@@ -5,6 +5,7 @@ import {
   AgentChatRequestSchema,
   AgentChatResponseSchema,
   type AgentChatCheckup,
+  type AgentChatRequest,
   type AgentChatResponse
 } from '@kotak/shared'
 import { Hono, type Context } from 'hono'
@@ -60,11 +61,59 @@ const inputText: Record<string, (value: unknown) => string> = {
   plan_role_code: (code) => (code ? `plan for ${code}` : 'plan for the assessed role')
 }
 
-function label({ title, input }: KotakToolCall): string {
+type ChatLocale = NonNullable<AgentChatRequest['lang']>
+type TranslatedLocale = Exclude<ChatLocale, 'en'>
+
+const translatedToolTitles: Record<TranslatedLocale, Record<string, string>> = {
+  ms: {
+    find_role: 'Cari Peranan',
+    get_checkup_questions: 'Dapatkan Soalan Semakan',
+    suggest_roles: 'Cadangkan Peranan',
+    run_checkup: 'Jalankan Semakan',
+    what_changed: 'Perubahan antara Set Data',
+    national_skill_gaps: 'Jurang Kemahiran Negara',
+    job_market: 'Iklan Kerja di Malaysia',
+    list_sources: 'Senarai Sumber Data'
+  },
+  zh: {
+    find_role: '查找职位',
+    get_checkup_questions: '获取检测问题',
+    suggest_roles: '推荐职位',
+    run_checkup: '运行检测',
+    what_changed: '数据快照对比',
+    national_skill_gaps: '全国技能差距',
+    job_market: '马来西亚招聘广告',
+    list_sources: '列出数据来源'
+  }
+}
+
+const translatedInputText: Record<TranslatedLocale, Record<string, (value: unknown) => string>> = {
+  ms: {
+    weekly_hours: (hours) => (hours === null ? 'jam dividen AI' : `${hours} jam seminggu`),
+    scenario: (pace) => (pace === 'fast' ? 'kadar AI pantas' : 'kadar AI Malaysia'),
+    snapshot_id: (id) => `data ${id}`,
+    before: (id) => `daripada ${id}`,
+    after: (id) => `kepada ${id}`,
+    plan_role_code: (code) => (code ? `peta jalan untuk ${code}` : 'peta jalan untuk peranan yang dinilai')
+  },
+  zh: {
+    weekly_hours: (hours) => (hours === null ? 'AI 节省的小时数' : `${hours} 小时/周`),
+    scenario: (pace) => (pace === 'fast' ? '快速 AI 进度' : '马来西亚 AI 进度'),
+    snapshot_id: (id) => `${id} 数据`,
+    before: (id) => `从 ${id}`,
+    after: (id) => `到 ${id}`,
+    plan_role_code: (code) => (code ? `为 ${code} 规划路线图` : '为当前评估职位规划路线图')
+  }
+}
+
+function label({ name, title, input }: KotakToolCall, lang: ChatLocale = 'en'): string {
+  const localized = lang !== 'en'
+  const localizedTitle = localized ? (translatedToolTitles[lang][name] ?? title) : title
+  const labels = localized ? translatedInputText[lang] : inputText
   const chosen = Object.entries((input ?? {}) as Record<string, unknown>).flatMap(([field, value]) =>
-    inputText[field] ? [inputText[field](value)] : typeof value === 'string' ? [value] : []
+    labels[field] ? [labels[field](value)] : typeof value === 'string' ? [value] : []
   )
-  return chosen.length ? `${title}: ${chosen.join(', ')}` : title
+  return chosen.length ? `${localizedTitle}: ${chosen.join(', ')}` : localizedTitle
 }
 
 // Every { source_name, vintage_date } in the tools' results, once.
@@ -91,6 +140,12 @@ export function createAgentChatRoute(deps: AiDeps) {
     if (!toolDeps || !agent) return unavailable(context)
 
     const chat = request.data.checkup
+    const promptLanguageRule =
+      request.data.lang === 'ms'
+        ? 'Reply in Bahasa Malaysia as written in Malaysia, not Indonesian. Keep every number, source name, date, job title and course title exactly as the tools give them.'
+        : request.data.lang === 'zh'
+          ? 'Reply in Simplified Chinese as Malaysian Chinese readers write it. Keep every number, source name, date, job title and course title exactly as the tools give them.'
+          : undefined
     let bound: Awaited<ReturnType<typeof bindCheckup>>
     try {
       bound = await bindCheckup(toolDeps.kotak, chat)
@@ -107,7 +162,7 @@ export function createAgentChatRoute(deps: AiDeps) {
     const calls: KotakToolCall[] = []
     try {
       const reply = await agent.run({
-        system: [AGENT_RULES, KOPI, bound.about].join('\n\n'),
+        system: [AGENT_RULES, KOPI, bound.about, ...(promptLanguageRule ? [promptLanguageRule] : [])].join('\n\n'),
         messages: request.data.messages,
         tools: createKotakClaudeTools(toolDeps, { checkup: bound.checkup, onCall: (call) => calls.push(call) }),
         max_tokens: MAX_TOKENS,
@@ -120,7 +175,7 @@ export function createAgentChatRoute(deps: AiDeps) {
       calls.forEach((call) => collectSources(call.output, sources))
       const response = {
         reply,
-        tools: calls.map((call) => ({ name: call.name, label: label(call) })),
+        tools: calls.map((call) => ({ name: call.name, label: label(call, request.data.lang) })),
         sources: [...sources.values()]
       }
       return context.json(AgentChatResponseSchema.parse(response))

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from '../ui/cn'
 
 export interface PageTransitionProps {
@@ -52,6 +54,7 @@ function OpeningBox({ open, className }: { open: boolean; className?: string }) 
 
 // Full-screen "Opening the Box…" moment between the last question and the results.
 export function PageTransition({ onDone, durationMs = 2400, load }: PageTransitionProps) {
+  const t = useText(uiText)
   const [open, setOpen] = useState(false)
   const [progress, setProgress] = useState(0)
   const onDoneRef = useRef(onDone)
@@ -92,16 +95,16 @@ export function PageTransition({ onDone, durationMs = 2400, load }: PageTransiti
       <div className="flex h-[264px] w-[288px] items-center justify-center lg:h-[352px] lg:w-[384px]">
         <OpeningBox open={open} className="h-[114px] w-[142px] lg:h-[170px] lg:w-[204px]" />
       </div>
-      <p className="text-title-l lg:text-display-l">Opening the Box…</p>
-      <p className="max-w-[300px] text-body-l lg:max-w-[520px]">Kopi is reading three sources for you.</p>
+      <p className="text-title-l lg:text-display-l">{t.openingBox}</p>
+      <p className="max-w-[300px] text-body-l lg:max-w-[520px]">{t.readingSourcesForYou}</p>
       <div className="w-[280px] space-y-2 lg:w-[360px]">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-label-m">Reading Three Sources</span>
+          <span className="text-label-m">{t.readingSources}</span>
           <span className="font-mono text-mono-s">{progress}%</span>
         </div>
         <div
           role="progressbar"
-          aria-label="Reading Three Sources"
+          aria-label={t.readingSources}
           aria-valuenow={progress}
           aria-valuemin={0}
           aria-valuemax={100}
@@ -114,7 +117,7 @@ export function PageTransition({ onDone, durationMs = 2400, load }: PageTransiti
           />
         </div>
       </div>
-      <p className="font-mono text-mono-s">O*NET · Economic Index · DOSM</p>
+      <p className="font-mono text-mono-s">{t.sourcesSummary}</p>
     </div>
   )
 }

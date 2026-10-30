@@ -1,0 +1,513 @@
+{
+  "explainers": {
+    "15-1254.00": {
+      "web-site-building": {
+        "basic": "Tugas ini melibatkan pembinaan halaman internet asas menggunakan alat pengarangan visual dengan tunjuk ajar mentor. Contohnya, membina halaman kenalan pejabat yang mengandungi teks, imej dan kotak serahan mengikut susun atur pasukan."
+      },
+      "web-specifications-and-standards": {
+        "basic": "Kerja ini melibatkan pembacaan artikel, manual dan penerbitan dalam talian untuk mengikuti perkembangan alat laman web terkini. Contohnya, menelaah garis panduan baharu tentang kemas kini pelayar internet untuk memahami perubahan yang mungkin menjejaskan laman web syarikat."
+      },
+      "web-testing-and-updates": {
+        "advanced": "Peranan ini melibatkan penyusunan cara fail laman web disimpan pada komputer hos dan mengarahkan pengemaskinian kandungan. Contohnya, mereka bentuk struktur folder untuk imej produk dan menyelaras penyiaran sepanduk harga percutian yang dikemas kini di seluruh laman web."
+      }
+    },
+    "15-1255.00": {
+      "site-maintenance-and-seo": {
+        "advanced": "Kerja ini melibatkan penyeliaan baik pulih besar laman web dan peningkatan kedudukan enjin carian untuk menarik lebih ramai pelawat. Contohnya, menyusun semula kandungan laman dan memperhalusi huraian kata kunci supaya halaman syarikat muncul di tangga teratas hasil carian.",
+        "basic": "Tugas ini melibatkan penyemakan pautan halaman web yang rosak dan penyerahan alamat laman kepada enjin carian di bawah penyeliaan. Contohnya, mengklik butang navigasi untuk memastikan ia berfungsi dan menyerahkan pautan laman baharu ke direktori carian."
+      },
+      "team-collaboration-and-strategy": {
+        "advanced": "Peranan ini melibatkan penyatuan pelbagai jabatan perniagaan untuk menyelesaikan pertikaian teknikal dan menyelaraskan ciri beli-belah dalam talian. Contohnya, membantu pasukan pemasaran dan pengaturcaraan bersetuju tentang reka bentuk halaman pembayaran yang melariskan jualan produk di samping berfungsi lancar."
+      },
+      "technical-specifications-and-standards": {
+        "advanced": "Tugas ini melibatkan penetapan peraturan laman web untuk privasi pengguna dan kebolehcapaian bagi orang kurang upaya. Contohnya, mengarahkan pereka bentuk menyertakan teks pembaca skrin pada imej dan memastikan persetujuan kuki pengguna mematuhi undang-undang privasi antarabangsa."
+      },
+      "visual-design-and-prototyping": {
+        "advanced": "Kerja ini melibatkan kajian gaya visual kreatif dan pembimbingan papan konsep awal untuk projek digital utama. Contohnya, menggabungkan kolaj imej dan warna untuk menentukan hala tuju estetika aplikasi beli-belah telefon pintar yang baharu."
+      },
+      "web-development-and-coding": {
+        "advanced": "Peranan ini melibatkan pemilihan bahasa pengaturcaraan terbaik dan penulisan kod latar yang rumit untuk laman web utama. Contohnya, memilih alat pengekodan untuk platform penstriman dan memprogramkan menu interaktif yang menampung jutaan penonton serentak.",
+        "basic": "Kerja ini melibatkan penyusunan susun atur halaman web yang mudah menggunakan perisian reka bentuk dengan bantuan pereka bentuk kanan. Contohnya, meletakkan galeri foto dan teks pengenalan pada halaman acara sambil mengikuti olokan reka bentuk yang diberikan."
+      }
+    },
+    "43-3031.00": {
+      "cash-handling": {
+        "advanced": "Pekerja ini menyelia prosedur wang fizikal dan memeriksa rekod kewangan untuk ketepatan. Contohnya, menetapkan garis panduan deposit bank harian untuk pejabat dan mengaudit resit kad kredit berbanding lejar bayaran pelanggan."
+      },
+      "financial-calculations": {
+        "advanced": "Pekerja ini menyelesaikan percanggahan matematik yang sukar dalam rekod perakaunan dan menyemak pengiraan rakan sekerja. Contohnya, mengira semula faedah kompaun dan jadual susut nilai bagi peralatan syarikat serta membetulkan potongan cukai gaji yang dikira oleh kerani lain."
+      },
+      "financial-data-accuracy": {
+        "advanced": "Pekerja ini menetapkan standard untuk menyemak ketepatan lejar dan melatih rakan sekerja menyemak rekod kewangan. Contohnya, menyediakan senarai semak semakan akhir bulan dan membimbing pembantu kira-kira muda untuk memastikan jumlah invois sepadan dengan deposit penyata bank."
+      },
+      "office-administration": {
+        "advanced": "Pekerja ini menyelaras aliran kerja pentadbiran dan mengajar kakitangan cara mengkategorikan dokumen. Contohnya, menyusun semula proses penghalaan akaun belum bayar dan melatih kerani menetapkan kod akaun perbelanjaan yang betul pada bil utiliti yang diterima.",
+        "basic": "Pekerja ini menguruskan kerja kertas pejabat dan mengendalikan pertanyaan telefon mengikut arahan mudah. Contohnya, memfailkan invois pembekal mengikut abjad dalam kabinet fail dan menjawab panggilan masuk untuk menyambungkan pelanggan ke jabatan yang betul."
+      }
+    }
+  },
+  "roles": {
+    "15-1254.00": {
+      "corners": {
+        "technical-documentation": {
+          "name": "Dokumentasi teknikal",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mendokumenkan faktor teknikal kompleks seperti beban pelayan dan lebar jalur.",
+            "basic": "Saya masih perlukan panduan langkah demi langkah untuk merekodkan keputusan ujian ringkas."
+          },
+          "statements": {
+            "advanced": "Saya boleh mendokumenkan faktor teknikal kompleks seperti beban pelayan dan lebar jalur.",
+            "basic": "Saya boleh merekodkan keputusan ujian ringkas dengan bimbingan.",
+            "working": "Saya boleh menulis pelan dan prosedur ujian terperinci secara kendiri."
+          }
+        },
+        "web-design-and-databases": {
+          "name": "Reka bentuk web dan pangkalan data",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mencipta model dan prototaip web yang kompleks untuk sistem baharu.",
+            "basic": "Saya masih perlu dibimbing untuk menganalisis keperluan pengguna bagi menyenaraikan keperluan teknikal asas."
+          },
+          "statements": {
+            "advanced": "Saya boleh mencipta model dan prototaip web yang kompleks untuk sistem baharu.",
+            "basic": "Saya boleh menganalisis keperluan pengguna untuk menyenaraikan keperluan teknikal asas.",
+            "working": "Saya boleh membangunkan pangkalan data yang menyokong aplikasi web."
+          }
+        },
+        "web-performance-and-support": {
+          "name": "Prestasi dan sokongan web",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mencadangkan dan melaksanakan penambahbaikan perkakasan atau perisian pelayan.",
+            "basic": "Saya masih perlukan panduan langkah demi langkah untuk menjawab pertanyaan e-mel pengguna."
+          },
+          "statements": {
+            "advanced": "Saya boleh mencadangkan dan melaksanakan penambahbaikan perkakasan atau perisian pelayan.",
+            "basic": "Saya boleh menjawab pertanyaan e-mel pengguna dengan bimbingan.",
+            "working": "Saya boleh bekerjasama dengan pasukan untuk menyelesaikan isu laman web."
+          }
+        },
+        "web-site-building": {
+          "name": "Pembinaan laman web",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk memilih bahasa pengaturcaraan dan alat yang paling sesuai untuk projek web yang kompleks.",
+            "basic": "Saya masih perlu dibimbing untuk membina laman web ringkas menggunakan alat pengarangan."
+          },
+          "statements": {
+            "advanced": "Saya boleh memilih bahasa pengaturcaraan dan alat yang paling sesuai untuk projek web yang kompleks.",
+            "basic": "Saya boleh membina laman web ringkas menggunakan alat pengarangan dengan bimbingan.",
+            "working": "Saya boleh menulis kod sokongan untuk aplikasi web secara kendiri."
+          }
+        },
+        "web-specifications-and-standards": {
+          "name": "Spesifikasi dan standard web",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk membangunkan prosedur bagi semakan dan penyelenggaraan laman web yang berterusan.",
+            "basic": "Saya masih perlukan bantuan untuk mengekalkan pengetahuan tentang teknologi web melalui pembacaan."
+          },
+          "statements": {
+            "advanced": "Saya boleh membangunkan prosedur untuk semakan dan penyelenggaraan laman web yang berterusan.",
+            "basic": "Saya boleh mengekalkan pengetahuan tentang teknologi web melalui pembacaan.",
+            "working": "Saya boleh menulis huraian terperinci tentang spesifikasi laman web."
+          }
+        },
+        "web-testing-and-updates": {
+          "name": "Pengujian dan kemas kini web",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengarahkan kemas kini laman web dan menyediakan struktur direktori pelayan.",
+            "basic": "Saya masih perlukan bantuan untuk menjalankan ujian asas laman web."
+          },
+          "statements": {
+            "advanced": "Saya boleh mengarahkan kemas kini laman web dan menyediakan struktur direktori pelayan.",
+            "basic": "Saya boleh menjalankan ujian asas laman web dengan senarai semak.",
+            "working": "Saya boleh menilai kod untuk keserasian pelayar dan peranti."
+          }
+        }
+      }
+    },
+    "15-1255.00": {
+      "corners": {
+        "site-maintenance-and-seo": {
+          "name": "Penyelenggaraan laman dan SEO",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengarahkan kemas kini laman web yang kompleks dan mengoptimumkan pendaftaran enjin carian bagi meningkatkan trafik dengan ketara.",
+            "basic": "Saya masih perlu dibimbing untuk menyemak pautan dan mendaftarkan laman web dengan enjin carian."
+          },
+          "statements": {
+            "advanced": "Saya boleh mengarahkan kemas kini laman web yang kompleks dan mengoptimumkan pendaftaran enjin carian untuk meningkatkan trafik dengan ketara.",
+            "basic": "Saya boleh menyemak pautan dan mendaftarkan laman web dengan enjin carian dengan bimbingan.",
+            "working": "Saya boleh mengenal pasti masalah daripada ujian, membetulkannya, dan melakukan kemas kini rutin laman web secara kendiri."
+          }
+        },
+        "team-collaboration-and-strategy": {
+          "name": "Kerjasama pasukan dan strategi",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengetuai pasukan pelbagai fungsi yang menyelesaikan konflik dan mengintegrasikan strategi e-dagang dengan pembangunan web.",
+            "basic": "Saya masih perlukan bantuan untuk menyampaikan butiran projek kepada ahli pasukan."
+          },
+          "statements": {
+            "advanced": "Saya boleh mengetuai pasukan pelbagai fungsi untuk menyelesaikan konflik dan mengintegrasikan strategi e-dagang dengan pembangunan web.",
+            "basic": "Saya boleh menyampaikan butiran projek kepada ahli pasukan dengan bimbingan.",
+            "working": "Saya boleh bekerjasama dengan pembangun dan pengurusan untuk mengutamakan keperluan dan menyiapkan projek pembangunan web."
+          }
+        },
+        "technical-specifications-and-standards": {
+          "name": "Spesifikasi dan standard teknikal",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menetapkan standard teknikal bagi kebolehcapaian dan privasi sambil membimbing pasukan tentang keperluan undang-undang dan prestasi yang kompleks.",
+            "basic": "Saya masih perlukan panduan langkah demi langkah untuk mendokumenkan garis panduan gaya asas bagi kandungan laman web."
+          },
+          "statements": {
+            "advanced": "Saya boleh menetapkan standard teknikal untuk kebolehcapaian dan privasi, serta membimbing pasukan tentang keperluan undang-undang dan prestasi yang kompleks.",
+            "basic": "Saya boleh mendokumenkan garis panduan gaya asas untuk kandungan laman web dengan penyeliaan.",
+            "working": "Saya boleh membangunkan spesifikasi teknikal dan prosedur terperinci untuk semakan laman web yang berterusan secara kendiri."
+          }
+        },
+        "user-research-and-testing": {
+          "name": "Kajian pengguna dan pengujian",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka jadual ujian menyeluruh yang merangkumi semua jenis pelayar dan peranti bagi memastikan kebolehpercayaan sistem.",
+            "basic": "Saya masih perlu dibimbing untuk mengumpul maklum balas pengguna dan mendokumenkan keperluan reka bentuk asas."
+          },
+          "statements": {
+            "advanced": "Saya boleh mereka jadual ujian menyeluruh yang merangkumi semua jenis pelayar dan peranti untuk memastikan kebolehpercayaan sistem.",
+            "basic": "Saya boleh mengumpul maklum balas pengguna dan mendokumenkan keperluan reka bentuk asas dengan bimbingan.",
+            "working": "Saya boleh menjalankan ujian laman web mengikut jadual yang dirancang dan menganalisis keputusan untuk meningkatkan kualiti reka bentuk."
+          }
+        },
+        "visual-design-and-prototyping": {
+          "name": "Reka bentuk visual dan prototaip",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengkaji dan menerapkan penyelesaian visual yang inovatif sambil mengarahkan aktiviti pra-pengeluaran seperti papan mood untuk projek yang kompleks.",
+            "basic": "Saya masih perlu dibimbing untuk mencipta templat halaman ringkas dan susun atur imej."
+          },
+          "statements": {
+            "advanced": "Saya boleh mengkaji dan menerapkan penyelesaian visual yang inovatif, serta mengarahkan aktiviti pra-pengeluaran seperti papan mood untuk projek yang kompleks.",
+            "basic": "Saya boleh mencipta templat halaman ringkas dan susun atur imej dengan bimbingan.",
+            "working": "Saya boleh membangunkan konsep reka bentuk visual dan gambar rajah interaksi yang memenuhi matlamat projek dan keperluan pengguna."
+          }
+        },
+        "web-development-and-coding": {
+          "name": "Pembangunan web dan pengekodan",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menulis kod sokongan yang kompleks dan memilih bahasa pengaturcaraan yang paling sesuai untuk aplikasi web berskala besar.",
+            "basic": "Saya masih perlukan bantuan untuk menggunakan alat pengarangan bagi membina laman web ringkas."
+          },
+          "statements": {
+            "advanced": "Saya boleh menulis kod sokongan yang kompleks dan memilih bahasa pengaturcaraan yang paling sesuai untuk aplikasi web berskala besar.",
+            "basic": "Saya boleh menggunakan alat pengarangan untuk membina laman web ringkas dengan bimbingan.",
+            "working": "Saya boleh mereka bentuk dan menyelenggara laman web menggunakan bahasa skrip dan alat pengurusan kandungan secara kendiri."
+          }
+        }
+      }
+    },
+    "43-3031.00": {
+      "corners": {
+        "accounting-software-entry": {
+          "name": "Kemasukan perisian perakaunan",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk melatih kakitangan baharu menggunakan perisian perakaunan bagi merekod dan menganalisis data.",
+            "basic": "Saya masih perlukan panduan langkah demi langkah untuk memasukkan data kewangan ke dalam perisian perakaunan."
+          },
+          "statements": {
+            "advanced": "Saya boleh melatih kakitangan baharu menggunakan perisian perakaunan untuk merekod dan menganalisis data.",
+            "basic": "Saya boleh memasukkan data kewangan ke dalam perisian perakaunan dengan panduan langkah demi langkah.",
+            "working": "Saya boleh merekod dan menyimpan maklumat kewangan menggunakan perisian perakaunan secara kendiri."
+          }
+        },
+        "cash-handling": {
+          "name": "Pengendalian tunai",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengurus prosedur pengendalian tunai dan mengaudit rekod bayaran.",
+            "basic": "Saya masih perlukan bantuan untuk menerima dan merekodkan bayaran tunai."
+          },
+          "statements": {
+            "advanced": "Saya boleh mengurus prosedur pengendalian tunai dan mengaudit rekod bayaran.",
+            "basic": "Saya boleh menerima dan merekodkan bayaran tunai dengan penyeliaan.",
+            "working": "Saya boleh merekod dan memasukkan tunai, cek dan baucar ke bank secara kendiri."
+          }
+        },
+        "financial-calculations": {
+          "name": "Pengiraan kewangan",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyelesaikan masalah pengiraan kewangan yang kompleks dan menyemak kerja orang lain.",
+            "basic": "Saya masih perlukan panduan langkah demi langkah untuk melakukan pengiraan kewangan ringkas seperti jumlah dan diskaun."
+          },
+          "statements": {
+            "advanced": "Saya boleh menyelesaikan masalah pengiraan kewangan yang kompleks dan menyemak kerja orang lain.",
+            "basic": "Saya boleh melakukan pengiraan kewangan ringkas seperti jumlah dan diskaun.",
+            "working": "Saya boleh mendebit, mengkredit dan menjumlahkan akaun menggunakan hamparan secara kendiri."
+          }
+        },
+        "financial-data-accuracy": {
+          "name": "Ketepatan data kewangan",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menetapkan standard bagi menyemak ketepatan data kewangan dan membimbing orang lain.",
+            "basic": "Saya masih perlu dibimbing untuk menyemak angka dan catatan bagi mengesan kesilapan."
+          },
+          "statements": {
+            "advanced": "Saya boleh menetapkan standard untuk menyemak ketepatan data kewangan dan membimbing orang lain.",
+            "basic": "Saya boleh menyemak angka dan catatan untuk kesilapan dengan senarai semak.",
+            "working": "Saya boleh menyelaras rekod dan melaporkan percanggahan yang ditemui secara kendiri."
+          }
+        },
+        "office-administration": {
+          "name": "Pentadbiran pejabat",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyusun aliran kerja pejabat dan membimbing kakitangan tentang pengekodan dokumen.",
+            "basic": "Saya masih perlu dibimbing untuk memfailkan dokumen dan menjawab telefon."
+          },
+          "statements": {
+            "advanced": "Saya boleh menyusun aliran kerja pejabat dan membimbing kakitangan tentang pengekodan dokumen.",
+            "basic": "Saya boleh memfailkan dokumen dan menjawab telefon dengan arahan asas.",
+            "working": "Saya boleh mengekod dokumen dan mengendalikan surat-menyurat rutin secara kendiri."
+          }
+        },
+        "regulatory-compliance": {
+          "name": "Pematuhan peraturan",
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk memastikan pematuhan pasukan terhadap peraturan dan dasar kewangan yang kompleks.",
+            "basic": "Saya masih perlukan bantuan untuk mematuhi dasar dan prosedur syarikat bagi rekod kewangan."
+          },
+          "statements": {
+            "advanced": "Saya boleh memastikan pematuhan pasukan terhadap peraturan dan dasar kewangan yang kompleks.",
+            "basic": "Saya boleh mematuhi dasar dan prosedur syarikat untuk rekod kewangan.",
+            "working": "Saya boleh mengakses maklumat kewangan berkomputer untuk menjawab soalan akaun tertentu."
+          }
+        }
+      }
+    }
+  },
+  "sdg_targets": {
+    "1.1": {
+      "reason": "Kerja perkhidmatan sosial yang menyokong pelanggan dapat membantu orang yang hidup dalam kemiskinan melampau mendapatkan bantuan yang mereka perlukan.",
+      "text": "Menjelang 2030, membasmi kemiskinan melampau untuk semua orang di mana-mana, yang pada masa ini diukur sebagai orang yang hidup dengan kurang daripada $1.25 sehari"
+    },
+    "1.2": {
+      "reason": "Merancang sumber dengan baik dan bertindak balas terhadap halangan dapat membantu melindungi pendapatan yang menjauhkan orang daripada kemiskinan.",
+      "text": "Menjelang 2030, mengurangkan sekurang-kurangnya separuh kadar lelaki, wanita dan kanak-kanak semua peringkat umur yang hidup dalam kemiskinan dalam semua dimensinya mengikut takrifan kebangsaan"
+    },
+    "10.2": {
+      "reason": "Mendekati dan membantu orang daripada setiap peringkat umur dan keupayaan membantu merangkumi mereka dalam kehidupan sosial dan ekonomi.",
+      "text": "Menjelang 2030, memperkasa dan mempromosikan keterangkuman sosial, ekonomi dan politik semua orang, tanpa mengira umur, jantina, ketidakupayaan, kaum, etnik, asal usul, agama atau taraf ekonomi atau lain-lain"
+    },
+    "11.2": {
+      "reason": "Mengarahkan lalu lintas dan menguatkuasakan peraturan jalan raya membantu menjadikan jalan raya lebih selamat.",
+      "text": "Menjelang 2030, menyediakan akses kepada sistem pengangkutan yang selamat, berpatutan, boleh diakses dan mampan untuk semua, meningkatkan keselamatan jalan raya, terutamanya dengan meluaskan pengangkutan awam, dengan perhatian khusus kepada keperluan mereka yang berada dalam keadaan mudah terjejas, wanita, kanak-kanak, orang kurang upaya dan warga emas"
+    },
+    "11.3": {
+      "reason": "Kemahiran merancang membantu bandar dan pekan berkembang secara mampan dan terurus.",
+      "text": "Menjelang 2030, memperkukuh pembandaran yang inklusif dan mampan serta keupayaan untuk perancangan dan pengurusan penempatan manusia yang penyertaan, bersepadu dan mampan di semua negara"
+    },
+    "11.4": {
+      "reason": "Merekod, memulihara dan berkongsi budaya membantu melindungi warisan budaya dan semula jadi.",
+      "text": "Mengukuhkan usaha untuk melindungi dan memelihara warisan budaya dan semula jadi dunia"
+    },
+    "11.5": {
+      "reason": "Merancang dan menyelaras tindak balas kecemasan membantu mengurangkan kematian, kemudaratan dan kerugian yang disebabkan oleh bencana.",
+      "text": "Menjelang 2030, mengurangkan dengan ketara bilangan kematian dan bilangan orang yang terjejas serta mengurangkan dengan banyak kerugian ekonomi langsung berbanding keluaran dalam negara kasar global yang disebabkan oleh bencana, termasuk bencana berkaitan air, dengan tumpuan kepada perlindungan golongan miskin dan orang yang berada dalam keadaan mudah terjejas"
+    },
+    "11.6": {
+      "reason": "Mematuhi standard alam sekitar serta mengurus sisa dan pencemaran membantu mengurangkan kesan alam sekitar di bandar.",
+      "text": "Menjelang 2030, mengurangkan kesan alam sekitar per kapita di bandar, termasuk dengan memberi perhatian khusus kepada kualiti udara dan pengurusan sisa pepejal dan sisa lain"
+    },
+    "11.7": {
+      "reason": "Mereka bentuk dan menjaga taman serta ruang hijau dan awam yang lain membantu memastikan ia selamat dan boleh digunakan oleh semua orang.",
+      "text": "Menjelang 2030, menyediakan akses sejagat kepada ruang hijau dan awam yang selamat, inklusif dan boleh diakses, khususnya untuk wanita dan kanak-kanak, warga emas dan orang kurang upaya"
+    },
+    "12.2": {
+      "reason": "Merancang cara sumber semula jadi digunakan membantu menguruskannya secara mampan dan menggunakannya dengan cekap.",
+      "text": "Menjelang 2030, mencapai pengurusan yang mampan dan penggunaan cekap sumber semula jadi"
+    },
+    "12.3": {
+      "reason": "Memeriksa hasil ladang dan cara ia dikendalikan semasa pengangkutan dapat mengesan penyakit dan kerosakan lebih awal, yang dapat mengurangkan kehilangan makanan selepas tuai.",
+      "text": "Menjelang 2030, mengurangkan separuh sisa makanan per kapita global di peringkat runcit dan pengguna serta mengurangkan kehilangan makanan sepanjang rantaian pengeluaran dan bekalan, termasuk kehilangan lepas tuai"
+    },
+    "12.4": {
+      "reason": "Membangunkan kaedah kawalan perosak dan rumpai serta menguji sampel untuk pencemaran dapat membantu mengurus bahan kimia dan mengesan apa yang sampai ke udara, air dan tanih.",
+      "text": "Menjelang 2020, mencapai pengurusan bahan kimia dan semua sisa yang mesra alam sepanjang kitaran hayatnya, selaras dengan rangka kerja antarabangsa yang dipersetujui, dan mengurangkan dengan ketara pelepasannya ke udara, air dan tanih untuk meminimumkan kesan buruknya terhadap kesihatan manusia dan alam sekitar"
+    },
+    "12.5": {
+      "reason": "Menggunakan bahan dengan cermat, membaiki barangan dan menjejaki sisa membantu mencegah dan mengurangkan apa yang dibuang.",
+      "text": "Menjelang 2030, mengurangkan dengan ketara penjanaan sisa melalui pencegahan, pengurangan, kitar semula dan penggunaan semula"
+    },
+    "12.6": {
+      "reason": "Menyediakan laporan kemampanan membantu syarikat berkongsi maklumat yang jelas tentang kesan alam sekitar dan sosial mereka dalam pelaporan berkala mereka.",
+      "text": "Menggalakkan syarikat, terutamanya syarikat besar dan transnasional, untuk mengamalkan amalan mampan dan mengintegrasikan maklumat kemampanan ke dalam kitaran pelaporan mereka"
+    },
+    "12.8": {
+      "reason": "Memberi pelanggan nasihat yang jelas tentang produk dan amalan mampan dapat membantu mereka membuat pilihan yang termaklum dan mampan.",
+      "text": "Menjelang 2030, memastikan orang di mana-mana mempunyai maklumat dan kesedaran yang relevan untuk pembangunan mampan dan gaya hidup yang selaras dengan alam semula jadi"
+    },
+    "13.1": {
+      "reason": "Mengukur, mengkaji dan merancang untuk risiko iklim dan air membantu masyarakat bersedia menghadapi dan menyesuaikan diri dengan bahaya iklim.",
+      "text": "Mengukuhkan daya tahan dan keupayaan menyesuaikan diri terhadap bahaya berkaitan iklim dan bencana alam di semua negara"
+    },
+    "13.2": {
+      "reason": "Menilai dan memantau risiko iklim dan alam sekitar membantu memberi dasar dan pelan iklim bukti yang mereka perlukan.",
+      "text": "Mengintegrasikan langkah perubahan iklim ke dalam dasar, strategi dan perancangan kebangsaan"
+    },
+    "14.2": {
+      "reason": "Menternak ikan secara bertanggungjawab dan menilai risiko pencemaran kepada air dapat membantu mengurangkan kemudaratan yang mengalir ke pantai dan laut.",
+      "text": "Menjelang 2020, mengurus dan melindungi ekosistem marin dan pantai secara mampan untuk mengelakkan kesan buruk yang ketara, termasuk dengan mengukuhkan daya tahannya, dan mengambil tindakan untuk pemulihannya bagi mencapai lautan yang sihat dan produktif"
+    },
+    "14.4": {
+      "reason": "Menangkap ikan mengikut peraturan dan mengurus stok ikan membantu melindungi stok dan membolehkannya pulih.",
+      "text": "Menjelang 2020, mengawal selia penuaian dengan berkesan dan menamatkan penangkapan ikan berlebihan, penangkapan ikan haram, tidak dilaporkan dan tidak dikawal selia serta amalan penangkapan ikan yang memusnahkan dan melaksanakan pelan pengurusan berasaskan sains, untuk memulihkan stok ikan dalam masa sesingkat yang boleh, sekurang-kurangnya ke tahap yang dapat menghasilkan hasil mampan maksimum sebagaimana yang ditentukan oleh ciri biologinya"
+    },
+    "15.1": {
+      "reason": "Mengukur, merancang dan mengurus tanah dan hutan membantu memulihara dan memulihkan ekosistem daratan dan air tawar.",
+      "text": "Menjelang 2020, memastikan pemuliharaan, pemulihan dan penggunaan mampan ekosistem daratan dan air tawar pedalaman serta perkhidmatannya, khususnya hutan, tanah lembap, gunung dan tanah kering, selaras dengan obligasi di bawah perjanjian antarabangsa"
+    },
+    "15.2": {
+      "reason": "Merancang kerja pemulihan membantu memulihkan hutan yang terosot dan kawasan semula jadi yang lain.",
+      "text": "Menjelang 2020, mempromosikan pelaksanaan pengurusan mampan semua jenis hutan, menghentikan penebangan hutan, memulihkan hutan yang terosot dan meningkatkan dengan ketara penghutanan dan penghutanan semula di seluruh dunia"
+    },
+    "15.3": {
+      "reason": "Memulihara tanih serta mengurus tanah dan tumbuh-tumbuhan membantu memulihkan tanah dan tanih yang terosot.",
+      "text": "Menjelang 2030, memerangi penggurunan, memulihkan tanah dan tanih yang terosot, termasuk tanah yang terjejas oleh penggurunan, kemarau dan banjir, dan berusaha mencapai dunia neutral dari segi degradasi tanah"
+    },
+    "15.5": {
+      "reason": "Mengukur hidupan liar dan merancang pengurusannya membantu melindungi habitat dan spesies terancam.",
+      "text": "Mengambil tindakan segera dan ketara untuk mengurangkan degradasi habitat semula jadi, menghentikan kehilangan biodiversiti dan, menjelang 2020, melindungi dan mencegah kepupusan spesies terancam"
+    },
+    "16.1": {
+      "reason": "Kemahiran yang mencegah keganasan dan memastikan keselamatan orang ramai membantu mengurangkan keganasan dan kematian yang disebabkannya.",
+      "text": "Mengurangkan dengan ketara semua bentuk keganasan dan kadar kematian yang berkaitan di mana-mana"
+    },
+    "16.3": {
+      "reason": "Hukuman yang adil dan konsisten membantu menegakkan kedaulatan undang-undang dan layanan sama rata di bawahnya.",
+      "text": "Mempromosikan kedaulatan undang-undang di peringkat kebangsaan dan antarabangsa serta memastikan akses sama rata kepada keadilan untuk semua"
+    },
+    "16.6": {
+      "reason": "Menyimpan rekod yang tepat, menyemak fakta dan melaporkan secara terbuka adalah sebahagian daripada amalan harian mengendalikan institusi yang berkesan, bertanggungjawab dan telus.",
+      "text": "Membangunkan institusi yang berkesan, bertanggungjawab dan telus di semua peringkat"
+    },
+    "16.10": {
+      "reason": "Membantu orang mencari dan menggunakan maklumat menyokong akses awam kepada maklumat.",
+      "text": "Memastikan akses awam kepada maklumat dan melindungi kebebasan asas, selaras dengan perundangan kebangsaan dan perjanjian antarabangsa"
+    },
+    "17.17": {
+      "reason": "Membina perkongsian masyarakat membantu menghimpunkan badan awam, perniagaan dan kumpulan masyarakat untuk bekerjasama mencapai matlamat bersama.",
+      "text": "Menggalakkan dan mempromosikan perkongsian awam, awam-swasta dan masyarakat sivil yang berkesan, berdasarkan pengalaman dan strategi sumber perkongsian"
+    },
+    "2.3": {
+      "reason": "Penyelidikan biologi dan tanaman serta pemeriksaan lapangan menambah pengetahuan pertanian yang dapat membantu pengeluar makanan berskala kecil meningkatkan hasil.",
+      "text": "Menjelang 2030, menggandakan produktiviti pertanian dan pendapatan pengeluar makanan berskala kecil, khususnya wanita, orang asal, petani keluarga, penternak dan nelayan, termasuk melalui akses yang selamat dan sama rata kepada tanah, sumber dan input produktif lain, pengetahuan, perkhidmatan kewangan, pasaran dan peluang untuk penambahan nilai dan pekerjaan bukan ladang"
+    },
+    "2.4": {
+      "reason": "Amalan tanaman, ternakan dan tanah yang baik membantu menjadikan pertanian lebih produktif dan berdaya tahan di samping melindungi tanih dan ekosistem.",
+      "text": "Menjelang 2030, memastikan sistem pengeluaran makanan yang mampan dan melaksanakan amalan pertanian berdaya tahan yang meningkatkan produktiviti dan pengeluaran, yang membantu mengekalkan ekosistem, yang mengukuhkan keupayaan untuk menyesuaikan diri dengan perubahan iklim, cuaca melampau, kemarau, banjir dan bencana lain serta yang menambah baik kualiti tanah dan tanih secara beransur-ansur"
+    },
+    "3.3": {
+      "reason": "Mengesan, mencegah dan merawat penyakit berjangkit membantu memerangi penyakit berjangkit yang diliputi sasaran ini.",
+      "text": "Menjelang 2030, menamatkan wabak AIDS, tuberkulosis, malaria dan penyakit tropika yang terabai serta memerangi hepatitis, penyakit bawaan air dan penyakit berjangkit lain"
+    },
+    "3.8": {
+      "reason": "Kerja kesihatan, penjagaan dan sokongan yang mahir membantu orang mendapatkan perkhidmatan kesihatan penting yang berkualiti, yang diperlukan oleh liputan kesihatan sejagat.",
+      "text": "Mencapai liputan kesihatan sejagat, termasuk perlindungan risiko kewangan, akses kepada perkhidmatan penjagaan kesihatan penting yang berkualiti serta akses kepada ubat-ubatan dan vaksin penting yang selamat, berkesan, berkualiti dan berpatutan untuk semua"
+    },
+    "3.9": {
+      "reason": "Mengumpul sampel untuk ujian makmal membantu mengesan sisa kimia dan pencemaran lebih awal, yang dapat membantu mencegah penyakit daripadanya.",
+      "text": "Menjelang 2030, mengurangkan dengan ketara bilangan kematian dan penyakit akibat bahan kimia berbahaya serta pencemaran udara, air dan tanih"
+    },
+    "3.b": {
+      "reason": "Kemahiran penyelidikan dalam perubatan dapat menyumbang kepada pembangunan vaksin dan ubat-ubatan baharu.",
+      "text": "Menyokong penyelidikan dan pembangunan vaksin dan ubat-ubatan untuk penyakit berjangkit dan tidak berjangkit yang terutama menjejaskan negara membangun, menyediakan akses kepada ubat-ubatan dan vaksin penting yang berpatutan, selaras dengan Perisytiharan Doha mengenai Perjanjian TRIPS dan Kesihatan Awam, yang menegaskan hak negara membangun untuk menggunakan sepenuhnya peruntukan dalam Perjanjian tentang Aspek Perdagangan Hak Harta Intelek berkenaan kelonggaran untuk melindungi kesihatan awam, dan khususnya, menyediakan akses kepada ubat-ubatan untuk semua"
+    },
+    "4.1": {
+      "reason": "Mengajar dan mengurus sekolah membantu kanak-kanak menamatkan pendidikan rendah dan menengah yang berkualiti.",
+      "text": "Menjelang 2030, memastikan semua kanak-kanak perempuan dan lelaki menamatkan pendidikan rendah dan menengah yang percuma, saksama dan berkualiti yang membawa kepada hasil pembelajaran yang relevan dan berkesan"
+    },
+    "4.2": {
+      "reason": "Penjagaan dan pengajaran awal kanak-kanak membantu kanak-kanak kecil bersedia untuk sekolah rendah.",
+      "text": "Menjelang 2030, memastikan semua kanak-kanak perempuan dan lelaki mendapat akses kepada perkembangan awal kanak-kanak, penjagaan dan pendidikan prasekolah yang berkualiti supaya mereka bersedia untuk pendidikan rendah"
+    },
+    "4.3": {
+      "reason": "Mengajar dan mengurus kolej serta program latihan dapat membantu meluaskan akses kepada pendidikan teknikal, vokasional dan tertiari yang berkualiti.",
+      "text": "Menjelang 2030, memastikan akses sama rata untuk semua wanita dan lelaki kepada pendidikan teknikal, vokasional dan tertiari yang berpatutan dan berkualiti, termasuk universiti"
+    },
+    "4.4": {
+      "reason": "Membina kemahiran yang digunakan pekerjaan ini memberi anda kemahiran yang relevan untuk pekerjaan dan pekerjaan yang baik, yang disasarkan untuk dimiliki oleh lebih ramai belia dan orang dewasa.",
+      "text": "Menjelang 2030, meningkatkan dengan ketara bilangan belia dan orang dewasa yang mempunyai kemahiran yang relevan, termasuk kemahiran teknikal dan vokasional, untuk pekerjaan, pekerjaan yang baik dan keusahawanan"
+    },
+    "4.7": {
+      "reason": "Menerangkan sains kepada orang ramai membantu mereka memperoleh pengetahuan dan kemahiran yang diperlukan untuk mempromosikan pembangunan mampan.",
+      "text": "Menjelang 2030, memastikan semua pelajar memperoleh pengetahuan dan kemahiran yang diperlukan untuk mempromosikan pembangunan mampan, termasuk antara lainnya melalui pendidikan untuk pembangunan mampan dan gaya hidup mampan, hak asasi manusia, kesaksamaan gender, pemupukan budaya keamanan dan tanpa keganasan, kewarganegaraan global serta penghargaan terhadap kepelbagaian budaya dan sumbangan budaya kepada pembangunan mampan"
+    },
+    "4.c": {
+      "reason": "Membina kemahiran mengajar menambah bekalan guru yang berkelayakan.",
+      "text": "Menjelang 2030, meningkatkan dengan ketara bekalan guru yang berkelayakan, termasuk melalui kerjasama antarabangsa untuk latihan guru di negara membangun, terutamanya negara paling kurang maju dan negara pulau kecil membangun"
+    },
+    "5.4": {
+      "reason": "Menyediakan perkhidmatan penjagaan, seperti penjagaan kanak-kanak, membantu berkongsi kerja penjagaan tidak berbayar yang dilakukan keluarga.",
+      "text": "Mengiktiraf dan menghargai kerja penjagaan dan kerja rumah yang tidak berbayar melalui penyediaan perkhidmatan awam, infrastruktur dan dasar perlindungan sosial serta pemupukan tanggungjawab bersama dalam isi rumah dan keluarga sebagaimana yang sesuai di peringkat kebangsaan"
+    },
+    "6.1": {
+      "reason": "Mereka bentuk storan air serta menjejaki paras dan aliran air menyokong sistem yang membekalkan air minuman yang selamat.",
+      "text": "Menjelang 2030, mencapai akses sejagat dan saksama kepada air minuman yang selamat dan berpatutan untuk semua"
+    },
+    "6.2": {
+      "reason": "Kerja pembersihan dan sanitasi membantu memastikan tandas, bilik air dan bangunan sentiasa bersih.",
+      "text": "Menjelang 2030, mencapai akses kepada sanitasi dan kebersihan yang mencukupi dan saksama untuk semua serta menamatkan pembuangan najis di tempat terbuka, dengan memberi perhatian khusus kepada keperluan wanita dan kanak-kanak perempuan serta mereka yang berada dalam keadaan mudah terjejas"
+    },
+    "6.3": {
+      "reason": "Menguji dan merawat air membantu mengesan dan mengurangkan pencemaran, yang meningkatkan kualiti air.",
+      "text": "Menjelang 2030, meningkatkan kualiti air dengan mengurangkan pencemaran, menghapuskan pembuangan sampah dan meminimumkan pelepasan bahan kimia dan bahan berbahaya, mengurangkan separuh kadar air sisa yang tidak dirawat serta meningkatkan dengan ketara kitar semula dan penggunaan semula yang selamat di seluruh dunia"
+    },
+    "6.4": {
+      "reason": "Mengukur dan mengkaji air, serta merancang cara ia dialir dan digunakan, menyokong penggunaan air tawar yang lebih cekap dan mampan.",
+      "text": "Menjelang 2030, meningkatkan dengan ketara kecekapan penggunaan air merentas semua sektor serta memastikan pengeluaran dan bekalan air tawar yang mampan untuk menangani kekurangan air dan mengurangkan dengan ketara bilangan orang yang mengalami kekurangan air"
+    },
+    "6.6": {
+      "reason": "Mengkaji dan mengurangkan kesan alam sekitar membantu melindungi dan memulihkan sungai, tasik, tanah lembap dan ekosistem berkaitan air yang lain.",
+      "text": "Menjelang 2020, melindungi dan memulihkan ekosistem berkaitan air, termasuk gunung, hutan, tanah lembap, sungai, akuifer dan tasik"
+    },
+    "7.1": {
+      "reason": "Memasang dan memeriksa sistem tenaga seperti solar membantu membawa tenaga yang boleh dipercayai dan moden ke rumah dan perniagaan.",
+      "text": "Menjelang 2030, memastikan akses sejagat kepada perkhidmatan tenaga yang berpatutan, boleh dipercayai dan moden"
+    },
+    "7.2": {
+      "reason": "Merancang, membina dan mengendalikan sistem tenaga boleh baharu membantu meningkatkan bahagian tenaga yang datang daripada sumber boleh baharu.",
+      "text": "Menjelang 2030, meningkatkan dengan ketara bahagian tenaga boleh baharu dalam campuran tenaga global"
+    },
+    "7.3": {
+      "reason": "Menebat dan menutup bangunan mengurangkan tenaga yang dibazirkan, yang meningkatkan kecekapan tenaga.",
+      "text": "Menjelang 2030, menggandakan kadar peningkatan global dalam kecekapan tenaga"
+    },
+    "8.10": {
+      "reason": "Kemahiran kewangan dan insurans membantu bank dan syarikat insurans berkhidmat kepada pelanggan, termasuk orang yang baharu mengenali perkhidmatan kewangan.",
+      "text": "Mengukuhkan keupayaan institusi kewangan domestik untuk menggalakkan dan meluaskan akses kepada perkhidmatan perbankan, insurans dan kewangan untuk semua"
+    },
+    "8.2": {
+      "reason": "Mempelajari alat dan kaedah yang lebih baik untuk kerja ini dapat membantu meningkatkan produktiviti melalui teknologi dan inovasi.",
+      "text": "Mencapai tahap produktiviti ekonomi yang lebih tinggi melalui kepelbagaian, penaiktarafan teknologi dan inovasi, termasuk melalui tumpuan kepada sektor bernilai tambah tinggi dan berintensifkan buruh"
+    },
+    "8.3": {
+      "reason": "Kemahiran yang memulakan atau mengembangkan perniagaan, atau membentuk dasar untuknya, menyokong aktiviti produktif dan penciptaan pekerjaan.",
+      "text": "Mempromosikan dasar berorientasikan pembangunan yang menyokong aktiviti produktif, penciptaan pekerjaan yang baik, keusahawanan, kreativiti dan inovasi, serta menggalakkan pemformalan dan pertumbuhan perusahaan mikro, kecil dan sederhana, termasuk melalui akses kepada perkhidmatan kewangan"
+    },
+    "8.5": {
+      "reason": "Membina kemahiran ini membantu anda kekal dalam, atau beralih ke, pekerjaan yang produktif dan baik.",
+      "text": "Menjelang 2030, mencapai guna tenaga penuh dan produktif serta pekerjaan yang baik untuk semua wanita dan lelaki, termasuk belia dan orang kurang upaya, dan bayaran sama rata untuk kerja yang sama nilainya"
+    },
+    "8.8": {
+      "reason": "Bekerja dengan selamat serta memastikan peralatan dan kawasan kerja sentiasa teratur membantu memastikan tempat kerja selamat dan terjamin untuk orang yang bekerja di sana.",
+      "text": "Melindungi hak pekerja dan mempromosikan persekitaran kerja yang selamat dan terjamin untuk semua pekerja, termasuk pekerja migran, khususnya migran wanita, dan mereka dalam pekerjaan yang tidak menentu"
+    },
+    "9.1": {
+      "reason": "Memastikan peralatan dan stesen pemantauan berfungsi, dengan data yang tepat, menyokong infrastruktur yang boleh dipercayai dan berdaya tahan.",
+      "text": "Membangunkan infrastruktur yang berkualiti, boleh dipercayai, mampan dan berdaya tahan, termasuk infrastruktur serantau dan rentas sempadan, untuk menyokong pembangunan ekonomi dan kesejahteraan manusia, dengan tumpuan kepada akses yang berpatutan dan saksama untuk semua"
+    },
+    "9.2": {
+      "reason": "Kemahiran pengeluaran adalah sebahagian daripada industri yang disasarkan untuk berkembang secara inklusif dan mampan.",
+      "text": "Mempromosikan perindustrian yang inklusif dan mampan dan, menjelang 2030, meningkatkan dengan ketara bahagian industri dalam guna tenaga dan keluaran dalam negara kasar, selaras dengan keadaan kebangsaan, dan menggandakan bahagiannya di negara paling kurang maju"
+    },
+    "9.4": {
+      "reason": "Menaik taraf infrastruktur dan industri supaya lebih bersih dan cekap memerlukan orang yang boleh memasang, membaiki dan menambah baiknya.",
+      "text": "Menjelang 2030, menaik taraf infrastruktur dan mengubah suai industri untuk menjadikannya mampan, dengan peningkatan kecekapan penggunaan sumber dan penggunaan teknologi dan proses perindustrian yang bersih dan mesra alam yang lebih meluas, dengan semua negara bertindak mengikut keupayaan masing-masing"
+    },
+    "9.5": {
+      "reason": "Kemahiran penyelidikan dan teknikal menambah penyelidikan saintifik dan keupayaan teknologi yang disasarkan untuk berkembang.",
+      "text": "Memperkukuh penyelidikan saintifik, menaik taraf keupayaan teknologi sektor perindustrian di semua negara, khususnya negara membangun, termasuk menjelang 2030 menggalakkan inovasi dan meningkatkan dengan ketara bilangan pekerja penyelidikan dan pembangunan bagi setiap 1 juta orang serta perbelanjaan penyelidikan dan pembangunan awam dan swasta"
+    }
+  }
+}

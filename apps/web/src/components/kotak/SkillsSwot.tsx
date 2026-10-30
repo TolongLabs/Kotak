@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { Link } from '../../app/router'
 import { routes } from '../../app/routes'
 import type { Swot, SwotItem } from '../../demo/types'
+import { radarText } from '../../i18n/messages/radar'
+import { useText } from '../../i18n/text'
 import { VerdictChip } from '../ui/VerdictChip'
 import { cn } from '../ui/cn'
 
@@ -18,8 +20,10 @@ const QUADRANT_PREVIEW = 4
 
 export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: SkillsSwotProps) {
   const phone = size === 'phone'
+  const t = useText(radarText)
   const [expanded, setExpanded] = useState<string[]>([])
   const quadrants: Array<{
+    key: string
     title: string
     hint: string
     items: SwotItem[]
@@ -28,30 +32,34 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
     focus?: boolean
   }> = [
     {
-      title: 'Strengths',
-      hint: 'Lead With These',
+      key: 'strengths',
+      title: t.strengths.title,
+      hint: t.strengths.hint,
       items: swot.strengths,
       icon: CircleCheck,
       className: 'on-accent on-you-fill border-[1.5px] border-text-primary bg-radar-you-fill'
     },
     {
-      title: 'Weaknesses',
-      hint: 'Close These Next',
+      key: 'weaknesses',
+      title: t.weaknesses.title,
+      hint: t.weaknesses.hint,
       items: swot.weaknesses,
       icon: Target,
       className: 'border-[1.5px] border-text-primary bg-swot-weak',
       focus: true
     },
     {
-      title: 'Opportunities',
-      hint: 'Roles Within Reach',
+      key: 'opportunities',
+      title: t.opportunities.title,
+      hint: t.opportunities.hint,
       items: swot.opportunities,
       icon: Briefcase,
       className: 'border-[1.5px] border-text-primary bg-swot-opp'
     },
     {
-      title: 'Threats',
-      hint: 'Let AI Draft These',
+      key: 'threats',
+      title: t.threats.title,
+      hint: t.threats.hint,
       items: swot.threats,
       icon: TriangleAlert,
       className: 'border-[1.5px] border-text-primary bg-swot-threat'
@@ -66,31 +74,29 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
           <h2 id="skills-swot-title" className="text-title-s text-text-primary">
-            Your Skills SWOT
+            {t.swotTitle}
           </h2>
-          <p className="text-body-s text-text-muted">
-            Your six skills, sorted by your level and where the market is heading.
-          </p>
+          <p className="text-body-s text-text-muted">{t.swotSubtitle}</p>
         </div>
         {radarLink ? (
           <Link
             to={routes.radar}
             className="inline-flex min-h-11 shrink-0 items-center rounded-sm bg-bg-default px-1 text-label-m text-text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
           >
-            Open Radar
+            {t.openRadar}
           </Link>
         ) : null}
       </header>
 
       {/* Columns follow the card's own width: one on phones, 2x2 in a half column, one row of four at full width. */}
       <div className="grid grid-cols-1 gap-3 @md:grid-cols-2 @3xl:grid-cols-4">
-        {quadrants.map(({ title, hint, items, icon: Icon, className, focus }) => {
-          const open = expanded.includes(title)
+        {quadrants.map(({ key, title, hint, items, icon: Icon, className, focus }) => {
+          const open = expanded.includes(key)
           const shown = open ? items : items.slice(0, QUADRANT_PREVIEW)
           const hiddenCount = items.length - shown.length
           return (
             <section
-              key={title}
+              key={key}
               aria-label={title}
               className={cn(
                 'flex h-full min-w-0 flex-col rounded-md p-3',
@@ -105,7 +111,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
                 </h3>
                 {focus && items.length > 0 && (
                   <span className="rounded-full border border-text-primary px-2 py-0.5 text-label-s font-semibold text-text-primary">
-                    Focus here
+                    {t.focusHere}
                   </span>
                 )}
               </div>
@@ -123,18 +129,18 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
                   ))}
                 </ul>
               ) : (
-                <p className="text-body-s text-text-muted">None in this snapshot.</p>
+                <p className="text-body-s text-text-muted">{t.noneInSnapshot}</p>
               )}
               {items.length > QUADRANT_PREVIEW && (
                 <button
                   type="button"
                   aria-expanded={open}
                   onClick={() =>
-                    setExpanded((current) => (open ? current.filter((each) => each !== title) : [...current, title]))
+                    setExpanded((current) => (open ? current.filter((each) => each !== key) : [...current, key]))
                   }
                   className="-ml-1 inline-flex min-h-11 items-center self-start px-1 text-label-s font-semibold text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted"
                 >
-                  {open ? 'Show Less' : `+${hiddenCount} More`}
+                  {open ? t.showLess : t.moreItems(hiddenCount)}
                 </button>
               )}
             </section>
@@ -142,9 +148,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
         })}
       </div>
 
-      <p className="font-mono text-mono-s text-text-muted">
-        Fixed rules sort the skills. Each verdict cites its sources on the Radar page.
-      </p>
+      <p className="font-mono text-mono-s text-text-muted">{t.swotFootnote}</p>
     </section>
   )
 }

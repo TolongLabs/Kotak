@@ -10,6 +10,9 @@ import {
 } from '../../engine/quadrant'
 import { Link } from '../../app/router'
 import { cn } from '../ui/cn'
+import { commonText } from '../../i18n/common'
+import { rolesText } from '../../i18n/messages/roles'
+import { textNow, useText } from '../../i18n/text'
 
 export interface QuadrantMapProps {
   points: QuadrantPoint[]
@@ -24,13 +27,11 @@ export interface QuadrantMapProps {
 }
 
 // The four boxes in the plot: [left, top] cell of the 2x2 grid, the name, its line and its SWOT tint.
-const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; name: string; line: string; tint: string; divider: string }[] = [
+const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; tint: string; divider: string }[] = [
   {
     id: 'plan',
     col: 0,
     row: 0,
-    name: 'Plan',
-    line: 'Growing, not ready yet. Train for it.',
     tint: 'bg-swot-opp',
     divider: 'border-r border-b'
   },
@@ -38,8 +39,6 @@ const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; name: string; line: string; ti
     id: 'best',
     col: 1,
     row: 0,
-    name: 'Best',
-    line: 'Ready and growing. Go for it.',
     tint: 'bg-radar-you-fill',
     divider: 'border-b'
   },
@@ -47,8 +46,6 @@ const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; name: string; line: string; ti
     id: 'rethink',
     col: 0,
     row: 1,
-    name: 'Rethink',
-    line: 'Not ready, shrinking. Avoid.',
     tint: 'bg-swot-weak',
     divider: 'border-r'
   },
@@ -56,14 +53,11 @@ const BOXES: { id: BoxId; col: 0 | 1; row: 0 | 1; name: string; line: string; ti
     id: 'push',
     col: 1,
     row: 1,
-    name: 'Push',
-    line: 'Ready, shrinking. Move soon.',
     tint: 'bg-swot-threat',
     divider: ''
   }
 ]
 
-const KIND_LABEL: Record<PointKind, string> = { you: 'Your job', target: 'Your target', suggested: 'Kotak suggests' }
 // Stacking on the plot: the star on top, then the red targets, then the blue suggestions.
 const STACK: Record<PointKind, number> = { suggested: 0, target: 1, you: 2 }
 
@@ -130,20 +124,36 @@ function Marker({ kind, chart = false, className }: { kind: PointKind; chart?: b
 // The job page's own job is drawn as the star; the star is "This job" there, or "Your job" when it is the user's own.
 const markOf = (point: Placed, focusId?: string): PointKind =>
   point.id === focusId && point.kind === 'suggested' ? 'you' : point.kind
-const wordOf = (point: Placed, focusId?: string) =>
-  point.id === focusId && point.kind === 'suggested' ? 'This job' : KIND_LABEL[point.kind]
+const wordOf = (point: Placed, focusId?: string) => {
+  const t = textNow(rolesText).quadrant
+  return point.id === focusId && point.kind === 'suggested' ? t.thisJob : t.markers[point.kind]
+}
 
 // The table's Marker column uses short words so it wraps less on a phone.
-const SHORT_LABEL: Record<PointKind, string> = { you: 'Your job', target: 'Target', suggested: 'Suggests' }
-const shortWordOf = (point: Placed, focusId?: string) =>
-  point.id === focusId && point.kind === 'suggested' ? 'This job' : SHORT_LABEL[point.kind]
+const shortWordOf = (point: Placed, focusId?: string) => {
+  const t = textNow(rolesText).quadrant
+  return point.id === focusId && point.kind === 'suggested' ? t.thisJob : t.shortMarkers[point.kind]
+}
 
-const trendWord = (trend: Trend | null) => (trend ? trend[0].toUpperCase() + trend.slice(1) : 'No trend data')
-const fitWord = (fit: number | null) => (fit === null ? 'fit unknown' : `fit ${fit}%`)
-const BOX_NAME = Object.fromEntries(BOXES.map(({ id, name }) => [id, name])) as Record<BoxId, string>
+const trendWord = (trend: Trend | null) => {
+  if (!trend) return textNow(rolesText).quadrant.noTrend
+  const labels = textNow(commonText).verdicts
+  const key: Record<Trend, keyof typeof labels> = { rising: 'Rising', steady: 'Steady', declining: 'Declining' }
+  return labels[key[trend]]
+}
+const fitWord = (fit: number | null) => {
+  const t = textNow(rolesText).quadrant
+  return fit === null ? t.fitUnknownLower : t.fitLower(fit)
+}
+const displayFitWord = (fit: number | null) => {
+  const t = textNow(rolesText).quadrant
+  return fit === null ? t.fitUnknown : t.fit(fit)
+}
 // Where a dot sits, in words: its box, the steady middle line, or not placed (no fit or no trend).
-const placeWord = (point: Placed) =>
-  point.box ? BOX_NAME[point.box] : point.x !== null && point.y !== null ? 'Middle line' : 'Not placed'
+const placeWord = (point: Placed) => {
+  const t = textNow(rolesText).quadrant
+  return point.box ? t.boxes[point.box].name : point.x !== null && point.y !== null ? t.middleLine : t.notPlaced
+}
 
 // Spreads spots on one line in their given order: each lands at least `gap` after the one before, inside [from, to], as
 // close to where it wants to be as it can. Taking i gaps off the i-th spot turns "a gap apart" into "in order", which
@@ -263,14 +273,10 @@ function useNarrow() {
   return narrow
 }
 
-export function QuadrantMap({
-  points,
-  focusId,
-  title = 'Where You Stand',
-  description = 'Each dot is a job. Across: how ready you are for it. Up: it is growing.',
-  bare = false,
-  className
-}: QuadrantMapProps) {
+export function QuadrantMap({ points, focusId, title, description, bare = false, className }: QuadrantMapProps) {
+  const t = useText(rolesText)
+  const chartTitle = title ?? t.quadrant.title
+  const chartDescription = description ?? t.quadrant.description
   const narrow = useNarrow()
   const placed = useMemo(() => placePoints(points), [points])
   const focused = focusId ? placed.find((point) => point.id === focusId) : undefined
@@ -346,20 +352,20 @@ export function QuadrantMap({
     <section
       className={cn('@container space-y-4', !bare && 'surface-card p-4 lg:p-5', className)}
       aria-labelledby={bare ? undefined : 'quadrant-title'}
-      aria-label={bare ? 'Where this job sits' : undefined}
+      aria-label={bare ? t.quadrant.thisJobAria : undefined}
     >
       {!bare && (
         <header className="space-y-1">
           <h2 id="quadrant-title" className="text-title-s text-text-primary">
-            {title}
+            {chartTitle}
           </h2>
-          <p className="text-body-s text-text-muted">{description}</p>
+          <p className="text-body-s text-text-muted">{chartDescription}</p>
         </header>
       )}
 
       <div className="min-w-0">
         <p className="mb-1 flex items-center justify-end gap-1 text-label-s text-text-primary" aria-hidden="true">
-          Higher is better
+          {t.quadrant.higherIsBetter}
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
         </p>
         <div ref={plotRef} className={cn(narrow ? 'h-[340px]' : 'aspect-square', 'relative w-full')}>
@@ -368,7 +374,7 @@ export function QuadrantMap({
               ref={namesRef}
               className="grid h-full w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_minmax(0,1fr)]"
             >
-              {BOXES.map(({ id, col, row, name, line, tint, divider }) => (
+              {BOXES.map(({ id, col, row, tint, divider }) => (
                 <div
                   key={id}
                   className={cn(
@@ -383,8 +389,8 @@ export function QuadrantMap({
                     'border-text-primary'
                   )}
                 >
-                  <span className="text-label-m">{name}</span>
-                  <span className="text-label-s">{line}</span>
+                  <span className="text-label-m">{t.quadrant.boxes[id].name}</span>
+                  <span className="text-label-s">{t.quadrant.boxes[id].line}</span>
                 </div>
               ))}
             </div>
@@ -400,7 +406,7 @@ export function QuadrantMap({
                 }}
               >
                 <span className="rounded-full border-[1.5px] border-text-primary bg-accent-box px-3 text-label-s text-accent-on-box">
-                  This job: {trendWord(band.trend)}
+                  {t.quadrant.thisJobTrend(trendWord(band.trend))}
                 </span>
               </div>
             )}
@@ -414,7 +420,15 @@ export function QuadrantMap({
               <Fragment key={point.id}>
                 <button
                   type="button"
-                  aria-label={`${point.label}, ${wordOf(point, focusId)}, ${fitWord(point.fit)}, ${trendWord(point.trend)}, ${placeWord(point)}${point.box ? ' box' : ''}${point.gap ? `, Needed first: ${point.gap}` : ''}`}
+                  aria-label={t.quadrant.points(
+                    point.label,
+                    wordOf(point, focusId),
+                    fitWord(point.fit),
+                    trendWord(point.trend),
+                    placeWord(point),
+                    Boolean(point.box),
+                    point.gap
+                  )}
                   onPointerEnter={() => setHovered(point.id)}
                   onPointerLeave={() => setHovered(null)}
                   onFocus={() => setFocusedDot(point.id)}
@@ -454,17 +468,17 @@ export function QuadrantMap({
                     <p className="font-semibold">{point.label}</p>
                     <p className="flex items-center gap-1.5 text-label-s">
                       <Marker kind={markOf(point, focusId)} />
-                      {wordOf(point, focusId)} · {point.fit === null ? 'Fit unknown' : `Fit ${point.fit}%`} ·{' '}
-                      {trendWord(point.trend)}
+                      {wordOf(point, focusId)} · {displayFitWord(point.fit)} · {trendWord(point.trend)}
                     </p>
-                    {point.gap && <p className="text-label-s">Needed first: {point.gap}</p>}
+                    {point.gap && <p className="text-label-s">{t.quadrant.neededFirst(point.gap)}</p>}
                     {interactive && point.id !== focusId && (
                       <Link
                         to={`/app/jobs/${point.id}`}
                         onClick={close}
                         className="inline-flex min-h-6 items-center text-label-m text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                       >
-                        Open Job Page<span className="sr-only">: {point.label}</span>
+                        {t.quadrant.openJobPage}
+                        <span className="sr-only">{t.quadrant.openJobTitle(point.label)}</span>
                       </Link>
                     )}
                   </div>
@@ -474,49 +488,50 @@ export function QuadrantMap({
           })}
         </div>
         <div className="mt-1 flex justify-between text-label-s text-text-muted" aria-hidden="true">
-          <span>0% fit</span>
-          <span>How ready you are</span>
+          <span>{t.quadrant.fitAxis}</span>
+          <span>{t.quadrant.readinessAxis}</span>
           <span>100%</span>
         </div>
         <div className="mt-2 flex flex-wrap justify-end gap-x-4 gap-y-1 text-label-s text-text-primary">
           {marksShown.has('you') && (
             <span className="inline-flex items-center gap-1.5">
               <Marker kind="you" />
-              {starPoint && starPoint.id === focusId ? wordOf(starPoint, focusId) : 'You'}
+              {starPoint && starPoint.id === focusId ? wordOf(starPoint, focusId) : t.rolesView.chartYou}
             </span>
           )}
           {marksShown.has('target') && (
             <span className="inline-flex items-center gap-1.5">
               <Marker kind="target" />
-              Your targets
+              {t.quadrant.targetLegend}
             </span>
           )}
           {marksShown.has('suggested') && (
             <span className="inline-flex items-center gap-1.5">
               <Marker kind="suggested" />
-              Kotak suggests
+              {t.quadrant.markers.suggested}
             </span>
           )}
         </div>
       </div>
 
       <details open className="border-t border-border-subtle pt-3">
-        <summary className="min-h-11 cursor-pointer text-label-m text-text-primary">
-          Text version (See the Maths table)
-        </summary>
+        <summary className="min-h-11 cursor-pointer text-label-m text-text-primary">{t.quadrant.textVersion}</summary>
         <p className="py-2 text-body-s text-text-muted">
-          Across is your fit % (50 or more counts as ready). Up is the job&apos;s trend: Rising above the middle line,
-          Declining below, Steady on it, in no box.
+          {t.quadrant.textDescription(
+            textNow(commonText).verdicts.Rising,
+            textNow(commonText).verdicts.Declining,
+            textNow(commonText).verdicts.Steady
+          )}
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-body-s">
             <thead>
               <tr className="text-label-s text-text-muted">
-                <th className="py-1 pr-1.5 sm:pr-4">Role</th>
-                <th className="py-1 pr-1.5 sm:pr-4">Marker</th>
-                <th className="py-1 pr-1.5 sm:pr-4 text-right">Fit</th>
-                <th className="py-1 pr-1.5 sm:pr-4">Trend</th>
-                <th className="py-1">Place</th>
+                <th className="py-1 pr-1.5 sm:pr-4">{t.quadrant.role}</th>
+                <th className="py-1 pr-1.5 sm:pr-4">{t.quadrant.marker}</th>
+                <th className="py-1 pr-1.5 sm:pr-4 text-right">{t.quadrant.fitColumn}</th>
+                <th className="py-1 pr-1.5 sm:pr-4">{t.jobView.trend}</th>
+                <th className="py-1">{t.quadrant.place}</th>
               </tr>
             </thead>
             <tbody>
@@ -540,7 +555,7 @@ export function QuadrantMap({
                   {point.gap && (
                     <tr>
                       <td colSpan={5} className="pb-1 text-label-s text-text-muted">
-                        Needed first: {point.gap}
+                        {t.quadrant.neededFirst(point.gap)}
                       </td>
                     </tr>
                   )}

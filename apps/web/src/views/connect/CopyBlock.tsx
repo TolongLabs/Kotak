@@ -1,6 +1,8 @@
 import { Check, Copy } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '../../components/ui/Button'
+import { changesText } from '../../i18n/messages/changes'
+import { useText } from '../../i18n/text'
 
 export interface CopyBlockProps {
   // What the text is, for the copy button's label and the toast, e.g. "MCP URL".
@@ -13,6 +15,7 @@ export interface CopyBlockProps {
 
 // Text to paste somewhere else, with a copy button. The text stays selectable for browsers that block the clipboard.
 export function CopyBlock({ name, caption, text, onCopy }: CopyBlockProps) {
+  const t = useText(changesText)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -43,7 +46,7 @@ export function CopyBlock({ name, caption, text, onCopy }: CopyBlockProps) {
           iconStart={<Icon className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />}
           onClick={copy}
         >
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? t.copied : t.copy}
           <span className="sr-only"> {name}</span>
         </Button>
       </div>

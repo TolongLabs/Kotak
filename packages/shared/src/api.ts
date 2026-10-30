@@ -342,6 +342,9 @@ export const AgentChatCheckupSchema = z
     path: ['role_code']
   })
 
+// The interface languages (#431).
+export const LocaleSchema = z.enum(['en', 'ms', 'zh'])
+
 export const AgentChatRequestSchema = z
   .object({
     messages: z
@@ -352,7 +355,10 @@ export const AgentChatRequestSchema = z
         message: "The conversation starts and ends with the user's turn."
       }),
     // null before the user has a check-up: Kopi then points to the check-up and answers general questions.
-    checkup: AgentChatCheckupSchema.nullable()
+    checkup: AgentChatCheckupSchema.nullable(),
+    // The interface language (#431); Kopi replies in Bahasa Malaysia for 'ms', Simplified Chinese for 'zh'. Absent
+    // means English.
+    lang: LocaleSchema.optional()
   })
   .strict()
 

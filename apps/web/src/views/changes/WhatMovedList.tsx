@@ -1,10 +1,13 @@
 import type { MovedRow } from './whatMoved'
+import { changesText } from '../../i18n/messages/changes'
+import { useText } from '../../i18n/text'
 
 export function WhatMovedList({ rows }: { rows: MovedRow[] }) {
+  const t = useText(changesText)
   return (
     <section aria-labelledby="what-moved-title" className="space-y-3">
       <h2 id="what-moved-title" className="text-title-m text-text-primary">
-        What Moved
+        {t.whatMoved}
       </h2>
       <ul className="divide-y divide-border-subtle rounded-md border border-border-subtle bg-bg-default">
         {rows.map((row) => (

@@ -1,5 +1,7 @@
 import { SdgTargetChip } from '../../components/kotak/SdgReasonChip'
 import { useSdgReasons } from '../../engine/bundle'
+import { roadmapText, type SdgReasonKey } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 import { fmt, pathTargetTotals, type TimelineStep } from './planSupport'
 
 // What This Path Contributes To (#391): the plan's SDG targets summed over its steps, each with how many steps and
@@ -8,6 +10,7 @@ import { fmt, pathTargetTotals, type TimelineStep } from './planSupport'
 // as it does on the steps.
 
 export function PathContributionCard({ steps, impactArea }: { steps: TimelineStep[]; impactArea: number | null }) {
+  const t = useText(roadmapText)
   const reasons = useSdgReasons()
   const rows = pathTargetTotals(steps)
   if (rows.length === 0) return null
@@ -21,12 +24,10 @@ export function PathContributionCard({ steps, impactArea }: { steps: TimelineSte
     >
       <div className="space-y-1">
         <h2 id="path-contribution-title" className="text-title-s text-text-primary">
-          What This Path Contributes To
+          {t.path.title}
         </h2>
         <p className="text-body-s text-text-muted">
-          The UN SDG {rows.length === 1 ? 'target' : 'targets'} your {steps.length}{' '}
-          {steps.length === 1 ? 'step builds' : 'steps build'} toward, from about {fmt(planHours)} learning hours.
-          {shared && ' A step tagged with two targets counts toward each.'}
+          {t.path.description(rows.length, steps.length, fmt(planHours), shared)}
         </p>
       </div>
       <ul className="grid gap-3 lg:grid-cols-2">
@@ -42,11 +43,13 @@ export function PathContributionCard({ steps, impactArea }: { steps: TimelineSte
             <div className="flex flex-wrap items-center justify-between gap-2">
               <SdgTargetChip target={target} />
               <p className="font-mono text-mono-m text-text-primary">
-                {total.steps} {total.steps === 1 ? 'step' : 'steps'} · about {fmt(total.hours)} h
+                {t.path.stepHours(total.steps, fmt(total.hours))}
               </p>
             </div>
             {reasons.status === 'ready' && (
-              <p className="text-body-s text-text-primary">{reasons.data.targets[target]?.reason}</p>
+              <p className="text-body-s text-text-primary">
+                {t.sdg.reasons[target as SdgReasonKey] ?? reasons.data.targets[target]?.reason}
+              </p>
             )}
           </li>
         ))}

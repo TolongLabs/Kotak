@@ -1,10 +1,14 @@
 import { useEffect, useId, useState } from 'react'
 import { Minus, Plus } from 'lucide-react'
 import type { SourceRef } from '../../demo/types'
+import { commonText } from '../../i18n/common'
+import { useText } from '../../i18n/text'
 import { SourceReference } from './SourceReference'
 
 /** A folded list of numbered sources. It opens when the user expands it or follows a citation to one of its entries. */
-export function SourceList({ sources, label = 'Sources' }: { sources: SourceRef[]; label?: string }) {
+export function SourceList({ sources, label }: { sources: SourceRef[]; label?: string }) {
+  const common = useText(commonText)
+  const resolvedLabel = label ?? common.sources
   const panelId = useId()
   const [open, setOpen] = useState(false)
 
@@ -32,7 +36,7 @@ export function SourceList({ sources, label = 'Sources' }: { sources: SourceRef[
         onClick={() => setOpen((value) => !value)}
         className="flex min-h-[44px] w-full items-center justify-between gap-4 px-4 py-3 text-left text-label-l text-text-primary"
       >
-        {label} ({sources.length})
+        {resolvedLabel} ({sources.length})
         <ToggleIcon className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
       </button>
       {open && (

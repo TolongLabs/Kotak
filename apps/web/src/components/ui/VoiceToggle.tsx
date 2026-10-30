@@ -1,5 +1,7 @@
 import { forwardRef, type ComponentPropsWithoutRef } from 'react'
 import { AudioLines, VolumeX } from 'lucide-react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { IconButton } from './IconButton'
 import { cn } from './cn'
 
@@ -12,10 +14,11 @@ export const VoiceToggle = forwardRef<HTMLButtonElement, VoiceToggleProps>(funct
   { muted, onToggle, className, ...props },
   ref
 ) {
+  const t = useText(uiText)
   return (
     <IconButton
       ref={ref}
-      label={muted ? 'Unmute Kopi' : 'Mute Kopi'}
+      label={muted ? t.unmuteKopi : t.muteKopi}
       icon={muted ? VolumeX : AudioLines}
       onClick={onToggle}
       aria-pressed={muted}

@@ -1,4 +1,6 @@
 import { Moon, Sun } from 'lucide-react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 import { useTheme } from './theme'
 import { switchTheme } from './themeTransition'
@@ -6,13 +8,14 @@ import { switchTheme } from './themeTransition'
 // Flips between light and dark. It matches the bar's menu button, so it has no tooltip that could spill off a phone
 // screen; the label names the theme it switches to.
 export function ThemeToggle({ className }: { className?: string }) {
+  const t = useText(uiText)
   const next = useTheme() === 'dark' ? 'light' : 'dark'
   const Icon = next === 'dark' ? Moon : Sun
 
   return (
     <button
       type="button"
-      aria-label={next === 'dark' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+      aria-label={next === 'dark' ? t.switchToDark : t.switchToLight}
       onClick={(event) => {
         const { left, top, width, height } = event.currentTarget.getBoundingClientRect()
         switchTheme(next, { x: left + width / 2, y: top + height / 2 })

@@ -11,7 +11,6 @@ import {
 } from 'lucide-react'
 import { useEffect, useState, type ComponentType } from 'react'
 import {
-  EDUCATION_LABELS,
   EducationLevelSchema,
   type EducationLevel,
   type Occupation,
@@ -24,9 +23,11 @@ import { routes } from '../app/routes'
 import { Button } from '../components/ui/Button'
 import { ChoiceCard } from '../components/ui/ChoiceCard'
 import { Select } from '../components/ui/Select'
-import { checkUpSteps, Stepper } from '../components/ui/Stepper'
+import { Stepper } from '../components/ui/Stepper'
 import { fetchRoleAliases, type RoleAlias } from '../engine/api'
 import { usePathways, useRoleIndex } from '../engine/bundle'
+import { checkupText } from '../i18n/messages/checkup'
+import { useText } from '../i18n/text'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { AreaPicker } from './checkup/AreaPicker'
 import { JobSearch } from './checkup/JobSearch'
@@ -41,86 +42,24 @@ import { TargetPicker } from './checkup/TargetPicker'
 type Icon = ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>
 type IntakeGoal = 'stay' | 'target' | 'explore' | 'unsure'
 
-const situations: { id: Situation; title: string; description: string; icon: Icon }[] = [
-  { id: 'working', title: 'Working', description: 'I have a job now.', icon: Briefcase },
-  { id: 'studying', title: 'Studying', description: 'I’m at school, college or university.', icon: BookOpen },
-  {
-    id: 'graduated',
-    title: 'Graduated, Looking for Work',
-    description: 'I’ve finished studying.',
-    icon: GraduationCap
-  },
-  { id: 'between_jobs', title: 'Between Jobs', description: 'I’ve worked, and I’m looking again.', icon: Hourglass },
-  {
-    id: 'returning',
-    title: 'Returning to Work',
-    description: 'After a break, such as caring for family.',
-    icon: RotateCcw
-  }
+const situations: { id: Situation; icon: Icon }[] = [
+  { id: 'working', icon: Briefcase },
+  { id: 'studying', icon: BookOpen },
+  { id: 'graduated', icon: GraduationCap },
+  { id: 'between_jobs', icon: Hourglass },
+  { id: 'returning', icon: RotateCcw }
 ]
 
-const goalOptions: { id: IntakeGoal; title: string; description: string; icon: Icon }[] = [
-  {
-    id: 'stay',
-    title: 'Stay Strong in My Job',
-    description: 'Keep your current role safe as AI changes it.',
-    icon: Briefcase
-  },
-  {
-    id: 'target',
-    title: 'Move to a Role I Have in Mind',
-    description: 'Name up to 3 roles; the questions test you on the first.',
-    icon: Route
-  },
-  {
-    id: 'explore',
-    title: 'Show Me Where I Could Go',
-    description: 'Pick the areas that interest you, or let your job and study lead.',
-    icon: PackageOpen
-  },
-  {
-    id: 'unsure',
-    title: 'I’m Not Sure Yet',
-    description: 'Tell Kopi what you enjoy, and it suggests roles to try.',
-    icon: Compass
-  }
+const goalOptions: { id: IntakeGoal; icon: Icon }[] = [
+  { id: 'stay', icon: Briefcase },
+  { id: 'target', icon: Route },
+  { id: 'explore', icon: PackageOpen },
+  { id: 'unsure', icon: Compass }
 ]
-
-const educationOptions = [
-  { value: '', label: 'Prefer Not to Say' },
-  ...EducationLevelSchema.options.map((level) => ({ value: level, label: educationTitle(level) }))
-]
-
-function educationTitle(level: EducationLevel) {
-  const titles: Record<EducationLevel, string> = {
-    secondary: 'SPM or Equivalent',
-    certificate: 'Certificate',
-    diploma: 'Diploma',
-    bachelor: 'Bachelor’s Degree',
-    master: 'Master’s Degree',
-    doctorate: 'Doctorate'
-  }
-  return titles[level] ?? EDUCATION_LABELS[level]
-}
 
 // Years of work as bands; each stores its lower bound, which the access rule compares with what a job needs.
-const yearOptions = [
-  { value: '', label: 'Prefer Not to Say' },
-  { value: '0', label: 'None Yet' },
-  { value: '1', label: 'Under 2 Years' },
-  { value: '2', label: '2 to 3 Years' },
-  { value: '4', label: '4 to 5 Years' },
-  { value: '6', label: '6 to 9 Years' },
-  { value: '10', label: '10 Years or More' }
-]
 
 const hasJobNow = (situation: Situation | null) => situation === 'working'
-const jobLabel = (situation: Situation | null) =>
-  situation === 'working' || situation === null
-    ? { label: 'Your Job Title', placeholder: 'Type Your Job Title' }
-    : situation === 'between_jobs' || situation === 'returning'
-      ? { label: 'Your Last Job (Optional)', placeholder: 'Type Your Last Job Title' }
-      : { label: 'A Job You’ve Had (Optional)', placeholder: 'Part-Time, Internship or Earlier Job' }
 
 // "I'm not sure" is stored as the explore goal until the user picks a role, so this browser remembers the choice
 // itself, for coming back to the start. Blocked storage just forgets it.
@@ -148,6 +87,7 @@ function initialGoal(goal: string | null, profile: Profile): IntakeGoal {
 }
 
 export function CheckUpView() {
+  const t = useText(checkupText)
   const session = useGuestSession()
   const roleIndex = useRoleIndex()
   const pathways = usePathways()
@@ -192,17 +132,7 @@ export function CheckUpView() {
   const jobNow = hasJobNow(situation)
   // Between jobs or returning, "stay" becomes getting back into the last job, once the user has named it.
   const backToLastJob = (situation === 'between_jobs' || situation === 'returning') && job !== null
-  const goals = goalOptions
-    .filter((option) => option.id !== 'stay' || jobNow || backToLastJob)
-    .map((option) =>
-      option.id === 'stay' && backToLastJob
-        ? {
-            ...option,
-            title: 'Get Back Into My Last Job',
-            description: 'Test yourself on your last job as AI changes it.'
-          }
-        : option
-    )
+  const goals = goalOptions.filter((option) => option.id !== 'stay' || jobNow || backToLastJob)
   const effectiveGoal: IntakeGoal = goal === 'stay' && !jobNow && !backToLastJob ? 'explore' : goal
   const targetIsJob = job !== null && targets.some((target) => target.onet_code === job.onet_code)
   // Without a job to test, "show me where" needs something to go on, and Kopi suggests roles before any question.
@@ -218,14 +148,34 @@ export function CheckUpView() {
           : true)
   const missing =
     situation === null
-      ? 'Pick where you are right now.'
+      ? t.copy.missingSituation
       : effectiveGoal === 'stay' && !job
-        ? 'Type your job title to test you on it.'
+        ? t.copy.missingJob
         : effectiveGoal === 'target' && targets.length === 0
-          ? 'Name the role you want.'
+          ? t.copy.missingTarget
           : effectiveGoal === 'explore' && !canStart
-            ? 'Pick an area, your field of study or a job, so Kopi has something to go on.'
+            ? t.copy.missingExplore
             : null
+
+  const educationOptions = [
+    { value: '', label: t.study.preferNot },
+    ...EducationLevelSchema.options.map((level) => ({ value: level, label: t.study.qualifications[level] }))
+  ]
+  const yearOptions = [
+    { value: '', label: t.study.preferNot },
+    { value: '0', label: t.study.years.noneYet },
+    { value: '1', label: t.study.years.underTwo() },
+    { value: '2', label: t.study.years.range(2, 3) },
+    { value: '4', label: t.study.years.range(4, 5) },
+    { value: '6', label: t.study.years.range(6, 9) },
+    { value: '10', label: t.study.years.orMore(10) }
+  ]
+  const jobSearchLabels =
+    situation === 'working' || situation === null
+      ? t.jobLabels.current
+      : situation === 'between_jobs' || situation === 'returning'
+        ? t.jobLabels.last
+        : t.jobLabels.earlier
 
   const profileNow = (): Profile => ({
     situation,
@@ -263,31 +213,23 @@ export function CheckUpView() {
     navigate(routes.questions)
   }
 
-  const speech =
-    situation === null
-      ? 'Hi, I’m Kopi. Tell me where you are, and I’ll find the roles worth checking.'
-      : suggestsFirst
-        ? 'No job to test yet? No problem. I’ll suggest roles first, then test you on the one you pick.'
-        : 'Let’s open the box on your work.'
+  const speech = situation === null ? t.speech.greeting : suggestsFirst ? t.speech.noJob : t.speech.openWork
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-6 lg:gap-8">
-      <Stepper step={1} labels={checkUpSteps} />
+      <Stepper step={1} />
       <KopiAside pose="idle" speech={speech} />
 
       <section className="space-y-1.5" aria-labelledby="about-heading">
         <h1 id="about-heading" className="text-title-m text-text-primary lg:text-title-l">
-          Tell Kopi About You
+          {t.copy.heading}
         </h1>
-        <p className="text-body-s text-text-muted">
-          Your study and situation decide which roles Kopi shows, and tell you when a role needs a qualification. It
-          stays in this browser, unless you ask Kopi a question, which sends it with your check-up.
-        </p>
+        <p className="text-body-s text-text-muted">{t.copy.intro}</p>
       </section>
 
       <section className="space-y-3" aria-labelledby="situation-heading">
         <h2 id="situation-heading" className="text-label-l text-text-primary">
-          Right Now, I’m
+          {t.copy.situationHeading}
         </h2>
         <div role="radiogroup" aria-labelledby="situation-heading" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {situations.map((option) => (
@@ -295,8 +237,8 @@ export function CheckUpView() {
               key={option.id}
               name="situation"
               value={option.id}
-              title={option.title}
-              description={option.description}
+              title={t.situations[option.id].title}
+              description={t.situations[option.id].description}
               icon={option.icon}
               selected={situation === option.id}
               onSelect={(value) => setSituation(value as Situation)}
@@ -307,29 +249,29 @@ export function CheckUpView() {
 
       <section className="space-y-3" aria-labelledby="study-heading">
         <h2 id="study-heading" className="text-label-l text-text-primary">
-          Your Study and Experience
+          {t.copy.studyHeading}
         </h2>
         <div className="grid max-w-[720px] gap-4 sm:grid-cols-2">
           <Select
-            label="Highest Qualification"
+            label={t.copy.qualification}
             options={educationOptions}
             value={education ?? ''}
             onChange={(value) => setEducation(value ? (value as EducationLevel) : null)}
           />
           <Select
-            label="Field of Study"
+            label={t.copy.field}
             options={[
-              { value: '', label: 'Prefer Not to Say' },
+              { value: '', label: t.study.preferNot },
               ...[...fields]
                 .sort((a, b) => a.label.localeCompare(b.label))
-                .map((option) => ({ value: option.id, label: option.label }))
+                .map((option) => ({ value: option.id, label: t.study.fields[option.id] ?? option.label }))
             ]}
             value={field ?? ''}
             onChange={(value) => setField(value || null)}
           />
           {situation !== 'studying' && (
             <Select
-              label="Years of Work Experience"
+              label={t.copy.yearsExperience}
               options={yearOptions}
               value={years === null ? '' : String(years)}
               onChange={(value) => setYears(value === '' ? null : Number(value))}
@@ -340,17 +282,15 @@ export function CheckUpView() {
 
       <section className="space-y-3" aria-labelledby="work-heading">
         <h2 id="work-heading" className="text-label-l text-text-primary">
-          {jobNow ? 'Your Work' : 'Your Work, If Any'}
+          {jobNow ? t.copy.work : t.copy.workIfAny}
         </h2>
-        <p className="text-body-s text-text-muted">
-          Type a job title in any language. Kopi matches it to one of 900 job profiles.
-        </p>
+        <p className="text-body-s text-text-muted">{t.copy.jobSearchHint(900)}</p>
         <JobSearch
           key={restored ? 'restored' : 'initial'}
           roles={roles}
           aliases={aliases}
           ready={roleIndex.status === 'ready'}
-          {...jobLabel(situation)}
+          {...jobSearchLabels}
           accepted={job}
           onAccept={setJob}
           initialQuery={jobQuery || job?.title || ''}
@@ -359,7 +299,7 @@ export function CheckUpView() {
 
       <section className="space-y-3" aria-labelledby="goal-heading">
         <h2 id="goal-heading" className="text-label-l text-text-primary">
-          What Do You Want?
+          {t.copy.goalHeading}
         </h2>
         <div role="radiogroup" aria-labelledby="goal-heading" className="grid gap-4 sm:grid-cols-2">
           {goals.map((option) => (
@@ -367,8 +307,12 @@ export function CheckUpView() {
               key={option.id}
               name="goal"
               value={option.id}
-              title={option.title}
-              description={option.description}
+              title={(option.id === 'stay' && backToLastJob ? t.goals.backToLastJob : t.goals[option.id]).title}
+              description={
+                option.id === 'target'
+                  ? t.goals.target.description(3)
+                  : (option.id === 'stay' && backToLastJob ? t.goals.backToLastJob : t.goals[option.id]).description
+              }
               icon={option.icon}
               selected={effectiveGoal === option.id}
               onSelect={(value) => setGoal(value as IntakeGoal)}
@@ -380,7 +324,7 @@ export function CheckUpView() {
       {effectiveGoal === 'target' && (
         <section className="space-y-3" aria-labelledby="target-role-heading">
           <h2 id="target-role-heading" className="text-label-l text-text-primary">
-            Which Roles Do You Want?
+            {t.copy.targetHeading}
           </h2>
           <TargetPicker
             roles={roles}
@@ -391,7 +335,7 @@ export function CheckUpView() {
           />
           {targetIsJob && (
             <p className="text-body-s text-state-error" role="status">
-              Pick a role different from your current job.
+              {t.copy.targetDifferent}
             </p>
           )}
         </section>
@@ -400,7 +344,8 @@ export function CheckUpView() {
       {effectiveGoal === 'explore' && pathways.status === 'ready' && (
         <section className="space-y-3" aria-labelledby="areas-heading">
           <h2 id="areas-heading" className="text-label-l text-text-primary">
-            Areas That Interest You {job ? '(Optional)' : ''}
+            {t.copy.areasHeading}
+            {job ? t.copy.optional : ''}
           </h2>
           <AreaPicker areas={pathways.data.areas} selected={areas} onChange={setAreas} />
         </section>
@@ -414,10 +359,10 @@ export function CheckUpView() {
           {suggestsFirst ? (
             <span className="inline-flex items-center gap-2">
               <Search className="h-5 w-5" aria-hidden="true" />
-              See Roles for Me
+              {t.buttons.seeRoles}
             </span>
           ) : (
-            'Start the 12 Questions'
+            t.buttons.startQuestions(12)
           )}
         </Button>
       </div>

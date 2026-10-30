@@ -18,8 +18,11 @@ import { SourceList } from '../components/kotak/SourceList'
 import { ToolsCard } from '../components/kotak/ToolsCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { checkUpSteps, Stepper } from '../components/ui/Stepper'
+import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
+import { dateLocale } from '../i18n/locale'
+import { radarText } from '../i18n/messages/radar'
+import { useText } from '../i18n/text'
 import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
@@ -43,7 +46,7 @@ function gapFor(corner: Corner, scenario: Scenario) {
 function snapshotMonth(snapshotId: string) {
   const [year, month] = snapshotId.split('-').map(Number)
   const date = new Date(Date.UTC(year, month - 1, 1))
-  return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+  return date.toLocaleDateString(dateLocale(), { month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
 
 function latestSourceVintageDate(checkup: Checkup): string | null {
@@ -57,6 +60,7 @@ function latestSourceVintageDate(checkup: Checkup): string | null {
 
 export function RadarView() {
   const session = useGuestSession()
+  const t = useText(radarText)
   const bundle = useCheckupBundle(session)
   const [scenario, setScenario] = useScenario()
   const roleData = bundle.status === 'ready' ? bundle.data : null
@@ -121,9 +125,9 @@ export function RadarView() {
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <h1 className="sr-only">Future Skills Radar</h1>
-        <Stepper step={3} labels={checkUpSteps} />
-        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can map its skills.`} />
+        <h1 className="sr-only">{t.futureSkillsRadar}</h1>
+        <Stepper step={3} />
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}${t.thenMapSkills}`} />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
           {startAgain(session).label}
         </Button>
@@ -134,12 +138,12 @@ export function RadarView() {
   if (bundle.status !== 'ready' || !checkup) {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <h1 className="sr-only">Future Skills Radar</h1>
-        <Stepper step={3} labels={checkUpSteps} />
+        <h1 className="sr-only">{t.futureSkillsRadar}</h1>
+        <Stepper step={3} />
         {bundle.status === 'error' ? (
-          <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+          <Banner type="error" title={t.kopiCouldNotOpenJob.title} body={t.kopiCouldNotOpenJob.body} />
         ) : (
-          <CatDialogue pose="thinking" speech="Opening the box on your job…" />
+          <CatDialogue pose="thinking" speech={t.openingBox} />
         )}
       </div>
     )
@@ -203,13 +207,13 @@ export function RadarView() {
   const speech =
     access.profession && needsQualification(access)
       ? access.status === 'qualify'
-        ? `${role.title} also needs a set qualification in Malaysia. Your fit shows whether the work suits you, so weigh it before you enrol.`
-        : `${role.title} is regulated in Malaysia: see the steps below. Your fit shows whether the work suits you.`
+        ? t.qualiAlso(role.title)
+        : t.qualiRegulated(role.title)
       : biggestRisingGap
         ? firstRoadmapStatement
-          ? `Your biggest rising gap is ${biggestRisingGap.name}. Try this: ${firstRoadmapStatement}`
-          : 'I don’t have a ready skill statement for your first step yet.'
-        : 'No rising skill gap stands out for this job yet.'
+          ? t.biggestGapTry(biggestRisingGap.name, firstRoadmapStatement)
+          : t.noStatementYet
+        : t.noRisingGapJob
 
   // The role's biggest gap, the same term the roles page names, with its levels.
   const gapOf = (code: string) => {
@@ -267,7 +271,7 @@ export function RadarView() {
           />
           {targets.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-label-s text-text-muted">Closing This Supports</span>
+              <span className="text-label-s text-text-muted">{t.closingSupports}</span>
               {targets.map((target) => (
                 <SdgTargetChip key={target} target={target} />
               ))}
@@ -281,27 +285,20 @@ export function RadarView() {
   if (explanationsPaused) {
     return (
       <div className="mx-auto w-full max-w-[45rem] space-y-6">
-        <Banner
-          type="error"
-          title="Explanations Are Paused"
-          body="We couldn't reach the AI. Your verdicts, roles and plan still work."
-        />
-        <CatDialogue
-          pose="worried"
-          speech="The AI is resting. Your verdicts still stand. I’ll explain them when it’s back."
-        />
+        <Banner type="error" title={t.explanationsPaused.title} body={t.explanationsPaused.body} />
+        <CatDialogue pose="worried" speech={t.aiResting} />
 
         {pausedGapCorners.map(renderGapCard)}
 
         <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 grid grid-cols-1 gap-3 rounded-md p-3 sm:grid-cols-2 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
           <Button variant="secondary" size="lg" fullWidth onClick={retryExplanations}>
-            Try the Explanations Again
+            {t.tryExplanationsAgain}
           </Button>
           <Link
             to={routes.roles}
             className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
           >
-            See Roles That Fit
+            {t.seeRoles}
           </Link>
         </div>
       </div>
@@ -310,22 +307,20 @@ export function RadarView() {
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      <Stepper step={3} labels={checkUpSteps} />
+      <Stepper step={3} />
 
       <CatDialogue pose="explaining" speech={speech} />
 
       <header className="space-y-1.5">
         <div className="flex items-start gap-1">
-          <h1 className="text-title-m text-text-primary lg:text-title-l">
-            {role.title}, {neededLabel}
-          </h1>
+          <h1 className="text-title-m text-text-primary lg:text-title-l">{t.roleHeading(role.title, neededLabel)}</h1>
           <Tooltip
-            content="The needed level is an estimate from AI-use and job-ad trends 12 months ahead."
+            content={t.neededTooltip}
             className="mt-0.5 lg:mt-1 [&_[role=tooltip]]:left-auto [&_[role=tooltip]]:right-0 [&_[role=tooltip]]:translate-x-0 [&_[role=tooltip]]:max-w-[calc(100vw-3rem)] [&_[role=tooltip]]:whitespace-normal [&_[role=tooltip]]:text-left"
           >
             <button
               type="button"
-              aria-label="About Needed By"
+              aria-label={t.aboutNeededBy}
               className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-bg-panel hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
             >
               <Info className="h-4 w-4 stroke-current" aria-hidden="true" />
@@ -334,16 +329,13 @@ export function RadarView() {
         </div>
         {workSdgs && workSdgs.targets.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-label-s text-text-muted">Linked SDG Targets</span>
+            <span className="text-label-s text-text-muted">{t.linkedSdg}</span>
             {workSdgs.targets.map((target) => (
               <SdgTargetChip key={target} target={target} workReason={workSdgs.reason} />
             ))}
           </div>
         )}
-        <p className="text-body-s text-text-muted">
-          Where the job is heading, and where you stand. Targets and dates are estimates; every verdict comes from fixed
-          rules over dated public data.
-        </p>
+        <p className="text-body-s text-text-muted">{t.radarIntro}</p>
         <ScenarioControl scenario={scenario} onChange={setScenario} />
       </header>
 
@@ -361,12 +353,12 @@ export function RadarView() {
       />
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-6">
-        <section className="space-y-4" aria-label="Future Skills Radar">
+        <section className="space-y-4" aria-label={t.futureSkillsRadar}>
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
           <Banner
             type="info"
-            title={`Data as of ${activeMonth}`}
-            body={latestVintage ? `Latest source vintage date: ${latestVintage}` : undefined}
+            title={t.dataAsOf(activeMonth)}
+            body={latestVintage ? t.latestVintageDate(latestVintage) : undefined}
           />
         </section>
 
@@ -379,10 +371,10 @@ export function RadarView() {
         <section className="space-y-4" aria-labelledby="gaps-title">
           <header className="flex items-center justify-between gap-3">
             <h2 id="gaps-title" className="text-title-s text-text-primary">
-              Your Gaps
+              {t.yourGaps}
             </h2>
             <span className="shrink-0 font-mono text-mono-s text-text-muted">
-              {weaknessCorners.length} of {corners.length} Skills
+              {t.gapsCount(weaknessCorners.length, corners.length)}
             </span>
           </header>
 
@@ -400,14 +392,14 @@ export function RadarView() {
 
         {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} />}
 
-        <SourceList sources={sources} label="All Sources" />
+        <SourceList sources={sources} label={t.allSources} />
 
         <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
           <Link
             to={routes.roles}
             className="inline-flex min-h-12 w-full items-center justify-center rounded-sm border-[1.5px] border-text-primary bg-accent-box px-6 text-label-l text-accent-on-box transition-colors duration-150 ease-out hover:bg-accent-box-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
           >
-            See Roles That Fit
+            {t.seeRoles}
           </Link>
         </div>
       </div>

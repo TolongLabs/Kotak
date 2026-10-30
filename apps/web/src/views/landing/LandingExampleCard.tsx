@@ -6,6 +6,8 @@ import { SourceReference } from '../../components/kotak/SourceReference'
 import { TextLink } from '../../components/ui/TextLink'
 import { VerdictChip } from '../../components/ui/VerdictChip'
 import { cn } from '../../components/ui/cn'
+import { landingText } from '../../i18n/messages/landing'
+import { useText } from '../../i18n/text'
 
 export interface LandingExampleCardProps {
   corner: Corner
@@ -23,9 +25,11 @@ export function LandingExampleCard({
   paused = false,
   maxSources = 2,
   scenario = DEFAULT_SCENARIO,
-  neededLabel = 'Needed by 2027',
+  neededLabel,
   className
 }: LandingExampleCardProps) {
+  const t = useText(landingText)
+  const resolvedNeededLabel = neededLabel ?? t.exampleCard.neededBy2027
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
   const displayedSources = sources.slice(0, maxSources)
   const remainingCount = sources.length - displayedSources.length
@@ -37,12 +41,12 @@ export function LandingExampleCard({
         <VerdictChip verdict={corner.verdict} size="sm" />
       </header>
 
-      <LevelMeter you={corner.you} needed={needed} neededLabel={neededLabel} />
+      <LevelMeter you={corner.you} needed={needed} neededLabel={resolvedNeededLabel} />
 
       {corner.reasoning ? <Reasoning text={corner.reasoning} paused={paused} /> : null}
 
       {displayedSources.length > 0 ? (
-        <ul className="space-y-2" aria-label={`Sources for ${corner.name}`}>
+        <ul className="space-y-2" aria-label={t.exampleCard.sourcesFor(corner.name)}>
           {displayedSources.map((source) => (
             <li key={source.n}>
               <SourceReference source={source} />
@@ -54,7 +58,7 @@ export function LandingExampleCard({
       {remainingCount > 0 ? (
         <div className="flex justify-center pt-1">
           <TextLink href="#data-sources" className="text-label-s font-semibold">
-            +{remainingCount} More Sources
+            {t.exampleCard.moreSources(remainingCount)}
           </TextLink>
         </div>
       ) : null}

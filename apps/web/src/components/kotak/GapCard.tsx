@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import type { Corner, Scenario, SourceRef } from '../../demo/types'
+import { radarText } from '../../i18n/messages/radar'
+import { useText } from '../../i18n/text'
 import { Reasoning } from './Reasoning'
 import { SourceReference } from './SourceReference'
 import { LevelMeter } from './LevelMeter'
@@ -13,13 +15,8 @@ export interface GapCardProps {
   neededLabel?: string
 }
 
-export function GapCard({
-  corner,
-  sources,
-  paused = false,
-  scenario = 'slow',
-  neededLabel = 'Needed by 2027'
-}: GapCardProps) {
+export function GapCard({ corner, sources, paused = false, scenario = 'slow', neededLabel }: GapCardProps) {
+  const t = useText(radarText)
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
   // Two sources up front, as on the landing example card; the rest open and close in place.
   const [showAll, setShowAll] = useState(false)
@@ -38,7 +35,7 @@ export function GapCard({
       {corner.reasoning ? <Reasoning text={corner.reasoning} paused={paused} /> : null}
 
       {shownSources.length > 0 ? (
-        <ul className="space-y-2" aria-label={`Sources for ${corner.name}`}>
+        <ul className="space-y-2" aria-label={t.sourcesFor(corner.name)}>
           {shownSources.map((source) => (
             <li key={source.n}>
               <SourceReference source={source} />
@@ -55,7 +52,7 @@ export function GapCard({
             onClick={() => setShowAll((value) => !value)}
             className="inline-flex min-h-11 items-center px-2 text-label-s font-semibold text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted"
           >
-            {showAll ? 'Show Fewer Sources' : `+${hiddenCount} More Sources`}
+            {showAll ? t.showFewerSources : t.moreSources(hiddenCount)}
           </button>
         </div>
       ) : null}

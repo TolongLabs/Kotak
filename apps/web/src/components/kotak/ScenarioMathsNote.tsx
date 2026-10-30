@@ -1,4 +1,7 @@
 import { fastGrowthMultiplier, type UsageAnchors } from '@kotak/shared'
+import { commonText } from '../../i18n/common'
+import { changesText } from '../../i18n/messages/changes'
+import { useText } from '../../i18n/text'
 
 /**
  * The fast future's one rule in plain words (#389), quoted in See the Maths on the Roles and Roadmap screens. The
@@ -6,14 +9,15 @@ import { fastGrowthMultiplier, type UsageAnchors } from '@kotak/shared'
  * `packages/shared/src/rules/verdicts.ts` moves Malaysia's usage index halfway to Singapore's (FAST_CONVERGENCE = 0.5).
  */
 export function ScenarioMathsNote({ anchors }: { anchors: UsageAnchors }) {
+  const t = useText(changesText)
+  const c = useText(commonText)
   const multiplier = fastGrowthMultiplier(anchors)
 
   return (
     <p className="text-label-s text-text-muted">
-      Fast AI Uptake is an estimate with one assumption: Malaysia’s AI usage index ({anchors.mys.value}) moves halfway
-      to Singapore’s ({anchors.sgp.value}), from {anchors.mys.source_name}. So growing AI use grows{' '}
-      <span className="font-mono text-mono-s text-text-primary">{multiplier.toFixed(2)}x</span> faster, and shrinking
-      use shrinks that much slower. Verdicts stay the same in both futures.
+      {t.mathsBefore(c.scenarios.fast, anchors.mys.value, anchors.sgp.value, anchors.mys.source_name)}{' '}
+      <span className="font-mono text-mono-s text-text-primary">{multiplier.toFixed(2)}x</span>
+      {t.mathsAfter}
     </p>
   )
 }

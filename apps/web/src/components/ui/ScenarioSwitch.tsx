@@ -1,4 +1,6 @@
 import { forwardRef, useId, type ComponentPropsWithoutRef } from 'react'
+import { commonText } from '../../i18n/common'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
 export type ScenarioValue = 'slow' | 'fast'
@@ -8,16 +10,15 @@ export interface ScenarioSwitchProps extends Omit<ComponentPropsWithoutRef<'div'
   onChange?: (value: ScenarioValue) => void
 }
 
-const options: Array<{ value: ScenarioValue; label: string }> = [
-  { value: 'slow', label: 'Slow AI Uptake' },
-  { value: 'fast', label: 'Fast AI Uptake' }
-]
+// The option labels live in commonText and are read while rendering, so they follow a language switch.
+const values: ScenarioValue[] = ['slow', 'fast']
 
 export const ScenarioSwitch = forwardRef<HTMLDivElement, ScenarioSwitchProps>(function ScenarioSwitch(
   { value, onChange, className, ...props },
   ref
 ) {
   const baseId = useId()
+  const t = useText(commonText)
   return (
     <div
       ref={ref}
@@ -25,11 +26,11 @@ export const ScenarioSwitch = forwardRef<HTMLDivElement, ScenarioSwitchProps>(fu
       className={cn('inline-flex items-stretch rounded-full border border-border-subtle bg-bg-panel p-1', className)}
       {...props}
     >
-      {options.map((option) => {
-        const selected = value === option.value
+      {values.map((optionValue) => {
+        const selected = value === optionValue
         return (
           <label
-            key={option.value}
+            key={optionValue}
             className={cn(
               'has-[:focus-visible]:outline-focus-ring flex min-h-[44px] cursor-pointer items-center whitespace-nowrap rounded-full border-[1.5px] px-5 transition-colors duration-150 ease-out has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
               selected
@@ -40,12 +41,12 @@ export const ScenarioSwitch = forwardRef<HTMLDivElement, ScenarioSwitchProps>(fu
             <input
               type="radio"
               name={baseId}
-              value={option.value}
+              value={optionValue}
               checked={selected}
-              onChange={() => onChange?.(option.value)}
+              onChange={() => onChange?.(optionValue)}
               className="sr-only"
             />
-            {option.label}
+            {t.scenarios[optionValue]}
           </label>
         )
       })}

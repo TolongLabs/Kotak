@@ -1,6 +1,9 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, type RefObject } from 'react'
+import { LanguageToggle } from '../../components/ui/LanguageToggle'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
+import { shellText } from '../../i18n/messages/shell'
+import { useText } from '../../i18n/text'
 import { Brand, GuestCard, NavList } from './Sidebar'
 
 interface NavDrawerProps {
@@ -12,6 +15,7 @@ interface NavDrawerProps {
 
 export function NavDrawer({ open, path, onClose, returnFocusRef }: NavDrawerProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const t = useText(shellText)
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -23,7 +27,7 @@ export function NavDrawer({ open, path, onClose, returnFocusRef }: NavDrawerProp
   return (
     <dialog
       ref={dialogRef}
-      aria-label="Menu"
+      aria-label={t.navigation.menu}
       onClose={() => {
         onClose()
         returnFocusRef.current?.focus()
@@ -39,19 +43,20 @@ export function NavDrawer({ open, path, onClose, returnFocusRef }: NavDrawerProp
           <Brand onNavigate={onClose} />
           <button
             type="button"
-            aria-label="Close Menu"
+            aria-label={t.navigation.closeMenu}
             onClick={onClose}
             className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-bg-default text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel"
           >
             <X className="h-5 w-5 stroke-current" aria-hidden="true" />
           </button>
         </div>
-        <nav aria-label="Main">
+        <nav aria-label={t.navigation.main}>
           <NavList path={path} onNavigate={onClose} />
         </nav>
         <div className="mt-auto space-y-4">
           <div className="flex items-center justify-between border-t border-border-subtle pt-4">
-            <span className="text-label-m text-text-primary">Appearance</span>
+            <span className="text-label-m text-text-primary">{t.navigation.appearance}</span>
+            <LanguageToggle />
             <ThemeToggle />
           </div>
           <GuestCard />
