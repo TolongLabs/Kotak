@@ -105,7 +105,8 @@ async function callWorker(family: string, tag: string, brief: string, timeout: n
       '--mode',
       'plan',
       '--effort',
-      'high'
+      'high',
+      ...(process.env.ALLOW_GPT_OVER_LIMIT ? ['--allow-gpt-over-limit'] : []) // only with the user's yes
     ],
     { stdout: 'pipe', stderr: 'pipe' }
   )
@@ -598,6 +599,308 @@ const FIX_SPECS: { code: string; slot: number; note: string }[] = [
   }
 ]
 
+// ---------- #416: rewrite the slots the strict reviewers flagged (run with WRITE_FAMILY=codex.luna) ----------
+const FIX_LIST = `${W}/native/review/fix-list.jsonl`
+const DEMO_UNTOUCHED = new Set([...DEMO, '15-1255.00']) // the demo jobs are hand-read and stay as they are
+
+/** Rewrite flagged slots, one call per job, at most 2 rounds (the second only for slots the validator still rejects). `--dry` prints the plan. */
+async function fixflagged() {
+  const roles = new Map((await loadRoles()).map((r) => [r.onet_code, r]))
+  const jobs = new Map(readJsonl<Job>(WRITTEN).map((j) => [j.onet_code, jobWithFixes(j)]))
+  const flags = new Map<string, { slot: number; reasons: string[] }[]>()
+  for (const f of readJsonl<any>(FIX_LIST)) {
+    if (DEMO_UNTOUCHED.has(f.onet_code) || !jobs.has(f.onet_code)) continue
+    const list = flags.get(f.onet_code) ?? []
+    const cur = list.find((x) => x.slot === f.slot)
+    if (cur) cur.reasons.push(`${f.category}: ${f.reason}`)
+    else list.push({ slot: f.slot, reasons: [`${f.category}: ${f.reason}`] })
+    flags.set(f.onet_code, list)
+  }
+  const done = new Set(readJsonl<any>(`${W}/native/review/fixflagged-done.jsonl`).map((x) => x.onet_code))
+  const todo = [...flags].filter(([c]) => !done.has(c))
+  console.log(
+    `flagged: ${flags.size} jobs, ${[...flags.values()].reduce((n, l) => n + l.length, 0)} slots; ${todo.length} jobs to do`
+  )
+  if (args.includes('--dry')) return
+  const limit = Number(opt('--max-jobs')) || Infinity
+  await pool(todo.slice(0, limit), async ([code, items]) => {
+    const role = roles.get(code)!
+    let slots = jobs.get(code)!.slots
+    const accepted = new Map<number, Slot>()
+    let pending = new Map(items.map((i) => [i.slot, i.reasons.join(' | ')]))
+    for (let round = 0; round < 2 && pending.size; round++) {
+      const cur = [...pending].map(([slot, why]) => {
+        const s = slots[slot]!
+        return `SLOT ${slot} reviewer comments: ${why}\nCurrent: ${JSON.stringify({ slot, corner_id: s.corner_id, level: s.level, situation: s.situation, options: s.options.map((o) => ({ text: o.text, score: o.score, words: wordCount(o.text) })), task_ids: s.task_ids })}`
+      })
+      const brief = `Fix workplace situational-judgement questions for a Malaysian career-check-up app. Do not run any terminal commands. Reply with text only.\n\nJob: ${role.title} (${code}). Strict reviewers commented on the slots below. Fix ONLY these kinds of problem: the ranking is unclear (two options could swap, or a lower option reads better than a higher one), the score-4 option is weak or only score 3 plus a step, or the situation does not test the corner's task or goes beyond the job's authority. A comment that only says the score-1 or score-2 option is harmful, unsafe or dishonest is INTENDED: leave that alone (reply {"slot":N,"keep":true}). Score 1 must stay clearly the worst, score 4 clearly the best.\n\nRules for a rewritten slot: situation at most 35 words and 250 characters; exactly 4 options, each a full natural sentence of at most 16 words and 120 characters, with "words" counts within 5 of each other; scores 1 to 4 each once; no words: best, always, never, ignore, immediately, comprehensive, thoroughly, perfect, correct, wrong, guess, "do nothing"; keep corner_id, level and task_ids (task ids must stay from this corner: ${JSON.stringify(role.corners.map((c) => [c.corner_id, c.task_ids]))}).\n\n${cur.join('\n\n')}\n\nOutput one JSON object per slot, one per line, no code fences: either {"slot":N,"keep":true} or {"slot":N,"corner_id":"...","level":"...","situation":"...","options":[{"text":"...","score":3,"words":N}, ...4],"task_ids":[...]}`
+      let text: string
+      try {
+        text = await callWorker(WRITE_FAMILY, 'fixflag', brief, 900)
+        failures = 0
+      } catch (e) {
+        onFail(e)
+        return
+      }
+      const next = [...slots]
+      const changed = new Set<number>()
+      for (const o of parseLines(text)) {
+        if (!pending.has(o?.slot) || o.keep || !Array.isArray(o.options)) continue
+        next[o.slot] = {
+          slot: o.slot,
+          corner_id: o.corner_id,
+          level: o.level,
+          situation: String(o.situation ?? '').trim(),
+          options: o.options.map((x: any, k: number) => ({
+            id: 'abcd'[k]!,
+            text: String(x?.text ?? '').trim(),
+            score: Number(x?.score)
+          })),
+          task_ids: Array.isArray(o.task_ids) ? o.task_ids.map(Number) : []
+        }
+        changed.add(o.slot)
+      }
+      for (const [slot] of pending) if (!changed.has(slot)) pending.delete(slot) // kept as is
+      const bad = validateJob(next, role.corners)
+      const badSlots = new Set(
+        bad.flatMap((m) => (m.match(/^slot (\d+):/) ? [Number(m.match(/^slot (\d+):/)![1])] : []))
+      )
+      for (const slot of changed) {
+        if (badSlots.has(slot)) {
+          pending.set(
+            slot,
+            `${pending.get(slot)} | YOUR LAST REWRITE WAS REJECTED BY THE CHECKER: ${bad.filter((m) => m.startsWith(`slot ${slot}:`)).join('; ')}`
+          )
+          next[slot] = slots[slot]! // go back to the original for the next round
+        } else {
+          accepted.set(slot, next[slot]!)
+          pending.delete(slot)
+        }
+      }
+      slots = next
+      // job-level problems (e.g. score 4 longest in too many slots) undo the accepted slots of this job
+      if (validateJob(slots, role.corners).length) {
+        for (const slot of accepted.keys()) slots[slot] = jobs.get(code)!.slots[slot]!
+        accepted.clear()
+        break
+      }
+    }
+    for (const [slot, s] of accepted)
+      appendFileSync(SLOT_FIXES, JSON.stringify({ onet_code: code, slot, slot_obj: s, source: 'flag-fix' }) + '\n')
+    appendFileSync(
+      `${W}/native/review/fixflagged-done.jsonl`,
+      JSON.stringify({ onet_code: code, flagged: items.length, rewritten: accepted.size }) + '\n'
+    )
+    console.log(`${code}: ${accepted.size} of ${items.length} slots rewritten`)
+  })
+}
+
+/** native/review/fixflagged-sample.md: 10 random (seeded) rewritten slots, before and after, for the lead's hand-read. */
+function fixSample() {
+  const raw = new Map(readJsonl<Job>(WRITTEN).map((j) => [j.onet_code, j]))
+  const fixes = readJsonl<any>(SLOT_FIXES).filter((f) => f.source === (opt('--source') ?? 'flag-fix'))
+  const flags = readJsonl<any>(FIX_LIST)
+  const rnd = seeded(SAMPLE_SEED)
+  const pick = [...fixes]
+    .sort((a, b) => `${a.onet_code}${a.slot}`.localeCompare(`${b.onet_code}${b.slot}`))
+    .sort(() => rnd() - 0.5)
+    .slice(0, 10)
+  const show = (s: Slot) =>
+    [
+      `Situation: ${s.situation}`,
+      ...[...s.options].sort((a, b) => b.score - a.score).map((o) => `- ${o.score}: ${o.text}`)
+    ].join('\n')
+  const out = [
+    '# Rewritten slots: 10 at random, before and after\n',
+    `${fixes.length} slots were rewritten in total.\n`
+  ]
+  for (const f of pick) {
+    const before = raw.get(f.onet_code)!.slots[f.slot]!
+    out.push(`\n## ${f.onet_code} ${raw.get(f.onet_code)!.title}, slot ${f.slot}\n`)
+    for (const x of flags.filter((x) => x.onet_code === f.onet_code && x.slot === f.slot))
+      out.push(`Flag (${x.category}): ${x.reason}\n`)
+    out.push(`**Before**\n\n${show(before)}\n\n**After**\n\n${show(f.slot_obj)}\n`)
+  }
+  writeFileSync(`${W}/native/review/${opt('--out') ?? 'fixflagged-sample.md'}`, out.join('\n') + '\n')
+  console.log(`wrote ${pick.length} of ${fixes.length} rewritten slots`)
+}
+
+// ---------- #416: Haiku packs for the flagged slots Luna could not fix ----------
+const HAIKU_DIR = `${W}/native/review/haiku-packs`
+const slotKey = (code: string, slot: number) => `${code}|${slot}`
+
+/** Flagged slots still unchanged that Luna did NOT answer "keep" for, with the checker's last complaint on its last rewrite. */
+async function failedSlots() {
+  const { readdirSync } = await import('node:fs')
+  const roles = new Map((await loadRoles()).map((r) => [r.onet_code, r]))
+  const jobs = new Map(readJsonl<Job>(WRITTEN).map((j) => [j.onet_code, jobWithFixes(j)]))
+  const fixed = new Set(
+    readJsonl<any>(SLOT_FIXES)
+      .filter((f) => f.source === 'flag-fix')
+      .map((f) => slotKey(f.onet_code, f.slot))
+  )
+  const keep = new Set<string>()
+  const last = new Map<string, any>() // latest rewrite Luna produced for a slot
+  const briefs = readdirSync(`${W}/briefs`)
+    .filter((f) => f.startsWith('fixflag'))
+    .sort()
+  for (const b of briefs) {
+    const out = `${W}/raw/${b.replace(/\.md$/, '.out')}`
+    if (!existsSync(out)) continue
+    const code = readFileSync(`${W}/briefs/${b}`, 'utf8').match(/Job: .*?\(([0-9.-]+)\)/)?.[1]
+    if (!code) continue
+    for (const o of parseLines(readFileSync(out, 'utf8'))) {
+      if (typeof o.slot !== 'number') continue
+      if (o.keep) keep.add(slotKey(code, o.slot))
+      else if (Array.isArray(o.options)) last.set(slotKey(code, o.slot), o)
+    }
+  }
+  const out: { code: string; slot: number; reasons: string[]; complaint: string }[] = []
+  const flags = new Map<string, string[]>()
+  for (const f of readJsonl<any>(FIX_LIST)) {
+    if (DEMO_UNTOUCHED.has(f.onet_code) || !jobs.has(f.onet_code)) continue
+    flags.set(slotKey(f.onet_code, f.slot), [
+      ...(flags.get(slotKey(f.onet_code, f.slot)) ?? []),
+      `${f.category}: ${f.reason}`
+    ])
+  }
+  for (const [k, reasons] of flags) {
+    if (fixed.has(k) || keep.has(k)) continue
+    const [code, slotText] = k.split('|')
+    const slot = Number(slotText)
+    let complaint = "no rewrite came back, or the job-level rule undid the job's rewrites"
+    const o = last.get(k)
+    if (o) {
+      const next = [...jobs.get(code!)!.slots]
+      next[slot] = {
+        slot,
+        corner_id: o.corner_id,
+        level: o.level,
+        situation: String(o.situation ?? '').trim(),
+        options: o.options.map((x: any, i: number) => ({
+          id: 'abcd'[i]!,
+          text: String(x?.text ?? '').trim(),
+          score: Number(x?.score)
+        })),
+        task_ids: Array.isArray(o.task_ids) ? o.task_ids.map(Number) : []
+      }
+      const bad = validateJob(next, roles.get(code!)!.corners)
+      const mine = bad.filter((m) => m.startsWith(`slot ${slot}:`) || !m.startsWith('slot '))
+      if (mine.length) complaint = mine.join('; ')
+    }
+    out.push({ code: code!, slot, reasons, complaint })
+  }
+  return out
+}
+
+async function haikuPacks() {
+  const roles = new Map((await loadRoles()).map((r) => [r.onet_code, r]))
+  const jobs = new Map(readJsonl<Job>(WRITTEN).map((j) => [j.onet_code, jobWithFixes(j)]))
+  const failed = await failedSlots()
+  const byJob = new Map<string, typeof failed>()
+  for (const f of failed) byJob.set(f.code, [...(byJob.get(f.code) ?? []), f])
+  mkdirSync(`${HAIKU_DIR}/../haiku-out`, { recursive: true })
+  const packs = chunk([...byJob], 6)
+  packs.forEach((p, i) => {
+    const n = String(i + 1).padStart(2, '0')
+    const body = p.map(([code, items]) => {
+      const role = roles.get(code)!
+      const cur = items.map((f) => {
+        const s = jobs.get(code)!.slots[f.slot]!
+        return `SLOT ${f.slot} reviewer comments: ${f.reasons.join(' | ')}\nChecker complaint on the last attempt: ${f.complaint}\nCurrent: ${JSON.stringify({ slot: f.slot, corner_id: s.corner_id, level: s.level, situation: s.situation, options: s.options.map((o) => ({ text: o.text, score: o.score, words: wordCount(o.text) })), task_ids: s.task_ids })}`
+      })
+      return `### Job ${role.title} (${code}); corner task ids: ${JSON.stringify(role.corners.map((c) => [c.corner_id, c.task_ids]))}\n\n${cur.join('\n\n')}`
+    })
+    const text = `# Pack ${n}: fix workplace situational-judgement questions
+
+You fix questions for a Malaysian career-check-up app. Strict reviewers commented on the slots below, and an earlier attempt failed the checker. Fix ONLY these kinds of problem: the ranking is unclear (two options could swap, or a lower option reads better than a higher one), the score-4 option is weak or only score 3 plus a step, or the situation does not test the corner's task or goes beyond the job's authority. A comment that only says the score-1 or score-2 option is harmful, unsafe or dishonest is INTENDED: skip that slot. Score 1 must stay clearly the worst, score 4 clearly the best.
+
+Rules for a rewritten slot: situation at most 35 words and 250 characters; exactly 4 options, each a full natural sentence of at most 16 words and 120 characters, whose word counts are within 5 of each other; scores 1 to 4 each once; never use the words best, always, never, ignore, immediately, comprehensive, thoroughly, perfect, correct, wrong, guess, "do nothing"; keep corner_id, level and task_ids (task ids only from that corner's list).
+
+## Your output
+Write one JSON line per rewritten slot to ${W}/native/review/haiku-out/pack-${n}.jsonl (append as you go, no code fences), exactly:
+{"onet_code":"...","slot":N,"corner_id":"...","level":"...","situation":"...","options":[{"text":"...","score":3}, ...4 entries],"task_ids":[...]}
+Then run this and fix every REJECT line until it is clean (a job's slots are checked together):
+cd ${ROOT} && bun scripts/scenarios/run.ts applyhaiku --check --file ${W}/native/review/haiku-out/pack-${n}.jsonl
+Rules for you: no web search, no git, write only that output file, run only that command. Reply with only the number of lines written and whether the check is clean.
+
+## Slots
+
+${body.join('\n\n')}
+`
+    writeFileSync(`${HAIKU_DIR}/pack-${n}.md`, text)
+  })
+  console.log(JSON.stringify({ packs: packs.length, jobs: byJob.size, slots: failed.length }))
+}
+
+/** Validate Haiku lines (jobs checked with all their rewrites together); with --check only print, else append to the slot fixes. */
+async function applyHaiku() {
+  const { readdirSync } = await import('node:fs')
+  const roles = new Map((await loadRoles()).map((r) => [r.onet_code, r]))
+  const jobs = new Map(readJsonl<Job>(WRITTEN).map((j) => [j.onet_code, jobWithFixes(j)]))
+  const dir = `${W}/native/review/haiku-out`
+  const files = opt('--file')
+    ? [opt('--file')!]
+    : existsSync(dir)
+      ? readdirSync(dir)
+          .filter((f) => f.endsWith('.jsonl'))
+          .sort()
+          .map((f) => `${dir}/${f}`)
+      : []
+  const have = new Set(
+    readJsonl<any>(SLOT_FIXES)
+      .filter((f) => f.source === 'haiku-fix')
+      .map((f) => slotKey(f.onet_code, f.slot))
+  )
+  let applied = 0
+  let rejected = 0
+  for (const file of files) {
+    const byJob = new Map<string, any[]>()
+    for (const o of readJsonl<any>(file))
+      if (o?.onet_code && typeof o.slot === 'number') byJob.set(o.onet_code, [...(byJob.get(o.onet_code) ?? []), o])
+    for (const [code, lines] of byJob) {
+      const job = jobs.get(code)
+      if (!job) {
+        console.log(`REJECT ${code}: unknown job`)
+        rejected++
+        continue
+      }
+      const next = [...job.slots]
+      for (const o of lines) {
+        if (!Array.isArray(o.options) || o.slot < 0 || o.slot > 11) continue
+        next[o.slot] = {
+          slot: o.slot,
+          corner_id: o.corner_id,
+          level: o.level,
+          situation: String(o.situation ?? '').trim(),
+          options: o.options.map((x: any, i: number) => ({
+            id: 'abcd'[i]!,
+            text: String(x?.text ?? '').trim(),
+            score: Number(x?.score)
+          })),
+          task_ids: Array.isArray(o.task_ids) ? o.task_ids.map(Number) : []
+        }
+      }
+      const bad = validateJob(next, roles.get(code)!.corners)
+      if (bad.length) {
+        console.log(`REJECT ${code}: ${bad.slice(0, 5).join('; ')}`)
+        rejected++
+        continue
+      }
+      if (args.includes('--check')) continue
+      for (const o of lines)
+        if (!have.has(slotKey(code, o.slot)) && next[o.slot] !== job.slots[o.slot])
+          (appendFileSync(
+            SLOT_FIXES,
+            JSON.stringify({ onet_code: code, slot: o.slot, slot_obj: next[o.slot], source: 'haiku-fix' }) + '\n'
+          ),
+            applied++)
+    }
+  }
+  console.log(JSON.stringify({ applied, rejected_jobs: rejected }))
+  if (rejected) process.exitCode = 1
+}
+
 async function fixslots() {
   const roles = new Map((await loadRoles()).map((r) => [r.onet_code, r]))
   const jobs = new Map(readJsonl<Job>(WRITTEN).map((j) => [j.onet_code, j]))
@@ -957,6 +1260,10 @@ else if (cmd === 'reviewpack') reviewPack()
 else if (cmd === 'reviewfold') await reviewFold()
 else if (cmd === 'concat') await concat()
 else if (cmd === 'fixslots') await fixslots()
+else if (cmd === 'fixflagged') await fixflagged()
+else if (cmd === 'fixsample') fixSample()
+else if (cmd === 'haikupacks') await haikuPacks()
+else if (cmd === 'applyhaiku') await applyHaiku()
 else if (cmd === 'apply') await apply()
 else if (cmd === 'merge') merge()
 else if (cmd === 'count') await count()
