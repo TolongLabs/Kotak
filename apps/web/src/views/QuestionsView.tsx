@@ -20,7 +20,13 @@ import { checkupBundleKey, loadCheckupBundleFor, useRoleBundle } from '../engine
 import { assessedRoleCode } from '../engine/checkup'
 import { checkupText } from '../i18n/messages/checkup'
 import { useText } from '../i18n/text'
-import { scenarioSeed, updateGuestSession, useGuestSession } from '../session/store'
+import {
+  questionProgress,
+  saveQuestionProgress,
+  scenarioSeed,
+  updateGuestSession,
+  useGuestSession
+} from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import { QuestionInfo } from './checkup/QuestionInfo'
 import { ScenarioOptions } from './checkup/ScenarioOptions'
@@ -51,7 +57,10 @@ export function QuestionsView() {
   const assessedCode = assessedRoleCode(session)
   const bundle = useRoleBundle(assessedCode)
   // The effective ratings so far: a reversed question's click is already flipped (see onAnswer).
-  const [asked, setAsked] = useState<Rating[]>([])
+  // A reload resumes where the user left off (#324).
+  const [asked, setAsked] = useState<Rating[]>(() =>
+    assessedCode ? questionProgress(assessedCode, session.active_snapshot_id) : []
+  )
   // The rating just clicked, held for the 300 ms pause before the next question; null otherwise.
   const [chosen, setChosen] = useState<Rating | null>(null)
   const thinkingTimer = useRef<number | null>(null)
@@ -140,7 +149,9 @@ export function QuestionsView() {
     if (chosen !== null) return
     const advance = () => {
       const next = [...asked, question.kind === 'scenario' ? question.rate(position - 1) : question.rate(position)]
-      if (next.length === totalQuestions) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
+      const done = next.length === totalQuestions
+      if (done) updateGuestSession({ answers: toSessionAnswers(role, order, next) })
+      saveQuestionProgress(role.onet_code, session.active_snapshot_id, done ? [] : next)
       setAsked(next)
     }
     // The pink and tick show for the pause with or without motion (#351); only the movement follows reduced motion.
@@ -254,7 +265,11 @@ export function QuestionsView() {
         <button
           type="button"
           disabled={asked.length === 0 || chosen !== null}
-          onClick={() => setAsked((current) => current.slice(0, -1))}
+          onClick={() => {
+            const back = asked.slice(0, -1)
+            saveQuestionProgress(role.onet_code, session.active_snapshot_id, back)
+            setAsked(back)
+          }}
           className="inline-flex h-12 items-center justify-center rounded-sm px-2 text-label-l font-semibold text-text-primary underline underline-offset-4 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:text-text-muted disabled:no-underline"
         >
           {t.questions.previous}
