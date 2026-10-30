@@ -70,6 +70,7 @@ const faqDemo = [
 
 export function OverlaysGallery() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [plainModalOpen, setPlainModalOpen] = useState(false)
   const [tabValue, setTabValue] = useState(tabsDemo[0].id)
   const [goalValue, setGoalValue] = useState('keep')
   const [scenarioValue, setScenarioValue] = useState<ScenarioValue>('slow')
@@ -91,6 +92,9 @@ export function OverlaysGallery() {
           <Button variant="secondary" onClick={() => setModalOpen(true)}>
             Open Modal
           </Button>
+          <Button variant="secondary" onClick={() => setPlainModalOpen(true)}>
+            Open Modal Without Blur or Close Tooltip
+          </Button>
         </div>
         <Modal
           open={modalOpen}
@@ -108,6 +112,15 @@ export function OverlaysGallery() {
           }
         >
           Your answers, radar and plan on this device will be cleared. This can&apos;t be undone.
+        </Modal>
+        <Modal
+          open={plainModalOpen}
+          onClose={() => setPlainModalOpen(false)}
+          title="How to Read the Space"
+          closeTooltip={false}
+          backdrop="none"
+        >
+          The page behind stays fully visible, with no dim or blur, and the close button shows no tooltip.
         </Modal>
       </section>
 

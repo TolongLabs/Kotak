@@ -9,3 +9,5 @@ data/pathways/cip-soc.json
 data/generated/
 # Other finalist teams' repositories, kept byte-for-byte as cloned
 docs/sources/finalists/*/
+# Generated knowledge graph, rewritten by graphify update
+graphify-out/

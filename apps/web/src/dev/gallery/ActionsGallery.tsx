@@ -1,8 +1,9 @@
-import { ArrowRight, Download, Heart, Plus, Search, Settings, Share2, Trash2, Volume2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Download, Heart, Plus, Search, Settings, Share2, Trash2, Volume2 } from 'lucide-react'
 import { Avatar } from '../../components/ui/Avatar'
-import { Button } from '../../components/ui/Button'
+import { Button, ButtonLink } from '../../components/ui/Button'
 import { Citation } from '../../components/ui/Citation'
 import { IconButton } from '../../components/ui/IconButton'
+import { Kbd, KbdGroup } from '../../components/ui/Kbd'
 import { ProgressBar } from '../../components/ui/ProgressBar'
 import { SdgChip } from '../../components/ui/SdgChip'
 import { Spinner } from '../../components/ui/Spinner'
@@ -92,6 +93,48 @@ export function ActionsGallery() {
         </div>
       </section>
 
+      {/* ButtonLink */}
+      <section className="space-y-6">
+        <h2 className="text-title-m font-bold">Button Link</h2>
+        <p className="text-body-m text-text-muted">
+          A link that looks like Button, for actions that go to another page, so Cmd-click and middle-click still work.
+        </p>
+
+        <div className="space-y-3">
+          <h3 className="text-title-s font-semibold">Variants</h3>
+          <div className="flex flex-wrap items-center gap-4">
+            <ButtonLink to="#gallery" variant="primary">
+              Primary Link
+            </ButtonLink>
+            <ButtonLink to="#gallery" variant="secondary">
+              Secondary Link
+            </ButtonLink>
+            <ButtonLink to="#gallery" variant="ghost">
+              Ghost Link
+            </ButtonLink>
+            <ButtonLink to="#gallery" variant="inverse">
+              Inverse Link
+            </ButtonLink>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-title-s font-semibold">Sizes And Icons</h3>
+          <div className="flex flex-wrap items-center gap-4">
+            <ButtonLink to="#gallery" variant="primary" size="lg">
+              Large 48 Px
+            </ButtonLink>
+            <ButtonLink
+              to="#gallery"
+              variant="ghost"
+              iconStart={<ArrowLeft className="h-5 w-5 stroke-current" aria-hidden="true" />}
+            >
+              Back to Dashboard
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+
       {/* IconButton */}
       <section className="space-y-6">
         <h2 className="text-title-m font-bold">Icon Button</h2>
@@ -114,6 +157,45 @@ export function ActionsGallery() {
             <IconButton label="Share Roadmap" icon={Share2} variant="plain" />
             <IconButton label="Remove Entry" icon={Trash2} variant="plain" />
             <IconButton label="Disabled Share" icon={Share2} variant="plain" disabled />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-title-s font-semibold">Without Tooltip</h3>
+          <div className="flex flex-wrap items-center gap-4">
+            <IconButton label="Adjust Sound" icon={Volume2} variant="plain" tooltip={false} />
+          </div>
+        </div>
+      </section>
+
+      {/* Kbd */}
+      <section className="space-y-6">
+        <h2 className="text-title-m font-bold">Kbd</h2>
+
+        <div className="space-y-3">
+          <h3 className="text-title-s font-semibold">Keys And Groups</h3>
+          <div className="flex flex-wrap items-center gap-4">
+            <Kbd aria-hidden={false}>R</Kbd>
+            <Kbd aria-hidden={false}>Esc</Kbd>
+            <KbdGroup>
+              <Kbd aria-hidden={false}>F</Kbd>
+              <Kbd aria-hidden={false}>1</Kbd>
+              <Kbd aria-hidden={false}>2</Kbd>
+            </KbdGroup>
+            <KbdGroup>
+              <Kbd aria-hidden={false}>←</Kbd>
+              <Kbd aria-hidden={false}>→</Kbd>
+            </KbdGroup>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-title-s font-semibold">Beside A Control</h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="ghost" aria-keyshortcuts="D">
+              Show the Table
+            </Button>
+            <Kbd>D</Kbd>
           </div>
         </div>
       </section>

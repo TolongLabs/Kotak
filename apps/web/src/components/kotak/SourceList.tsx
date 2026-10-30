@@ -42,7 +42,7 @@ export function SourceList({ sources, label }: { sources: SourceRef[]; label?: s
       {open && (
         <div
           id={panelId}
-          className="divide-y divide-border-subtle border-t border-border-subtle [&>div]:rounded-none [&>div]:border-0"
+          className="divide-y divide-border-subtle border-t border-border-subtle [&>div]:rounded-none [&>div]:border-0 [&>div:last-child]:rounded-b-[calc(var(--radius-md)-1px)]"
         >
           {sources.map((source) => (
             <SourceReference key={source.n} source={source} />

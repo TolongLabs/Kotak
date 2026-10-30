@@ -18,6 +18,7 @@ export const commonText = defineText(
       radar: 'Radar',
       roles: 'Roles',
       roadmap: 'Roadmap',
+      space: 'Space',
       connect: 'Connect Your AI',
       settings: 'Settings'
     },
@@ -53,6 +54,7 @@ export const commonText = defineText(
       radar: 'Radar',
       roles: 'Peranan',
       roadmap: 'Peta Jalan',
+      space: 'Ruang',
       connect: 'Sambungkan AI Anda',
       settings: 'Tetapan'
     },
@@ -88,6 +90,7 @@ export const commonText = defineText(
       radar: '雷达',
       roles: '职位',
       roadmap: '路线图',
+      space: '空间',
       connect: '连接你的 AI',
       settings: '设置'
     },

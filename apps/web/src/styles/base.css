@@ -122,6 +122,35 @@
     color-scheme: dark;
   }
 
+  /* The 3D space (/app/space) stays dark in both themes. tokens.css gives it the dark --k tokens, but Tailwind's colours
+     resolve them on <html>, so the subtree points its colours at them again. */
+  .space-dark {
+    --color-bg-default: var(--k-color-bg-default);
+    --color-bg-panel: var(--k-color-bg-panel);
+    --color-text-primary: var(--k-color-text-primary);
+    --color-text-muted: var(--k-color-text-muted);
+    --color-border-subtle: var(--k-color-border-subtle);
+    --color-border-control: var(--k-color-border-control);
+    --color-accent-box: var(--k-color-accent-box);
+    --color-accent-box-hover: var(--k-color-accent-box-hover);
+    --color-accent-on-box: var(--k-color-accent-on-box);
+    --color-map-target: var(--k-color-map-target);
+    --color-map-suggested: var(--k-color-map-suggested);
+    --color-state-success: var(--k-color-state-success);
+    --color-state-warning: var(--k-color-state-warning);
+    --color-state-error: var(--k-color-state-error);
+    --color-focus-ring: var(--k-color-focus-ring);
+    --color-radar-role: var(--k-color-radar-role);
+    --color-radar-you: var(--k-color-radar-you);
+    --color-radar-you-fill: var(--k-color-radar-you-fill);
+    --color-swot-weak: var(--k-color-swot-weak);
+    --color-swot-opp: var(--k-color-swot-opp);
+    --color-swot-threat: var(--k-color-swot-threat);
+    --color-accent-chosen: var(--k-color-accent-chosen);
+    --color-surface-glass: var(--k-color-surface-glass);
+    color-scheme: dark;
+  }
+
   .surface-card {
     background-color: var(--color-bg-default);
     border: 1px solid var(--color-border-subtle);

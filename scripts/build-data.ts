@@ -27,11 +27,13 @@ import {
   roleVerdicts,
   SdgReasonsFileSchema,
   SnapshotIdSchema,
+  spaceRole,
   transferAnswers,
   usesScenarios,
   type AeiSnapshot,
   type BundleRole,
-  type Source
+  type Source,
+  type SpaceFile
 } from '../packages/shared/src/index'
 import { cornerLinkErrors, loadCorners } from './build-data/corners'
 import { buildPathways, loadPathwaysInputs, roleTools } from './build-data/pathways'
@@ -282,12 +284,22 @@ if (failures.length > 0 || !index || !manifest || !pathways) {
   process.exit(1)
 }
 
-// 7. Write, only after every check passed.
+// 7. Write, only after every check passed. The 3D space's file cuts every checked role down (space.ts) and keeps the
+// usage index anchors once, from any role, since every role has the same.
+const [anyRole] = roles.values()
+const space: SpaceFile = {
+  meta,
+  anchors: Object.fromEntries(
+    months.map((m) => [m.snapshot_id, anyRole!.signals[m.snapshot_id]!.anchors])
+  ) as SpaceFile['anchors'],
+  roles: [...roles.values()].map(spaceRole)
+}
 const files: [string, unknown][] = [
   [BUNDLE_PATHS.manifest, manifest],
   [BUNDLE_PATHS.roles, index],
   [BUNDLE_PATHS.pathways, pathways],
   [BUNDLE_PATHS.sdgReasons, sdgReasons],
+  [BUNDLE_PATHS.space, space],
   ...[...roles.values()].map((r): [string, unknown] => [BUNDLE_PATHS.role(r.onet_code), r])
 ]
 await rm(`${PUBLIC}${dirname(BUNDLE_PATHS.manifest)}`, { recursive: true, force: true })
@@ -295,7 +307,8 @@ const sizes = await Promise.all(files.map(([path, value]) => Bun.write(`${PUBLIC
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`
 const total = sizes.reduce((a, b) => a + b, 0)
-const roleSizes = sizes.slice(4).sort((a, b) => a - b)
+const sizeOf = (path: string) => sizes[files.findIndex(([p]) => p === path)]!
+const roleSizes = [...roles.keys()].map((code) => sizeOf(BUNDLE_PATHS.role(code))).sort((a, b) => a - b)
 console.info(
   `Corners: ${JSON.stringify(manifest.corners)}; questions ready for ${index.roles.filter((r) => r.questions_ready).length} roles, ` +
     `scenarios for ${[...roles.values()].filter(usesScenarios).length}`
@@ -310,7 +323,8 @@ for (const d of manifest.demo.roles) {
 }
 console.info(
   `Wrote ${files.length} files (${(total / 1024 / 1024).toFixed(1)} MB) to apps/web/public${dirname(BUNDLE_PATHS.manifest)}: ` +
-    `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, pathways ${kb(sizes[2]!)}, SDG reasons ${kb(sizes[3]!)}, ${roleSizes.length} role files ` +
+    `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, pathways ${kb(sizes[2]!)}, SDG reasons ${kb(sizes[3]!)}, ` +
+    `space ${kb(sizeOf(BUNDLE_PATHS.space))} (${kb(Bun.gzipSync(JSON.stringify(space)).length)} gzipped), ${roleSizes.length} role files ` +
     `(median ${kb(roleSizes[roleSizes.length >> 1]!)}, largest ${kb(roleSizes.at(-1)!)})`
 )
 console.info(`build:data finished in ${((performance.now() - started) / 1000).toFixed(1)} s`)

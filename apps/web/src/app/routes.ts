@@ -10,6 +10,7 @@ export const routes = {
   jobs: '/app/jobs',
   roadmap: '/app/roadmap',
   changes: '/app/changes',
+  space: '/app/space',
   connect: '/app/connect',
   settings: '/app/settings',
   adminSignIn: '/admin/sign-in',

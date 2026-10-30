@@ -19,7 +19,7 @@ const VERDICT_KEYS = {
   unknown: 'Unknown'
 } as const
 
-const verdictConfig = {
+export const verdictConfig = {
   rising: {
     icon: TrendingUp,
     borderStyle: 'border-solid',
