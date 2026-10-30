@@ -20,6 +20,7 @@ import { RoadmapView } from './views/RoadmapView'
 import { RolesView } from './views/RolesView'
 import { SignInView } from './views/SignInView'
 import { SettingsView } from './views/SettingsView'
+import { SpaceView } from './views/SpaceView'
 import { WhatChangedView } from './views/WhatChangedView'
 import { AdminScrapingView } from './views/AdminScrapingView'
 import { AdminSignInView } from './views/AdminSignInView'
@@ -56,6 +57,8 @@ function Screen({ path, dataLabel }: { path: string; dataLabel: string }) {
   if (path === routes.adminScraping) return <AdminScrapingView />
   if (path === routes.landing) return <LandingView />
   if (path === routes.signIn) return <SignInView />
+  // The space fills the viewport, outside the app shell.
+  if (path === routes.space) return <SpaceView />
 
   const jobCode = path.startsWith(`${routes.jobs}/`) ? decodeURIComponent(path.slice(routes.jobs.length + 1)) : null
   if (jobCode) return <JobScreen code={jobCode} path={path} dataLabel={dataLabel} />

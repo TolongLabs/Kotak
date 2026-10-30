@@ -9,7 +9,8 @@ import {
   type BundlePathways,
   type BundleRole,
   type BundleRoleIndex,
-  type SdgReasonsFile
+  type SdgReasonsFile,
+  type SpaceFile
 } from '@kotak/shared'
 
 // The static client bundle (#88), read through a bundle source, checked with its Zod schema and kept in memory for
@@ -107,6 +108,11 @@ export interface Bundle {
   role: (onetCode: string) => Promise<BundleRole>
   /** The role, every related role and the `extra` roles, which the check-up ranks it against. */
   roleBundle: (onetCode: string, extra?: string[]) => Promise<RoleBundle>
+  /**
+   * Every role cut to what the engine reads for a ranked role, for the 3D space. It has no schema: the build cut it
+   * from role files it had already checked (packages/shared/src/bundle/space.ts).
+   */
+  space: () => Promise<SpaceFile>
 }
 
 /** Role files kept at most; the least recently read goes first. Every other file always stays. */
@@ -146,6 +152,7 @@ export function createBundle(source: BundleSource): Bundle {
     roleIndex: () => load(BUNDLE_PATHS.roles, BundleRoleIndexSchema),
     pathways: () => load(BUNDLE_PATHS.pathways, BundlePathwaysSchema),
     sdgReasons: () => load(BUNDLE_PATHS.sdgReasons, SdgReasonsFileSchema),
+    space: () => load(BUNDLE_PATHS.space, { parse: (file) => file as SpaceFile }),
     role,
     async roleBundle(onetCode, extra = []) {
       const main = await role(onetCode)

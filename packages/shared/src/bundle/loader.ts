@@ -13,7 +13,9 @@ export const BUNDLE_PATHS = {
   roles: '/data/roles.json',
   role: (onetCode: string) => `/data/roles/${onetCode}.json`,
   pathways: '/data/pathways.json',
-  sdgReasons: '/data/sdg-reasons.json'
+  sdgReasons: '/data/sdg-reasons.json',
+  /** Every role, cut to what the engine reads for a ranked role, for the 3D space (see space.ts). */
+  space: '/data/space.json'
 } as const
 
 /**

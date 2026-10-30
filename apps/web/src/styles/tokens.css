@@ -90,7 +90,8 @@
   --ask-kopi-clearance: 4.75rem;
 }
 
-:root[data-theme='dark'] {
+:root[data-theme='dark'],
+.space-dark {
   --k-color-bg-default: #10100b;
   --k-color-bg-panel: #1b1a13;
   --k-color-text-primary: #f3f2ed;

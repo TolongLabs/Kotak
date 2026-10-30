@@ -25,6 +25,11 @@ export function usePath(): string {
   return useSyncExternalStore(subscribe, () => window.location.pathname)
 }
 
+/** The query string, such as "?view=look-around", kept current through navigate and the back button like usePath. */
+export function useSearch(): string {
+  return useSyncExternalStore(subscribe, () => window.location.search)
+}
+
 export function navigate(to: string) {
   const url = new URL(to, window.location.origin)
   if (url.pathname + url.search === window.location.pathname + window.location.search) return

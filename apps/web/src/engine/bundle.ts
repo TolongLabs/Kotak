@@ -26,6 +26,7 @@ export const loadRole = (onetCode: string) => bundle.role(onetCode)
 export const loadRoleBundle = (onetCode: string, extra?: string[]) => bundle.roleBundle(onetCode, extra)
 export const loadPathways = () => bundle.pathways()
 export const loadSdgReasons = () => bundle.sdgReasons()
+export const loadSpaceFile = () => bundle.space()
 
 /** The session's check-up inputs as a key: the same key loads the same roles. */
 export function checkupBundleKey(session: GuestSession): string | null {
@@ -97,11 +98,13 @@ export const useSdgReasons = () => {
     return loaded.status === 'ready' && overlay ? { ...loaded, data: overlaySdgReasons(loaded.data, overlay) } : loaded
   }, [loaded, locale])
 }
+/** The 3D space's file; nothing is fetched until `enabled`, so a session with no check-up skips its 4 MB. */
+export const useSpaceFile = (enabled: boolean) => useLoaded(enabled ? 'space' : null, loadSpaceFile)
 export const useSuggestions = (profile: Profile | null, currentCode: string | null) =>
   useLoaded(profile ? JSON.stringify({ profile, current_role_code: currentCode }) : null, loadSuggestionsFor)
-/** The check-up's roles for the session: the assessed role first, then the roles it is ranked against. */
-export const useCheckupBundle = (session: GuestSession) => {
-  const loaded = useLoaded(checkupBundleKey(session), loadCheckupBundleFor)
+/** The check-up's roles for the session: the assessed role first, then the roles it is ranked against. null loads none. */
+export const useCheckupBundle = (session: GuestSession | null) => {
+  const loaded = useLoaded(session && checkupBundleKey(session), loadCheckupBundleFor)
   const locale = useLocale()
   return useMemo(() => {
     const overlay = contentFor(locale)
