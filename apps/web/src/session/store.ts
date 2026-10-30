@@ -5,6 +5,9 @@ import { useSyncExternalStore } from 'react'
 const GUEST_SESSION_KEY = 'kotak:guest-session'
 // The scenario options' shuffle seed (#352), kept apart from the session so the session's schema is unchanged.
 const SCENARIO_SEED_KEY = 'kotak:scenario-seed'
+// The answers given so far on the questions page (#324), kept apart from the session so results pages still treat an
+// unfinished check-up as unanswered (#310).
+const QUESTION_PROGRESS_KEY = 'kotak:question-progress'
 
 const cleanSession: GuestSession = {
   is_guest: false,
@@ -103,7 +106,31 @@ export function resetGuestSession() {
   commit(cleanSession, () => {
     localStorage.removeItem(GUEST_SESSION_KEY)
     localStorage.removeItem(SCENARIO_SEED_KEY)
+    localStorage.removeItem(QUESTION_PROGRESS_KEY)
   })
+}
+
+/** The effective ratings given so far for this role and snapshot, whose question order they follow; else none. */
+export function questionProgress(role_code: string, snapshot_id: string): Rating[] {
+  try {
+    const saved = parseJson(localStorage.getItem(QUESTION_PROGRESS_KEY) ?? '') as
+      { role_code?: unknown; snapshot_id?: unknown; asked?: unknown } | undefined
+    const asked = saved?.asked
+    if (saved?.role_code !== role_code || saved.snapshot_id !== snapshot_id || !Array.isArray(asked)) return []
+    return asked.every((rating) => rating === 1 || rating === 2 || rating === 3 || rating === 4) ? asked : []
+  } catch {
+    return []
+  }
+}
+
+/** Saves the ratings so far; none clears them, as after the last answer. */
+export function saveQuestionProgress(role_code: string, snapshot_id: string, asked: Rating[]) {
+  try {
+    if (asked.length === 0) localStorage.removeItem(QUESTION_PROGRESS_KEY)
+    else localStorage.setItem(QUESTION_PROGRESS_KEY, JSON.stringify({ role_code, snapshot_id, asked }))
+  } catch {
+    // Blocked storage: a reload starts the questions again, as before.
+  }
 }
 
 /**
