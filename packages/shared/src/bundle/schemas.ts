@@ -18,6 +18,7 @@ import {
   RoleQualitySchema,
   SdgTargetSchema
 } from '../data/role-corners'
+import { StatementVariantSchema } from '../data/statement-variants'
 import { CornerScenariosSchema } from '../data/scenarios'
 import { SnapshotIdSchema, SourceSchema, VerdictSchema } from '../engine'
 import { RoleSignalsSchema, ScenarioSchema, SnapshotDiffSchema, TransferLinksSchema } from '../rules/schemas'
@@ -56,6 +57,8 @@ export const BundleCornerSchema = z
     /** null until the batch writes them; the build never makes them up. */
     statements: CanDoStatementsSchema.nullable(),
     reversed_statements: ReversedStatementsSchema.nullish(),
+    /** Optional experienced wording for roles that still use statement questions. */
+    statement_variants: StatementVariantSchema.optional(),
     explainers: CornerExplainersSchema.optional(),
     /** "What would you do" questions (#352); the check-up asks them only when every corner has both. */
     scenarios: CornerScenariosSchema.optional(),

@@ -67,6 +67,18 @@ const [occupations, tasks, activities, april, may, jmi, demoRoles, sdgReasons] =
 const corners = await loadCorners(ROOT, tasks.tasks)
 const pathwaysInputs = await loadPathwaysInputs(ROOT)
 const links = onetLinks(tasks.tasks, activities)
+const statementVariantCount = [...corners.values()].reduce(
+  (count, role) =>
+    count +
+    role.corners.reduce(
+      (roleCount, corner) =>
+        roleCount +
+        Object.values(corner.statement_variants?.statements ?? {}).filter((text) => text !== undefined).length +
+        Object.values(corner.statement_variants?.reversed_statements ?? {}).filter((text) => text !== undefined).length,
+      0
+    ),
+  0
+)
 
 const failures: string[] = []
 function check<T>(name: string, schema: Schema<T>, value: unknown): T | null {
@@ -288,6 +300,7 @@ console.info(
   `Corners: ${JSON.stringify(manifest.corners)}; questions ready for ${index.roles.filter((r) => r.questions_ready).length} roles, ` +
     `scenarios for ${[...roles.values()].filter(usesScenarios).length}`
 )
+console.info(`Statement variants: ${statementVariantCount}`)
 for (const d of manifest.demo.roles) {
   const { checks, diff } = d
   console.info(

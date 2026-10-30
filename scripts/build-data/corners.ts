@@ -7,6 +7,7 @@ import {
   CornerGroupsFileSchema,
   RoleCornersSchema,
   ScenariosFileSchema,
+  StatementVariantsFileSchema,
   StatementExplainersSchema,
   cornerIwaErrors,
   foreignTaskErrors,
@@ -21,6 +22,7 @@ export const BATCH_FILE = 'data/generated/role-corners.json'
 export const EXPLAINERS_FILE = 'data/generated/statement-explainers.json'
 export const GROUPS_FILE = 'data/generated/corner-groups.json'
 export const SCENARIOS_FILE = 'data/generated/scenarios.json'
+export const STATEMENT_VARIANTS_FILE = 'data/generated/statement-variants.json'
 
 export type FoundCorners = Pick<BundleRole, 'corners_source' | 'quality' | 'generated' | 'corners'>
 
@@ -42,8 +44,22 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
 
   const explainers = (await read(`${root}/${EXPLAINERS_FILE}`, StatementExplainersSchema)) ?? {}
   const scenarios = (await read(`${root}/${SCENARIOS_FILE}`, ScenariosFileSchema))?.roles ?? {}
+  const statementVariants = (await read(`${root}/${STATEMENT_VARIANTS_FILE}`, StatementVariantsFileSchema))?.roles ?? {}
   const unknownRoles = Object.keys(scenarios).filter((code) => !batch?.roles.some((r) => r.onet_code === code))
   if (unknownRoles.length > 0) throw new Error(`${SCENARIOS_FILE}: no batch corners for ${unknownRoles.join(', ')}`)
+  const unknownVariantRoles = Object.keys(statementVariants).filter(
+    (code) => !batch?.roles.some((r) => r.onet_code === code)
+  )
+  if (unknownVariantRoles.length > 0)
+    throw new Error(`${STATEMENT_VARIANTS_FILE}: no batch corners for ${unknownVariantRoles.join(', ')}`)
+  const unknownVariantCorners = Object.entries(statementVariants).flatMap(([code, variants]) => {
+    const role = batch?.roles.find((r) => r.onet_code === code)
+    return Object.keys(variants)
+      .filter((id) => !role?.corners.some((corner) => corner.corner_id === id))
+      .map((id) => `${code} ${id}`)
+  })
+  if (unknownVariantCorners.length > 0)
+    throw new Error(`${STATEMENT_VARIANTS_FILE}: unknown corner(s) ${unknownVariantCorners.join(', ')}`)
   const partial: string[] = []
   const found = new Map<string, FoundCorners>()
   for (const occupation of groups.occupations) {
@@ -67,6 +83,7 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
     const { errors } = validateOccupationCorners(role, tasks[role.onet_code] ?? [])
     if (errors.length > 0) throw new Error(`${BATCH_FILE} ${role.onet_code}: ${errors.join('; ')}`)
     const byCorner = explainers[role.onet_code] ?? {}
+    const variantsByCorner = statementVariants[role.onet_code] ?? {}
     const orphans = Object.keys(byCorner).filter((id) => !role.corners.some((c) => c.corner_id === id))
     if (orphans.length > 0)
       throw new Error(`${EXPLAINERS_FILE} ${role.onet_code}: unknown corner ${orphans.join(', ')}`)
@@ -92,6 +109,7 @@ export async function loadCorners(root: string, tasks: OnetTasksFile['tasks']): 
       corners: role.corners.map((c) => ({
         ...c,
         ...(byCorner[c.corner_id] && { explainers: byCorner[c.corner_id] }),
+        ...(variantsByCorner[c.corner_id] && { statement_variants: variantsByCorner[c.corner_id] }),
         ...(scenariosByCorner[c.corner_id] && { scenarios: scenariosByCorner[c.corner_id] })
       }))
     })

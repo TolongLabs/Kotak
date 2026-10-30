@@ -7,7 +7,10 @@ import { REVERSED_SLOTS, reversedRating } from './scoring'
 
 export type QuestionLevel = 'basic' | 'advanced'
 
-type AskedCorner = Pick<BundleCorner, 'corner_id' | 'statements' | 'reversed_statements' | 'scenarios'>
+type AskedCorner = Pick<
+  BundleCorner,
+  'corner_id' | 'statements' | 'reversed_statements' | 'statement_variants' | 'scenarios'
+>
 
 export type SlotQuestion =
   | {
@@ -39,7 +42,8 @@ export function usesScenarios(role: { corners: Pick<BundleCorner, 'scenarios'>[]
  */
 export function slotQuestion(
   role: { corners: AskedCorner[] },
-  slot: { order: readonly string[]; corner_id: string; level: QuestionLevel; seed: number }
+  slot: { order: readonly string[]; corner_id: string; level: QuestionLevel; seed: number },
+  yearsExperience?: number | null
 ): SlotQuestion {
   const asked = slot.order.indexOf(slot.corner_id)
   const corner = role.corners.find((c) => c.corner_id === slot.corner_id)
@@ -60,10 +64,13 @@ export function slotQuestion(
     }
   }
   const index = 2 * asked + (slot.level === 'advanced' ? 1 : 0)
-  const reversedText = REVERSED_SLOTS.includes(index) ? corner.reversed_statements?.[slot.level] : undefined
+  const variants = yearsExperience != null && yearsExperience >= 4 ? corner.statement_variants : undefined
+  const reversedText = REVERSED_SLOTS.includes(index)
+    ? (variants?.reversed_statements?.[slot.level] ?? corner.reversed_statements?.[slot.level])
+    : undefined
   return {
     kind: 'statement',
-    statement: reversedText ?? corner.statements![slot.level],
+    statement: reversedText ?? variants?.statements?.[slot.level] ?? corner.statements![slot.level],
     reversed: reversedText !== undefined,
     rate: (rating) => (reversedText ? reversedRating(rating) : rating)
   }
