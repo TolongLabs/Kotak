@@ -1,6 +1,5 @@
 .agents/
 .claude/
-docs/demo/example-pitch-deck.html
 # Hand-set slide decks, exported to PDF and PPTX as they are
 docs/demo/deck/*.html
 # Generated O*NET data, one record per line

@@ -1,5 +1,5 @@
 // Writes scripts/demo-requests.json, the requests `bun run prewarm:ai` sends so the demo never waits on Claude (#150).
-// - role_titles: the titles TRD.md's job match acceptance names, and the demo profile's job in docs/demo/video.md.
+// - role_titles: the titles TRD.md's job match acceptance names, and the demo profile's job in docs/demo/prelim/video.md.
 //   The app calls the match route only for a typed title with no exact O*NET title, so these are the ones it sends.
 // - explanations: what the Radar sends for each role in data/demo-roles.json, through the app's own computeCheckup
 //   and buildExplanationRequest: the May 2026 snapshot, the default scenario and the demo walk's answers (Not Yet,

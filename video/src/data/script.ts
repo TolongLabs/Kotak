@@ -1,5 +1,5 @@
 // The demo narration, D1 to M1, as the director script reads it
-// (docs/demo/kotak-director-script.md, "Live demo"). `[pause Ns]` marks are silence;
+// (docs/demo/prelim/director-script.md, "Live demo"). `[pause Ns]` marks are silence;
 // `[kopi]` is where Kopi's own voice plays in D6. The captions use these words, and Whisper only times them.
 // If a take reads a pickup line, change its text here to what was said.
 export const SCRIPT = {
