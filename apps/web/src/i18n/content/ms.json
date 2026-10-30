@@ -274,6 +274,766 @@
           }
         }
       }
+    },
+    "15-1252.00": {
+      "corners": {
+        "project-communication": {
+          "name": "Komunikasi projek",
+          "statements": {
+            "advanced": "Saya boleh mencipta templat pelaporan piawai dan melatih orang lain mengenainya.",
+            "basic": "Saya boleh melakar kemas kini status ringkas untuk pasukan projek.",
+            "working": "Saya boleh menyediakan laporan terperinci tentang spesifikasi dan status projek."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mencipta templat pelaporan piawai dan melatih orang lain mengenainya.",
+            "basic": "Saya masih perlukan bantuan untuk melakar kemas kini status ringkas untuk pasukan projek."
+          }
+        },
+        "testing-procedures": {
+          "name": "Prosedur pengujian",
+          "statements": {
+            "advanced": "Saya boleh mengarahkan prosedur pengesahan dan menetapkan piawaian dokumentasi.",
+            "basic": "Saya boleh mengikuti senarai semak untuk menguji ciri perisian kecil.",
+            "working": "Saya boleh membangunkan prosedur pengujian dan dokumentasi untuk sistem baharu."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengarahkan prosedur pengesahan dan menetapkan piawaian dokumentasi.",
+            "basic": "Saya masih perlukan bantuan untuk menguji ciri perisian kecil."
+          }
+        },
+        "software-design": {
+          "name": "Reka bentuk perisian",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk sistem kompleks menggunakan model matematik untuk meramalkan hasil.",
+            "basic": "Saya boleh membantu menentukan piawaian prestasi asas bagi projek perisian.",
+            "working": "Saya boleh mereka bentuk sistem perisian secara kendiri menggunakan analisis saintifik."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk sistem kompleks menggunakan model matematik yang meramalkan hasil.",
+            "basic": "Saya masih perlukan bantuan untuk menentukan piawaian prestasi asas bagi projek perisian."
+          }
+        },
+        "technical-advising": {
+          "name": "Penyediaan nasihat teknikal",
+          "statements": {
+            "advanced": "Saya boleh menasihati pengurusan kanan tentang strategi teknikal yang kompleks.",
+            "basic": "Saya boleh menjawab soalan asas tentang penyelenggaraan perisian.",
+            "working": "Saya boleh berunding dengan pelanggan tentang status projek dan reka bentuk."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menasihati pengurusan kanan tentang strategi teknikal yang kompleks.",
+            "basic": "Saya masih perlukan bantuan untuk menjawab soalan asas tentang penyelenggaraan perisian."
+          }
+        },
+        "system-analysis": {
+          "name": "Analisis sistem",
+          "statements": {
+            "advanced": "Saya boleh mengetuai penilaian sistem yang kompleks dan menetapkan piawaian untuk analisis data.",
+            "basic": "Saya boleh mengumpul data untuk memeriksa sama ada perubahan sistem adalah mungkin.",
+            "working": "Saya boleh menganalisis keperluan pengguna untuk merancang pemasangan sistem baharu."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengetuai penilaian sistem yang kompleks dan menetapkan piawaian untuk analisis data.",
+            "basic": "Saya masih perlukan bantuan untuk mengumpul data dan memeriksa sama ada perubahan sistem adalah mungkin."
+          }
+        },
+        "code-maintenance": {
+          "name": "Penyelenggaraan kod",
+          "statements": {
+            "advanced": "Saya boleh mengetuai naik taraf perisian utama dan membimbing orang lain membaiki ralat.",
+            "basic": "Saya boleh membaiki ralat mudah dalam perisian sedia ada dengan bimbingan.",
+            "working": "Saya boleh mengubah suai perisian untuk perkakasan baharu secara sendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengetuai naik taraf perisian utama dan membimbing orang lain membaiki ralat.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membaiki ralat mudah dalam perisian sedia ada."
+          }
+        }
+      }
+    },
+    "13-2011.00": {
+      "corners": {
+        "system-efficiency-reviews": {
+          "name": "Semakan kecekapan sistem",
+          "statements": {
+            "advanced": "Saya boleh mengesyorkan kawalan untuk memastikan kebolehpercayaan sistem dan integriti data.",
+            "basic": "Saya boleh memeriksa buku akaun bagi penggunaan prosedur akauntansi yang diterima.",
+            "working": "Saya boleh meneliti sistem kewangan untuk mengenal pasti isu kecekapan dan keberkesanan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengesyorkan kawalan yang memastikan kebolehpercayaan sistem dan integriti data.",
+            "basic": "Saya masih perlukan bantuan untuk memeriksa buku akaun bagi penggunaan prosedur akauntansi yang diterima."
+          }
+        },
+        "audit-and-compliance": {
+          "name": "Audit dan pematuhan",
+          "statements": {
+            "advanced": "Saya boleh mengumpul data untuk mengesan penipuan, ketidakpatuhan, atau kawalan yang lemah.",
+            "basic": "Saya boleh meneliti akaun bagi mencari percanggahan dan mendamaikan perbezaan dengan bimbingan.",
+            "working": "Saya boleh mengaudit rekod gaji untuk menentukan liabiliti dan pematuhan cukai."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengumpul data yang mengesan penipuan, ketidakpatuhan, atau kawalan yang lemah.",
+            "basic": "Saya masih perlukan bantuan untuk meneliti akaun bagi mencari percanggahan dan mendamaikan perbezaan."
+          }
+        },
+        "financial-record-checks": {
+          "name": "Semakan rekod kewangan",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk dan mendokumentasikan sistem pemeliharaan rekod baharu menggunakan teknologi komputer semasa.",
+            "basic": "Saya boleh memeriksa wang tunai dan cek yang dibatalkan untuk mengesahkan ketepatan rekod.",
+            "working": "Saya boleh memeriksa inventori untuk mengesahkan entri jurnal dan buku besar secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk dan mendokumentasikan sistem pemeliharaan rekod baharu menggunakan teknologi komputer semasa.",
+            "basic": "Saya masih perlukan bantuan untuk memeriksa wang tunai dan cek yang dibatalkan untuk mengesahkan ketepatan rekod."
+          }
+        },
+        "financial-statement-analysis": {
+          "name": "Analisis penyata kewangan",
+          "statements": {
+            "advanced": "Saya boleh menganalisis trend perniagaan dan kos untuk meramalkan pendapatan dan perbelanjaan masa depan.",
+            "basic": "Saya boleh menyediakan entri jurnal pelarasan di bawah penyeliaan.",
+            "working": "Saya boleh menganalisis rekod akaun untuk menilai ketepatan dan pematuhan kepada piawaian."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menganalisis trend perniagaan dan kos untuk meramalkan pendapatan dan perbelanjaan masa depan.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk menyediakan entri jurnal pelarasan."
+          }
+        },
+        "management-reporting": {
+          "name": "Pelaporan pengurusan",
+          "statements": {
+            "advanced": "Saya boleh menyelia pengauditan premis dan menentukan skop siasatan.",
+            "basic": "Saya boleh melaporkan kewangan premis kepada pengurusan.",
+            "working": "Saya boleh berunding dengan pegawai syarikat tentang hal ehwal kewangan dan peraturan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyelia pengauditan premis dan menentukan skop siasatan.",
+            "basic": "Saya masih perlukan bantuan untuk melaporkan kewangan premis kepada pengurusan."
+          }
+        },
+        "tax-and-asset-evaluation": {
+          "name": "Penilaian cukai dan aset",
+          "statements": {
+            "advanced": "Saya boleh menilai sama ada objektif organisasi dipantulkan dalam aktiviti pengurusan.",
+            "basic": "Saya boleh membina jadual akaun dan melabelkan entri ke akaun yang betul.",
+            "working": "Saya boleh menilai kewangan pembayar cukai untuk menentukan liabiliti cukai menggunakan kaedah penilaian."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menilai sama ada objektif organisasi dipantulkan dalam aktiviti pengurusan.",
+            "basic": "Saya masih perlukan bantuan untuk membina jadual akaun dan melabelkan entri ke akaun yang betul."
+          }
+        }
+      }
+    },
+    "15-2051.00": {
+      "corners": {
+        "mathematical-analysis-and-trends": {
+          "name": "Analisis matematik dan trend",
+          "statements": {
+            "advanced": "Saya boleh mencadangkan penyelesaian dalam kejuruteraan, sains, dan bidang lain menggunakan teori dan teknik matematik.",
+            "basic": "Saya boleh mengenal pasti hubungan dan trend atau faktor yang boleh menjejaskan hasil penyelidikan dengan bimbingan.",
+            "working": "Saya boleh menganalisis data secara kendiri untuk mengenal pasti hubungan dan trend yang menjejaskan hasil penyelidikan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mencadangkan penyelesaian dalam kejuruteraan, sains, dan bidang lain menggunakan teori dan teknik matematik.",
+            "basic": "Saya masih perlukan bantuan untuk mengenal pasti hubungan dan trend atau faktor yang boleh menjejaskan hasil penyelidikan."
+          }
+        },
+        "visualization-and-reporting": {
+          "name": "Visualisasi dan pelaporan",
+          "statements": {
+            "advanced": "Saya boleh menyampaikan persembahan lisan atau bertulis tentang hasil analisis data kepada pengurusan atau pengguna akhir.",
+            "basic": "Saya boleh mencipta graf, carta, atau visualisasi lain untuk menyampaikan hasil data dengan bimbingan.",
+            "working": "Saya boleh mencipta visualisasi dan membaca kajian secara kendiri untuk mengenal pasti trend analitik yang baru muncul."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyampaikan persembahan lisan atau bertulis tentang hasil analisis data kepada pengurusan atau pengguna akhir.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk mencipta graf, carta, atau visualisasi lain yang menyampaikan hasil data."
+          }
+        },
+        "business-insights-and-advice": {
+          "name": "Wawasan dan nasihat perniagaan",
+          "statements": {
+            "advanced": "Saya boleh mengesyorkan penyelesaian berasaskan data kepada pemegang saham utama dan membimbing proses membuat keputusan mereka.",
+            "basic": "Saya boleh mengenal pasti penyelesaian masalah perniagaan menggunakan hasil analisis data dengan bimbingan.",
+            "working": "Saya boleh mengenal pasti penyelesaian masalah perniagaan seperti belanjawan atau pemasaran menggunakan data secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengesyorkan penyelesaian berasaskan data kepada pemegang saham utama dan membimbing proses membuat keputusan mereka.",
+            "basic": "Saya masih perlukan bantuan untuk mengenal pasti penyelesaian masalah perniagaan menggunakan hasil analisis data."
+          }
+        },
+        "survey-and-sampling-design": {
+          "name": "Reka bentuk tinjauan dan pensampelan",
+          "statements": {
+            "advanced": "Saya boleh mengenal pasti masalah perniagaan atau objektif pengurusan yang boleh diatasi melalui analisis data.",
+            "basic": "Saya boleh menggunakan teknik pensampelan untuk menentukan kumpulan yang akan ditinjau dengan bimbingan.",
+            "working": "Saya boleh mereka bentuk tinjauan, soal siasat pendapat, atau instrumen lain untuk mengumpul data secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengenal pasti masalah perniagaan atau objektif pengurusan yang boleh diatasi melalui analisis data.",
+            "basic": "Saya masih perlukan bantuan untuk menggunakan teknik pensampelan yang menentukan kumpulan yang akan ditinjau."
+          }
+        },
+        "data-cleaning-and-coding": {
+          "name": "Pembersihan dan pengkodan data",
+          "statements": {
+            "advanced": "Saya boleh menulis fungsi atau aplikasi baharu dalam bahasa pengaturcaraan untuk menjalankan analisis yang kompleks.",
+            "basic": "Saya boleh membersihkan dan memanipulasi data mentah menggunakan perisian statistik dengan bimbingan.",
+            "working": "Saya boleh memproses set data yang besar secara kendiri menggunakan perisian statistik untuk projek sebenar."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menulis fungsi atau aplikasi baharu dalam bahasa pengaturcaraan untuk menjalankan analisis yang kompleks.",
+            "basic": "Saya masih perlukan bantuan untuk membersihkan dan memanipulasi data mentah menggunakan perisian statistik."
+          }
+        },
+        "statistical-modeling-and-validation": {
+          "name": "Pemodelan dan pengesahan statistik",
+          "statements": {
+            "advanced": "Saya boleh menguji, mengesahkan, dan merumuskan semula model untuk memastikan ramalan hasil yang diingini adalah tepat.",
+            "basic": "Saya boleh membandingkan model menggunakan metrik prestasi statistik dengan bimbingan.",
+            "working": "Saya boleh menggunakan algoritma pemilihan ciri pada model yang meramalkan hasil yang diingini secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menguji, mengesahkan, dan merumuskan semula model untuk memastikan ramalan hasil yang diingini adalah tepat.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membandingkan model menggunakan metrik prestasi statistik."
+          }
+        }
+      }
+    },
+    "13-1111.00": {
+      "corners": {
+        "field-data-collection": {
+          "name": "Pengumpulan data lapangan",
+          "statements": {
+            "advanced": "Saya boleh merangka protokol pengumpulan data yang kompleks untuk audit operasi berbilang jabatan.",
+            "basic": "Saya boleh mengumpul dan menyusun maklumat asas tentang masalah kerja tertentu dengan bimbingan.",
+            "working": "Saya boleh mewawancara kakitangan dan memerhati operasi di tapak untuk mengenal pasti isu proses secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya masih perlukan bantuan pakar untuk merangka protokol pengumpulan data yang kompleks untuk audit operasi berbilang jabatan.",
+            "basic": "Saya masih perlukan bantuan untuk mengumpul dan menyusun maklumat asas tentang masalah kerja tertentu."
+          }
+        },
+        "records-system-design": {
+          "name": "Reka bentuk sistem rekod",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk dan menguatkuasakan pematuhan untuk sistem pengurusan dan perlindungan rekod peringkat perusahaan.",
+            "basic": "Saya boleh membantu mengarkib dan mendapatkan rekod mengikut garis panduan pengurusan sedia ada.",
+            "working": "Saya boleh membangunkan dan melaksanakan program pengurusan rekod untuk pengarkiban dan perlindungan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk dan menguatkuasakan pematuhan untuk sistem pengurusan dan perlindungan rekod peringkat perusahaan.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu mengarkib dan mendapatkan rekod mengikut garis panduan pengurusan sedia ada."
+          }
+        },
+        "form-and-report-design": {
+          "name": "Reka bentuk borang dan laporan",
+          "statements": {
+            "advanced": "Saya boleh meluluskan perubahan besar pada borang dan laporan, menetapkan piawaian untuk penggunaan organisasi.",
+            "basic": "Saya boleh meneliti borang dan laporan sedia ada untuk mengenal pasti isu format asas.",
+            "working": "Saya boleh mereka bentuk dan mencadangkan perubahan kepada borang dan laporan untuk meningkatkan tujuan mereka."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk meluluskan perubahan besar pada borang dan laporan sambil menetapkan piawaian untuk penggunaan organisasi.",
+            "basic": "Saya masih perlukan bantuan untuk meneliti borang dan laporan sedia ada bagi mengenal pasti isu format asas."
+          }
+        },
+        "operational-data-analysis": {
+          "name": "Analisis data operasi",
+          "statements": {
+            "advanced": "Saya boleh membangunkan kaedah alternatif yang kompleks dan penyelesaian strategik untuk halangan operasi utama.",
+            "basic": "Saya boleh menganalisis set data ringkas untuk mengenal pasti ketidakefisienan operasi asas dengan pengawasan.",
+            "working": "Saya boleh menganalisis data yang dikumpul untuk membangunkan penyelesaian praktikal bagi meningkatkan operasi harian."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk membangunkan kaedah alternatif yang kompleks dan penyelesaian strategik untuk halangan operasi utama.",
+            "basic": "Saya masih perlukan bantuan untuk menganalisis set data ringkas bagi mengenal pasti ketidakefisienan operasi asas."
+          }
+        },
+        "implementation-and-training": {
+          "name": "Pelaksanaan dan latihan",
+          "statements": {
+            "advanced": "Saya boleh mengetuai latihan pasukan besar tentang sistem baharu yang kompleks dan memastikan penerimaan yang berjaya.",
+            "basic": "Saya boleh membantu menyediakan manual ringkas dan membantu dalam sesi latihan pengguna asas.",
+            "working": "Saya boleh mendokumentasikan dapatan kajian, menyediakan manual, dan melatih pekerja tentang prosedur baharu."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengetuai latihan pasukan besar tentang sistem baharu yang kompleks dan memastikan penerimaan yang berjaya.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk menyediakan manual ringkas dan membantu sesi latihan pengguna asas."
+          }
+        },
+        "process-study-planning": {
+          "name": "Perancangan kajian proses",
+          "statements": {
+            "advanced": "Saya boleh merancang kajian komprehensif mengenai isu kompleks seperti pengeluaran bersepadu atau analisis kos.",
+            "basic": "Saya boleh membantu menggariskan skop kajian prosedur kerja yang ringkas.",
+            "working": "Saya boleh merancang kajian tentang masalah kerja seperti kawalan inventori atau aliran maklumat."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk merancang kajian komprehensif mengenai isu kompleks seperti pengeluaran bersepadu atau analisis kos.",
+            "basic": "Saya masih perlukan bantuan untuk membantu menggariskan skop kajian prosedur kerja yang ringkas."
+          }
+        }
+      }
+    },
+    "13-1071.00": {
+      "corners": {
+        "hiring-and-selection": {
+          "name": "Pengambilan dan pemilihan",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk dan mengetuai proses pengambilan yang kompleks, membimbing pengurus tentang kriteria pemilihan dan keputusan akhir.",
+            "basic": "Saya boleh meneliti permohonan kerja dan memadankannya dengan keperluan kerja asas dengan bimbingan.",
+            "working": "Saya boleh mewawancara pemohon secara kendiri dan memilih calon berkelayakan untuk jawatan kosong."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk dan mengetuai proses pengambilan yang kompleks, membimbing pengurus tentang kriteria pemilihan dan keputusan akhir.",
+            "basic": "Saya masih perlukan bantuan untuk meneliti permohonan kerja dan memadankannya dengan keperluan kerja asas."
+          }
+        },
+        "recruitment-strategy": {
+          "name": "Strategi perekrutan",
+          "statements": {
+            "advanced": "Saya boleh menasihati pengurusan tentang program pengekalan jangka panjang dan strategi perekrutan yang kompleks untuk organisasi.",
+            "basic": "Saya boleh mencari calon kerja menggunakan pangkalan data dan papan kerja dalam talian dengan pengawasan.",
+            "working": "Saya boleh membangunkan dan melaksanakan strategi perekrutan untuk memenuhi keperluan kakitangan semasa secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menasihati pengurusan tentang program pengekalan jangka panjang dan strategi perekrutan yang kompleks untuk organisasi.",
+            "basic": "Saya masih perlukan bantuan untuk mencari calon kerja menggunakan pangkalan data dan papan kerja dalam talian."
+          }
+        },
+        "hr-policy-guidance": {
+          "name": "Panduan dasar HR",
+          "statements": {
+            "advanced": "Saya boleh mentafsir undang-undang HR yang kompleks dan membimbing pengurusan tentang pelaksanaan dasar dan isu pematuhan.",
+            "basic": "Saya boleh menjelaskan dasar dan prosedur HR standard kepada pekerja dengan skrip.",
+            "working": "Saya boleh mentafsir dan menjelaskan peraturan HR secara kendiri serta memaklumkan pemohon tentang butiran pekerjaan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mentafsir undang-undang HR yang kompleks dan membimbing pengurusan tentang pelaksanaan dasar dan isu pematuhan.",
+            "basic": "Saya masih perlukan bantuan untuk menjelaskan dasar dan prosedur HR standard kepada pekerja."
+          }
+        },
+        "hr-records-management": {
+          "name": "Pengurusan rekod HR",
+          "statements": {
+            "advanced": "Saya boleh menganalisis data pekerjaan untuk mengenal pasti trend dan menyediakan laporan strategik untuk kepimpinan.",
+            "basic": "Saya boleh mengemas kini buku panduan dan direktori kakitangan dengan bimbingan daripada kakitangan HR kanan.",
+            "working": "Saya boleh mengekalkan rekod pekerjaan dan menyediakan laporan HR yang diperlukan secara kendiri menggunakan perisian."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menganalisis data pekerjaan untuk mengenal pasti trend dan menyediakan laporan strategik untuk kepimpinan.",
+            "basic": "Saya masih perlukan bantuan untuk mengemas kini buku panduan dan direktori kakitangan."
+          }
+        },
+        "employee-relations": {
+          "name": "Hubungan pekerja",
+          "statements": {
+            "advanced": "Saya boleh menyelesaikan isu hubungan pekerja yang kompleks dan memastikan pematuhan penuh dengan undang-undang EEO dan ADA.",
+            "basic": "Saya boleh membantu mendokumentasikan aduan pekerja dan menyediakan dokumen pemecatan dengan pengawasan.",
+            "working": "Saya boleh menangani kebimbangan pekerja secara kendiri dan menjalankan temu bual keluar untuk kakitangan yang berundur."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyelesaikan isu hubungan pekerja yang kompleks dan memastikan pematuhan penuh dengan undang-undang EEO dan ADA.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu mendokumentasikan aduan pekerja dan menyediakan dokumen pemecatan."
+          }
+        },
+        "staff-training": {
+          "name": "Latihan kakitangan",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk dan menyampaikan program latihan lanjutan tentang kaunseling dan dokumentasi prestasi untuk pengurus.",
+            "basic": "Saya boleh menjadualkan orientasi kakitangan baharu dan menyediakan bahan latihan asas dengan bantuan.",
+            "working": "Saya boleh mengendalikan orientasi kakitangan baharu dan melatih pengurus tentang teknik temu duga secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk dan menyampaikan program latihan lanjutan tentang kaunseling dan dokumentasi prestasi untuk pengurus.",
+            "basic": "Saya masih perlukan bantuan untuk menjadualkan orientasi kakitangan baharu dan menyediakan bahan latihan asas."
+          }
+        }
+      }
+    },
+    "11-2021.00": {
+      "corners": {
+        "pricing-and-strategy": {
+          "name": "Penetapan harga dan strategi",
+          "statements": {
+            "advanced": "Saya boleh menetapkan piawaian harga dan membimbing pasukan dalam penempatan pasaran yang kompleks.",
+            "basic": "Saya boleh membantu melakar pilihan harga dengan bimbingan daripada pengurus kanan.",
+            "working": "Saya boleh membangunkan strategi harga yang seimbang antara matlamat firma dan keperluan pelanggan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menetapkan piawaian harga dan membimbing pasukan dalam penempatan pasaran yang kompleks.",
+            "basic": "Saya masih perlukan bantuan untuk melakar pilihan harga."
+          }
+        },
+        "vendor-and-legal-deals": {
+          "name": "Perjanjian vendor dan undang-undang",
+          "statements": {
+            "advanced": "Saya boleh menyelesaikan pertikaian undang-undang yang kompleks dan menetapkan piawaian untuk perjanjian vendor.",
+            "basic": "Saya boleh membantu dalam penyediaan kontrak vendor asas di bawah pengawasan undang-undang.",
+            "working": "Saya boleh berunding kontrak pengedaran dan memberi nasihat mengenai spesifikasi produk."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyelesaikan pertikaian undang-undang yang kompleks dan menetapkan piawaian untuk perjanjian vendor.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu dalam penyediaan kontrak vendor asas."
+          }
+        },
+        "financial-and-product-data": {
+          "name": "Data kewangan dan produk",
+          "statements": {
+            "advanced": "Saya boleh menetapkan piawaian analisis kewangan dan membimbing pasukan tentang unjuran ROI.",
+            "basic": "Saya boleh membantu menyusun senarai produk dan memeriksa angka bajet dengan sokongan.",
+            "working": "Saya boleh menilai aspek kewangan pembangunan produk dan menyusun senarai tawaran."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menetapkan piawaian analisis kewangan dan membimbing pasukan tentang unjuran ROI.",
+            "basic": "Saya masih perlukan bantuan untuk menyusun senarai produk dan memeriksa angka bajet."
+          }
+        },
+        "market-trend-analysis": {
+          "name": "Analisis trend pasaran",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk rangka kerja penyelidikan pasaran dan membimbing pasukan dalam analisis trend.",
+            "basic": "Saya boleh membantu mengumpulkan data pasaran dan merumuskan penemuan dengan bimbingan.",
+            "working": "Saya boleh menganalisis trend pasaran dan menggunakan ramalan jualan untuk merancang keuntungannya."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk rangka kerja penyelidikan pasaran dan membimbing pasukan dalam analisis trend.",
+            "basic": "Saya masih perlukan bantuan untuk mengumpulkan data pasaran dan merumuskan penemuan."
+          }
+        },
+        "team-supervision": {
+          "name": "Penyeliaan pasukan",
+          "statements": {
+            "advanced": "Saya boleh menetapkan piawaian prestasi dan membimbing pengurus tentang pembangunan pasukan.",
+            "basic": "Saya boleh membantu menjadualkan tugas kakitangan dan memerhati aktiviti harian.",
+            "working": "Saya boleh mengarahkan pengambilan, latihan, dan penilaian prestasi untuk kakitangan pemasaran."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menetapkan piawaian prestasi dan membimbing pengurus tentang pembangunan pasukan.",
+            "basic": "Saya masih perlukan bantuan untuk menjadualkan tugas kakitangan dan memerhati aktiviti harian."
+          }
+        },
+        "promotional-coordination": {
+          "name": "Penyelarasan promosi",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk strategi promosi dan membimbing pasukan berbilang fungsi dalam pelaksanaan.",
+            "basic": "Saya boleh membantu mengatur logistik untuk acara promosi kecil dengan pengawasan.",
+            "working": "Saya boleh menyelaraskan aktiviti promosi dan pameran perdagangan dengan pelbagai jabatan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk strategi promosi dan membimbing pasukan berbilang fungsi dalam pelaksanaan.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu mengatur logistik acara promosi kecil."
+          }
+        }
+      }
+    },
+    "11-1021.00": {
+      "corners": {
+        "performance-analysis": {
+          "name": "Analisis prestasi",
+          "statements": {
+            "advanced": "Saya boleh mengenal pasti bidang pengurangan kos strategik dan penambahbaikan program daripada data prestasi yang kompleks.",
+            "basic": "Saya boleh meninjau laporan jualan atau aktiviti ringkas dengan bimbingan untuk memeriksa pencapaian matlamat.",
+            "working": "Saya boleh menganalisis penyata kewangan dan data prestasi secara kendiri untuk mengukur produktiviti."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengenal pasti bidang pengurangan kos strategik dan penambahbaikan program daripada data prestasi yang kompleks.",
+            "basic": "Saya masih perlukan bantuan untuk meninjau laporan jualan atau aktiviti ringkas dan memeriksa pencapaian matlamat."
+          }
+        },
+        "department-coordination": {
+          "name": "Penyelarasan jabatan",
+          "statements": {
+            "advanced": "Saya boleh mengarahkan inisiatif berbilang jabatan yang kompleks yang melibatkan pengeluaran, penetapan harga, dan pengedaran jualan.",
+            "basic": "Saya boleh mengikuti arahan untuk menyelaraskan aktiviti pentadbiran asas untuk penghantaran produk atau perkhidmatan.",
+            "working": "Saya boleh mengarahkan dan menyelaraskan aktiviti harian jabatan perniagaan tertentu secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengarahkan inisiatif berbilang jabatan yang kompleks yang melibatkan pengeluaran, penetapan harga, dan pengedaran jualan.",
+            "basic": "Saya masih perlukan bantuan untuk menyelaraskan aktiviti pentadbiran asas untuk penghantaran produk atau perkhidmatan."
+          }
+        },
+        "policy-implementation": {
+          "name": "Pelaksanaan dasar",
+          "statements": {
+            "advanced": "Saya boleh menetapkan piawaian untuk dasar organisasi baharu dan membimbing kakitangan tentang pelaksanaannya.",
+            "basic": "Saya boleh membantu melakar prosedur jabatan dengan bimbingan pegawai kanan.",
+            "working": "Saya boleh secara kendiri menetapkan dan melaksanakan matlamat serta objektif jabatan bersama kakitangan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menetapkan piawaian untuk dasar organisasi baharu dan membimbing kakitangan tentang pelaksanaannya.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu melakar prosedur jabatan."
+          }
+        },
+        "staff-development": {
+          "name": "Pembangunan kakitangan",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk program latihan yang komprehensif dan menetapkan piawaian penilaian untuk semua kakitangan.",
+            "basic": "Saya boleh membantu memilih calon dan mengendalikan sesi latihan asas dengan pengawasan.",
+            "working": "Saya boleh menjalankan fungsi peribadi secara kendiri termasuk pemilihan, latihan, dan penilaian."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk program latihan yang komprehensif dan menetapkan piawaian penilaian untuk semua kakitangan.",
+            "basic": "Saya masih perlukan bantuan untuk memilih calon dan mengendalikan sesi latihan asas."
+          }
+        },
+        "budget-management": {
+          "name": "Pengurusan belanjawan",
+          "statements": {
+            "advanced": "Saya boleh menyelaraskan strategi kewangan kompleks untuk memaksimumkan pelaburan dan meningkatkan kecekapan keseluruhan.",
+            "basic": "Saya boleh membantu menjejak perbelanjaan belanjawan dan membiayai operasi asas dengan bimbingan.",
+            "working": "Saya boleh mengarah dan menyelaraskan aktiviti kewangan secara kendiri untuk membiayai operasi harian."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyelaraskan strategi kewangan kompleks yang memaksimumkan pelaburan dan meningkatkan kecekapan keseluruhan.",
+            "basic": "Saya masih perlukan bantuan untuk menjejak perbelanjaan belanjawan dan membiayai operasi asas."
+          }
+        },
+        "work-assignment": {
+          "name": "Penugasan kerja",
+          "statements": {
+            "advanced": "Saya boleh mengoptimumkan jadual kakitangan dan menugaskan tugas kompleks untuk memastikan pengagihan beban kerja yang adil dan cekap.",
+            "basic": "Saya boleh membantu menyediakan jadual kerja asas kakitangan dengan bimbingan penyelia.",
+            "working": "Saya boleh menyediakan jadual kerja kakitangan dan menugaskan tugas khusus kepada ahli pasukan secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengoptimumkan jadual kakitangan dan menugaskan tugas kompleks untuk pengagihan beban kerja yang adil dan cekap.",
+            "basic": "Saya masih perlukan bantuan untuk membimbing saya dalam menyediakan jadual kerja asas kakitangan."
+          }
+        }
+      }
+    },
+    "11-1011.00": {
+      "corners": {
+        "operational-direction": {
+          "name": "Arah operasi",
+          "statements": {
+            "advanced": "Saya boleh melaksanakan dasar untuk memaksimumkan pulangan dan meningkatkan produktiviti.",
+            "basic": "Saya boleh membantu merancang aktiviti jabatan di bawah pengawasan.",
+            "working": "Saya boleh mengarahkan aktiviti pengeluaran, penentuan harga, dan jualan secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk melaksanakan dasar yang memaksimumkan pulangan dan meningkatkan produktiviti.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu merancang aktiviti jabatan."
+          }
+        },
+        "performance-analysis": {
+          "name": "Analisis prestasi",
+          "statements": {
+            "advanced": "Saya boleh mentafsir peraturan dan menerangkannya kepada pegawai korporat.",
+            "basic": "Saya boleh meneliti laporan kakitangan dengan bimbingan untuk mencadangkan perubahan.",
+            "working": "Saya boleh menganalisis operasi untuk menentukan bidang pengurangan kos."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mentafsir peraturan dan menerangkannya kepada pegawai korporat.",
+            "basic": "Saya masih perlukan bantuan untuk meneliti laporan kakitangan bagi mencadangkan perubahan."
+          }
+        },
+        "stakeholder-coordination": {
+          "name": "Penyelarasan pemegang berkepentingan",
+          "statements": {
+            "advanced": "Saya boleh berkhidmat sebagai penghubung antara pemegang saham dan organisasi luar.",
+            "basic": "Saya boleh menghadiri mesyuarat untuk membincangkan isu dengan anggota kakitangan.",
+            "working": "Saya boleh menyelaraskan fungsi antara jabatan dan tapak secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk berkhidmat sebagai penghubung antara pemegang saham dan organisasi luar.",
+            "basic": "Saya masih perlukan bantuan untuk menghadiri mesyuarat bagi membincangkan isu dengan anggota kakitangan."
+          }
+        },
+        "financial-planning": {
+          "name": "Perancangan kewangan",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk sistem kawalan belanjawan untuk memaksimumkan pulangan pelaburan.",
+            "basic": "Saya boleh menyediakan dokumen belanjawan asas untuk kelulusan dengan bimbingan.",
+            "working": "Saya boleh mengarahkan aktiviti kewangan organisasi untuk membiayai operasi."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk sistem kawalan belanjawan yang memaksimumkan pulangan pelaburan.",
+            "basic": "Saya masih perlukan bantuan untuk menyediakan dokumen belanjawan asas untuk kelulusan."
+          }
+        },
+        "governance-leadership": {
+          "name": "Kepimpinan tadbir urus",
+          "statements": {
+            "advanced": "Saya boleh mengatur atau meluluskan kempen promosi utama untuk organisasi.",
+            "basic": "Saya boleh membantu memilih kakitangan peringkat tinggi dengan bimbingan.",
+            "working": "Saya boleh mempengerusikan lembaga pengarah dan jawatankuasa pengurusan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengatur atau meluluskan kempen promosi utama untuk organisasi.",
+            "basic": "Saya masih perlukan bantuan untuk membantu memilih kakitangan peringkat tinggi."
+          }
+        },
+        "contract-negotiation": {
+          "name": "Rundingan kontrak",
+          "statements": {
+            "advanced": "Saya boleh menyampaikan ucapan untuk mempromosikan perkhidmatan dan mencapai objektif.",
+            "basic": "Saya boleh membantu melaksanakan pelan tindakan pembetulan dengan penyeliaan.",
+            "working": "Saya boleh merundingkan atau meluluskan kontrak dengan pembekal dan agensi."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyampaikan ucapan bagi mempromosikan perkhidmatan dan mencapai objektif.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk membantu melaksanakan pelan tindakan pembetulan."
+          }
+        }
+      }
+    },
+    "29-1141.00": {
+      "corners": {
+        "medication-administration": {
+          "name": "Pemberian ubat",
+          "statements": {
+            "advanced": "Saya boleh menguruskan rejimen ubat yang kompleks dan membimbing orang lain tentang pengurusan tindak balas buruk.",
+            "basic": "Saya boleh memberikan ubat yang diresepkan di bawah pengawasan langsung jururawat berdaftar.",
+            "working": "Saya boleh memberikan ubat secara kendiri dan memantau pesakit untuk kesan sampingan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menguruskan rejimen ubat yang kompleks dan membimbing orang lain tentang pengurusan tindak balas buruk.",
+            "basic": "Saya masih perlukan bantuan untuk memberikan ubat yang diresepkan."
+          }
+        },
+        "patient-monitoring": {
+          "name": "Pemantauan pesakit",
+          "statements": {
+            "advanced": "Saya boleh mengenal pasti corak gejala yang kompleks dan melaraskan protokol pemantauan untuk pesakit kritikal.",
+            "basic": "Saya boleh merekodkan tanda vital dan gejala dengan bimbingan daripada jururawat kanan.",
+            "working": "Saya boleh memantau keadaan pesakit secara kendiri dan melaporkan perubahan kepada pasukan penjagaan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengenal pasti corak gejala yang kompleks dan melaraskan protokol pemantauan untuk pesakit kritikal.",
+            "basic": "Saya masih perlukan bantuan untuk merekodkan tanda vital dan gejala."
+          }
+        },
+        "care-coordination": {
+          "name": "Penyelarasan penjagaan",
+          "statements": {
+            "advanced": "Saya boleh memimpin mesyuarat berbilang disiplin untuk menyelesaikan konflik pelan penjagaan yang kompleks.",
+            "basic": "Saya boleh menghadiri mesyuarat pasukan dan berkongsi kemas kini pesakit dengan bimbingan.",
+            "working": "Saya boleh menyelaraskan dengan profesional penjagaan kesihatan untuk melaksanakan pelan penjagaan pesakit."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk memimpin mesyuarat berbilang disiplin untuk menyelesaikan konflik pelan penjagaan yang kompleks.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk menghadiri mesyuarat pasukan dan berkongsi kemas kini pesakit."
+          }
+        },
+        "health-education": {
+          "name": "Pendidikan kesihatan",
+          "statements": {
+            "advanced": "Saya boleh membangunkan dan mengetuai program penambahbaikan kesihatan di peringkat komuniti.",
+            "basic": "Saya boleh memberikan petua kesihatan asas kepada pesakit dengan skrip yang telah disediakan.",
+            "working": "Saya boleh memberi arahan kepada keluarga tentang topik pencegahan penyakit dan pemeliharaan kesihatan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk membangunkan dan mengetuai program penambahbaikan kesihatan di peringkat komuniti.",
+            "basic": "Saya masih perlukan bantuan untuk memberikan petua kesihatan asas kepada pesakit."
+          }
+        },
+        "health-assessment": {
+          "name": "Penilaian kesihatan",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk rangka kerja penilaian yang komprehensif untuk pelbagai keperluan kesihatan komuniti.",
+            "basic": "Saya boleh mengumpulkan maklumat kesihatan asas pesakit dan keluarga dengan pengawasan.",
+            "working": "Saya boleh menilai keperluan pesakit dan mengubahsuai pelan rawatan berdasarkan respons mereka."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk rangka kerja penilaian yang komprehensif untuk pelbagai keperluan kesihatan komuniti.",
+            "basic": "Saya masih perlukan bantuan untuk mengumpulkan maklumat kesihatan asas pesakit dan keluarga."
+          }
+        },
+        "records-and-supervision": {
+          "name": "Rekod dan penyeliaan",
+          "statements": {
+            "advanced": "Saya boleh mengaudit rekod unit untuk pematuhan dan membimbing kakitangan junior tentang dokumentasi.",
+            "basic": "Saya boleh memasukkan data pesakit ke dalam rekod dengan bantuan rakan sekerja.",
+            "working": "Saya boleh mengekalkan rekod perubatan terperinci dan menyelia kakitangan kejururawatan yang kurang mahir."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mengaudit rekod unit untuk pematuhan dan membimbing kakitangan junior tentang dokumentasi.",
+            "basic": "Saya masih perlukan bimbingan langkah demi langkah untuk memasukkan data pesakit ke dalam rekod."
+          }
+        }
+      }
+    },
+    "25-2031.00": {
+      "corners": {
+        "lesson-planning": {
+          "name": "Perancangan pengajaran",
+          "statements": {
+            "advanced": "Saya boleh mereka bentuk dan semak semula program kurikulum sekolah dengan kakitangan lain.",
+            "basic": "Saya boleh menyediakan garis panduan pengajaran mengikut garis panduan kurikulum yang diberikan.",
+            "working": "Saya boleh merancang aktiviti dan projek kelas yang seimbang secara kendiri."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mereka bentuk dan semak semula program kurikulum sekolah dengan kakitangan lain.",
+            "basic": "Saya masih perlukan bantuan untuk menyediakan garis panduan pengajaran mengikut garis panduan kurikulum yang diberikan."
+          }
+        },
+        "student-support": {
+          "name": "Sokongan pelajar",
+          "statements": {
+            "advanced": "Saya boleh menyelesaikan isu tingkah laku dan akademik yang kompleks bersama kakitangan.",
+            "basic": "Saya boleh memberikan bantuan asas kepada pelajar yang mempunyai kecacatan.",
+            "working": "Saya boleh memberi kaunseling kepada pelajar tentang masalah dan minat akademik."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyelesaikan isu tingkah laku dan akademik yang kompleks bersama kakitangan.",
+            "basic": "Saya masih perlukan bantuan untuk memberikan bantuan asas kepada pelajar yang mempunyai kecacatan."
+          }
+        },
+        "classroom-resources": {
+          "name": "Sumber bilik darjah",
+          "statements": {
+            "advanced": "Saya boleh menyesuaikan bahan pengajaran untuk pelbagai keperluan pelajar.",
+            "basic": "Saya boleh menyediakan bilik darjah dan peralatan asas untuk kelas.",
+            "working": "Saya boleh mengekalkan rekod pelajar yang tepat dan menggunakan alat AV."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk menyesuaikan bahan pengajaran untuk pelbagai keperluan pelajar.",
+            "basic": "Saya masih perlukan bantuan untuk menyediakan bilik darjah dan peralatan asas untuk kelas."
+          }
+        },
+        "parent-communication": {
+          "name": "Komunikasi dengan ibu bapa",
+          "statements": {
+            "advanced": "Saya boleh memimpin mesyuarat untuk menentukan keutamaan sumber pelajar.",
+            "basic": "Saya boleh berkongsi laporan kemajuan pelajar dengan ibu bapa.",
+            "working": "Saya boleh berjumpa dengan ibu bapa untuk membincangkan keperluan anak mereka."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk memimpin mesyuarat yang menentukan keutamaan sumber pelajar.",
+            "basic": "Saya masih perlukan bantuan untuk berkongsi laporan kemajuan pelajar dengan ibu bapa."
+          }
+        },
+        "student-assessment": {
+          "name": "Penilaian pelajar",
+          "statements": {
+            "advanced": "Saya boleh mentafsir keputusan ujian piawai untuk mengenal pasti keperluan pelajar.",
+            "basic": "Saya boleh mengagihkan dan menanda kerja rumah dengan semakan penyelia.",
+            "working": "Saya boleh menyediakan dan mengendalikan ujian untuk menilai kemajuan."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk mentafsir keputusan ujian piawai untuk mengenal pasti keperluan pelajar.",
+            "basic": "Saya masih perlukan bantuan untuk mengagihkan dan menanda kerja rumah."
+          }
+        },
+        "classroom-instruction": {
+          "name": "Pengajaran di bilik darjah",
+          "statements": {
+            "advanced": "Saya boleh membimbing pelajar dalam aktiviti pembelajaran pengalaman yang kompleks.",
+            "basic": "Saya boleh menyampaikan kuliah dan demonstrasi dengan bimbingan guru.",
+            "working": "Saya boleh menguatkuasakan peraturan dan mengekalkan ketenteraman di bilik darjah."
+          },
+          "reversed_statements": {
+            "advanced": "Saya sukar untuk membimbing pelajar dalam aktiviti pembelajaran pengalaman yang kompleks.",
+            "basic": "Saya masih perlukan bantuan untuk menyampaikan kuliah dan demonstrasi."
+          }
+        }
+      }
     }
   },
   "sdg_targets": {
@@ -874,6 +1634,1226 @@
             "c": "Anggap perbezaan RM 120 sebagai perbezaan pemasaan dan teruskan menyemak rekod minggu berikutnya.",
             "d": "Padankan salinan resit dan slip deposit dengan buku tunai, kemudian laporkan hasil dapatan anda."
           }
+        }
+      }
+    },
+    "15-1252.00": {
+      "project-communication": {
+        "advanced": {
+          "options": {
+            "a": "Tanya keperluan pasukan, lakar satu templat ringkas, dan cuba dengan dua pasukan.",
+            "b": "Umumkan templat baharu wajib mulai Isnin dan buang laporan yang guna format lama.",
+            "c": "Biarkan setiap pasukan kekalkan format sendiri dan kumpul laporan dalam folder berkongsi.",
+            "d": "Tulis satu templat ringkas daripada laporan sedia ada dan kongsi dengan lima pasukan."
+          },
+          "situation": "Anda sedang mencipta templat laporan mingguan piawai untuk lima pasukan. Sesetengah pasukan sudah guna format sendiri dan kata yang baharu menambah kertas kerja."
+        },
+        "basic": {
+          "options": {
+            "a": "Katakan log masuk siap dan pembayaran lewat dua hari, dan tawarkan penjelasan jika ditanya.",
+            "b": "Laporkan kedua-dua ciri sebagai siap dan selesaikan pembayaran secara senyap sebelum sesiapa menguji sistem minggu ini.",
+            "c": "Katakan log masuk siap, pembayaran lewat dua hari, sebabnya, dan bila anda jangka siap.",
+            "d": "Laporkan log masuk siap dan pembayaran berjalan baik, untuk menenangkan pasukan."
+          },
+          "situation": "Ketua pasukan anda meminta anda menulis kemas kini status mingguan ringkas untuk projek. Ciri log masuk siap, tetapi pembayaran lewat dua hari."
+        }
+      },
+      "testing-procedures": {
+        "advanced": {
+          "options": {
+            "a": "Tetapkan kes ujian untuk jumlah biasa, sempadan dan tidak sah serta rekodkan hasil yang dijangkakan bagi setiap satu.",
+            "b": "Langkau ujian formal, memandangkan formula disalin daripada hamparan yang sudah digunakan oleh bank.",
+            "c": "Uji jumlah biasa serta jumlah terbesar dan terkecil yang dibenarkan, dan rekodkan hasilnya.",
+            "d": "Uji jumlah biasa dan kembangkan pengujian selepas pelancaran jika pengguna melaporkan masalah."
+          },
+          "situation": "Anda mesti menetapkan prosedur pengesahan untuk pengira pinjaman baharu. Tarikh pelancaran tetap, dan pasukan mencadangkan menguji hanya jumlah pinjaman biasa."
+        },
+        "basic": {
+          "options": {
+            "a": "Tanda keseluruhan ciri sebagai lulus kerana ruang pada permulaan jarang berlaku dalam penggunaan sebenar.",
+            "b": "Tanda langkah sebagai gagal, catat input dan hasil yang tepat, dan beritahu pembangun.",
+            "c": "Taip semula carian tanpa ruang, tanda langkah sebagai lulus, dan catat bahawa ia berfungsi.",
+            "d": "Tanda langkah sebagai gagal dan teruskan untuk menyiapkan baki senarai semak."
+          },
+          "situation": "Anda diberi senarai semak untuk menguji kotak carian baharu pada portal kakitangan. Satu langkah gagal: carian yang bermula dengan ruang tidak mengembalikan sebarang hasil."
+        }
+      },
+      "software-design": {
+        "advanced": {
+          "options": {
+            "a": "Tambahkan pelayan tambahan dalam reka bentuk supaya ia mempunyai kapasiti sepuluh kali ganda dan mulakan pengkodan.",
+            "b": "Salin reka bentuk dari laman tempahan serupa dan sesuaikan selepas jualan pertama.",
+            "c": "Modelkan beban puncak daripada jualan lepas dan uji reka bentuk terhadapnya sebelum pengkodan bermula.",
+            "d": "Kekalkan reka bentuk semasa dan betulkan sebarang kelewatan secara langsung semasa jualan festival berlangsung."
+          },
+          "situation": "Anda sedang mereka bentuk sistem tempahan yang mesti mengendalikan trafik sepuluh kali ganda hari ini semasa jualan festival. Pasukan ingin memulakan pengkodan minggu depan."
+        },
+        "basic": {
+          "options": {
+            "a": "Semak berapa lama masa yang diambil oleh laman semasa, kemudian cadangkan masa sasaran dan beban pengguna.",
+            "b": "Tulis 'cepat' dalam keperluan dan biarkan penguji menentukan maksudnya semasa proses berjalan.",
+            "c": "Cadangkan laman dimuatkan dalam masa kurang daripada dua saat, memandangkan ia biasa untuk laman web.",
+            "d": "Janjikan kelajuan laman pesaing dalam nota pelancaran dan bina untuk memadainya."
+          },
+          "situation": "Laman semakan baharu sedang dibina. Pemilik produk berkata ia mesti cepat tetapi tidak memberikan angka. Anda diminta membantu menentukan piawaian prestasi."
+        }
+      },
+      "technical-advising": {
+        "advanced": {
+          "options": {
+            "a": "Biarkan pasukan mengundi dan hantar keputusan kepada CEO dengan nota ringkas.",
+            "b": "Beritahu CEO bahawa pembinaan semula akan mengambil masa dua bulan, kerana pasukan jualan vendor berkata begitu.",
+            "c": "Hadirkan kedua-dua laluan dengan kos, risiko dan garis masa, nyatakan cadangan anda, dan catat apa yang tidak diketahui.",
+            "d": "Cadangkan pembinaan semula kerana sistem yang semakin tua lebih mahal dari segi kos, dan ringkaskan kebimbangan pasukan."
+          },
+          "situation": "CEO bertanya sama ada sistem pesanan yang semakin tua perlu dibina semula atau terus dipampat. Seorang vendor menawarkan pembinaan semula, dan pasukan anda berpecah belah."
+        },
+        "basic": {
+          "options": {
+            "a": "Terangkan bahawa kemas kini dijalankan setiap bulan, biasanya pada waktu malam, dan beritahu dia di mana jadual itu dipaparkan.",
+            "b": "Beritahu dia kemas kini dijalankan setiap bulan dan dia patut bertanya kepada pasukan sokongan tentang masa.",
+            "c": "Beritahu dia pelanggan tidak akan perasan kerana kemas kini kecil, jadi dia tidak perlu risau.",
+            "d": "Jamin kepadanya bahawa tiada masa lapuk dan beritahu dia untuk mengatakan begitu kepada pelanggan."
+          },
+          "situation": "Seorang rakan sekerja dari jualan bertanya berapa kerap aplikasi syarikat mendapat kemas kini penyelenggaraan dan sama ada pelanggan akan perasan. Anda tahu jadualnya."
+        }
+      },
+      "system-analysis": {
+        "advanced": {
+          "options": {
+            "a": "Pilih vendor yang kelajuan lapornya paling tinggi dan rancang pemasangan mengikut jadualnya.",
+            "b": "Sokong vendor yang disyorkan rakan lama anda dan jadualkan pertukaran untuk minggu gaji hujung bulan.",
+            "c": "Jalankan semula ujian setiap vendor pada satu sampel gaji yang disamarkan dan bandingkan kos serta kesesuaian.",
+            "d": "Bandingkan tiga cadangan berdasarkan harga dan ciri yang disenaraikan, kemudian cadangkan tawaran terkuat."
+          },
+          "situation": "Pengurusan mahu menggantikan sistem gaji. Tiga vendor telah menghantar cadangan, dan setiap satu melaporkan angka prestasi yang berbeza yang diukur menggunakan data ujian yang berbeza."
+        },
+        "basic": {
+          "options": {
+            "a": "Jalankan alat pelaporan pada salinan pangkalan data dan beritahu ketua jika ia dimuatkan.",
+            "b": "Beritahu ketua ia sepatutnya berfungsi, kerana kedua-dua sistem menggunakan perisian pangkalan data yang sama.",
+            "c": "Arahkan alat pelaporan ke pangkalan data pelanggan langsung dan lihat apa yang rosak semasa waktu bekerja.",
+            "d": "Bandingkan nama dan jenis medan dalam kedua-dua sistem dan senaraikan ketidakpaduan untuk ketua."
+          },
+          "situation": "Ketua pasukan anda bertanya sama ada alat pelaporan lama boleh membaca pangkalan data pelanggan baharu. Pangkalan data baharu itu aktif dan sedang melayani pelanggan. Anda mempunyai senarai jadual kedua-duanya."
+        }
+      },
+      "code-maintenance": {
+        "advanced": {
+          "options": {
+            "a": "Naik taraf modul terus pada pelayan produksi pada waktu siang dan pantau log ralat.",
+            "b": "Petakan perkhidmatan yang menggunakan modul, naik taraf pada cabang, dan keluarkan berperingkat dengan pelan undur.",
+            "c": "Naik taraf modul pada cabang, jalankan suite ujian penuh, dan keluarkannya ke semua tempat.",
+            "d": "Tunggu hingga bulan terakhir sebelum sokongan tamat, kemudian naik taraf modul dalam satu keluaran pantas."
+          },
+          "situation": "Pasukan perlu memindahkan modul pembayaran ke versi pustaka baharu. Sokongan pustaka lama tamat suku tahun depan, dan banyak perkhidmatan memanggil modul ini."
+        },
+        "basic": {
+          "options": {
+            "a": "Baiki baris pembundaran, tambah ujian diskaun, dan jalankan ujian sedia ada.",
+            "b": "Baiki baris pembundaran dan jalankan ujian sedia ada untuk memastikan tiada bahagian lain rosak.",
+            "c": "Baiki baris pembundaran dan semak dengan mencuba satu invois berdiskaun secara manual.",
+            "d": "Sunting pangkalan data invois langsung untuk melaraskan jumlah yang kelihatan salah, dan biarkan kod."
+          },
+          "situation": "Seorang pengguna melaporkan halaman invois menunjukkan jumlah yang tersasar beberapa sen apabila diskaun dikenakan. Anda menemui baris kod yang membundarkan jumlah itu."
+        }
+      }
+    },
+    "13-2011.00": {
+      "system-efficiency-reviews": {
+        "advanced": {
+          "options": {
+            "a": "Sarankan kawalan seperti semakan pemilik terhadap perubahan vendor dan laporan pembayaran bulanan.",
+            "b": "Catat kelemahan dalam laporan anda dan terima pandangan pelanggan tentang penjawatannya.",
+            "c": "Buang kelemahan daripada laporan anda kerana pelanggan berkata ia tidak boleh diubah.",
+            "d": "Sarankan pengambilan seorang lagi pekerja untuk membahagikan tugas antara dua pegawai."
+          },
+          "situation": "Semasa menilai sistem pembayaran pelanggan, anda mendapati seorang pegawai boleh mencipta vendor dan meluluskan pembayaran. Pelanggan berkata bilangan kakitangan terlalu kecil untuk mengubahnya."
+        },
+        "basic": {
+          "options": {
+            "a": "Nyatakan tarikh dalam kertas kerja anda tetapi biarkan invois direkodkan seperti sedia ada.",
+            "b": "Tanya peruncit mengapa invois dalam Februari dan catat jawapannya.",
+            "c": "Tukar tarikh invois dalam buku kepada Mac supaya rekod konsisten.",
+            "d": "Senaraikan tiga invois, catat ralat tarikh, dan laporkan kepada penyelia anda."
+          },
+          "situation": "Anda memeriksa buku akaun bayaran untuk seorang peruncit. Tiga invois pembekal bertarikh Mac direkodkan dalam Februari."
+        }
+      },
+      "audit-and-compliance": {
+        "advanced": {
+          "options": {
+            "a": "Minta pengurus HR mengesahkan jawatan dan tarikh mula sepuluh pekerja itu secara bertulis.",
+            "b": "Terima penjelasan kakitangan lapangan dan catat sepuluh nama itu dalam kertas kerja anda.",
+            "c": "Amarah jurutera gaji anda curiga penipuan dan minta bukti kerja minggu depan.",
+            "d": "Sahkan sepuluh pekerja melalui kontrak dan penyelia, serta perincikan butiran akaun gaji."
+          },
+          "situation": "Audit gaji anda menemui sepuluh pekerja yang dibayar setiap bulan tetapi tidak muncul dalam sistem kehadiran. Jurutera gaji berkata mereka adalah kakitangan lapangan."
+        },
+        "basic": {
+          "options": {
+            "a": "Tanya pengurus kewangan sama ada cek RM350 telah dikeluarkan bulan lalu.",
+            "b": "Buang RM350 daripada angka penyata bank untuk memadankan buku tunai.",
+            "c": "Jejak cek dalam rekod pembayaran, sahkan penerima dan rekodkannya.",
+            "d": "Rekod RM350 sebagai perbelanjaan pelbagai supaya pendamaian seimbang hari ini."
+          },
+          "situation": "Anda mendamaikan penyata bank dengan buku tunai syarikat. Penyata menunjukkan cek RM350 yang telah diselesaikan tetapi tidak ada dalam buku tunai."
+        }
+      },
+      "financial-record-checks": {
+        "advanced": {
+          "options": {
+            "a": "Kekalkan buku besar kertas dan hamparan, serta tambah salinan sandaran setiap bulan.",
+            "b": "Alihkan pelanggan ke perisian baharu pada hari akhir tahun dan padam rekod lama.",
+            "c": "Pasang perisian akaun popular dan alihkan data hamparan tahun lepas ke dalamnya.",
+            "d": "Petakan transaksi semasa, tetapkan struktur akaun, pilih perisian yang sesuai dan tulis prosedur."
+          },
+          "situation": "Pelanggan kecil firma anda masih menggunakan buku besar kertas dan hamparan. Anda diminta untuk mereka bentuk dan mendokumentasikan sistem pemeliharaan rekod baharu dengan perisian akaun semasa."
+        },
+        "basic": {
+          "options": {
+            "a": "Kira semula, semak resit terkini untuk jurang tersebut, dan beritahu penyelia anda perbezaannya.",
+            "b": "Minta penyambut tetamu untuk menampung RM85 supaya kiraan boleh ditutup.",
+            "c": "Rekodkan kekurangan RM85 seperti yang ditemui dan tanya penyelia anda apa yang perlu dilakukan.",
+            "d": "Laraskan buku besar ke bawah sebanyak RM85 supaya rekod sepadan dengan wang tunai."
+          },
+          "situation": "Anda mengira wang tunai kecil di sebuah klinik. Wang tunai yang ada RM85 kurang daripada yang ditunjukkan dalam buku besar, dan penjaganya bercuti sehingga hari Isnin."
+        }
+      },
+      "financial-statement-analysis": {
+        "advanced": {
+          "options": {
+            "a": "Gunakan sasaran jualan pelanggan sendiri dan tambah kos biasa daripada purata industri.",
+            "b": "Gandakan pendapatan dan kos cawangan pertama bagi setiap tahun ramalan dan laporkannya.",
+            "c": "Ramalkan pertumbuhan pendapatan untuk kedua-dua cawangan dan biarkan kos baharu untuk semakan kemudian.",
+            "d": "Ramalkan item daripada trend, tambah kos cawangan baharu dan tunjukkan julat tinggi dan rendah."
+          },
+          "situation": "Seorang pelanggan merancang untuk membuka cawangan kedua. Anda diminta meramalkan pendapatan dan perbelanjaan untuk dua tahun menggunakan trend kos dan jualan tiga tahun."
+        },
+        "basic": {
+          "options": {
+            "a": "Tanya pembuku sama ada sewa perlu dibahagikan merentasi enam bulan.",
+            "b": "Biarkan RM6,000 penuh sebagai perbelanjaan kerana wang telah keluar dari bank.",
+            "c": "Rekodkan RM1,000 sebagai perbelanjaan sewa dan alihkan baki RM5,000 ke sewa dibayar di hadapan.",
+            "d": "Rekodkan RM1,000 sebagai perbelanjaan sewa dan tanya penyelia anda tentang baki RM5,000."
+          },
+          "situation": "Anda sedang menyediakan entri pelarasan pada akhir bulan untuk sewa yang dibayar di hadapan. Syarikat membayar RM6,000 untuk enam bulan pada Januari dan merekodkan semuanya sebagai perbelanjaan."
+        }
+      },
+      "management-reporting": {
+        "advanced": {
+          "options": {
+            "a": "Ulangi program audit tahun lepas sepenuhnya dan tambah nota tentang sistem baharu.",
+            "b": "Fokuskan skop pada inventori dan sistem baharu serta agihkan kakitangan mengikut risiko.",
+            "c": "Terima laporan inventori pelanggan dan kurangkan audit kepada baki akhir tahun.",
+            "d": "Kurangkan audit kepada semakan akaun utama untuk menjimatkan masa."
+          },
+          "situation": "Anda menyelia audit bagi pelanggan pembuatan kecil dengan masa terhad. Audit tahun lepas mendapati kawalan inventori lemah, dan pelanggan telah menukar sistem gudangnya sejak itu."
+        },
+        "basic": {
+          "options": {
+            "a": "Hantar penyata pendapatan penuh dan baki bank dengan nota ringkas.",
+            "b": "Sajikan baki bank dalam mesyuarat dan tinggalkan penyata pendapatan.",
+            "c": "Laporkan angka pendapatan dan tinggalkan perbelanjaan untuk menjimatkan ruang.",
+            "d": "Ringkaskan pendapatan, perbelanjaan dan tunai dalam beberapa baris dan sediakan butiran."
+          },
+          "situation": "Pengurus anda meminta ringkasan ringkas kewangan bulan ini untuk mesyuarat jabatan. Anda mempunyai penyata pendapatan dan baki bank."
+        }
+      },
+      "tax-and-asset-evaluation": {
+        "advanced": {
+          "options": {
+            "a": "Laporkan lebihan kepada pengarah kewangan sebagai percanggahan dengan matlamat.",
+            "b": "Bandingkan rekod pembelian dan bajet dengan matlamat, kemudian temuduga pengurus tentang keutamaan.",
+            "c": "Kesimpulan dalam laporan bahawa pengurus pembelian bertindak menentang matlamat secara sengaja.",
+            "d": "Semak dokumen dasar syarikat dan simpulkan bahawa matlamat dinyatakan dengan cukup jelas."
+          },
+          "situation": "Anda meneliti sama ada matlamat syarikat untuk mengurangkan pembaziran dipantulkan dalam keputusan pengurusnya. Pembelian terus membeli dalam jumlah besar untuk mendapatkan diskaun, mewujudkan lebihan."
+        },
+        "basic": {
+          "options": {
+            "a": "Rekodkan ketuhar sebagai peralatan di bawah aset tetap kerana ia akan digunakan selama bertahun-tahun.",
+            "b": "Rekodkan ketuhar di bawah perbelanjaan am dan semak semula pada penutupan tahun.",
+            "c": "Tanya pemilik atau akauntan akaun mana yang sesuai untuk ketuhar dan rekodkan di situ.",
+            "d": "Rekodkan ketuhar sebagai inventori untuk dijual kerana kedai roti membeli dan menjual barang."
+          },
+          "situation": "Anda menetapkan akaun untuk kedai roti baharu dan melabelkan entri pertamanya. Pembelian ketuhar bernilai RM8,000 perlu dimasukkan ke dalam akaun yang betul."
+        }
+      }
+    },
+    "15-2051.00": {
+      "mathematical-analysis-and-trends": {
+        "advanced": {
+          "options": {
+            "a": "Tapis hingar, uji kaedah pengesanan perubahan pada kegagalan lampau, dan laraskan ambang.",
+            "b": "Haluskan bacaan dengan purata bergerak dan gunakan peraturan amaran sedia ada.",
+            "c": "Tingkatkan ambang amaran sehingga bilangan amaran palsu boleh diuruskan.",
+            "d": "Matikan amaran untuk sensor paling bising supaya jurutera tidak terganggu."
+          },
+          "situation": "Pasukan kejuruteraan mempunyai bacaan sensor yang bising dan mahu kaedah untuk mengesan kegagalan awal mesin. Amaran sedia ada terlalu kerap untuk berguna."
+        },
+        "basic": {
+          "options": {
+            "a": "Terangkan bahawa kedua-duanya mungkin mengikut cuaca panas dan uji dengan menambah suhu.",
+            "b": "Cadangkan promosi ais krim di kolam renang berdasarkan hubungan dalam data.",
+            "c": "Laporkan bahawa peningkatan lawatan kolam renang nampaknya menyebabkan jualan ais krim lebih tinggi.",
+            "d": "Laporkan hubungan kuat dan nyatakan anda tidak dapat menentukan punca daripada data sahaja."
+          },
+          "situation": "Semasa melihat data jualan, anda perasan jualan ais krim dan lawatan ke kolam renang meningkat bersama. Penyelia anda bertanya sama ada satu memacu yang lain."
+        }
+      },
+      "visualization-and-reporting": {
+        "advanced": {
+          "options": {
+            "a": "Katakan anda akan semak andaian tersebut dan hantar jawapan bertulis pada hari Jumaat.",
+            "b": "Jawab berdasarkan pengetahuan umum dan tambah bahawa ia mungkin perlu disahkan kemudian.",
+            "c": "Minta rakan sekerja dalam bilik itu menjawab dan beralih ke perkara seterusnya.",
+            "d": "Katakan andaian itu adalah standard dan cadangkan soalan itu tidak penting untuk keputusan."
+          },
+          "situation": "Anda mempersembahkan hasil model kepada ketua jabatan. Seorang ketua bertanya soalan teknikal tentang andaian model yang tidak dapat anda jawab sekarang."
+        },
+        "basic": {
+          "options": {
+            "a": "Pisahkan carta kepada panel kecil bagi setiap wilayah yang berkongsi satu skala paksi.",
+            "b": "Kekalkan satu carta tetapi gunakan warna berbeza dan garis lebih tebal untuk setiap wilayah.",
+            "c": "Tunjuk tahun terkini sahaja supaya ada lebih sedikit garis pada carta.",
+            "d": "Plot satu garis purata untuk semua wilayah dan sembunyikan butiran wilayah."
+          },
+          "situation": "Pensupervisor anda meminta carta yang menunjukkan hasil jualan bulanan bagi lima wilayah selama dua tahun. Draf pertama mempunyai sepuluh garis yang bertindih."
+        }
+      },
+      "business-insights-and-advice": {
+        "advanced": {
+          "options": {
+            "a": "Ulangi kesimpulan anda dengan slaid ringkasan dan minta kumpulan membuat keputusan.",
+            "b": "Tawarkan untuk melunakkan syor supaya baris produk ini dikekalkan untuk satu suku lagi.",
+            "c": "Buang angka paling lemah daripada slaid anda supaya data kelihatan lebih meyakinkan.",
+            "d": "Terangkan data dan andaian, jemput cabaran mereka, dan tawarkan ujian susulan."
+          },
+          "situation": "Analisis anda mengesyorkan penyingkiran baris produk yang digemari oleh pengarah. Data jelas, tetapi pengarah mencabar kesimpulan anda dalam mesyuarat."
+        },
+        "basic": {
+          "options": {
+            "a": "Salin tahap kakitangan hari bekerja dan tambah satu orang untuk setiap giliran hujung minggu.",
+            "b": "Cari waktu sibuk hujung minggu dalam data dan cadangkan julat kakitangan.",
+            "c": "Syorkan pengurangan kakitangan hujung minggu kerana purata bilangan kelihatan rendah sepanjang minggu.",
+            "d": "Kira purata pelanggan hujung minggu setiap jam dan cadangkan satu bilangan kakitangan."
+          },
+          "situation": "Seorang pengurus meminta bantuan untuk menentukan bilangan kakitangan yang perlu dijadualkan pada hujung minggu. Anda mempunyai data bilangan pelanggan setiap jam selama dua tahun."
+        }
+      },
+      "survey-and-sampling-design": {
+        "advanced": {
+          "options": {
+            "a": "Bina ramalan jualan seperti diminta dan tambah nota tentang pelanggan berulang.",
+            "b": "Beritahu pengurus bahawa pelanggan berulang adalah punca dan ubah projek untuk sepadan.",
+            "c": "Semak kadar pelanggan berulang dalam data, kemudian cadangkan model untuk masalah tersebut.",
+            "d": "Bina ramalan dan tunggu pengurus bertanya tentang punca-punca tersebut."
+          },
+          "situation": "Seorang pengurus runcit berkata jualan sedang menurun dan meminta model untuk meramalkan jualan bulan depan. Anda menduga masalah sebenar ialah kehilangan pelanggan berulang."
+        },
+        "basic": {
+          "options": {
+            "a": "Pilih 200 pelanggan daripada kumpulan umur terbesar kerana ia mendominasi fail.",
+            "b": "Sampel secara rawak dalam setiap kumpulan umur mengikut nisbah saiznya.",
+            "c": "Pilih 200 pelanggan yang membeli baru-baru ini kerana mereka paling mudah dihubungi.",
+            "d": "Pilih 200 pelanggan secara rawak daripada senarai penuh dan catat campuran umur."
+          },
+          "situation": "Seorang ketua pemasaran ingin meninjau 200 daripada 20,000 pelanggan anda. Penyelia anda memberitahu anda untuk menggunakan pensampelan, dan kumpulan umur berbeza-beza saiznya dengan ketara."
+        }
+      },
+      "data-cleaning-and-coding": {
+        "advanced": {
+          "options": {
+            "a": "Tulis satu skrip dengan perubahan fail semasa terbina di dalamnya dan kongsi.",
+            "b": "Tulis fungsi yang memadam baris yang tidak dapat dibaca dan jalankan pada fail baharu.",
+            "c": "Tulis fungsi yang didokumentasikan dengan parameter, kemudian uji pada fail lepas.",
+            "d": "Salin skrip minggu lepas dan laraskan langkah untuk setiap fail baharu."
+          },
+          "situation": "Pasukan anda mengulangi langkah pembersihan yang sama pada fail jualan mingguan, dengan perubahan kecil secara manual setiap kali. Anda diminta membina alat yang boleh digunakan semula."
+        },
+        "basic": {
+          "options": {
+            "a": "Standardkan nombor dengan skrip dan semak sampel baris.",
+            "b": "Padam semua baris dengan tanda plus supaya lajur kelihatan konsisten.",
+            "c": "Baiki format secara manual dalam hamparan kira-kira untuk seratus baris pertama.",
+            "d": "Kekalkan kedua-dua format seperti sedia ada dan biarkan model menganggapnya berbeza."
+          },
+          "situation": "Anda membersihkan fail pelanggan untuk satu model. Lajur nombor telefon bercampur format seperti 012-3456789 dan +60123456789."
+        }
+      },
+      "statistical-modeling-and-validation": {
+        "advanced": {
+          "options": {
+            "a": "Latih semula model menggunakan data bulan langsung terkini dan guna semula model tersebut.",
+            "b": "Semak perbezaan antara data ujian dan data langsung, latih semula jika perlu, dan laporkan punca.",
+            "c": "Beritahu pengurus bahawa skor ujian membuktikan model itu kukuh dan data langsung itu pelik.",
+            "d": "Tambahkan pembetulan tetap kepada setiap ramalan untuk memadankan jurang yang dilihat setakat ini."
+          },
+          "situation": "Model ramalan permintaan anda mendapat skor baik dalam ujian tetapi jauh daripada data sebenar pada bulan langsung pertama. Pengurus mahu penyelesaian pantas."
+        },
+        "basic": {
+          "options": {
+            "a": "Bandingkan kedua-dua model pada metrik yang dipilih dan pada data yang dikekalkan, kemudian laporkan.",
+            "b": "Pilih metrik baharu yang mana Model A mendapat skor lebih tinggi dan laporkan perbandingan tersebut.",
+            "c": "Laporkan Model B kerana ia mendapat skor lebih tinggi pada metrik yang dipilih oleh penyelia anda.",
+            "d": "Laporkan Model A kerana ketepatan adalah metrik yang paling difahami oleh pembaca."
+          },
+          "situation": "Anda melatih dua model untuk meramalkan pembatalan pelanggan. Model A mempunyai ketepatan yang sedikit lebih tinggi, tetapi Model B mendapat skor lebih baik pada metrik yang dipilih oleh penyelia anda."
+        }
+      }
+    },
+    "13-1111.00": {
+      "field-data-collection": {
+        "advanced": {
+          "options": {
+            "a": "Guna semula angka tahun lepas untuk mana-mana jabatan yang lambat memberi respons.",
+            "b": "Lawat setiap jabatan, perhatikan prosesnya dan catat dapatan dalam format pasukan itu sendiri.",
+            "c": "Minta eksport mentah daripada setiap jabatan dan gabungkan sendiri selepas semuanya tiba.",
+            "d": "Setuju satu templat umum dengan setiap jabatan dan uji cubaannya dalam satu pasukan dahulu."
+          },
+          "situation": "Anda mesti merancang pengumpulan data untuk audit merangkumi kewangan, perolehan dan logistik. Setiap jabatan menyimpan rekod dalam format berbeza, dan tiada yang mempunyai kakitangan lebihan."
+        },
+        "basic": {
+          "options": {
+            "a": "Guna masa langkah daripada kajian unit serupa sebelum ini untuk mengisi jadual dapatan.",
+            "b": "Salin carta proses daripada manual kakitangan dan tandakan sebagai amalan semasa.",
+            "c": "Tonton dua kelulusan dari awal hingga akhir dan sahkan setiap langkah dengan kakitangan.",
+            "d": "Minta ketua unit menerangkan setiap langkah kelulusan dan tulis prosesnya."
+          },
+          "situation": "Ketua anda meminta anda mengetahui sebab kelulusan tuntutan lambat dalam satu unit. Ketua unit boleh memberikan anda satu petang."
+        }
+      },
+      "records-system-design": {
+        "advanced": {
+          "options": {
+            "a": "Terangkan sebab peraturan itu kepada pengurus dan kekalkan audit seperti dirancang.",
+            "b": "Temu bual pengurus untuk mencari langkah perlahan, mudahkan, dan kekalkan jadual audit.",
+            "c": "Lepaskan audit untuk pejabat yang rekod lampau baik dan beritahu pejabat utama kemudian.",
+            "d": "Tangguhkan audit sebulan supaya pejabat boleh menyesuaikan diri dengan peraturan baharu."
+          },
+          "situation": "Anda melancarkan program rekod di lima pejabat. Pengurus berkata peraturan pengekalan dan akses baharu melambatkan staf, dan ada yang minta anda lepaskan audit pertama."
+        },
+        "basic": {
+          "options": {
+            "a": "Beritahu jurutera untuk ikut garis panduan dan arkibkan kontrak di almari berkunci.",
+            "b": "Bimbing jurutera melalui garis panduan, kemudian arkib dan catat kontrak bersama.",
+            "c": "Arkibkan kontrak di almari sekarang dan tambah entri daftar pada hujung minggu.",
+            "d": "Simpan kontrak di meja jurutera supaya pasukan boleh membacanya dengan mudah."
+          },
+          "situation": "Seorang jurutera baharu bertanya ke mana kontrak pembekal yang ditandatangani perlu disimpan. Garis panduan rekod jabatan anda menyatakan kontrak diarkibkan di almari berkunci dan dicatat dalam daftar."
+        }
+      },
+      "form-and-report-design": {
+        "advanced": {
+          "options": {
+            "a": "Uji borang dengan kakitangan cawangan, buang medan yang tidak digunakan, kemudian luluskan versi yang lebih pendek.",
+            "b": "Luluskan borang dan wajibkan setiap tuntutan lampau dihantar semula menggunakan borang tersebut.",
+            "c": "Luluskan borang dan minta cawangan menghantar maklum balas selepas bulan pertama.",
+            "d": "Tolak borang dan minta kewangan terus menggunakan borang tuntutan semasa."
+          },
+          "situation": "Kewangan mencadangkan borang tuntutan perbelanjaan baharu dengan enam medan tambahan. Kakitangan cawangan berkata ia akan menggandakan masa tuntutan mereka. Anda mempunyai kuasa untuk meluluskan perubahan borang."
+        },
+        "basic": {
+          "options": {
+            "a": "Tonton tiga pengguna mengisi borang dan catat di mana mereka teragak-agak.",
+            "b": "Beri tahu pengguna untuk membaca arahan di halaman dua sebelum mengisi tarikh.",
+            "c": "Padam satu kotak tarikh daripada borang induk dan gantikan salinan langsung hari ini.",
+            "d": "Bandingkan borang dengan dasar cuti dan tandakan mana-mana kotak yang mengulang maklumat."
+          },
+          "situation": "Seorang pengguna memberitahu anda borang cuti bulanan membingungkan kerana dua kotak meminta tarikh. Penyelia anda meminta anda meneliti borang dan melaporkan semula."
+        }
+      },
+      "operational-data-analysis": {
+        "advanced": {
+          "options": {
+            "a": "Sokong jualan dan bataskan had untuk sepuluh pelanggan teratas sehingga semakan.",
+            "b": "Petakan di mana pesanan menunggu dan cadangkan had berperingkat dengan semakan tambahan untuk pesanan besar.",
+            "c": "Cadangkan pengesah kedua pada syif yang mempunyai kelewatan terpanjang dan semak selepas sebulan.",
+            "d": "Sokong kewangan dan cadangkan pengambilan satu pengesah lagi untuk mengosongkan gilir lebih cepat."
+          },
+          "situation": "Kelewatan kelulusan pesanan menelan kos kira-kira dua hari setiap pesanan. Jualan mahu had kelulusan dibuang, manakala kewangan mahu setiap pesanan disemak. Anda mempunyai data masa menunggu untuk suku tahun lepas."
+        },
+        "basic": {
+          "options": {
+            "a": "Beritahu penyelia anda kakitangan cawangan utara lebih perlahan dan perlu diberi amaran.",
+            "b": "Semak sama ada kedua-dua cawangan mengira hari dengan cara yang sama, kemudian bandingkan beban kerja dan langkah.",
+            "c": "Cadangkan penambahan dua kakitangan di cawangan utara untuk mengurangkan masa pemprosesan pulangan.",
+            "d": "Laporkan bahawa cawangan utara lebih perlahan dan cadangkan meniru rutin cawangan selatan."
+          },
+          "situation": "Data anda menunjukkan pemprosesan pulangan mengambil masa empat hari di cawangan utara dan dua hari di cawangan selatan. Penyelia anda bertanya apa yang ditunjukkan oleh data ini."
+        }
+      },
+      "implementation-and-training": {
+        "advanced": {
+          "options": {
+            "a": "Bertemu penyelia untuk mengetahui sebab mereka masih guna hamparan, kemudian latih mereka tentang kekurangan itu.",
+            "b": "Padam hamparan lama dari pelayan berkongsi sebelum penyelia beralih sepenuhnya.",
+            "c": "Laksanakan latihan tambahan untuk semua 300 kakitangan tentang sistem penuh sebelum tarikh pelancaran.",
+            "d": "Minta penaja projek mengarahkan penyelia berhenti menggunakan hamparan sebelum pelancaran."
+          },
+          "situation": "Sistem penjadualan baharu akan dilancarkan untuk 300 kakitangan bulan depan. Pengguna uji kaji berkata penyelia masih menggunakan hamparan lama, dan anda mengetuai latihan."
+        },
+        "basic": {
+          "options": {
+            "a": "Tunjuk borang baharu semasa latihan dan suruh kakitangan bertanya soalan selepas itu.",
+            "b": "Tulis langkah-langkah mengikut urutan dengan contoh borang dan uji pada rakan sekerja.",
+            "c": "Kemas kini tajuk panduan lama kepada borang baharu dan hantar kepada kakitangan.",
+            "d": "Salin arahan cetak borang ke dalam panduan satu muka surat dan sebarkannya."
+          },
+          "situation": "Borang tuntutan perbelanjaan baharu akan dilancarkan pada hari Isnin. Anda diminta menulis panduan satu muka surat untuk kakitangan dan menyokong sesi latihan ringkas."
+        }
+      },
+      "process-study-planning": {
+        "advanced": {
+          "options": {
+            "a": "Minta Kilang B membina data setahun penuh sebelum kajian bermula.",
+            "b": "Bandingkan kilang sepanjang tiga bulan bersama dan uji musiman menggunakan data setahun Kilang A.",
+            "c": "Skalakan data tiga bulan Kilang B kepada setahun penuh dan bandingkan dengan Kilang A.",
+            "d": "Guna tiga bulan bersama untuk kedua-dua kilang dan nyatakan had dalam laporan."
+          },
+          "situation": "Anda merancang kajian pengeluaran dan kos merentasi dua kilang. Kilang A mempunyai data setahun penuh, tetapi Kilang B hanya mempunyai data tiga bulan."
+        },
+        "basic": {
+          "options": {
+            "a": "Salin skop daripada kajian pasukan gajian lepas dan ubah namanya.",
+            "b": "Liputi keseluruhan rantaian bekalan daripada pembekal ke stor supaya tiada masalah tertinggal.",
+            "c": "Senaraikan masalah permintaan stok yang disebut staf dan gunakan senarai itu sebagai skop.",
+            "d": "Draf skop yang menamakan jenis permintaan, data yang diperlukan dan penanda aras mingguan."
+          },
+          "situation": "Pensupervisor anda meminta anda menggariskan skop kajian tentang cara pasukan stor mengendalikan permintaan stok. Kajian mesti siap dalam masa tiga minggu."
+        }
+      }
+    },
+    "13-1071.00": {
+      "hiring-and-selection": {
+        "advanced": {
+          "options": {
+            "a": "Skor kedua-dua berdasarkan kriteria yang dipersetujui, rekodkan sebab, cadangkan seorang, dan tandakan hubungan pengurus.",
+            "b": "Tambahkan pusingan temu duga kedua untuk calon akhir yang tidak dikenali baik oleh pengurus.",
+            "c": "Skor kedua-dua calon akhir berdasarkan kriteria yang dipersetujui dan biarkan keputusan akhir kepada pengurus.",
+            "d": "Biarkan pengurus memilih bekas rakan sekerjanya dan rekodkan keputusan sebagai pilihan panel."
+          },
+          "situation": "Anda mereka bentuk proses pengambilan untuk jawatan kewangan kanan dan membimbing pengurus tentang keputusan akhir. Dua calon akhir hampir sama, dan seorang ialah bekas rakan sekerja pengurus."
+        },
+        "basic": {
+          "options": {
+            "a": "Senaraikan pendek calon yang memenuhi kedua-dua keperluan dan simpan lima yang lain untuk semakan kemudian.",
+            "b": "Senaraikan pendek calon yang memenuhi kedua-dua keperluan dan hantar lima yang lain kepada pengurus untuk diputuskan.",
+            "c": "Senaraikan pendek lima yang berpengalaman dahulu, memandangkan pengalaman lebih penting dalam kerja ini.",
+            "d": "Tambahkan diploma kepada rekod lima pemohon tersebut supaya mereka layak untuk senarai pendek."
+          },
+          "situation": "Anda menyaring 30 permohonan untuk jawatan jurutera yang memerlukan diploma dan satu tahun pengalaman. Lima pemohon tiada diploma tetapi mempunyai tiga tahun pengalaman."
+        }
+      },
+      "recruitment-strategy": {
+        "advanced": {
+          "options": {
+            "a": "Cadangkan menahan gaji akhir jurutera yang meletak jawatan untuk meyakinkan mereka kekal.",
+            "b": "Cadangkan kenaikan gaji untuk semua jurutera dan minta kewangan mencari bajet.",
+            "c": "Cadangkan merekrut pengganti lebih cepat dan menawarkan bonus tawaran yang lebih besar kepada semua jurutera baharu.",
+            "d": "Analisis sebab keluar dan data gaji, cadangkan langkah pengekalan yang tepat, dan pantau hasilnya."
+          },
+          "situation": "Pengurusan meminta nasihat tentang program pengekalan. Beberapa jurutera terampil meletak jawatan suku ini, dan bajet terhad."
+        },
+        "basic": {
+          "options": {
+            "a": "Tawarkan kekosongan di akaun media sosial peribadi anda dan tunggu orang memohon.",
+            "b": "Hubungi calon dari pangkalan data dan janji mereka kerja sebelum pengurus bersetuju.",
+            "c": "Cari papan kerja untuk entri data dan hantar setiap profil yang anda jumpa kepada pengurus.",
+            "d": "Cari papan kerja menggunakan kemahiran utama jawatan, senaraikan profil yang sesuai, dan hantarkan mereka."
+          },
+          "situation": "Pengurus anda meminta anda mencari calon untuk jawatan entri data menggunakan papan kerja dan pangkalan data. Seorang penyelia membimbing anda."
+        }
+      },
+      "hr-policy-guidance": {
+        "advanced": {
+          "options": {
+            "a": "Draf dasar kerja hibrida seperti yang diterangkan pengurusan dan nyatakan bahawa peraturan manual mungkin berbeza.",
+            "b": "Terbitkan dasar kerja hibrida dan kemas kini manual kemudian jika kakitangan mengemukakan pertentangan.",
+            "c": "Bandingkan draf dasar dengan peraturan manual dan kontrak, senaraikan pertentangan, dan cadangkan pindaan.",
+            "d": "Beritahu kakitangan bahawa dasar kerja hibrida baharu mengatasi kontrak mereka mengenai jam kerja dan bayaran kerja tambahan."
+          },
+          "situation": "Pengurusan mahu memperkenalkan dasar kerja hibrida, tetapi peraturan manual tentang jam kerja dan kerja tambahan mungkin bertentangan. Anda memberi nasihat tentang pelaksanaan dan pematuhan."
+        },
+        "basic": {
+          "options": {
+            "a": "Beritahu dia bahawa dia boleh mengambil cuti tahunan sebanyak yang dia mahu pada tahun pertamanya.",
+            "b": "Baca hak cuti daripada dasar kepadanya dan minta dia menyemak butiran sendiri.",
+            "c": "Baca hak cuti daripada dasar, terangkan bagaimana ia dikira, dan kongsikan pautan tersebut.",
+            "d": "Beritahu dia bilangan hari cuti biasa di kebanyakan syarikat dan katakan miliknya serupa."
+          },
+          "situation": "Seorang pekerja baharu bertanya berapa hari cuti tahunan yang dia dapat pada tahun pertamanya. Anda mempunyai dasar cuti dan skrip."
+        }
+      },
+      "hr-records-management": {
+        "advanced": {
+          "options": {
+            "a": "Analisis kadar peralihan mengikut jabatan dan tempoh perkhidmatan, kaitkan dengan sebab peralihan, dan cadangkan tindakan dengan amaran.",
+            "b": "Tinggalkan jabatan dengan kadar peralihan tertinggi supaya laporan menunjukkan trend yang jelas.",
+            "c": "Laporkan bahawa kadar peralihan meningkat kerana pasaran kerja, yang berada di luar kawalan syarikat.",
+            "d": "Laporkan kadar peralihan mengikut jabatan dan senaraikan sebab yang diberikan dalam temu bual peralihan."
+          },
+          "situation": "Kepimpinan bertanya mengapa kadar peralihan kakitangan meningkat tahun ini. Anda mempunyai data peralihan, rekod ketidakhadiran dan hasil tinjauan, dan mesti menyediakan laporan."
+        },
+        "basic": {
+          "options": {
+            "a": "Masukkan jawatan dan gaji baharu dengan tarikh berkuat kuasa, dan lampirkan surat bertandatangan.",
+            "b": "Masukkan gaji yang lebih tinggi daripada yang ditunjukkan dalam surat selepas kakitangan berkata ia dipersetujui secara lisan.",
+            "c": "Masukkan jawatan baharu sekarang dan masukkan gaji apabila pasukan gaji memintanya.",
+            "d": "Masukkan jawatan dan gaji baharu sekarang dan lampirkan surat kepada rekod."
+          },
+          "situation": "Anda mengemas kini rekod kakitangan yang dinaikkan pangkat dalam sistem HR. Surat kenaikan pangkat menunjukkan jawatan dan gaji baharu bermula bulan depan."
+        }
+      },
+      "employee-relations": {
+        "advanced": {
+          "options": {
+            "a": "Beritahu pengadu bahawa isu ini ditutup kerana tiada saksi yang sanggup bercakap.",
+            "b": "Mula siasatan formal, lindungi pengadu, temu bual saksi secara peribadi, dan laporkan kepada HR kanan.",
+            "c": "Temu bual pengurus dan pengadu, kemudian buat keputusan berdasarkan siapa yang lebih meyakinkan.",
+            "d": "Minta mereka berdua bertemu dan selesaikan perkara antara mereka dengan permintaan maaf ringkas."
+          },
+          "situation": "Seorang kakitangan mendakwa gangguan oleh pengurus kanan, dan pengurus itu menafikannya. Saksi enggan bercakap. Anda mesti menyelesaikan isu ini dan mematuhi peraturan peluang sama rata."
+        },
+        "basic": {
+          "options": {
+            "a": "Terima kasih kepadanya dan tinggalkan komen tentang pengurus itu keluar dari nota kerana dia akan berundur.",
+            "b": "Rekodkan komen dia, siapkan dokumen, dan hantar kebimbangan tentang pengurus itu kepada ketua HR anda.",
+            "c": "Beritahu pengurus pekerja mana yang mengadu, supaya dia boleh bertindak balas sebelum nota difailkan.",
+            "d": "Rekodkan komen dia dan siapkan dokumen, kemudian failkan nota temu bual dalam rekodnya."
+          },
+          "situation": "Seorang pekerja berundur, dan anda menjalankan temu bual keluar serta menyiapkan dokumen pemecatan dengan bimbingan. Dia berkata pengurusnya sering menjerit kepada kakitangan."
+        }
+      },
+      "staff-training": {
+        "advanced": {
+          "options": {
+            "a": "Beri pengurus templat dengan medan untuk tarikh dan fakta, dan minta mereka menggunakannya.",
+            "b": "Ajarkan pengurus merekodkan tarikh, fakta dan kesan, serta berlatih dengan contoh sebenar yang disamarkan.",
+            "c": "Beritahu pengurus bahawa HR akan menulis semula nota mereka dengan perkataan yang betul sebelum sebarang pendengaran tatatertib.",
+            "d": "Beritahu pengurus untuk menulis nota yang lebih panjang supaya butiran penting tidak terlepas kemudian."
+          },
+          "situation": "Anda melatih pengurus tentang dokumentasi isu prestasi. Mereka menulis nota samar seperti sikap buruk, yang telah melemahkan kes tatatertib terdahulu."
+        },
+        "basic": {
+          "options": {
+            "a": "Tempah pagi Khamis, sahkan bilik dan peralatan, dan hantar agenda kepada semua orang.",
+            "b": "Tempah orientasi pada hari Jumaat dan minta pelatih melaraskan rancangannya pada hari itu.",
+            "c": "Tempah pagi Khamis dan beritahu kakitangan baharu butiran pada hari pertama mereka.",
+            "d": "Tempah pagi Khamis dan hantar agenda kepada kakitangan baharu dan pelatih."
+          },
+          "situation": "Anda menjadualkan orientasi untuk 12 kakitangan baharu dan menyediakan bahan asas. Pelatih itu bebas pada pagi Khamis."
+        }
+      }
+    },
+    "11-2021.00": {
+      "pricing-and-strategy": {
+        "advanced": {
+          "options": {
+            "a": "Kurangkan harga untuk menandingi pesaing di semua cawangan minggu ini demi melindungi bahagian pasaran.",
+            "b": "Lakukan tinjauan pelanggan tentang ciri yang dihargai berbanding pesaing, kemudian bentuk respons harga berdasarkan itu.",
+            "c": "Tawarkan diskaun terhad masa kepada pelanggan utama dan semak hasil jualan dengan kewangan bulan depan.",
+            "d": "Kekalkan harga semasa dan beritahu pasukan bahawa kualiti produk membenarkan harga yang lebih tinggi."
+          },
+          "situation": "Seorang pesaing telah melancarkan produk premium serupa yang harganya 15% lebih rendah daripada anda. Jualan mahu potongan harga sekarang, kewangan mahu mengekalkan margin, dan pasukan anda bertanya bagaimana untuk bertindak balas."
+        },
+        "basic": {
+          "options": {
+            "a": "Cetak RM8 pada poster pelancaran untuk menandingi pesaing termurah dan tetapkan harga awal.",
+            "b": "Cadangkan harga di tengah-tengah julat pesaing dan nyatakan ia sepadan dengan pasaran.",
+            "c": "Cadangkan harga sedikit di bawah pesaing terendah supaya minuman kelihatan lebih berbaloi.",
+            "d": "Lakar tiga titik harga dalam julat pesaing, dengan margin dan permintaan yang dijangka untuk setiap satu."
+          },
+          "situation": "Pengurus kanan anda meminta anda melakar pilihan harga untuk barisan teh gelembung baharu. Pesaing mengenakan RM8 hingga RM11 secawan, dan kos bahan anda ialah RM4.50 secawan sebelum sewa dan kakitangan."
+        }
+      },
+      "vendor-and-legal-deals": {
+        "advanced": {
+          "options": {
+            "a": "Hantar ringkasan, draf dan kontrak kepada pihak undang-undang, dan minta pencetak menangguhkan permulaan seketika.",
+            "b": "Minta pereka bebas mengesahkan secara bertulis bahawa logo itu asli, kemudian teruskan pencetakan mengikut jadual.",
+            "c": "Beritahu pereka lain bahawa logo kelihatan serupa dan tawarkan RM5,000 untuk menyelesaikan perkara ini dengan cepat.",
+            "d": "Beri pihak undang-undang kontrak pereka bebas dan fail logo akhir, kemudian tunggu nasihat mereka."
+          },
+          "situation": "Seorang pereka lain mendakwa logo pereka bebas anda pada pembungkusan baharu meniru karya mereka. Pencetakan 50,000 kotak bermula pada hari Isnin, dan pihak undang-undang telah meminta anda untuk fakta."
+        },
+        "basic": {
+          "options": {
+            "a": "Tanya ketua anda sama ada pengecualian kepada dasar 30 hari adalah mungkin sebelum memulakan draf.",
+            "b": "E-melkan draf dengan tempoh 90 hari kepada pengedar sekarang, memandangkan urus niaga di Penang itu mendesak.",
+            "c": "Sediakan terma pada 30 hari dan beritahu pengedar bahawa terma yang lebih panjang tidak mungkin.",
+            "d": "Sediakan terma pada 30 hari, dengan permintaan tersebut sebagai pilihan berasingan yang menunjukkan kosnya."
+          },
+          "situation": "Seorang pengedar di Penang meminta terma pembayaran 90 hari. Ketua anda meminta anda menyediakan terma untuk semakan undang-undang, dan dasar syarikat ialah 30 hari."
+        }
+      },
+      "financial-and-product-data": {
+        "advanced": {
+          "options": {
+            "a": "Minta data pasaran uji daripada pasukan produk di sebalik andaian itu sebelum meneliti angka.",
+            "b": "Minta kewangan meneliti unjuran dan tunggu pandangan mereka sebelum mengambil langkah seterusnya.",
+            "c": "Bina semula unjuran dengan kes pembelian berulang yang lebih rendah dan persembahkan julat pulangan kepada kewangan.",
+            "d": "Setujui penilaian dan hantar permohonan itu, memandangkan 25% melepasi ambang 20% kewangan."
+          },
+          "situation": "Pasukan produk memohon RM400,000 untuk rasa snek baharu dan mengunjurkan pulangan 25% pada tahun pertama. Kewangan mahu sekurang-kurangnya 20%. Anda perasan unjuran itu mengandaikan jualan pasaran uji akan berulang sepenuhnya di seluruh negara."
+        },
+        "basic": {
+          "options": {
+            "a": "Sahkan harga dengan senarai harga yang diluluskan dan beritahu pasukan yang hamparnya lapuk.",
+            "b": "Guna harga yang lebih rendah untuk item itu supaya tiada pelanggan membayar lebih daripada senarai.",
+            "c": "Guna harga daripada hamparan data yang lebih baharu dan tambah nota bahawa yang lain berbeza.",
+            "d": "Padam item daripada ketiga-tiga hamparan data untuk membuang pertembungan dan tambah semula selepas pelancaran."
+          },
+          "situation": "Anda sedang menyusun senarai produk untuk katalog baharu daripada tiga hamparan data yang disimpan oleh pasukan berbeza. Dua daripadanya menunjukkan harga berbeza untuk item yang sama."
+        }
+      },
+      "market-trend-analysis": {
+        "advanced": {
+          "options": {
+            "a": "Senaraikan punca yang mungkin, seperti harga atau pesaing, dan pilih satu ujian untuk setiap punca.",
+            "b": "Laksanakan tinjauan pelanggan yang dicadangkan di kedua-dua negeri dan bandingkan jawapan mengikut kumpulan umur.",
+            "c": "Lancarkan kempen diskaun di kedua-dua negeri bulan ini dan lihat sama jualan pulih selepas itu.",
+            "d": "Bandingkan jualan kedua-dua negeri dengan corak tahun lalu dan anggap penurunan itu sebagai musiman."
+          },
+          "situation": "Jualan jenama teh anda turun 12% di dua negeri dalam tiga bulan. Pasukan anda mencadangkan tinjauan pelanggan, tetapi tiada siapa yang mentakrifkan soalan yang perlu dijawab."
+        },
+        "basic": {
+          "options": {
+            "a": "Laporkan hasil 85% bersama campuran responden, dan tampilkan jawapan orang dewasa yang bekerja secara berasingan.",
+            "b": "Laporkan hasil 85% dan tambah nota bahawa kebanyakan responden ialah pelajar, bukan orang dewasa.",
+            "c": "Padam respons pelajar daripada fail dan laporkan baki hasil sebagai hasil tinjauan.",
+            "d": "Laporkan hasil 85% sebagai tajuk utama, memandangkan 120 responden ialah saiz sampel yang munasabah."
+          },
+          "situation": "Pengurus anda meminta ringkasan tinjauan dalam talian tentang rasa mi segera baharu. Daripada 120 responden, 85% menyukainya, tetapi kebanyakan mereka pelajar dan produk ini menyasarkan orang dewasa yang bekerja."
+        }
+      },
+      "team-supervision": {
+        "advanced": {
+          "options": {
+            "a": "Minta ketua yang pemurah menilai lebih ketat supaya kedua-dua pasukan dinilai atas terma yang sama.",
+            "b": "Skala skor setiap pasukan naik atau turun supaya purata jabatan sepadan dengan keputusan tahun lepas.",
+            "c": "Beritahu kakitangan bahawa penilaian pasukan yang ketat akan dinaikkan untuk sepadan dengan pasukan lain.",
+            "d": "Setujui kriteria penilaian bertulis dengan kedua-dua ketua, kemudian bandingkan penilaian sampel bersama sebelum penilaian bermula."
+          },
+          "situation": "Dua ketua pasukan anda menilai kakitangan dengan sangat berbeza: seorang memberi markah tertinggi kepada hampir semua orang, seorang lagi jarang menilai melebihi purata. Penilaian akan tiba dalam dua minggu dan kakitangan sedang membandingkan nota."
+        },
+        "basic": {
+          "options": {
+            "a": "Duduk bersama pembantu untuk panggilan sehari dan cari apa yang melambatkan mereka.",
+            "b": "Turunkan sasaran harian pembantu kepada 15 panggilan sehingga angka meningkat secara semula jadi.",
+            "c": "Ingatkan pembantu tentang sasaran 30 panggilan dan minta kemas kini kemajuan harian minggu ini.",
+            "d": "Kira percubaan dial yang tidak dijawab sebagai panggilan dalam log harian supaya angka mencapai sasaran."
+          },
+          "situation": "Pembantu jualan baharu anda telah membuat 12 panggilan sehari berbanding sasaran 30 selama tiga hari lepas. Anda menyelia kerja harian pasukan."
+        }
+      },
+      "promotional-coordination": {
+        "advanced": {
+          "options": {
+            "a": "Minta pengiklan mencetak semula banner dengan mesej akan datang dan hantar invois kepada kewangan.",
+            "b": "Sediakan video produk untuk skrin booth dan maklumkan pengiklan tentang kelewatan.",
+            "c": "Pamerkan model lama di bawah banner pelancaran baharu selama dua hari untuk mengekalkan minat.",
+            "d": "Dapatkan tarikh pasti daripada pengeluaran dan bersetuju dengan pelan demo sandaran bersama pasukan booth."
+          },
+          "situation": "Pada pameran perdagangan yang anda selaraskan, pengeluaran memaklumkan unit demo akan tiba selepas dua hari pertama. Pengiklan telah mencetak banner yang memaparkan produk."
+        },
+        "basic": {
+          "options": {
+            "a": "Dapatkan saiz booth yang dibenarkan secara bertulis dan tanya percetak tentang banner yang lebih kecil hari ini.",
+            "b": "Letakkan booth di pintu masuk pusat beli-belah, di mana terdapat lebih banyak ruang dan lalu lintas kaki.",
+            "c": "Kecilkan booth kepada saiz baharu dan tinggalkan banner, memandangkan ia tidak muat.",
+            "d": "Maklumkan penyelia anda tentang had saiz baharu dan tunggu arahan sebelum mengatur apa-apa lagi."
+          },
+          "situation": "Hari sebelum acara pengambilan sampel hujung minggu, pejabat pusat beli-belah memaklumkan booth anda mesti lebih kecil daripada saiz yang dipersetujui. Banner yang dirancang tidak akan muat lagi."
+        }
+      }
+    },
+    "11-1021.00": {
+      "performance-analysis": {
+        "advanced": {
+          "options": {
+            "a": "Kekalkan pembekal semasa dan terima kenaikan harga, kerana pertukaran menyebabkan gangguan.",
+            "b": "Bandingkan kos setiap unit boleh guna bagi setiap pembekal, termasuk penolakan dan kelewatan, kemudian cadangkan pesanan percubaan.",
+            "c": "Minta pembekal semasa menandingi sebut harga baharu dan sahkan terma kualiti kekal sama.",
+            "d": "Alihkan keseluruhan pesanan kepada pembekal baharu, kerana sebut harganya lebih rendah daripada yang lain."
+          },
+          "situation": "Kos pembungkusan telah meningkat 12% dalam setahun. Tiga pembekal berbeza dari segi kualiti dan masa hantar, dan pembekal baharu yang lebih murah telah menghantar sebut harga. Anda diminta mengesyorkan penjimatan."
+        },
+        "basic": {
+          "options": {
+            "a": "Hantar perbandingan sasaran biasa seperti diminta, kerana penyelia boleh bertanya tentang pesanan yang lewat.",
+            "b": "Laporkan kekurangan lapan peratus seperti yang kelihatan dan nyatakan bahawa satu pesanan besar telah lewat.",
+            "c": "Alihkan pesanan pelanggan yang lewat ke angka bulan ini supaya laporan memenuhi sasaran.",
+            "d": "Laporkan kekurangan dan juga angka yang disesuaikan untuk pesanan yang lewat, supaya kedua-duanya jelas."
+          },
+          "situation": "Penyelia anda meminta anda memeriksa laporan jualan bulan ini berbanding sasaran. Jualan adalah 8% di bawah sasaran, tetapi pesanan satu pelanggan besar telah lewat ke bulan hadapan."
+        }
+      },
+      "department-coordination": {
+        "advanced": {
+          "options": {
+            "a": "Iklankan promosi diskaun dalam kepada pelanggan minggu ini supaya tarikh pelancaran menjadi awam dan tetap.",
+            "b": "Guna tahap diskaun selamat kewangan dan tarikh gudang, kemudian minta pemasaran merancang mengikutnya.",
+            "c": "Kumpulkan ketiga-tiga ketua bersama angka margin dan stok untuk menetapkan satu pelan.",
+            "d": "Sokong diskaun dalam pemasaran kerana jumlah membantu suku tahun, dan biarkan kewangan melaraskan angka kemudian."
+          },
+          "situation": "Anda merancang promosi akhir bulan. Pemasaran mahu diskaun dalam, kewangan bimbang margin nipis, dan gudang kata stok tiba lewat. Setiap ketua mendorong pelan berbeza."
+        },
+        "basic": {
+          "options": {
+            "a": "Telefon pasukan jualan hari ini untuk kuantiti, kemudian minta slot penghantaran daripada logistik.",
+            "b": "Minta kedua-dua jabatan menghantar butiran mereka sebelum Khamis pagi dan sediakan kertas kerja selebihnya.",
+            "c": "Isi kuantiti daripada pesanan serupa bulan lalu dan tandakan kertas kerja sedia untuk penghantaran.",
+            "d": "Tunggu kedua-dua jabatan menghantar butiran mereka, kerana mereka sudah tahu tarikh penghantaran Jumaat."
+          },
+          "situation": "Pesanan pelanggan dihantar pada Jumaat, tetapi kertas kerja memerlukan kuantiti akhir daripada jualan dan slot penghantaran daripada logistik. Ia petang Rabu, dan anda masih tiada kedua-duanya."
+        }
+      },
+      "policy-implementation": {
+        "advanced": {
+          "options": {
+            "a": "Berikan taklimat kepada setiap pasukan tentang sebabnya, tetapkan tarikh mula, dan semak kelewatan selepas sebulan.",
+            "b": "Hantar memo kepada semua pasukan yang menyatakan dasar dan tarikh mula, serta minta pematuhan.",
+            "c": "Benarkan kakitangan kanan mengekalkan kaedah pesanan lama untuk item segera, dan terapkan dasar di tempat lain.",
+            "d": "Minta kewangan menahan bayaran bagi setiap invois tanpa dua kelulusan, termasuk pesanan yang telah dihantar."
+          },
+          "situation": "Anda memperkenalkan peraturan bahawa pembelian melebihi RM5,000 memerlukan dua kelulusan. Sesetengah kakitangan kanan berkata ia akan melambatkan kerja, dan beberapa pasukan masih memesan dengan cara lama."
+        },
+        "basic": {
+          "options": {
+            "a": "Lakar prosedur daripada nota dan hantarkan kepada pengurus anda untuk komen.",
+            "b": "Lakar langkah-langkah daripada nota, kemudian uji dengan kakitangan yang mengendalikan bayaran balik setiap hari.",
+            "c": "Mulakan penggunaan draf anda dengan kakitangan kaunter hari ini, memandangkan bayaran balik semakin bertimbun.",
+            "d": "Tulis prosedur umum yang ringkas supaya kakitangan mempunyai ruang untuk menggunakan pertimbangan mereka bagi setiap kes."
+          },
+          "situation": "Pengurus anda meminta anda melakar prosedur untuk permintaan bayaran balik pelanggan, untuk kelulusan kemudian. Anda mempunyai nota amalan tidak formal kedai dan templat kosong."
+        }
+      },
+      "staff-development": {
+        "advanced": {
+          "options": {
+            "a": "Adakan sesi separuh hari untuk seluruh pasukan yang merangkumi langkah pengebilan dan kesilapan biasa.",
+            "b": "Alihkan semua pengebilan kepada kakitangan kanan dan rekodkan kesilapan dalam fail penilaian pelamar baharu.",
+            "c": "Telusuri di mana ralat bermula, bina latihan ringkas di sekitar langkah tersebut, dan bandingkan bilangan ralat selepas itu.",
+            "d": "Hantar panduan bertulis tentang pengebilan kepada pasukan dan minta mereka membacanya minggu ini."
+          },
+          "situation": "Beberapa pelamar baharu membuat kesilapan pengebilan yang sama suku ini. Anda mesti merancang latihan untuk pasukan 30 orang, dengan bajet RM3,000."
+        },
+        "basic": {
+          "options": {
+            "a": "Cadangkan calon yang pengalamannya lebih sepadan dengan penerangan kerja dan nyatakan kebimbangan tentang ketidaksubaran.",
+            "b": "Hantar nama calon berpengalaman kepada penyelia dan beritahu calon lain bahawa jawatan telah diisi.",
+            "c": "Cadangkan calon yang anda rasa lebih selesa berbual dengannya, memandangkan pasukan mesti bekerjasama.",
+            "d": "Nilai kedua-duanya berdasarkan kriteria kerja yang sama, menggunakan contoh temu duga, dan catat keperluan latihan masing-masing."
+          },
+          "situation": "Anda membantu temu duga dua calon untuk jawatan pembantu kedai. Seorang mempunyai pengalaman kukuh tetapi kelihatan tidak sabar, manakala yang lain kurang pengalaman tetapi mendengar dengan baik. Penyelia anda meminta pandangan anda."
+        }
+      },
+      "budget-management": {
+        "advanced": {
+          "options": {
+            "a": "Cadangkan meletakkan jumlah penuh dalam simpanan tetap yang membayar kadar tertinggi yang tersedia.",
+            "b": "Cadangkan melaburkan jumlah penuh dalam pengembangan rakan niaga, memandangkan pulangan boleh melebihi kadar bank.",
+            "c": "Petakan aliran tunai bulanan dahulu, kemudian cadangkan meletakkan lebihan sebenar dalam simpanan jangka pendek.",
+            "d": "Kekalkan tiga bulan perbelanjaan dalam bentuk tunai dan cadangkan meletakkan baki dalam simpanan jangka pendek."
+          },
+          "situation": "Syarikat mempunyai RM200,000 wang tunai yang tidak digunakan selama enam bulan. Pengurus anda meminta anda mencadangkan cara menggunakannya sambil mengekalkan cukup untuk gaji dan pembayaran pembekal."
+        },
+        "basic": {
+          "options": {
+            "a": "Cari apa yang mendorong perbelanjaan tona, kemudian laporkan jumlah akhir bulan yang dijangkakan dengan cadangan penyelesaian.",
+            "b": "Catat angka dalam laporan bulanan dan lihat sama ada perbelanjaan melambat pada separuh kedua.",
+            "c": "Beritahu pengurus bahawa bekalan berada pada tujuh puluh peratus dan tanya sama ada belanjawan perlu diubah.",
+            "d": "Alihkan kekurangan ke baris belanjawan latihan supaya baris bekalan kekal dalam hadnya."
+          },
+          "situation": "Anda menjejak perbelanjaan bulanan untuk jabatan anda. Pada pertengahan bulan, baris bekalan pejabat telah menggunakan 70% belanjawannya, kebanyakannya untuk tona pencetak."
+        }
+      },
+      "work-assignment": {
+        "advanced": {
+          "options": {
+            "a": "Biarkan dua kakitangan berpengalaman terus mengendalikan kes sukar kerana mereka paling pantas, dan beri mereka waktu tambahan.",
+            "b": "Kongsi jam kerja tambahan secara sama rata kepada keenam-enam dan latih dua lagi kakitangan untuk kes sukar.",
+            "c": "Jadualkan keenam-enam bekerja jam panjang dengan hari rehat ditangguhkan sehingga pengganti diupah.",
+            "d": "Putar kes sukar antara keenam-enam, hadkan waktu tambahan setiap orang, dan semak jadual setiap bulan."
+          },
+          "situation": "Dua orang jurutera meletakkan jawatan bulan depan, meninggalkan enam kakitangan untuk liputan jam kerja yang lebih panjang. Dua daripadanya sudah mengendalikan kes pelanggan paling sukar, dan aduan tentang waktu tambahan semakin meningkat."
+        },
+        "basic": {
+          "options": {
+            "a": "Beri cuti Sabtu kepada siapa yang bekerja lebih banyak hari Sabtu baru-baru ini, dan tawarkan hari bekerja kepada yang lain.",
+            "b": "Minta dua kakitangan itu menyelesaikan sendiri siapa yang cuti Sabtu, dan jadualkan mengikut keputusan mereka.",
+            "c": "Luluskan kedua-dua permintaan cuti Sabtu dan operasikan kaunter dengan dua kakitangan, memandangkan hari bekerja lebih tenang.",
+            "d": "Beri cuti Sabtu kepada siapa yang meminta dahulu, dan tawarkan cuti hari bekerja kepada yang lain sebagai gantinya."
+          },
+          "situation": "Anda sedang menyediakan jadual kerja minggu hadapan untuk empat kakitangan kaunter. Dua orang meminta cuti Sabtu, tetapi Sabtu adalah hari paling sibuk dan memerlukan sekurang-kurangnya tiga orang bertugas."
+        }
+      }
+    },
+    "11-1011.00": {
+      "operational-direction": {
+        "advanced": {
+          "options": {
+            "a": "Minta rakan kongsi untuk penjelasan bertulis dan pelan untuk mengurangkan pulangan dalam bulan ini.",
+            "b": "Alihkan penghantaran seterusnya kembali ke pengedar lama untuk melihat sama ada pulangan menurun.",
+            "c": "Rekodkan pulangan sebagai perubahan fikiran pelanggan supaya angka bulanan kelihatan lebih stabil.",
+            "d": "Kumpulkan sebab pulangan mengikut kumpulan dan laluan, dan kumpulkan kedua-dua pihak untuk bersetuju dengan pembaikan."
+          },
+          "situation": "Pulangan produk telah berganda sejak rakan kongsi pengedaran baharu mengambil alih. Kakitangan jualan menyalahkan rakan kongsi, manakala rakan kongsi menyalahkan pembungkusan. Anda mesti memutuskan bagaimana untuk bertindak."
+        },
+        "basic": {
+          "options": {
+            "a": "Minta dua kakitangan itu menamatkan tugas segera sebelum berlepas, kemudian rancang selebihnya seperti biasa.",
+            "b": "Petakan tugas yang dimiliki oleh dua kakitangan itu, tetapkan liputan dengan serahan, dan tandakan sebarang kekosongan.",
+            "c": "Minta dua kakitangan itu menangguhkan cuti yang diluluskan supaya pelan boleh kekal seperti draf.",
+            "d": "Rancang bulan itu seolah-olah semua orang hadir dan selesaikan kekosongan apabila tolakan bermula."
+          },
+          "situation": "Anda sedang menyuraflah pelan aktiviti bulan hadapan untuk jabatan jualan. Dua kakitangan utama telah meluluskan cuti semasa tolakan jualan akhir bulan. Bagaimana anda menangani pelan ini?"
+        }
+      },
+      "performance-analysis": {
+        "advanced": {
+          "options": {
+            "a": "Hantar salinan penuh peraturan kepada pegawai dengan perenggan utama ditonjolkan dan biarkan mereka membacanya.",
+            "b": "Beri pegawai ringkasan yang jelas dan mudah tentang keperluan utama serta tarikh akhir peraturan tersebut.",
+            "c": "Rumuskan perubahan dalam pelaporan kami, nyatakan apa yang tidak jelas, dan minta nasihat undang-undang mengesahkan.",
+            "d": "Beritahu pegawai bahawa amalan semasa kami sudah mematuhi peraturan, memandangkan peraturan lama tidak banyak berubah."
+          },
+          "situation": "Peraturan kerajaan baharu mengubah cara syarikat anda mesti melaporkan waktu tambahan kakitangan. Dua pegawai kanan meminta anda menerangkan implikasinya bagi syarikat. Teksnya panjang dan teknikal."
+        },
+        "basic": {
+          "options": {
+            "a": "Laraskan angka wilayah supaya sepadan dengan ringkasan kewangan agar laporan lulus semakan hari ini.",
+            "b": "Semak angka wilayah terhadap rekod sumber untuk mengesahkan jumlah yang betul, kemudian beri komen.",
+            "c": "Nyatakan percanggahan dalam komen dan minta pengurus menerangkannya sebelum kelulusan.",
+            "d": "Cadangkan kelulusan kerana kenaikan keseluruhan jelas dan jurang wilayah kelihatan kecil."
+          },
+          "situation": "Laporan jualan bulanan pengurus menunjukkan kenaikan 30%, tetapi angka satu wilayah tidak sepadan dengan ringkasan kewangan. Penyelia anda mahu komen anda tentang laporan ini hari ini."
+        }
+      },
+      "stakeholder-coordination": {
+        "advanced": {
+          "options": {
+            "a": "Balas kepada kedua-duanya dengan menjelaskan bahawa dividen turun kerana keuntungan lebih rendah tahun ini.",
+            "b": "Beritahu pemegang saham bahawa lembaga akan semak dividen suku tahun depan, untuk menenangkan aduannya.",
+            "c": "Jawab pemegang saham dengan penjelasan yang diterbitkan dan biarkan panggilan akhbar tidak dibalas minggu ini.",
+            "d": "Hantar penjelasan dividen lembaga yang diterbitkan kepada pemegang saham dan alihkan panggilan akhbar kepada jurucakap."
+          },
+          "situation": "Seorang pemegang saham minoriti emel anda, kecewa kerana dividen tahun ini lebih rendah daripada tahun lalu. Akhbar tempatan juga menelefon bertanya tentangnya. Anda mengendalikan pertanyaan pelabur."
+        },
+        "basic": {
+          "options": {
+            "a": "Beralih ke perkara seterusnya, kerana ketua boleh selesaikan pesanan antara mereka kemudian.",
+            "b": "Minta setiap ketua nyatakan fakta, kemudian rekod pemilik dan tarikh akhir yang diterima kedua-duanya.",
+            "c": "Bertepi dengan ketua yang jabatannya mengendalikan kebanyakan pesanan sedemikian, untuk menutup perkara dengan cepat.",
+            "d": "Cadangkan dua ketua selesaikan pemilikan selepas mesyuarat dan kemas kini kumpulan esok."
+          },
+          "situation": "Dalam mesyuarat mingguan, dua ketua jabatan tidak bersetuju tentang siapa yang bertanggungjawab atas pesanan pelanggan yang lewat. Kedua-duanya memandang anda untuk pandangan, dan mesyuarat tinggal sepuluh minit."
+        }
+      },
+      "financial-planning": {
+        "advanced": {
+          "options": {
+            "a": "Alihkan dana lebihan antara belanjawan cawangan pada akhir tahun supaya laporan menunjukkan sasaran tercapai.",
+            "b": "Perkenalkan semakan perbelanjaan bulanan berbanding belanjawan, dengan had varians yang mencetuskan penjelasan dan pelan tindakan.",
+            "c": "Turunkan belanjawan setiap cawangan untuk tahun depan sebanyak sepuluh peratus supaya sebarang perbelanjaan lebihan kekal dalam had.",
+            "d": "Minta setiap pengurus cawangan memberikan kemas kini perbelanjaan suku tahunan ringkas dan penjelasan untuk jurang besar."
+          },
+          "situation": "Tiga cawangan terus membelanjai melebihi belanjawan, dan jurang ini muncul pada akhir tahun. Anda diminta untuk menetapkan cara untuk mengawal perbelanjaan sepanjang tahun."
+        },
+        "basic": {
+          "options": {
+            "a": "Kira baris perbelanjaan perjalanan sebanyak RM80,000 supaya belanjawan kelihatan ketat dan lembaga berpuas hati.",
+            "b": "Susun perjalanan tahun lepas mengikut tujuan, belanjakan yang diperlukan, dan tetapkan peraturan kelulusan untuk yang lain.",
+            "c": "Kekalkan baris perbelanjaan perjalanan pada angka tahun lepas supaya lembaga tidak membuka semula isu perbelanjaan lebihan.",
+            "d": "Asaskan baris perbelanjaan perjalanan pada perbelanjaan sebenar tahun lepas, disesuaikan dengan perjalanan yang telah dirancang."
+          },
+          "situation": "Anda sedang menyuraflah belanjawan tahunan jabatan anda untuk kelulusan lembaga. Tahun lepas, perbelanjaan perjalanan melebihi belanjawan sebanyak RM80,000. Anda mesti memutuskan bagaimana untuk menetapkan baris perbelanjaan perjalanan tahun ini."
+        }
+      },
+      "governance-leadership": {
+        "advanced": {
+          "options": {
+            "a": "Luluskan kempen itu setelah tuntutan tersebut diubah suai kepada sesuatu yang boleh dibuktikan oleh pemasaran daripada data harga.",
+            "b": "Luluskan kempen itu kerana pemasaran berkata mereka telah melihat harga pesaing dan harga kami lebih rendah.",
+            "c": "Luluskan kempen itu seperti yang dilakar dan minta pemasaran mencari data untuk tuntutan tersebut selepas pelancaran.",
+            "d": "Minta pemasaran melengkapkan perbandingan harga dahulu dan tangguhkan pelancaran sehingga ia siap."
+          },
+          "situation": "Pemasaran meminta anda meluluskan kempen RM50,000 yang mendakwa produk anda adalah 'yang termurah di Malaysia'. Anda tiada data perbandingan harga, dan pelancaran adalah minggu depan."
+        },
+        "basic": {
+          "options": {
+            "a": "Berikan markah kepada semua orang berdasarkan kriteria bertulis yang sama dan beritahu panel tentang hubungan dengan ahli lembaga.",
+            "b": "Beritahu ahli lembaga bahawa calon itu akan mencapai pusingan akhir sebelum panel bertemu.",
+            "c": "Susun calon mengikut keputusan dan nota temu duga, dan hantar susunan itu kepada pengerusi panel.",
+            "d": "Letakkan calon itu di tempat pertama kerana ahli lembaga mengenali kerja dan boleh menjaminnya."
+          },
+          "situation": "Anda membantu menyenaraikan calon untuk jawatan pengarah jabatan. Satu calon ialah kawan rapat ahli lembaga dan bersemangat dalam temu duga, tetapi mempunyai keputusan yang lebih lemah daripada dua orang lain."
+        }
+      },
+      "contract-negotiation": {
+        "advanced": {
+          "options": {
+            "a": "Tanya kewangan hasil projek mana yang dibenarkan untuk dikeluarkan dan bina ucapan berdasarkan itu.",
+            "b": "Buang slaid dengan kos dalaman dan bercakap tentang projek itu secara umum.",
+            "c": "Tunjuk angka kos sebagai peratusan jimat, bukan ringgit, kerana kedengaran kurang sensitif.",
+            "d": "Hadirkan angka kos sebenar, kerana ucapan jujur tentang jimat akan memenangi kepercayaan audiens."
+          },
+          "situation": "Anda diminta bercakap selama sepuluh minit di konvensyen industri untuk mempromosikan perkhidmatan syarikat anda. Slaid anda termasuk angka kos dalaman dari projek terkini yang belum dibenarkan untuk dikeluarkan."
+        },
+        "basic": {
+          "options": {
+            "a": "Hantar peringatan bertulis lagi kepada pembekal dengan tarikh tegas dan salin kepada penyelia.",
+            "b": "Tanda dua tindakan lewat itu sebagai selesai dalam penjejak supaya pelan kelihatan mengikut jadual.",
+            "c": "Telefon kontak pembekal untuk mengetahui apa yang menghalang tindakan, kemudian sahkan tarikh baharu secara bertulis.",
+            "d": "Tunggu penghantaran berjadual seterusnya pembekal untuk melihat sama ada masalah itu membetulkan diri sendiri."
+          },
+          "situation": "Pelan tindakan pembetulan untuk penghantaran pembekal yang lewat telah diluluskan bulan lalu. Dua tindakan kini lewat, dan pembekal tidak menjawab peringatan anda. Anda membantu melaksanakan pelan itu."
+        }
+      }
+    },
+    "29-1141.00": {
+      "medication-administration": {
+        "advanced": {
+          "options": {
+            "a": "Bilang dia untuk semak rekod alahan dan berikan dos jika tiada yang disenaraikan.",
+            "b": "Bilang dia untuk tangguh dos, semak pernafasan dan ruamnya, dan hubungi doktor bersama-sama.",
+            "c": "Tangguh dos beberapa jam dan lihat sama ada ruam hilang dengan sendirinya.",
+            "d": "Tangguh dos seterusnya dan hubungi doktor untuk melaporkan ruam dan muntah."
+          },
+          "situation": "Satu jam selepas dos antibiotik baharu, pesakit anda muntah dan mempunyai ruam baharu di dadanya. Seorang rakan junior bertanya sama ada dia harus memberikan dos yang dijadualkan seterusnya."
+        },
+        "basic": {
+          "options": {
+            "a": "Sahkan pesanan dan identitinya, terangkan tujuan, berikan ubat, dan nyatakan kesan yang perlu dilaporkan.",
+            "b": "Tenangkan dia bahawa ramai pesakit mengambilnya, kemudian berikan tablet dari pek berlabel.",
+            "c": "Semak pesanan dan gelang tangan, berikan tablet, dan pantau tindak balas semasa rondaan anda.",
+            "d": "Semak pesanan dan gelang tangan, berikan tablet, dan catat kebimbangannya untuk doktor."
+          },
+          "situation": "Anda memberikan ubat oral pagi di wad perubatan. Seorang pesakit berkata dia belum pernah mengambil tablet baharu itu dan kelihatan bimbang mengenainya."
+        }
+      },
+      "patient-monitoring": {
+        "advanced": {
+          "options": {
+            "a": "Galakkan dia minum lebih banyak cecair dan semak semula tekanan darahnya pada masa jadual seterusnya.",
+            "b": "Telefon doktor dengan bacaan tekanan darah dan nadi terkini dan tunggu arahan.",
+            "c": "Semak pemerhatian lebih kerap dan telefon doktor, laporkan trend dan keluaran air kencing yang rendah.",
+            "d": "Catat setiap bacaan, kerana tiada yang di bawah tahap amaran wad, dan kekalkan jadual biasa."
+          },
+          "situation": "Seorang pesakit selepas pembedahan mempunyai tekanan darah yang menurun secara beransur-ansur dalam tiga bacaan manakala nadinya meningkat dan keluaran air kencingnya rendah. Setiap bacaan secara berasingan kelihatan sempadan."
+        },
+        "basic": {
+          "options": {
+            "a": "Beri dia selimut untuk menggigil dan ambil semula suhu pada pusingan seterusnya.",
+            "b": "Semak semula suhunya, tambah nadi dan pernafasan, kemudian beritahu jururawat kanan semua bacaan.",
+            "c": "Catat suhu baharu dan beritahu jururawat kanan ia telah meningkat sejak pusingan terakhir.",
+            "d": "Catat bacaan sebagai kemungkinan kerosakan termometer, kerana dia berbual dengan baik, dan teruskan pusingan anda."
+          },
+          "situation": "Anda mengambil tanda vital di wad perubatan. Suhu pesakit anda ialah 38.4°C, meningkat daripada 37.2°C pada pusingan terakhir, dan dia berkata dia berasa sejuk."
+        }
+      },
+      "care-coordination": {
+        "advanced": {
+          "options": {
+            "a": "Bentangkan pemerhatian anda tentang keletihannya dan tanda vital, serta cadangkan ujian bersepadu yang singkat.",
+            "b": "Biarkan dia di katil seperti yang diminta keluarga, kerana mereka tahu tabiatnya dan mungkin akan mengadu.",
+            "c": "Ikut arahan doktor dan mobilitkan dia, kerana doktor bertanggungjawab atas pelan rawatan.",
+            "d": "Minta doktor dan fisioterapis membincangkannya, kemudian maklumkan keluarga tentang hasilnya."
+          },
+          "situation": "Doktor mahu pesakit strok berjalan hari ini, fisioterapis berkata dia terlalu lemah, dan keluarganya mahu dia berehat. Anda paling tahu keadaannya."
+        },
+        "basic": {
+          "options": {
+            "a": "Laporkan sarapan itu kepada jururawat yang bertanggungjawab supaya pasukan endoskopi boleh memutuskan masa.",
+            "b": "Tulis masa sarapan pada senarai semak dan beritahu kakitangan endoskopi apabila dia sampai.",
+            "c": "Hantar dia seperti yang dijadualkan, kerana pembatalan akan membazirkan slot dan melambatkan pesakit lain.",
+            "d": "Tanya berapa banyak dia makan dan hantar seperti dijadualkan jika ia makanan kecil."
+          },
+          "situation": "Anda sedang menyediakan pesakit untuk endoskopi yang dijadualkan pagi ini. Pembawa hampir tiba, dan anda perasan pesakit itu bersarapan pada 6 pagi walaupun ada arahan berpuasa."
+        }
+      },
+      "health-education": {
+        "advanced": {
+          "options": {
+            "a": "Kekalkan ceramah untuk pesara, kerana kehadiran yang stabil kelihatan baik dalam laporan bulanan.",
+            "b": "Iklankan ceramah sedia ada secara lebih meluas dengan poster dan mesej kepada setiap pesakit dalam daftar.",
+            "c": "Tanya pesakit usia bekerja apa yang sesuai, uji sesi petang yang singkat, dan bandingkan keputusan gula darah.",
+            "d": "Jadikan ceramah lebih panjang dengan slaid yang lebih terperinci, supaya pesakit bekerja melihat lebih banyak nilai."
+          },
+          "situation": "Sedikit pesakit usia bekerja menghadiri ceramah diabetes klinik anda, walaupun ramai yang mempunyai kawalan gula darah yang buruk. Penyelia anda membenarkan anda mereka bentuk semula program tersebut."
+        },
+        "basic": {
+          "options": {
+            "a": "Akui masalah bekalan air, kemudian tunjukkan kepadanya cara menutup tong dan membersihkannya setiap minggu.",
+            "b": "Teruskan ceramah mengikut skrip dan nasihatkan dia untuk mengelakkan penyimpanan air dalam bekas terbuka.",
+            "c": "Katakan kepadanya bahawa penyemburan kabus oleh pejabat kesihatan mengawal nyamuk, jadi tong kurang penting.",
+            "d": "Katakan kepadanya untuk menutup tong dan berikan dia risalah denggi untuk dibaca di rumah."
+          },
+          "situation": "Anda memberikan ceramah yang telah disediakan tentang pencegahan denggi di klinik. Seorang wanita tua berkata dia menyimpan air dalam tong terbuka kerana bekalan paip sering terputus."
+        }
+      },
+      "health-assessment": {
+        "advanced": {
+          "options": {
+            "a": "Mulakan ceramah kesihatan tentang diabetes dan tekanan darah, kerana penduduk tua sering menghidap kedua-duanya.",
+            "b": "Semak rekod klinik, kemudian tanya penduduk, pekerja asrama dan ketua kampung tentang kebimbangan kesihatan.",
+            "c": "Gunakan statistik kesihatan peringkat negeri untuk memilih masalah utama, kemudian draf senarai semak untuk kelulusan.",
+            "d": "Guna semula senarai semak daripada penilaian klinik jiran, kerana ia berkesan dan menjimatkan masa."
+          },
+          "situation": "Klinik anda melayani sebuah kampung dengan ramai penduduk tua dan sebuah asrama pekerja berdekatan. Penyelia anda meminta anda membantu merancang penilaian keperluan kesihatan komuniti. Anda mesti memutuskan bagaimana untuk bermula."
+        },
+        "basic": {
+          "options": {
+            "a": "Tenangkan dia bahawa pangsapuri lembap menyebabkan batuk pada ramai kanak-kanak dan ia akan hilang tidak lama lagi.",
+            "b": "Tanya bila batuk bermula, berapa kerap ia membangunkannya, dan bagaimana keadaan pangsapuri itu.",
+            "c": "Beri tahu ibu itu untuk membawanya ke klinik dan biarkan soalan-soalan itu kepada doktor.",
+            "d": "Catat bila batuk bermula dan berapa kerap ia membangunkannya, kemudian kemas kini jururawat kanan."
+          },
+          "situation": "Semasa saringan kesihatan di sekolah, seorang ibu memberitahu anda bahawa anaknya sering batuk pada waktu malam. Dia menyebut bahawa keluarga itu baru berpindah ke sebuah pangsapuri lembap."
+        }
+      },
+      "records-and-supervision": {
+        "advanced": {
+          "options": {
+            "a": "Letakkan peringatan di papan pengumuman wad bahawa kakitangan perlu merekod selepas setiap tugasan.",
+            "b": "Terangkan kepadanya mengapa rekod perlu dibuat selepas setiap tugasan dan semak entri beliau minggu depan.",
+            "c": "Minta beliau membetulkan carta hari ini supaya sepadan dengan pengambilan sebenar, dan terangkan cara merekod.",
+            "d": "Sesuaikan entri beliau sendiri ke tahap pengambilan biasa supaya jumlah kelihatan konsisten hari ini."
+          },
+          "situation": "Anda menyelia pembantu penjagaan kesihatan di wad anda. Anda perasan beliau mengisi carta pengambilan cecair pada awal shift, dan angka hari ini berbeza daripada apa yang diminum pesakit."
+        },
+        "basic": {
+          "options": {
+            "a": "Tulis angka yang anda ingat pada 2 petang dan tambah nota bahawa anda dipanggil pergi.",
+            "b": "Ulangi bacaan sekarang, rekod pada masa semasa, dan nyatakan entri 2 petang yang terlepas.",
+            "c": "Salin bacaan 10 pagi ke slot 2 petang, memandangkan pesakit masih kelihatan stabil.",
+            "d": "Ulangi bacaan dan rekod pada masa semasa, kemudian teruskan tugasan anda."
+          },
+          "situation": "Anda mengambil bacaan tekanan darah dan nadi pesakit pada 2 petang, tetapi dipanggil pergi sebelum merekod. Sekarang 3.30 petang dan anda tidak dapat mengingati angka tepat."
+        }
+      }
+    },
+    "25-2031.00": {
+      "lesson-planning": {
+        "advanced": {
+          "options": {
+            "a": "Tulis cadangan dengan pilihan anda sendiri dan persembahkan sebagai pandangan pasukan.",
+            "b": "Minta ketua sekolah memilih antara pilihan untuk menyelesaikan pertikaian.",
+            "c": "Sokong pilihan yang paling digemari guru dan tulis cadangan untuk ketua sekolah.",
+            "d": "Kumpul keperluan pelajar, bandingkan pilihan dengan pasukan, dan cadangkan ujian."
+          },
+          "situation": "Anda menyertai pasukan yang menyemak semula program sains sekolah menengah. Guru berbeza pendapat tentang penambahan komponen projek, dan ketua sekolah mahu cadangan segera."
+        },
+        "basic": {
+          "options": {
+            "a": "Padankan setiap pengajaran dengan topik garis panduan dan kongsikan draf pada Khamis.",
+            "b": "Senaraikan bab buku teks mengikut urutan dan kongsikan draf pada Jumaat.",
+            "c": "Mula dengan eksperimen yang digemari kelas anda dan tambah topik kemudian.",
+            "d": "Serahkan garis panduan yang disalin dari bank peperiksaan dan namakan semula tajuknya."
+          },
+          "situation": "Anda menyediakan garis panduan pengajaran kimia Tingkatan 4 dari garis panduan kurikulum. Ketua jabatan anda mahu melihatnya pada Jumaat."
+        }
+      },
+      "student-support": {
+        "advanced": {
+          "options": {
+            "a": "Panggil mesyuarat ringkas, kongsikan apa yang dilihat oleh setiap orang, dan bersetuju dengan satu pelan.",
+            "b": "Beritahu pelajar bahawa mereka akan gagal tahun ini jika tidak berubah.",
+            "c": "Tunggu sehingga akhir semester untuk melihat sama ada markah meningkat.",
+            "d": "Ikuti nasihat kaunselor dan beritahu orang lain tentangnya kemudian."
+          },
+          "situation": "Seorang pelajar terus gagal peperiksaan dan ponteng kelas. Kaunselor, ibu bapa dan seorang lagi guru masing-masing mencadangkan tindakan berbeza, dan pelajar itu tidak berkata apa-apa."
+        },
+        "basic": {
+          "options": {
+            "a": "Alihkan troli, pastikan laluan kosong, dan beritahu pelajar.",
+            "b": "Minta pelajar menggunakan pintu lain dan tunggu di luar sementara itu.",
+            "c": "Minta dua rakan sekelas mengangkat kerusi roda melepasi troli untuk menjimatkan masa.",
+            "d": "Tahan kelas di bilik lain sehingga troli dialihkan."
+          },
+          "situation": "Seorang pelajar yang menggunakan kerusi roda tidak dapat mencapai makmal sains di tingkat bawah melalui pintu biasa kerana troli menghalangnya."
+        }
+      },
+      "classroom-resources": {
+        "advanced": {
+          "options": {
+            "a": "Beri kedua-dua pelajar masa tambahan dan kekalkan lembaran kerja seperti sedia ada.",
+            "b": "Minta ibu bapa pelajar membantu dengan lembaran kerja di rumah.",
+            "c": "Tulis semula lembaran kerja dengan teks lebih pendek dan visual, serta uji dengan kedua-duanya.",
+            "d": "Alihkan kedua-dua pelajar ke belakang supaya mereka tidak melambatkan orang lain."
+          },
+          "situation": "Seorang pelajar yang disleksia dan seorang pelajar yang belajar bahasa Inggeris sebagai bahasa kedua berada dalam kelas Tingkatan 3 anda. Lembaran kerja piawai anda menggunakan perenggan panjang yang padat."
+        },
+        "basic": {
+          "options": {
+            "a": "Pasangkan pelajar pada dua belas mikroskop, gilirkan giliran, dan laporkan yang rosak.",
+            "b": "Pasangkan pelajar pada dua belas mikroskop dan teruskan pelajaran yang dirancang.",
+            "c": "Tangguhkan amali selama seminggu dan tunjuk video di dalam kelas.",
+            "d": "Biarkan tiga pelajar menggunakan mikroskop yang rosak dan rekodkan hasilnya juga."
+          },
+          "situation": "Sebelum amali sains Tingkatan 2, anda menyediakan makmal. Anda mendapati hanya dua belas mikroskop berfungsi untuk lima belas pelajar."
+        }
+      },
+      "parent-communication": {
+        "advanced": {
+          "options": {
+            "a": "Minta ibu bapa mengutamakan keutamaan, kemudian padankan dengan bajet dalam mesyuarat.",
+            "b": "Hadirkan senarai keutamaan sekolah dan jemput komen ibu bapa kemudian melalui e-mel.",
+            "c": "Janjikan kepada ibu bapa semua yang diminta dan selesaikan bajet kemudian.",
+            "d": "Pilih keutamaan yang disokong oleh ibu bapa yang paling bising dan rancang untuknya."
+          },
+          "situation": "Anda memimpin mesyuarat dengan ibu bapa tentang sumber untuk pelajar dalam aliran teknikal sekolah. Ibu bapa mempunyai keutamaan berbeza, dan bajet adalah terhad."
+        },
+        "basic": {
+          "options": {
+            "a": "Katakan anak itu baik dan menunjukkan potensi dalam seni.",
+            "b": "Beritahu ibu bapa bahawa anak itu antara pelajar teratas dalam kelas.",
+            "c": "Kongsi markah purata dan kekuatan seni, serta tanya tentang minat.",
+            "d": "Tunjuk lembaran markah dan minta ibu bapa membacanya kemudian."
+          },
+          "situation": "Pada hari ibu bapa, seorang ibu bapa bertanya bagaimana perkembangan anak mereka. Anak itu purata dalam kebanyakan subjek dan baik dalam seni."
+        }
+      },
+      "student-assessment": {
+        "advanced": {
+          "options": {
+            "a": "Buang markah kelas yang paling lemah daripada data supaya purata meningkat.",
+            "b": "Laporkan purata markah keseluruhan dan cadangkan kerja rumah algebra tambahan untuk semua kelas.",
+            "c": "Pecahkan keputusan mengikut topik algebra, kemudian senaraikan keperluan untuk setiap topik.",
+            "d": "Salahkan guru tahun lepas dalam laporan dan minta kakitangan baharu."
+          },
+          "situation": "Keputusan piawai menunjukkan prestasi lemah dalam algebra merentas semua kelas Tingkatan 4. Ketua meminta anda mengenal pasti keperluan pelajar dan melaporkan segera."
+        },
+        "basic": {
+          "options": {
+            "a": "Beri kedua-duanya markah rendah dan beritahu kelas supaya jangan meniru.",
+            "b": "Beri pelajar yang anda fikir meniru markah sifar dan beritahu kelas siapa dia.",
+            "c": "Bandingkan kedua-dua kerja, kemudian berbincang dengan kedua-dua pelajar sebelum menentukan markah.",
+            "d": "Tanda kedua-duanya sebagai biasa dan tambah nota meminta mereka bekerja berasingan."
+          },
+          "situation": "Anda menanda set kerja rumah kelas Tingkatan 3. Jawapan seorang pelajar kelihatan sama dengan rakan sekelasnya, sehingga kesilapan ejaan yang sama."
+        }
+      },
+      "classroom-instruction": {
+        "advanced": {
+          "options": {
+            "a": "Semak ramalan cuaca sekali lagi, kemudian ubah tarikh atau tawarkan alternatif di bilik darjah.",
+            "b": "Kekalkan tarikh dan beritahu pelajar tentang peraturan keselamatan di sungai.",
+            "c": "Kekalkan tarikh dan biarkan pelajar memutuskan sejauh mana mereka mendekati air.",
+            "d": "Kekalkan tarikh tetapi kekal di tebing dan pastikan pelajar berada di sebalik tali."
+          },
+          "situation": "Anda merancang lawatan ke sungai untuk projek geografi. Sungai ini mempunyai arus kuat selepas hujan, dan ramalan cuaca menunjukkan ribut pada hari lawatan."
+        },
+        "basic": {
+          "options": {
+            "a": "Biarkan contoh itu seperti sedia ada dan sebut kesilapan itu selepas kelas.",
+            "b": "Padam contoh itu secara senyap dan tulis yang baharu sambil bercakap.",
+            "c": "Jeda, betulkan contoh di papan, dan beritahu kelas apa yang berubah.",
+            "d": "Beritahu kelas bahawa contoh itu bertujuan untuk menipu mereka dan teruskan."
+          },
+          "situation": "Anda mengajar pecahan dalam kelas matematik Tingkatan 1 sambil diperhatikan seorang guru. Separuh jalan, anda menyedari satu contoh di papan ada kesilapan."
         }
       }
     }
