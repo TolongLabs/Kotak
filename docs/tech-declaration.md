@@ -165,11 +165,7 @@ RunPod was essential to build Kotak's data: it turned O\*NET's tasks into 6 skil
 
 ### 6.1. Data handling & privacy (150 words max)
 
-Kotak has no user accounts. A check-up runs in guest mode: the job, goal and answers stay in the browser's `localStorage`, and Settings > Reset All clears them.
-
-The app sends a typed job title to the Claude API for matching, and a role's skill data for explanations. Ask Kopi sends the user's message, and the results of tools run on their check-up, to Claude. Kopi's lines go to ElevenLabs for speech. Neither request carries a name, email or ID. The API caches answers and audio by a hash of the request.
-
-Postgres holds the national view as a role code, 6 skill levels, a sample flag and a date, with totals only for groups of 10 or more; no screen sends check-ups, so it holds labelled sample rows. The JobStreet scraper stores public job ads, not personal profiles. Keys live only in host secrets.
+Kotak follows the seven principles of Malaysia's Personal Data Protection Act 2010 (Act 709, sections 5 to 12) and holds no data that names a user (General, Data Integrity). There are no user accounts; the sign-in page says guest mode keeps the check-up on this device. The job, goals, profile and answers stay in the browser's `localStorage`, and Settings > Reset All deletes them (Notice and Choice, Retention, Access). The app sends a typed job title and a role's skill data to the Claude API, Ask Kopi's messages and check-up tool results to Claude, and Kopi's lines to ElevenLabs; the app adds no name, email or ID, and chats are never cached or logged (Disclosure). Keys stay in host secrets (Security). Postgres holds the national view as a role code, skill levels and a date, with real totals only for 10 or more check-ups; no screen sends them yet.
 
 ### 6.2. Known limitations & risks (150 words max)
 
