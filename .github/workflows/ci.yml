@@ -25,5 +25,8 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Fairness check
+        run: bun test packages/sdk/src/fairness.test.ts
+
       - name: Check Worker bundle
         run: bunx wrangler deploy --dry-run
