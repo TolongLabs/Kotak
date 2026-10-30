@@ -13,10 +13,18 @@ interface CornerOverlay {
   reversed_statements?: { basic?: string; advanced?: string }
 }
 
+type ScenarioQuestionOverlay = {
+  situation?: string
+  options?: Partial<Record<'a' | 'b' | 'c' | 'd', string>>
+}
+
+type CornerScenariosOverlay = Partial<Record<'basic' | 'advanced', ScenarioQuestionOverlay>>
+
 export interface ContentFile {
   roles: Record<string, { corners: Record<string, CornerOverlay> }>
   explainers: Record<string, Record<string, { basic?: string; advanced?: string }>>
   sdg_targets: Record<string, { text?: string; reason?: string }>
+  scenarios?: Record<string, Record<string, CornerScenariosOverlay>>
 }
 
 const content: Record<'ms' | 'zh', ContentFile> = { ms: ms as ContentFile, zh: zh as ContentFile }
@@ -29,7 +37,27 @@ export function contentFor(locale: Locale): ContentFile | null {
 function overlayCorner(roleCode: string, corner: BundleCorner, overlay: ContentFile): BundleCorner {
   const cornerOverlay = overlay.roles[roleCode]?.corners[corner.corner_id]
   const explainer = overlay.explainers[roleCode]?.[corner.corner_id]
-  if (!cornerOverlay && !explainer) return corner
+  const scenarioOverlay = overlay.scenarios?.[roleCode]?.[corner.corner_id]
+  if (!cornerOverlay && !explainer && !scenarioOverlay) return corner
+
+  const overlayScenario = (
+    question: NonNullable<BundleCorner['scenarios']>['basic'],
+    translated: ScenarioQuestionOverlay | undefined
+  ) => {
+    if (!question || !translated) return question
+    return {
+      ...question,
+      situation: translated.situation ?? question.situation,
+      options: question.options.map((option) => ({
+        ...option,
+        text: translated.options?.[option.id] ?? option.text
+      }))
+    }
+  }
+
+  const basicScenario = overlayScenario(corner.scenarios?.basic, scenarioOverlay?.basic)
+  const advancedScenario = overlayScenario(corner.scenarios?.advanced, scenarioOverlay?.advanced)
+
   return {
     ...corner,
     name: cornerOverlay?.name ?? corner.name,
@@ -40,13 +68,21 @@ function overlayCorner(roleCode: string, corner: BundleCorner, overlay: ContentF
     reversed_statements: cornerOverlay?.reversed_statements
       ? { ...corner.reversed_statements, ...cornerOverlay.reversed_statements }
       : corner.reversed_statements,
-    explainers: explainer ? { ...corner.explainers, ...explainer } : corner.explainers
+    explainers: explainer ? { ...corner.explainers, ...explainer } : corner.explainers,
+    scenarios: corner.scenarios
+      ? {
+          ...corner.scenarios,
+          ...(basicScenario ? { basic: basicScenario } : {}),
+          ...(advancedScenario ? { advanced: advancedScenario } : {})
+        }
+      : corner.scenarios
   }
 }
 
 /** The role with its translated corner texts swapped in; roles without an entry keep their identity. */
 export function overlayRole(role: BundleRole, overlay: ContentFile): BundleRole {
-  if (!overlay.roles[role.onet_code] && !overlay.explainers[role.onet_code]) return role
+  if (!overlay.roles[role.onet_code] && !overlay.explainers[role.onet_code] && !overlay.scenarios?.[role.onet_code])
+    return role
   return { ...role, corners: role.corners.map((corner) => overlayCorner(role.onet_code, corner, overlay)) }
 }
 
