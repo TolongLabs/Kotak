@@ -1,0 +1,810 @@
+{
+  "meta": {
+    "licence": "CC BY 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "This page includes information from the O*NET 30.1 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license. O*NET® is a trademark of USDOL/ETA.",
+    "modification_notice": "TolongLabs has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+    "onet_version": "30.1",
+    "method": "Removed supervisory wording while retaining each O*NET task and proficiency level."
+  },
+  "roles": {
+    "17-2111.02": {
+      "fire-code-compliance": {
+        "statements": {
+          "basic": "I can check building plans for basic fire code requirements."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to check building plans for basic fire code requirements."
+        }
+      },
+      "fire-system-design": {
+        "statements": {
+          "basic": "I can identify standard fire protection equipment needs."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to identify standard fire protection equipment needs."
+        }
+      },
+      "fire-cause-analysis": {
+        "statements": {
+          "basic": "I can observe fire scenes to identify obvious ignition sources."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to observe fire scenes and identify obvious ignition sources."
+        }
+      },
+      "safety-training-delivery": {
+        "statements": {
+          "basic": "I can assist in delivering basic fire safety drills."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to deliver basic fire safety drills."
+        }
+      },
+      "regulatory-policy-review": {
+        "statements": {
+          "basic": "I can read and summarize current fire safety laws."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with reading and summarizing current fire safety laws."
+        }
+      }
+    },
+    "19-4051.00": {
+      "reactor-performance-monitoring": {
+        "statements": {
+          "basic": "I can monitor reactor equipment performance to spot basic inefficiencies."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with monitoring reactor equipment performance to spot basic inefficiencies."
+        }
+      },
+      "radiation-safety-compliance": {
+        "statements": {
+          "basic": "I can follow basic radiation worker safety policies."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to follow basic radiation worker safety policies."
+        }
+      },
+      "equipment-safety-testing": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to conduct basic surveillance tests on nuclear equipment."
+        }
+      },
+      "maintenance-tagging-procedures": {
+        "statements": {
+          "basic": "I can apply safety tags to equipment."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with applying safety tags to equipment."
+        }
+      },
+      "nuclear-equipment-maintenance": {
+        "reversed_statements": {
+          "basic": "I would still struggle to maintain nuclear equipment."
+        }
+      }
+    },
+    "19-4061.00": {
+      "research-reports": {
+        "statements": {
+          "basic": "I can help format project reports and presentations."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with formatting project reports and presentations."
+        }
+      },
+      "statistical-analysis": {
+        "statements": {
+          "basic": "I can run basic descriptive analyses using computer software."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to run basic descriptive analyses using computer software."
+        }
+      },
+      "data-verification": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to check data entries for errors."
+        }
+      },
+      "database-management": {
+        "statements": {
+          "basic": "I can enter data into existing databases."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with entering data into existing databases."
+        }
+      },
+      "literature-research": {
+        "statements": {
+          "basic": "I can find basic information in libraries and online."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to find basic information in libraries and online."
+        }
+      }
+    },
+    "27-2021.00": {
+      "training-routines": {
+        "reversed_statements": {
+          "basic": "I would still struggle with attending practice sessions and following exercise instructions."
+        }
+      },
+      "competitive-performance": {
+        "reversed_statements": {
+          "basic": "I would still struggle to participate in athletic events following established rules and regulations."
+        }
+      },
+      "performance-review": {
+        "reversed_statements": {
+          "basic": "I would still struggle to discuss my performance with coaches after events."
+        }
+      },
+      "equipment-care": {
+        "reversed_statements": {
+          "basic": "I would still struggle to clean and store basic sports equipment after use."
+        }
+      },
+      "public-representation": {
+        "statements": {
+          "basic": "I can attend media meetings or charity events."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with attending media meetings or charity events."
+        }
+      }
+    },
+    "29-1181.00": {
+      "hearing-assessments": {
+        "statements": {
+          "basic": "I can examine and clean patients' ear canals."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with examining and cleaning patients' ear canals."
+        }
+      },
+      "diagnosis-and-referrals": {
+        "statements": {
+          "basic": "I can refer patients to additional services when needed."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to refer patients to additional services when needed."
+        }
+      },
+      "patient-counseling": {
+        "statements": {
+          "basic": "I can instruct patients in basic communication strategies."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to instruct patients in basic communication strategies."
+        }
+      },
+      "device-fitting": {
+        "statements": {
+          "basic": "I can fit and dispense basic assistive devices."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with fitting and dispensing basic assistive devices."
+        }
+      },
+      "treatment-planning": {
+        "statements": {
+          "basic": "I can assist in planning treatment programs."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to plan treatment programs with the team."
+        }
+      },
+      "practice-management": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to maintain patient records at all stages of treatment."
+        }
+      }
+    },
+    "29-1229.06": {
+      "injury-assessment": {
+        "reversed_statements": {
+          "basic": "I would still struggle with performing basic physical examinations on athletes."
+        }
+      },
+      "treatment-planning": {
+        "statements": {
+          "basic": "I can prescribe standard medications for minor athletic injuries."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to prescribe standard medications for minor athletic injuries."
+        }
+      },
+      "diagnostic-testing": {
+        "statements": {
+          "basic": "I can order basic laboratory tests for athletes."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to order basic laboratory tests for athletes."
+        }
+      },
+      "prevention-advice": {
+        "statements": {
+          "basic": "I can provide basic information on nutrition and hydration to athletes."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with giving athletes basic information on nutrition and hydration."
+        }
+      },
+      "care-coordination": {
+        "statements": {
+          "basic": "I can refer athletes for physical therapy or diagnostic testing."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to refer athletes for physical therapy or diagnostic testing when needed."
+        }
+      },
+      "emergency-response": {
+        "statements": {
+          "basic": "I can assist in preparing medical equipment for athletic competition sites."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to prepare medical equipment for athletic competition sites."
+        }
+      }
+    },
+    "31-1132.00": {
+      "patient-transport": {
+        "statements": {
+          "basic": "I can move a patient to a wheelchair."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with moving a patient to a wheelchair."
+        }
+      },
+      "equipment-cleaning": {
+        "statements": {
+          "basic": "I can wipe down a wheelchair with disinfectant."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to wipe down a wheelchair with disinfectant."
+        }
+      },
+      "supply-logistics": {
+        "reversed_statements": {
+          "basic": "I would still struggle to carry a box of supplies to a ward."
+        }
+      },
+      "linen-management": {
+        "statements": {
+          "basic": "I can strip a bed of soiled linens."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with stripping a bed of soiled linens."
+        }
+      },
+      "emergency-response": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to follow instructions for evacuating a room during a fire alarm."
+        }
+      }
+    },
+    "33-1091.00": {
+      "premises-monitoring": {
+        "statements": {
+          "basic": "I can watch CCTV screens and check alarms."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with watching CCTV screens and checking alarms."
+        }
+      },
+      "access-control": {
+        "statements": {
+          "basic": "I can lock doors and check IDs."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to lock doors and check IDs."
+        }
+      },
+      "security-documentation": {
+        "statements": {
+          "basic": "I can log key distribution and simple observations."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with logging key distribution and simple observations."
+        }
+      },
+      "emergency-response": {
+        "statements": {
+          "basic": "I can call emergency services."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to call emergency services."
+        }
+      },
+      "staff-management": {
+        "statements": {
+          "basic": "I can assign staff to posts."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with assigning staff to posts."
+        }
+      },
+      "equipment-and-drills": {
+        "statements": {
+          "basic": "I can inspect security equipment with a checklist."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with inspecting security equipment."
+        }
+      }
+    },
+    "35-2021.00": {
+      "food-prep-basics": {
+        "statements": {
+          "basic": "I can wash, peel, and cut fruits and vegetables."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to wash, peel, and cut fruits and vegetables."
+        }
+      },
+      "plating-and-service": {
+        "statements": {
+          "basic": "I can portion and wrap food for service."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to portion and wrap food for service."
+        }
+      },
+      "beverage-and-soup-prep": {
+        "statements": {
+          "basic": "I can stir and strain soups and sauces."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to stir and strain soups and sauces."
+        }
+      },
+      "stock-and-storage": {
+        "statements": {
+          "basic": "I can carry food supplies and utensils to storage areas."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to carry food supplies and utensils to storage areas."
+        }
+      },
+      "kitchen-hygiene-and-waste": {
+        "reversed_statements": {
+          "basic": "I would still struggle with scraping leftovers and removing trash from kitchen containers."
+        }
+      },
+      "kitchen-coordination": {
+        "statements": {
+          "basic": "I can weigh and measure ingredients."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to weigh and measure ingredients."
+        }
+      }
+    },
+    "39-3091.00": {
+      "guest-guidance": {
+        "statements": {
+          "basic": "I can answer simple questions about facility rules."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to answer simple questions about facility rules."
+        }
+      },
+      "safety-monitoring": {
+        "statements": {
+          "basic": "I can follow safety rules and report hazards."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with following safety rules and reporting hazards."
+        }
+      },
+      "ticket-sales": {
+        "statements": {
+          "basic": "I can process a single ticket sale."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to process a single ticket sale."
+        }
+      },
+      "record-keeping": {
+        "statements": {
+          "basic": "I can record a single entry in the logbook."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to record a single entry in the logbook."
+        }
+      },
+      "equipment-inventory": {
+        "reversed_statements": {
+          "basic": "I would still struggle with retrieving and storing specific items."
+        }
+      }
+    },
+    "39-5093.00": {
+      "scalp-and-hair-cleansing": {
+        "reversed_statements": {
+          "basic": "I would still struggle with shampooing and rinsing a client's hair to the standard guide."
+        }
+      },
+      "specialized-scalp-treatments": {
+        "reversed_statements": {
+          "basic": "I would still struggle to apply specialized scalp lotions."
+        }
+      },
+      "treatment-record-keeping": {
+        "statements": {
+          "basic": "I can fill in a treatment record form."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to fill in a treatment record form."
+        }
+      },
+      "health-referral-advice": {
+        "reversed_statements": {
+          "basic": "I would still struggle with identifying when a client needs to see a doctor."
+        }
+      }
+    },
+    "39-9031.00": {
+      "class-instruction": {
+        "statements": {
+          "basic": "I can demonstrate basic movements and breathing techniques."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with demonstrating basic movements and breathing techniques."
+        }
+      },
+      "program-planning": {
+        "statements": {
+          "basic": "I can help select music and movements for a simple routine."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with selecting music and movements for a simple routine."
+        }
+      },
+      "equipment-handling": {
+        "statements": {
+          "basic": "I can demonstrate how to use basic weights and machines."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to demonstrate how to use basic weights and machines."
+        }
+      },
+      "safety-and-first-aid": {
+        "reversed_statements": {
+          "basic": "I would still struggle to explain basic safety rules for using exercise equipment."
+        }
+      },
+      "lifestyle-advice": {
+        "reversed_statements": {
+          "basic": "I would still struggle with suggesting basic clothing and shoe options for exercise."
+        }
+      }
+    },
+    "45-2041.00": {
+      "visual-grading": {
+        "statements": {
+          "basic": "I can sort products by color and size."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to sort products by color and size."
+        }
+      },
+      "weight-estimation": {
+        "statements": {
+          "basic": "I can weigh products using a scale."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with weighing products using a scale."
+        }
+      },
+      "defect-removal": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to discard obviously broken or dirty items."
+        }
+      },
+      "container-labeling": {
+        "statements": {
+          "basic": "I can place products in containers and mark them."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to place products in containers and mark them."
+        }
+      },
+      "shipping-records": {
+        "reversed_statements": {
+          "basic": "I would still struggle with copying grade numbers onto tags from a list."
+        }
+      }
+    },
+    "47-2072.00": {
+      "pile-driving-controls": {
+        "statements": {
+          "basic": "I can move levers and turn valves to activate power hammers."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to move levers and turn valves to activate power hammers."
+        }
+      },
+      "equipment-pre-checks": {
+        "reversed_statements": {
+          "basic": "I would still struggle with performing basic pre-operational checks using a checklist."
+        }
+      },
+      "equipment-maintenance": {
+        "statements": {
+          "basic": "I can clean and lubricate equipment parts."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to clean and lubricate equipment parts."
+        }
+      },
+      "piling-positioning": {
+        "statements": {
+          "basic": "I can move levers to position piling leads."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to move levers and position piling leads."
+        }
+      }
+    },
+    "47-2082.00": {
+      "surface-preparation": {
+        "reversed_statements": {
+          "basic": "I would still struggle to countersink nails and screws below wall surfaces using hammers or screwdrivers."
+        }
+      },
+      "compound-mixing": {
+        "reversed_statements": {
+          "basic": "I would still struggle with mixing sealing compounds by hand following standard ratios."
+        }
+      },
+      "joint-sealing": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to press paper tape over joints to embed it into sealing compound."
+        }
+      },
+      "surface-smoothing": {
+        "reversed_statements": {
+          "basic": "I would still struggle to sand rough spots of dried cement between applications of compounds."
+        }
+      },
+      "final-finishing": {
+        "reversed_statements": {
+          "basic": "I would still struggle with applying additional coats to fill in holes and make surfaces smooth."
+        }
+      }
+    },
+    "47-5022.00": {
+      "machine-operation": {
+        "statements": {
+          "basic": "I can move levers and pedals to operate power machinery."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to move levers and pedals to operate power machinery."
+        }
+      },
+      "pre-operation-checks": {
+        "reversed_statements": {
+          "basic": "I would still struggle with checking equipment over before operation."
+        }
+      },
+      "machine-maintenance": {
+        "statements": {
+          "basic": "I can lubricate and adjust machinery."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to lubricate and adjust machinery."
+        }
+      },
+      "site-preparation": {
+        "statements": {
+          "basic": "I can move materials over short distances."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to move materials over short distances."
+        }
+      },
+      "work-coordination": {
+        "reversed_statements": {
+          "basic": "I would still struggle with receiving and acting on written or oral instructions regarding excavation."
+        }
+      }
+    },
+    "51-6091.00": {
+      "machine-setup": {
+        "statements": {
+          "basic": "I can load materials into extruding machines using hand tools."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with loading materials into extruding machines using hand tools."
+        }
+      },
+      "process-monitoring": {
+        "reversed_statements": {
+          "basic": "I would still struggle to observe control boards and gauges and check machine status."
+        }
+      },
+      "equipment-maintenance": {
+        "statements": {
+          "basic": "I can clean machine parts using hand tools."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to clean machine parts using hand tools."
+        }
+      },
+      "defect-reporting": {
+        "reversed_statements": {
+          "basic": "I would still struggle with writing down basic details of a machine malfunction."
+        }
+      },
+      "team-coordination": {
+        "reversed_statements": {
+          "basic": "I would still struggle to tell a colleague when a defect is noticed."
+        }
+      }
+    },
+    "51-9041.00": {
+      "machine-setup-and-controls": {
+        "statements": {
+          "basic": "I can press control buttons to activate machinery."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with pressing control buttons to activate machinery."
+        }
+      },
+      "quality-inspection-and-measurement": {
+        "statements": {
+          "basic": "I can weigh materials using scales."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to weigh materials using scales."
+        }
+      },
+      "monitoring-and-troubleshooting": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to watch machine lights and check for basic errors."
+        }
+      },
+      "defect-removal-and-clearing": {
+        "statements": {
+          "basic": "I can remove defective products from the line."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to remove defective products from the line."
+        }
+      },
+      "material-handling-and-cleaning": {
+        "statements": {
+          "basic": "I can move supplies using handtrucks."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with moving supplies using handtrucks."
+        }
+      },
+      "production-data-recording": {
+        "statements": {
+          "basic": "I can write down meter readings."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to write down meter readings."
+        }
+      }
+    },
+    "51-9071.00": {
+      "material-selection-and-grading": {
+        "statements": {
+          "basic": "I can select metals and gems for a design."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with selecting metals and gems for a design."
+        }
+      },
+      "jewelry-design-and-specification": {
+        "statements": {
+          "basic": "I can modify existing design specifications for metal contents and weights."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to modify existing design specifications for metal contents and weights."
+        }
+      },
+      "assembly-and-surface-finishing": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to smooth soldered joints and rough spots using hand files and emery paper."
+        }
+      },
+      "stone-setting-and-cutting": {
+        "statements": {
+          "basic": "I can position stones and metal pieces for setting."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with positioning stones and metal pieces for setting."
+        }
+      },
+      "metal-casting-and-shaping": {
+        "statements": {
+          "basic": "I can shape and straighten damaged articles by hand or using pliers."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to shape and straighten damaged articles by hand or using pliers."
+        }
+      }
+    },
+    "53-1041.00": {
+      "cargo-weight-calculations": {
+        "reversed_statements": {
+          "basic": "I would still struggle with calculating load weights for specific aircraft compartments using provided charts and computers."
+        }
+      },
+      "in-flight-cargo-monitoring": {
+        "reversed_statements": {
+          "basic": "I would still struggle to accompany aircraft as a flight crew member to observe cargo handling during flight."
+        }
+      },
+      "space-optimization-loading": {
+        "statements": {
+          "basic": "I can distribute cargo to maximize use of space."
+        },
+        "reversed_statements": {
+          "basic": "I would still find it hard to distribute cargo to maximize use of space."
+        }
+      },
+      "crew-safety-training": {
+        "statements": {
+          "basic": "I can train new employees on basic safety procedures and equipment operation."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to train new employees on basic safety procedures and equipment operation."
+        }
+      },
+      "ground-crew-supervision": {
+        "statements": {
+          "basic": "I can direct ground crews in loading and unloading cargo."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with directing ground crews in loading and unloading cargo."
+        }
+      }
+    },
+    "53-7121.00": {
+      "loading-flow-control": {
+        "statements": {
+          "basic": "I can start pumps and adjust valves to begin product flow."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with starting pumps and adjusting valves to begin product flow."
+        }
+      },
+      "material-handling-equipment": {
+        "statements": {
+          "basic": "I can operate basic industrial trucks and loaders."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to operate basic industrial trucks and loaders."
+        }
+      },
+      "vessel-positioning-and-sealing": {
+        "reversed_statements": {
+          "basic": "I would still find it hard to seal outlet valves on tank cars and trucks."
+        }
+      },
+      "loading-process-monitoring": {
+        "statements": {
+          "basic": "I can observe car positions and swing spouts into place."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle to observe car positions and swing spouts into place."
+        }
+      },
+      "operational-data-recording": {
+        "statements": {
+          "basic": "I can manually record basic operating data like product names and times."
+        },
+        "reversed_statements": {
+          "basic": "I would still struggle with manually recording basic operating data like product names and times."
+        }
+      }
+    }
+  }
+}

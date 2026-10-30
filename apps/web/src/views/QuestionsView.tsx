@@ -123,7 +123,11 @@ export function QuestionsView() {
     const corner = role.corners.find((item) => item.corner_id === order[Math.floor(index / 2)])!
     const level = index % 2 === 0 ? ('basic' as const) : ('advanced' as const)
     // A scenario (when the role has them) or the can-do statement; its `rate` gives the stored rating.
-    const question = slotQuestion(role, { order, corner_id: corner.corner_id, level, seed })
+    const question = slotQuestion(
+      role,
+      { order, corner_id: corner.corner_id, level, seed },
+      session.profile.years_experience
+    )
     return { corner, level, question, speech: question.kind === 'scenario' ? question.situation : question.statement }
   }
   const questionIndex = asked.length
