@@ -84,8 +84,17 @@ try {
       `metadata for ${sha}`
     ).split('\0')
     const message = `${rest.join('\0').trimEnd()}\n\nDev-Commit: ${sha}`
+    // A merge commit (a pull request merged without squashing) is replayed as its net change against its first
+    // parent: diff-tree lists no files for a merge, and format-patch skips merges, so both would drop it silently.
+    const isMerge =
+      mustOk(runGit(['rev-list', '--parents', '-n', '1', sha], ROOT), `parents of ${sha}`)
+        .trim()
+        .split(' ').length > 2
     const files = mustOk(
-      runGit(['diff-tree', '--no-commit-id', '--name-only', '-r', sha], ROOT),
+      runGit(
+        isMerge ? ['diff', '--name-only', `${sha}^1`, sha] : ['diff-tree', '--no-commit-id', '--name-only', '-r', sha],
+        ROOT
+      ),
       `file list for ${sha}`
     )
       .split('\n')
@@ -101,9 +110,17 @@ try {
       console.log(`skip ${sha.slice(0, 7)} ${subject} (empty commit)`)
       continue
     }
-    const patch = Bun.spawnSync(['git', 'format-patch', '-1', '--stdout', sha], { cwd: ROOT, env: ENV })
+    const patch = Bun.spawnSync(
+      isMerge
+        ? ['git', 'diff', '--binary', '--full-index', `${sha}^1`, sha]
+        : ['git', 'format-patch', '-1', '--stdout', sha],
+      { cwd: ROOT, env: ENV }
+    )
     if (!patch.success) throw new Error(`patch for ${sha} failed: ${patch.stderr.toString().trim()}`)
-    const am = Bun.spawnSync(['git', 'am', '--3way', ...excludes], { cwd: target, stdin: patch.stdout, env: ENV })
+    const am = Bun.spawnSync(
+      isMerge ? ['git', 'apply', '--3way', '--index', ...excludes] : ['git', 'am', '--3way', ...excludes],
+      { cwd: target, stdin: patch.stdout, env: ENV }
+    )
     if (!am.success) {
       const unmerged = runGit(['diff', '--name-only', '--diff-filter=U'], target)
         .out.split('\n')
@@ -118,7 +135,7 @@ try {
       process.exit(1)
     }
     const amend = Bun.spawnSync(
-      ['git', 'commit', '--amend', `--author=${authorName} <${authorEmail}>`, '-m', message],
+      ['git', 'commit', ...(isMerge ? [] : ['--amend']), `--author=${authorName} <${authorEmail}>`, '-m', message],
       { cwd: target, env: { ...ENV, GIT_AUTHOR_DATE: authorDate } }
     )
     if (!amend.success)
