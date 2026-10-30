@@ -121,3 +121,7 @@ apps/web/public/llms.txt
 # Local scraper runs and browser tooling
 .local/
 data/jobstreet/
+
+# act, the local GitHub Actions runner (#432)
+.secrets
+.artifacts/

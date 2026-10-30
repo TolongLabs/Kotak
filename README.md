@@ -70,6 +70,7 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
         <li><a href="#run-tests">Run Tests</a></li>
+        <li><a href="#run-ci-locally">Run CI Locally</a></li>
       </ul>
     </li>
     <li><a href="#how-we-use-replit">How We Use Replit</a></li>
@@ -352,6 +353,22 @@ bun test
 ```
 
 `bun test` skips the 26 browser integration tests of the JobStreet scraper unless `BROWSER_INTEGRATION=1` is set, because they launch its Chromium build ([scraper guide](/apps/api/src/scrapers/jobstreet/README.md#verification)). It also skips the intake pathway tests until `bun run build` has written the data bundle.
+
+### Run CI Locally
+
+TolongLabs' free GitHub Actions minutes are used up, so pull requests get no checks and a merge to `main` doesn't deploy. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
+
+```bash
+echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' >> ~/.actrc
+```
+
+```bash
+bun run ci:local       # the pull request check: typecheck, build and a Worker dry run
+bun run deploy:local   # the production deploy, as a push to main would run it
+bun run refresh:local  # the weekly data refresh; add --input dry_run=true to only check
+```
+
+The deploy and the refresh read their secrets from `.secrets`, which git ignores: copy [.secrets.example](/.secrets.example) and fill in the repository's Actions secrets. act removes its containers when a run ends, but keeps the runner image for the next run; `docker image rm catthehacker/ubuntu:act-latest` frees that space.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
