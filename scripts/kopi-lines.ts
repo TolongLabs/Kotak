@@ -1,4 +1,4 @@
-// Kopi's fixed lines: every text the app sends to POST /api/tts along the demo walk in docs/demo/video.md, for the
+// Kopi's fixed lines: every text the app sends to POST /api/tts along the demo walk in docs/demo/prelim/video.md, for the
 // sample profile in data/demo-roles.json (Web Developers, "Show Me Where I Could Go", level 1 on every corner: Not
 // Yet to each corner's first question, Yes to its second). They were recorded from the running app's /api/tts request
 // bodies on 22 October 2026, after voice.ts cleans them, through Check-Up, Radar, Roles, Roadmap, Home and What

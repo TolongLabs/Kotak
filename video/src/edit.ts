@@ -1,6 +1,6 @@
 // The demo cut, as data. Times are seconds from the start of their part, and most are set on a spoken
 // word, so the picture follows the voice. Camera framings and boxes are in the take's own pixels.
-// Graphics follow the cue sheet in docs/demo/demo-graphics.md. Each part runs as long as its read needs.
+// Graphics follow the cue sheet in docs/demo/prelim/demo-graphics.md. Each part runs as long as its read needs.
 import type { TakeId } from './data/script'
 import { FPS, KOPI_IN, LEADS, cue, cueBox, holdAfter, kopiSeconds, sec, shot, voiceLength, word, type Box, type ShotId } from './lib'
 import type { ActName, ArrowDir, HudStep, ResultName, RingName } from './motion'
