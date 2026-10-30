@@ -68,7 +68,8 @@ strong {
 }
 
 /* The template keeps its page-number badge; the digits follow the physical page. */
-.page:not(:first-child)::after {
+.page:not(:first-child)::after,
+.updated-prd .page:first-child::after {
   content: counter(sheet);
   position: absolute;
   left: 281.1pt;
@@ -279,4 +280,19 @@ li::marker {
 .figure img {
   display: block;
   width: 100%;
+}
+
+/* A section heading the template lacks, drawn over its stripped one: Barlow Condensed stands in for the template's
+   Helvetica Now Display Condensed Bold, which only Canva has. */
+.pagehead {
+  position: absolute;
+  top: 44pt;
+  left: 0;
+  width: 595pt;
+  text-align: center;
+  text-transform: uppercase;
+  font:
+    700 55pt/46pt 'Barlow Condensed',
+    sans-serif;
+  color: #3a3a3a;
 }

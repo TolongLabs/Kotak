@@ -39,6 +39,7 @@ TEMPLATES = {
 OUTPUTS = {
     "proposal": "SDC2026_T010NG_Preliminary.pdf",
     "declaration": "SDC2026_T010NG_TechDeclaration.pdf",
+    "updated-prd": "SDC2026_T010NG_UpdatedPRD.pdf",
 }
 PAINT = {"f", "F", "f*", "S", "s", "B", "B*", "b", "b*"}
 SHOW = {"Tj", "TJ", "'", '"'}
@@ -271,14 +272,13 @@ def dedupe(pdf):
         walk(page.get("/Resources"))
 
 
-def build(name):
-    tpl = template(name)
+def append_pages(pdf, name, template_name):
+    tpl = template(template_name)
     with tempfile.TemporaryDirectory() as tmp:
         sheets = overlay(name, Path(tmp) / "overlay.pdf")
         pages = specs(name)
         if len(sheets.pages) != len(pages):
             raise SystemExit(f"{name}: overlay has {len(sheets.pages)} pages for {len(pages)} sections")
-        pdf = pikepdf.new()
         for spec, sheet in zip(pages, sheets.pages):
             # copy_foreign caches, so a template page used twice needs its own page dictionary.
             source = pdf.copy_foreign(tpl.pages[spec["base"] - 1].obj)
@@ -290,16 +290,42 @@ def build(name):
             if spec["append"]:
                 with pikepdf.open(ROOT / spec["append"]) as extra:
                     pdf.pages.extend(extra.pages)
-        dedupe(pdf)
-        pdf.docinfo.Title = {"proposal": "Phase 1: Preliminary Project Proposal",
-                             "declaration": "Technical Tools Declaration"}[name] + ", Kotak (Team T010NG)"
-        out = ROOT / "submission" / OUTPUTS[name]
-        pdf.save(out, compress_streams=True, object_stream_mode=pikepdf.ObjectStreamMode.generate)
-        print(f"wrote submission/{OUTPUTS[name]} ({len(pdf.pages)} pages, {out.stat().st_size // 1024} KB)")
         # Windows can't delete the temporary overlay while pikepdf still has it open.
         sheets.close()
 
 
+def build(name):
+    pdf = pikepdf.new()
+    append_pages(pdf, name, name)
+    dedupe(pdf)
+    pdf.docinfo.Title = {"proposal": "Phase 1: Preliminary Project Proposal",
+                         "declaration": "Technical Tools Declaration"}[name] + ", Kotak (Team T010NG)"
+    out = ROOT / "submission" / OUTPUTS[name]
+    pdf.save(out, compress_streams=True, object_stream_mode=pikepdf.ObjectStreamMode.generate)
+    print(f"wrote submission/{OUTPUTS[name]} ({len(pdf.pages)} pages, {out.stat().st_size // 1024} KB)")
+
+
+def build_updated_prd():
+    pdf = pikepdf.new()
+    append_pages(pdf, "proposal", "proposal")
+    append_pages(pdf, "updated-prd", "proposal")
+    dedupe(pdf)
+    pdf.docinfo.Title = "Updated PRD, Kotak (Team T010NG)"
+    out = ROOT / "submission" / OUTPUTS["updated-prd"]
+    pdf.save(out, compress_streams=True, object_stream_mode=pikepdf.ObjectStreamMode.generate)
+    print(f"wrote submission/{OUTPUTS['updated-prd']} ({len(pdf.pages)} pages, {out.stat().st_size // 1024} KB)")
+
+
 if __name__ == "__main__":
-    for name in TEMPLATES:
-        build(name)
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("target", choices=("all", "proposal", "declaration", "updated-prd"), default="all", nargs="?")
+    target = parser.parse_args().target
+    if target == "updated-prd":
+        build_updated_prd()
+    elif target == "all":
+        for name in TEMPLATES:
+            build(name)
+    else:
+        build(target)

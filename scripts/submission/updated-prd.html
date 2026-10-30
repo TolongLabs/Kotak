@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>Updated PRD, Kotak (Team T010NG)</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=block"
+    />
+    <link rel="stylesheet" href="submission.css" />
+    <script>
+      // Marks text that overflows its box, or runs into the page-number band; build.py fails on any mark.
+      addEventListener('load', () =>
+        document.fonts.ready.then(() => {
+          for (const el of document.querySelectorAll('.fill, .box, .stack, .note')) {
+            const page = el.closest('.page')
+            const low = el.getBoundingClientRect().bottom - page.getBoundingClientRect().top > (752 * 4) / 3
+            if (el.scrollHeight > el.clientHeight + 1 || low) el.dataset.overflow = page.dataset.base
+          }
+        })
+      )
+    </script>
+  </head>
+  <body class="updated-prd" style="counter-reset: sheet 17">
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">8. Changes for<br />the final</div>
+      <div class="subhead" style="top: 169.4pt"><b>8.</b>Changes for the final</div>
+      <div class="box" style="left: 51.2pt; top: 200pt; width: 495.1pt; height: 539pt">
+        <p>What changed after the preliminary round, and which feedback asked for each change.</p>
+        <div class="tbl" style="grid-template-columns: 112pt 142pt 118pt 88pt; column-gap: 3pt; margin-top: 8pt">
+          <div class="h">Change</div>
+          <div class="h">Why</div>
+          <div class="h">Feedback behind it</div>
+          <div class="h">Pull request</div>
+          <div>
+            Every SDG chip names its target, gives a one-line reason and the UN text, and the roadmap totals the plan's
+            targets
+          </div>
+          <div>
+            A bare "SDG 4" told the user nothing, and a badge that changes no choice is the guide's "not enough"
+          </div>
+          <div>Finalist guide must-have 5</div>
+          <div>#405, #413</div>
+          <div>1,838 of 5,520 skill corners were judged against each target's UN text, then retagged or kept</div>
+          <div>Some reasons shown were not true of the skill under them</div>
+          <div>Team review</div>
+          <div>#414</div>
+          <div>The roadmap scales each step's hours by the user's situation, experience and qualification</div>
+          <div>Two people with the same answers got the same plan</div>
+          <div>Team review</div>
+          <div>#363, #364</div>
+          <div>The Where You Stand card shows four named boxes, dots that open on tap, and a table version</div>
+          <div>The dots crowded one box and needed the list below to decode</div>
+          <div>Team review</div>
+          <div>#365</div>
+          <div>
+            The questions page holds still: one speech box size, a pink chosen answer, no jump while a font loads
+          </div>
+          <div>The answers moved between questions and on a cold first visit</div>
+          <div>Team review</div>
+          <div>#371, #402, #404</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">8. Changes for<br />the final</div>
+      <div class="subhead" style="top: 169.4pt"><b>8.</b>Changes for the final (continued)</div>
+      <div class="box" style="left: 51.2pt; top: 200pt; width: 495.1pt; height: 539pt">
+        <div class="tbl" style="grid-template-columns: 112pt 142pt 118pt 88pt; column-gap: 3pt">
+          <div class="h">Change</div>
+          <div class="h">Why</div>
+          <div class="h">Feedback behind it</div>
+          <div class="h">Pull request</div>
+          <div>Arrow keys move through the job, target-role and top-bar search suggestions</div>
+          <div>Each suggestion was its own Tab stop, so leaving took up to 13 presses</div>
+          <div>Team review</div>
+          <div>#370, #388</div>
+          <div>Kopi keeps Claude's cited summary when no verdict changed, not the fixed template</div>
+          <div>The guardrail rejected drafts the prompt allowed</div>
+          <div>Team review</div>
+          <div>#399</div>
+          <div>
+            A published cost: about 7 US cents per check-up, about US$1,900 to US$7,000 a month at 100,000 users
+          </div>
+          <div>"How will Kotak keep running?" had no figure behind it</div>
+          <div>Mentor point 1: explain the business model</div>
+          <div>#393</div>
+          <div>
+            Smaller fixes: sign in before the check-up, readable verdict chips on the yellow card, an (i) popover off
+            the answers
+          </div>
+          <div>Each was a break a user could see</div>
+          <div>Team review</div>
+          <div>#362, #367, #374</div>
+        </div>
+        <p style="margin-top: 12pt"><strong>Not changed, and why</strong></p>
+        <ul>
+          <li>
+            <strong>The employer team view.</strong> Not built. The team presents it as the next step, never as a
+            working feature (#279, decision 2).
+          </li>
+          <li>
+            <strong>Testing Kotak on 3 to 5 real people.</strong> Not done. It needs people outside the team, not code
+            (#279, package B).
+          </li>
+          <li>
+            <strong>"What suits the company you want to join."</strong> Out of scope. It stays with the paste-a-job-ad
+            issue, closed as not planned (#279; #105).
+          </li>
+        </ul>
+      </div>
+    </section>
+  </body>
+</html>
