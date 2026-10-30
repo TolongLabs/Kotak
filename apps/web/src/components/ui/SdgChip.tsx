@@ -1,5 +1,7 @@
 import { forwardRef, type ComponentPropsWithoutRef } from 'react'
 import { cn } from './cn'
+import { roadmapText } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 
 export type SdgGoal = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17
 
@@ -34,7 +36,8 @@ export const SdgChip = forwardRef<HTMLSpanElement, SdgChipProps>(function SdgChi
   { goal, target, compact = false, className, style, children, ...props },
   ref
 ) {
-  const name = SDG_NAMES[goal] ?? `Goal ${goal}`
+  const t = useText(roadmapText)
+  const name = t.sdg.names[goal] ?? SDG_NAMES[goal] ?? t.sdg.goal(goal)
   const fullLabel = `SDG ${target ?? goal}: ${name}`
   const known = Number.isInteger(goal) && goal >= 1 && goal <= 17
 

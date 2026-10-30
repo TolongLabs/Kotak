@@ -1,5 +1,7 @@
 import { Pause, Play } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { updateGuestSession, useGuestSession } from '../../session/store'
 import { renderCited } from '../kotak/renderCited'
 import { IconButton } from '../ui/IconButton'
@@ -21,6 +23,7 @@ export interface KopiSpeechBoxProps {
 
 // Kopi's game-style speech box (DESIGN.md): types the line out, reads it aloud unless muted, and links citations.
 export function KopiSpeechBox({ speech, reserve, className }: KopiSpeechBoxProps) {
+  const t = useText(uiText)
   const { tts_muted: muted } = useGuestSession()
   const motion = useReducedMotion()
   const [owner] = useState(() => ({}))
@@ -67,7 +70,7 @@ export function KopiSpeechBox({ speech, reserve, className }: KopiSpeechBoxProps
         <div className="flex items-center gap-2">
           {!motion.system && (
             <IconButton
-              label={motion.manual ? 'Let Kopi Move' : 'Stop Kopi Moving'}
+              label={motion.manual ? t.letKopiMove : t.stopKopiMoving}
               icon={motion.manual ? Play : Pause}
               onClick={() => setManualReducedMotion(!motion.manual)}
               className="rounded-full"

@@ -18,6 +18,9 @@ import { askKopi } from '../../engine/api'
 import { useRoleIndex } from '../../engine/bundle'
 import { assessedRoleCode } from '../../engine/checkup'
 import { toIsoDate } from '../../engine/dates'
+import { commonText } from '../../i18n/common'
+import { shellText } from '../../i18n/messages/shell'
+import { useText } from '../../i18n/text'
 import { useGuestSession } from '../../session/store'
 import { navigate } from '../router'
 import { routes } from '../routes'
@@ -52,15 +55,6 @@ function checkupOf(session: GuestSession): AgentChatCheckup | null {
   }
 }
 
-function suggestionsFor(session: GuestSession, hasCheckup: boolean) {
-  if (!hasCheckup) return ['Which rising skills do Malaysian workers lack most?', 'Where does Kotak’s data come from?']
-  return [
-    'What if I study 6 hours a week?',
-    'Which of my skills are Declining, and why?',
-    session.goal === 'target' ? 'How far am I from my target role?' : 'What changed between the April and May data?'
-  ]
-}
-
 const ASK_KOPI_PANEL_ID = 'ask-kopi-panel'
 
 // Floats in the bottom-right corner of every /app page and toggles the chat window above it. The label stays "Ask Kopi";
@@ -75,6 +69,8 @@ export function AskKopiButton({
   ref?: Ref<HTMLButtonElement>
 }) {
   const Icon = open ? X : MessageCircle
+  const c = useText(commonText)
+
   return (
     <button
       ref={ref}
@@ -86,7 +82,7 @@ export function AskKopiButton({
       className="fixed bottom-4 right-4 z-40 inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border-[1.5px] border-text-primary bg-accent-box px-5 text-label-m text-accent-on-box shadow-[var(--shadow-popover)] transition-colors duration-150 ease-out hover:bg-accent-box-hover"
     >
       <Icon className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
-      Ask Kopi
+      {c.askKopi}
     </button>
   )
 }
@@ -103,6 +99,8 @@ export function AskKopiPanel({
   returnFocusRef: RefObject<HTMLButtonElement | null>
 }) {
   const session = useGuestSession()
+  const c = useText(commonText)
+  const t = useText(shellText)
   const index = useRoleIndex()
   const { reduced } = useReducedMotion()
   const [exchanges, setExchanges] = useState<Exchange[]>([])
@@ -121,6 +119,13 @@ export function AskKopiPanel({
   const roleTitle =
     index.status === 'ready' ? index.data.roles.find((role) => role.onet_code === roleCode)?.title : undefined
   const pose: KopiPose = sending ? 'thinking' : pending ? 'worried' : exchanges.length > 0 ? 'explaining' : 'idle'
+  const suggestions = hasCheckup
+    ? [
+        t.askKopi.suggestions.studyHours,
+        t.askKopi.suggestions.decliningSkills,
+        session.goal === 'target' ? t.askKopi.suggestions.targetRole : t.askKopi.suggestions.dataChange
+      ]
+    : [t.askKopi.suggestions.risingSkills, t.askKopi.suggestions.dataSource]
 
   // Opens as a non-modal window above the button, so the page stays in view and usable; focus starts in the question
   // box, Escape closes it, and focus returns to the Ask Kopi button (some browsers don't focus a clicked button).
@@ -188,13 +193,13 @@ export function AskKopiPanel({
 
   const latestReply = exchanges.at(-1)?.answer.reply
   const announcement = sending
-    ? 'Kopi is thinking.'
+    ? t.askKopi.thinkingAnnouncement
     : pending?.status === 'unavailable'
-      ? 'Kopi can’t chat right now.'
+      ? t.askKopi.unavailableAnnouncement
       : pending?.status === 'error'
-        ? 'Kopi couldn’t answer. Try again.'
+        ? t.askKopi.errorAnnouncement
         : latestReply
-          ? `Kopi says: ${plainChatText(latestReply)}`
+          ? t.askKopi.replyAnnouncement(plainChatText(latestReply))
           : ''
 
   return (
@@ -215,15 +220,17 @@ export function AskKopiPanel({
           {open && <KopiFigure pose={pose} className="h-14" />}
           <div className="min-w-0 flex-1">
             <h2 id={titleId} className="text-title-s text-text-primary">
-              Ask Kopi
+              {c.askKopi}
             </h2>
             <p className="truncate font-mono text-mono-s text-text-muted">
-              {hasCheckup ? `${roleTitle ?? 'Your check-up'} · Data ${dataLabel}` : 'No check-up yet'}
+              {hasCheckup
+                ? `${roleTitle ?? t.askKopi.yourCheckup} · ${t.topbar.data(dataLabel)}`
+                : t.askKopi.noCheckupYet}
             </p>
           </div>
           <button
             type="button"
-            aria-label="Close Ask Kopi"
+            aria-label={t.askKopi.close}
             onClick={onClose}
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-bg-panel text-text-primary transition-colors duration-150 ease-out hover:bg-bg-default"
           >
@@ -234,17 +241,12 @@ export function AskKopiPanel({
         <div ref={logRef} className="relative min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
           <KopiBubble>
             {hasCheckup ? (
-              <p className="text-body-m">
-                Ask me about your check-up, or try a what-if. I run Kotak’s own tools, so the data decides, not me.
-              </p>
+              <p className="text-body-m">{t.askKopi.introWithCheckup}</p>
             ) : (
               <>
-                <p className="text-body-m">
-                  You haven’t done a check-up yet. It takes about 3 minutes, then I can answer about your own job. I can
-                  still answer general questions about Kotak’s data.
-                </p>
+                <p className="text-body-m">{t.askKopi.introWithoutCheckup}</p>
                 <Button variant="primary" onClick={() => go(routes.checkUp)}>
-                  Start Your Check-Up
+                  {t.askKopi.startCheckup}
                 </Button>
               </>
             )}
@@ -253,10 +255,10 @@ export function AskKopiPanel({
           {exchanges.length === 0 && !pending && (
             <section aria-labelledby={`${titleId}-try`} className="space-y-2">
               <h3 id={`${titleId}-try`} className="text-label-m text-text-primary">
-                Try Asking
+                {t.askKopi.tryAsking}
               </h3>
               <ul className="space-y-2">
-                {suggestionsFor(session, hasCheckup).map((question) => (
+                {suggestions.map((question) => (
                   <li key={question}>
                     <button
                       type="button"
@@ -291,7 +293,7 @@ export function AskKopiPanel({
                     />
                   ))}
                 </span>
-                Kopi is thinking…
+                {t.askKopi.thinking}
               </p>
             </KopiBubble>
           )}
@@ -299,26 +301,22 @@ export function AskKopiPanel({
             <div className="space-y-3">
               <Banner
                 type="info"
-                title="Kopi Can’t Chat Right Now"
-                body={
-                  hasCheckup
-                    ? 'Your Radar and Roadmap still work, with every verdict and date.'
-                    : 'The check-up still works, and it takes about 3 minutes.'
-                }
+                title={t.askKopi.unavailableTitle}
+                body={hasCheckup ? t.askKopi.unavailableWithCheckup : t.askKopi.unavailableWithoutCheckup}
               />
               <div className="flex flex-wrap gap-2">
                 {hasCheckup ? (
                   <>
                     <Button variant="secondary" onClick={() => go(routes.radar)}>
-                      Open Radar
+                      {t.askKopi.openRadar}
                     </Button>
                     <Button variant="secondary" onClick={() => go(routes.roadmap)}>
-                      Open Roadmap
+                      {t.askKopi.openRoadmap}
                     </Button>
                   </>
                 ) : (
                   <Button variant="secondary" onClick={() => go(routes.checkUp)}>
-                    Start Your Check-Up
+                    {t.askKopi.startCheckup}
                   </Button>
                 )}
               </div>
@@ -326,13 +324,13 @@ export function AskKopiPanel({
           )}
           {pending?.status === 'error' && (
             <div className="space-y-3">
-              <Banner type="error" title="Kopi Couldn’t Answer" body="Something went wrong on the way. Try again." />
+              <Banner type="error" title={t.askKopi.errorTitle} body={t.askKopi.errorBody} />
               <Button
                 variant="secondary"
                 iconStart={<RotateCcw className="h-5 w-5 stroke-current" aria-hidden="true" />}
                 onClick={() => ask(pending.question)}
               >
-                Try Again
+                {c.tryAgain}
               </Button>
             </div>
           )}
@@ -344,7 +342,7 @@ export function AskKopiPanel({
 
         <form onSubmit={submit} className="flex items-end gap-2 border-t border-border-subtle p-4">
           <label htmlFor={inputId} className="sr-only">
-            Your Question
+            {t.askKopi.questionLabel}
           </label>
           <textarea
             ref={inputRef}
@@ -355,7 +353,7 @@ export function AskKopiPanel({
             readOnly={sending}
             aria-disabled={sending || undefined}
             aria-describedby={hintId}
-            placeholder={hasCheckup ? 'Ask about your check-up' : 'Ask about Kotak’s data'}
+            placeholder={hasCheckup ? t.askKopi.placeholderWithCheckup : t.askKopi.placeholderWithoutCheckup}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
               if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return
@@ -365,7 +363,7 @@ export function AskKopiPanel({
             className="block min-w-0 flex-1 resize-none rounded-sm border border-border-control bg-bg-default px-3 py-2.5 font-sans text-body-m text-text-primary placeholder:text-text-muted transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:bg-bg-panel aria-disabled:text-text-muted"
           />
           <span id={hintId} className="sr-only">
-            Enter sends. Shift and Enter start a new line.
+            {t.askKopi.inputHint}
           </span>
           <Button
             type="submit"
@@ -373,7 +371,7 @@ export function AskKopiPanel({
             iconStart={<SendHorizontal className="h-5 w-5 stroke-current" aria-hidden="true" />}
             disabled={sending || !draft.trim()}
           >
-            Send
+            {t.askKopi.send}
           </Button>
         </form>
       </div>
@@ -392,12 +390,14 @@ function KopiBubble({ children }: { children: ReactNode }) {
 }
 
 function Question({ text }: { text: string }) {
+  const t = useText(shellText)
+
   return (
     <p
       data-question
       className="ml-auto w-fit max-w-[85%] whitespace-pre-line break-words rounded-md border border-border-subtle bg-bg-panel px-3 py-2 text-body-m text-text-primary"
     >
-      <span className="sr-only">You asked: </span>
+      <span className="sr-only">{t.askKopi.youAsked}</span>
       {text}
     </p>
   )
@@ -462,6 +462,9 @@ function ChatText({ text }: { text: string }) {
 // A reply with the Kotak tools behind it, their sources and dates, and the AI-drafted label the app puts on Claude's
 // text (Reasoning's footer).
 function Reply({ answer }: { answer: AgentChatResponse }) {
+  const c = useText(commonText)
+  const t = useText(shellText)
+
   return (
     <KopiBubble>
       <div className="space-y-2 break-words text-body-m text-text-primary">
@@ -469,7 +472,7 @@ function Reply({ answer }: { answer: AgentChatResponse }) {
       </div>
       {answer.tools.length > 0 ? (
         <div className="space-y-1.5">
-          <h3 className="text-label-s text-text-muted">Tools Kopi Ran</h3>
+          <h3 className="text-label-s text-text-muted">{t.askKopi.toolsRan}</h3>
           <ul className="flex flex-wrap gap-1.5">
             {answer.tools.map((tool, index) => (
               <li
@@ -483,11 +486,11 @@ function Reply({ answer }: { answer: AgentChatResponse }) {
           </ul>
         </div>
       ) : (
-        <p className="text-body-s text-text-muted">Kopi ran no Kotak tools for this reply.</p>
+        <p className="text-body-s text-text-muted">{t.askKopi.noTools}</p>
       )}
       {answer.sources.length > 0 && (
         <div className="space-y-1.5">
-          <h3 className="text-label-s text-text-muted">Sources</h3>
+          <h3 className="text-label-s text-text-muted">{c.sources}</h3>
           <ul className="space-y-1">
             {answer.sources.map((source) => (
               <li key={`${source.source_name} ${source.vintage_date}`} className="flex items-baseline gap-3">
@@ -498,9 +501,7 @@ function Reply({ answer }: { answer: AgentChatResponse }) {
           </ul>
         </div>
       )}
-      <p className="border-t border-border-subtle pt-2 font-mono text-mono-s text-text-muted">
-        AI-drafted: Kopi wrote this with Claude from the tools above. Fixed rules set every verdict and number.
-      </p>
+      <p className="border-t border-border-subtle pt-2 font-mono text-mono-s text-text-muted">{t.askKopi.aiDrafted}</p>
     </KopiBubble>
   )
 }

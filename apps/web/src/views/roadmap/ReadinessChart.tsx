@@ -11,6 +11,8 @@ import {
   type MouseHandlerDataParam
 } from 'recharts'
 import { dayDiff, formatPlanDay, planWeekDate, stepActiveInWeek, type TimelineStep } from './planSupport'
+import { roadmapText } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 
 interface ReadinessPoint {
   week: number
@@ -27,6 +29,7 @@ interface ReadinessChartProps {
 }
 
 export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, onSelectStep }: ReadinessChartProps) {
+  const t = useText(roadmapText)
   const readyIndex = points.findIndex((point) => point.plan >= 80)
   const readyPoint = readyIndex >= 0 ? points[readyIndex] : undefined
   const lastPoint = points[points.length - 1]
@@ -35,11 +38,11 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
   const annotation =
     readyPoint && annotationFit !== undefined
       ? readyPoint.week === 0
-        ? `Already at least 80% Fit · ${annotationFit}%`
-        : `80% Fit by Week ${readyPoint.week} · ${annotationFit}%`
+        ? `${t.fit.already} · ${annotationFit}%`
+        : `${t.fit.byWeek(readyPoint.week)} · ${annotationFit}%`
       : annotationPoint && annotationFit !== undefined
-        ? `Below 80% Fit · ${annotationFit}% by Week ${annotationPoint.week}`
-        : 'No Readiness Estimate Yet'
+        ? t.fit.belowAtWeek(annotationFit, annotationPoint.week)
+        : t.fit.noEstimate
 
   const minimumFit =
     points.length > 0 ? Math.min(60, Math.floor(Math.min(...points.map((point) => point.plan)) / 10) * 10) : 60
@@ -58,31 +61,27 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
         <div className="min-w-0 space-y-1">
           <h2 id="readiness-title" className="text-title-s text-text-primary">
-            Readiness for {roleTitle}
+            {t.fit.heading(roleTitle)}
           </h2>
           <p className="font-mono text-mono-m text-text-primary">{annotation}</p>
         </div>
-        <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label="Readiness Legend">
+        <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label={t.fit.legend}>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
             <span aria-hidden="true" className="h-0 w-6 border-t-2 border-text-primary" />
-            Your Plan
+            {t.fit.yourPlan}
           </li>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
             <span aria-hidden="true" className="h-0 w-6 border-t-2 border-dashed border-text-muted" />
-            Threshold = 80% Fit
+            {t.fit.threshold}
           </li>
           <li className="inline-flex items-center gap-2 text-label-s text-text-muted">
             <span aria-hidden="true" className="h-4 w-0 border-l-2 border-text-primary" />
-            Today
+            {t.fit.today}
           </li>
         </ul>
       </div>
       {points.length > 1 ? (
-        <div
-          role="img"
-          aria-label={`Estimated fit by plan week. ${annotation}. Clicking a point selects the step that is active in that week.`}
-          className="h-[220px] w-full lg:h-[260px]"
-        >
+        <div role="img" aria-label={t.fit.chartDescription(annotation)} className="h-[220px] w-full lg:h-[260px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={points}
@@ -102,7 +101,7 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
                 dataKey="week"
                 domain={['dataMin', 'dataMax']}
                 ticks={xTicks}
-                tickFormatter={(week: number) => `W${week}`}
+                tickFormatter={t.timeline.axisWeek}
                 tick={{ fill: 'var(--color-text-muted)', fontSize: 12, fontFamily: 'var(--font-mono)' }}
                 tickLine={false}
                 axisLine={{ stroke: 'var(--color-border-control)' }}
@@ -129,9 +128,9 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
                   return (
                     <div className="pointer-events-none w-max rounded-sm border border-border-subtle bg-bg-default p-2.5 shadow-popover">
                       <p className="font-mono text-mono-s text-text-muted">
-                        Week {point.week} · {formatPlanDay(planWeekDate(startIso, point.week))}
+                        {t.fit.weekNumber(point.week)} · {formatPlanDay(planWeekDate(startIso, point.week))}
                       </p>
-                      <p className="mt-1 text-label-m text-text-primary">{Math.round(point.plan)}% fit</p>
+                      <p className="mt-1 text-label-m text-text-primary">{t.fit.percent(Math.round(point.plan))}</p>
                     </div>
                   )
                 }}
@@ -141,7 +140,7 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
               <Line
                 type="stepAfter"
                 dataKey="plan"
-                name="Your Plan"
+                name={t.fit.yourPlan}
                 stroke="var(--color-text-primary)"
                 strokeWidth={2}
                 dot={{ r: 4, fill: 'var(--color-accent-box)', stroke: 'var(--color-text-primary)', strokeWidth: 1.5 }}
@@ -168,17 +167,17 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
         </div>
       ) : (
         <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
-          No Roadmap Steps To Plot Yet.
+          {t.fit.noStepsToPlot}
         </p>
       )}
       <div className="sr-only">
         <table>
-          <caption>Estimated fit by plan week</caption>
+          <caption>{t.fit.tableCaption}</caption>
           <thead>
             <tr>
-              <th scope="col">Week</th>
-              <th scope="col">Date</th>
-              <th scope="col">Your Plan Fit</th>
+              <th scope="col">{t.fit.week}</th>
+              <th scope="col">{t.fit.date}</th>
+              <th scope="col">{t.fit.yourPlanFit}</th>
             </tr>
           </thead>
           <tbody>

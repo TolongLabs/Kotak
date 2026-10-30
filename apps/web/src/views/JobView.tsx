@@ -1,4 +1,4 @@
-import { assessedRoleCode, computeCheckup, roleOutlook } from '@kotak/sdk'
+import { assessedRoleCode, biggestGaps, computeCheckup, roleOutlook } from '@kotak/sdk'
 import { addMonths, HORIZON_MONTHS, roleVerdicts, type BundleRole, type Scenario, type SnapshotId } from '@kotak/shared'
 import { ArrowUpRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -17,6 +17,9 @@ import { verdictId } from '../engine/viewModel'
 import { useGuestSession } from '../session/store'
 import { useScenario } from '../session/scenario'
 import { NotFoundView } from './NotFoundView'
+import { dateLocale } from '../i18n/locale'
+import { rolesText } from '../i18n/messages/roles'
+import { useText } from '../i18n/text'
 
 /** Related roles that have a file, in O*NET's order, each once and never the job itself. */
 export function relatedRoles<T extends { onet_code: string }>(self: string, related: T[], limit = 5): T[] {
@@ -27,7 +30,7 @@ export function relatedRoles<T extends { onet_code: string }>(self: string, rela
 const outlookOf = (role: BundleRole, snapshotId: SnapshotId) => roleOutlook(role, snapshotId)
 
 const monthLabel = (date: string) =>
-  new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+  new Date(`${date}T00:00:00Z`).toLocaleDateString(dateLocale(), { month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 const formatNeeded = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(1))
 
@@ -36,13 +39,18 @@ const formatNeeded = (value: number) => (Number.isInteger(value) ? String(value)
  * job or no answer yet) or the roles are still loading. A job outside the check-up's own list is scored the same way
  * as the check-up does, by asking for it as an extra role.
  */
-function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string }> | null {
+interface SavedFit {
+  fit: number
+  gap?: { name: string; you: number; needed: number }
+}
+
+function useSavedFits(codes: string[]): Map<string, SavedFit> | null {
   const session = useGuestSession()
   const [scenario] = useScenario()
   const assessed = assessedRoleCode(session)
   const answered = session.answers.some((answer) => answer !== null)
   const key = assessed && answered ? JSON.stringify([assessed, codes, scenario]) : null
-  const [state, setState] = useState<{ key: string; fits: Map<string, { fit: number; gap?: string }> } | null>(null)
+  const [state, setState] = useState<{ key: string; fits: Map<string, SavedFit> } | null>(null)
 
   useEffect(() => {
     if (!key) return
@@ -60,11 +68,24 @@ function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string 
           profile: session.profile,
           startDate: new Date().toISOString().slice(0, 10)
         })
-        const fits = new Map(
+        const fits = new Map<string, SavedFit>(
           checkup.roles.map((role) => {
             const corners =
               [bundle.role, ...bundle.related].find((other) => other.onet_code === role.onet_code)?.corners ?? []
-            return [role.onet_code, { fit: Math.round(role.fit.score), gap: topGapLabel(role.fit, corners) }] as const
+            const gap = biggestGaps(role.fit)[0]
+            return [
+              role.onet_code,
+              {
+                fit: Math.round(role.fit.score),
+                gap: gap
+                  ? {
+                      name: corners.find((corner) => corner.corner_id === gap.corner_id)?.name ?? gap.corner_id,
+                      you: gap.user_level,
+                      needed: gap.target_level
+                    }
+                  : undefined
+              }
+            ] as const
           })
         )
         if (current) setState({ key, fits })
@@ -84,6 +105,7 @@ function useSavedFits(codes: string[]): Map<string, { fit: number; gap?: string 
 const cardClass = 'surface-card min-w-0 space-y-4 p-4 sm:p-6'
 
 function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotId: SnapshotId; scenario: Scenario }) {
+  const t = useText(rolesText)
   const names = new Map(role.corners.map((corner) => [corner.corner_id, corner.name]))
   const rows = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => ({
     id: corner.corner_id,
@@ -95,22 +117,22 @@ function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotI
     <section aria-labelledby="job-needs" className={cardClass}>
       <div className="space-y-1">
         <h2 id="job-needs" className="text-title-m text-text-primary">
-          What This Job Needs
+          {t.jobView.needsTitle}
         </h2>
-        <p className="text-body-s text-text-muted">{rows.length} skills and the level each needs, out of 3.</p>
+        <p className="text-body-s text-text-muted">{t.jobView.needsCount(rows.length)}</p>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
             <tr className="font-mono text-mono-s text-text-muted">
               <th scope="col" className="py-2 pr-3 font-normal">
-                Skill
+                {t.jobView.skill}
               </th>
               <th scope="col" className="py-2 pr-3 font-normal">
-                Trend
+                {t.jobView.trend}
               </th>
               <th scope="col" className="py-2 font-normal">
-                Needed level
+                {t.jobView.neededLevel}
               </th>
             </tr>
           </thead>
@@ -138,7 +160,9 @@ function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotI
                           />
                         ))}
                       </span>
-                      <span className="font-mono text-mono-s text-text-primary">{formatNeeded(row.needed)} of 3</span>
+                      <span className="font-mono text-mono-s text-text-primary">
+                        {t.jobView.ofThree(formatNeeded(row.needed))}
+                      </span>
                     </span>
                   </td>
                 </tr>
@@ -163,6 +187,7 @@ function useNarrow() {
 }
 
 export function JobView({ code }: { code: string }) {
+  const t = useText(rolesText)
   const session = useGuestSession()
   const [scenario, setScenario] = useScenario()
   const narrow = useNarrow()
@@ -177,14 +202,14 @@ export function JobView({ code }: { code: string }) {
   if (bundle.status !== 'ready')
     return (
       <p role="status" className="text-body-m text-text-muted">
-        Opening this job…
+        {t.jobView.opening}
       </p>
     )
 
   const { role } = bundle.data
   const snapshotId = session.active_snapshot_id
   const outlook = outlookOf(role, snapshotId)
-  const neededBy = `Needed by ${monthLabel(addMonths(`${snapshotId}-01`, HORIZON_MONTHS))}`
+  const neededBy = t.jobView.neededBy(monthLabel(addMonths(`${snapshotId}-01`, HORIZON_MONTHS)))
   const corners: Corner[] = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => {
     const needed = Math.min(3, Math.max(1, Math.round(corner.scenarios[scenario].target.value))) as 1 | 2 | 3
     return {
@@ -204,7 +229,7 @@ export function JobView({ code }: { code: string }) {
       id: code,
       label: role.title,
       fit: fits?.get(code)?.fit ?? null,
-      gap: fits?.get(code)?.gap,
+      gap: fits?.get(code)?.gap ? topGapLabel(fits.get(code)!.gap!) : undefined,
       trend: trendOf(outlook),
       kind: code === session.role_code ? 'you' : 'suggested'
     },
@@ -212,7 +237,7 @@ export function JobView({ code }: { code: string }) {
       id: other.onet_code,
       label: other.title,
       fit: fits?.get(other.onet_code)?.fit ?? null,
-      gap: fits?.get(other.onet_code)?.gap,
+      gap: fits?.get(other.onet_code)?.gap ? topGapLabel(fits.get(other.onet_code)!.gap!) : undefined,
       trend: trendOf(outlookOf(other, snapshotId)),
       kind: 'suggested' as const
     }))
@@ -222,7 +247,9 @@ export function JobView({ code }: { code: string }) {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0 space-y-2">
-          <p className="text-body-s text-text-muted">Jobs / {role.title}</p>
+          <p className="text-body-s text-text-muted">
+            {t.jobView.jobs} / {role.title}
+          </p>
           <h1 className="break-words text-title-l text-text-primary">{role.title}</h1>
           <p className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-mono-s text-text-muted">O*NET {role.onet_code}</span>
@@ -236,7 +263,7 @@ export function JobView({ code }: { code: string }) {
           iconEnd={<ArrowUpRight className="h-5 w-5" aria-hidden="true" />}
           onClick={() => navigate(`${routes.checkUp}?job=${encodeURIComponent(role.title)}`)}
         >
-          Check My Fit
+          {t.jobView.checkFit}
         </Button>
         <ScenarioControl scenario={scenario} onChange={setScenario} />
       </header>
@@ -247,9 +274,9 @@ export function JobView({ code }: { code: string }) {
           <section aria-labelledby="job-radar" className={cardClass}>
             <div className="space-y-1">
               <h2 id="job-radar" className="text-title-m text-text-primary">
-                Radar, Needed Levels
+                {t.jobView.radarTitle}
               </h2>
-              <p className="text-body-s text-text-muted">What the job asks for. No personal data on this chart.</p>
+              <p className="text-body-s text-text-muted">{t.jobView.radarDescription}</p>
             </div>
             <FutureSkillsRadar
               corners={corners}
@@ -264,20 +291,16 @@ export function JobView({ code }: { code: string }) {
         <section aria-labelledby="job-map" className={cardClass}>
           <div className="space-y-1">
             <h2 id="job-map" className="text-title-m text-text-primary">
-              Where This Job Sits
+              {t.jobView.mapTitle}
             </h2>
-            <p className="text-body-s text-text-muted">
-              {fits
-                ? 'Across: how ready you are for it, from your saved check-up. Up: the job is growing.'
-                : 'Up: the job is growing. We cannot place it across until you do the check-up.'}
-            </p>
+            <p className="text-body-s text-text-muted">{fits ? t.jobView.mapWithFit : t.jobView.mapWithoutFit}</p>
           </div>
           <QuadrantMap bare points={points} focusId={code} />
           {!fits && (
             <div className="space-y-3 rounded-md border-[1.5px] border-dashed border-border-control p-4">
-              <p className="text-label-m text-text-primary">Do the check-up to see how ready you are.</p>
+              <p className="text-label-m text-text-primary">{t.jobView.checkupPrompt}</p>
               <Button variant="secondary" onClick={() => navigate(routes.checkUp)}>
-                Start The Check-Up
+                {t.jobView.startCheckup}
               </Button>
             </div>
           )}
@@ -287,12 +310,12 @@ export function JobView({ code }: { code: string }) {
       <section aria-labelledby="job-related" className={cardClass}>
         <div className="space-y-1">
           <h2 id="job-related" className="text-title-m text-text-primary">
-            Related Roles
+            {t.jobView.relatedTitle}
           </h2>
-          <p className="text-body-s text-text-muted">From O*NET, in its order. Fewer than five is fine.</p>
+          <p className="text-body-s text-text-muted">{t.jobView.relatedDescription}</p>
         </div>
         {related.length === 0 ? (
-          <p className="text-body-s text-text-muted">O*NET lists no related roles with data for this job.</p>
+          <p className="text-body-s text-text-muted">{t.jobView.noRelated}</p>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {related.map((other) => {
@@ -307,7 +330,7 @@ export function JobView({ code }: { code: string }) {
                     <VerdictChip verdict={verdict} size="sm" />
                     <span className="break-words text-label-l text-text-primary">{other.title}</span>
                     <span className="text-body-s text-text-muted">
-                      {fit !== undefined ? `Your fit ${fit}%` : 'Open job page'}
+                      {fit !== undefined ? t.jobView.yourFit(fit) : t.jobView.openJob}
                     </span>
                   </Link>
                 </li>

@@ -1,4 +1,6 @@
 import { forwardRef, isValidElement, type ComponentPropsWithoutRef, type ComponentType, type ReactNode } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { Spinner } from './Spinner'
 import { cn } from './cn'
 
@@ -55,6 +57,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref
 ) {
+  const t = useText(uiText)
   const isDisabled = disabled || loading
 
   return (
@@ -72,7 +75,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       {...props}
     >
-      {loading ? <Spinner label="Loading" size="sm" /> : renderIcon(iconStart)}
+      {loading ? <Spinner label={t.loading} size="sm" /> : renderIcon(iconStart)}
       {children}
       {renderIcon(iconEnd)}
     </button>

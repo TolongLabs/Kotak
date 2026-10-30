@@ -2,6 +2,8 @@ import type { BundleRoleIndexEntry, Occupation, RoleMatchResponse } from '@kotak
 import { useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { fetchRoleMatch, type ApiResult, type RoleAlias } from '../../engine/api'
+import { checkupText } from '../../i18n/messages/checkup'
+import { useText } from '../../i18n/text'
 import {
   closestRoles,
   getRoleDisplayTitle,
@@ -36,6 +38,7 @@ export function JobSearch({
   onAccept: (role: Pick<Occupation, 'onet_code' | 'title'> | null) => void
   initialQuery: string
 }) {
+  const t = useText(checkupText)
   const [query, setQuery] = useState(initialQuery)
   const [open, setOpen] = useState(initialQuery.length > 0)
   const [matchState, setMatchState] = useState<
@@ -147,18 +150,15 @@ export function JobSearch({
         {listOpen && (
           <SuggestionList
             list={list}
-            label={`${label} Suggestions`}
-            status={
-              waiting ? 'Kopi is matching your title…' : noMatch && 'No match yet. Try a simpler title, or pick one:'
-            }
-            footnote={suggestions.length > 0 && 'Can’t find it? Type any title and Kopi will match it.'}
+            label={t.roleSearch.suggestions(label)}
+            status={waiting ? t.roleSearch.matching : noMatch && t.roleSearch.noMatch}
+            footnote={suggestions.length > 0 && t.roleSearch.footnote}
           />
         )}
       </div>
       {situation && !accepted && (
         <p className="text-body-s text-text-muted" role="status">
-          That sounds like where you are as well as a job. Pick it under Right Now, I’m, and choose the closest job
-          below if you’ve had one.
+          {t.roleSearch.situationHint}
         </p>
       )}
     </div>

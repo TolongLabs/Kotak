@@ -17,6 +17,7 @@ import {
   type RoleAliasesResponse,
   type RoleMatchResponse
 } from '@kotak/shared'
+import { getLocale } from '../i18n/locale'
 
 export type ApiResult<T> = { status: 'available'; data: T } | { status: 'unavailable' }
 
@@ -39,7 +40,7 @@ async function postJson<TRequest, TResponse>(
     const response = await fetch(path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request.data)
+      body: JSON.stringify({ ...request.data, lang: getLocale() })
     })
     if (response.status !== 200) return unavailable
 

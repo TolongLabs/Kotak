@@ -1,5 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { readGuestSession, startGuestSession } from '../../session/store'
+import { shellText } from '../../i18n/messages/shell'
+import { useText } from '../../i18n/text'
 import { AskKopiButton, AskKopiPanel } from './AskKopi'
 import { NavDrawer } from './NavDrawer'
 import { Sidebar } from './Sidebar'
@@ -25,6 +27,7 @@ function readSidebarPreference(): boolean | null {
 }
 
 export function AppShell({ path, dataLabel, collapsed = false, children }: AppShellProps) {
+  const t = useText(shellText)
   if (!readGuestSession()) startGuestSession()
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -50,7 +53,7 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-accent-box focus:px-4 focus:py-2 focus:text-label-l focus:text-accent-on-box"
       >
-        Skip to Content
+        {t.app.skipToContent}
       </a>
       <Sidebar path={path} collapsed={sidebarCollapsed} onToggleCollapsed={toggleSidebar} className="hidden lg:flex" />
       <div className="min-w-0 flex-1">

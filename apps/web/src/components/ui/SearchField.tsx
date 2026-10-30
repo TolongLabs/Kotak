@@ -1,5 +1,7 @@
 import { Lock, Search } from 'lucide-react'
 import { forwardRef, useId, type ComponentPropsWithoutRef } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
 export interface SearchFieldProps extends ComponentPropsWithoutRef<'input'> {
@@ -12,7 +14,7 @@ export interface SearchFieldProps extends ComponentPropsWithoutRef<'input'> {
 
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
-    label = 'Search',
+    label,
     hideLabel = false,
     placeholder,
     shortcutHint = '/',
@@ -24,6 +26,8 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   },
   ref
 ) {
+  const t = useText(uiText)
+  const resolvedLabel = label ?? t.search
   const generatedId = useId()
   const id = providedId ?? generatedId
   const invalid = ariaInvalid === true || ariaInvalid === 'true'
@@ -31,7 +35,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   return (
     <div className="space-y-2">
       <label htmlFor={id} className={cn('block text-label-m text-text-primary', hideLabel && 'sr-only')}>
-        {label}
+        {resolvedLabel}
       </label>
       <div
         className={cn(

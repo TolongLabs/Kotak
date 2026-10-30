@@ -14,6 +14,9 @@ import { hasAnswers, useGuestSession } from '../session/store'
 import { useScenario } from '../session/scenario'
 import { useActiveSnapshot } from '../session/snapshot'
 import { whatChangedItems } from './changes/whatMoved'
+import { dateLocale } from '../i18n/locale'
+import { changesText } from '../i18n/messages/changes'
+import { textNow, useText } from '../i18n/text'
 import { WhatChangedRadar } from './changes/WhatChangedRadar'
 import { startAgain } from './checkup/startAgain'
 
@@ -22,16 +25,7 @@ const afterSnapshot: SnapshotId = '2026-05'
 
 function snapshotMonthLabel(snapshotId: SnapshotId) {
   const date = new Date(`${snapshotId}-01T00:00:00Z`)
-  return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
-}
-
-const countWords: Record<number, string> = {
-  1: 'One',
-  2: 'Two',
-  3: 'Three',
-  4: 'Four',
-  5: 'Five',
-  6: 'Six'
+  return date.toLocaleDateString(dateLocale(), { month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
 
 function changeSpeech(
@@ -41,18 +35,20 @@ function changeSpeech(
   afterLabel: string,
   roadmapMoved: boolean
 ) {
-  if (cornerCount === 0 && roleCount === 0) return `Nothing moved between ${beforeLabel} and ${afterLabel}.`
-  const countStr = countWords[cornerCount] ?? String(cornerCount)
+  const t = textNow(changesText)
+  if (cornerCount === 0 && roleCount === 0) return t.speechNone(beforeLabel, afterLabel)
+  const countStr = t.countWord(cornerCount)
   if (roadmapMoved) {
-    return `New data landed. ${countStr} skill${cornerCount === 1 ? '' : 's'} changed, and your roadmap moved with them.`
+    return t.speechRoadmap(countStr, cornerCount)
   }
   if (cornerCount > 0) {
-    return `New data landed. ${countStr} skill${cornerCount === 1 ? '' : 's'} changed between ${beforeLabel} and ${afterLabel}.`
+    return t.speechSkills(countStr, cornerCount, beforeLabel, afterLabel)
   }
-  return `New data landed. Matched roles changed between ${beforeLabel} and ${afterLabel}.`
+  return t.speechRoles(beforeLabel, afterLabel)
 }
 
 export function WhatChangedView() {
+  const t = useText(changesText)
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
   const [scenario] = useScenario()
@@ -64,7 +60,7 @@ export function WhatChangedView() {
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
+        <h1 className="text-title-m text-text-primary lg:text-title-l">{t.title}</h1>
         <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can compare its snapshots.`} />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
           {startAgain(session).label}
@@ -76,11 +72,11 @@ export function WhatChangedView() {
   if (bundle.status !== 'ready') {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
+        <h1 className="text-title-m text-text-primary lg:text-title-l">{t.title}</h1>
         {bundle.status === 'error' ? (
-          <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+          <Banner type="error" title={t.bannerTitle} body={t.bannerBody} />
         ) : (
-          <CatDialogue pose="thinking" speech="Comparing the dated job data…" />
+          <CatDialogue pose="thinking" speech={t.comparing} />
         )}
       </div>
     )
@@ -135,31 +131,23 @@ export function WhatChangedView() {
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      <CatDialogue
-        pose={isMay ? 'explaining' : 'idle'}
-        speech={
-          isMay ? speech : 'You are viewing April data. Select After (May) to apply the newer snapshot across Kotak.'
-        }
-        size="md"
-      />
+      <CatDialogue pose={isMay ? 'explaining' : 'idle'} speech={isMay ? speech : t.viewingApril} size="md" />
 
-      <h1 className="text-title-m text-text-primary lg:text-title-l">What Changed When May Data Arrived</h1>
+      <h1 className="text-title-m text-text-primary lg:text-title-l">{t.title}</h1>
 
       <div className="flex min-w-0 flex-col gap-3 rounded-md border border-border-subtle bg-bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <RefreshCw className="h-5 w-5 shrink-0 stroke-current text-text-primary" aria-hidden="true" />
           <div className="min-w-0">
-            <p className="text-label-m text-text-primary">Live Demo</p>
+            <p className="text-label-m text-text-primary">{t.liveDemo}</p>
             <p className="text-body-s text-text-muted" aria-live="polite">
-              {isMay
-                ? `New data landed: ${afterLabel} is active across Kotak.`
-                : 'April 2026 data is active across Kotak.'}
+              {isMay ? t.activeMay(afterLabel) : t.activeApril(beforeLabel)}
             </p>
           </div>
         </div>
         <div
           role="group"
-          aria-label="Choose the active snapshot"
+          aria-label={t.snapshotChoice}
           className="grid w-full shrink-0 grid-cols-2 gap-1 rounded-sm border border-border-control bg-bg-default p-1 sm:w-auto"
         >
           <button
@@ -172,7 +160,7 @@ export function WhatChangedView() {
                 : 'border-transparent bg-bg-default text-text-primary hover:bg-bg-panel'
             }`}
           >
-            Before (April)
+            {t.beforeApril}
           </button>
           <button
             type="button"
@@ -184,7 +172,7 @@ export function WhatChangedView() {
                 : 'border-transparent bg-bg-default text-text-primary hover:bg-bg-panel'
             }`}
           >
-            After (May)
+            {t.afterMay}
           </button>
         </div>
       </div>
@@ -192,14 +180,14 @@ export function WhatChangedView() {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <section className="flex min-w-0 flex-1 flex-col gap-4" aria-labelledby="changes-title">
           <h2 id="changes-title" className="text-title-s text-text-primary">
-            April to May Changes
+            {t.aprilToMay}
           </h2>
           <div className="flex flex-col gap-4">
             {changes.length > 0 ? (
               changes.map((item) => <WhatChangedCard key={item.skill} item={item} />)
             ) : (
               <div className="surface-card rounded-md border border-border-subtle bg-bg-default p-6 text-center">
-                <p className="text-body-m text-text-primary">No skill changes were found between April and May.</p>
+                <p className="text-body-m text-text-primary">{t.noChanges}</p>
               </div>
             )}
           </div>
@@ -210,14 +198,14 @@ export function WhatChangedView() {
           aria-labelledby="radar-title"
         >
           <h2 id="radar-title" className="text-title-s text-text-primary">
-            The Dashed Line Moved
+            {t.dashedLine}
           </h2>
           <WhatChangedRadar
             beforeCorners={beforeCorners}
             afterCorners={afterCorners}
             scenario={after.scenario}
-            neededNowLabel="Needed Now (May)"
-            beforeLabel="Before (April)"
+            neededNowLabel={t.neededNowMay}
+            beforeLabel={t.beforeApril}
           />
           <SourceList sources={comparisonSources} />
         </section>
@@ -232,7 +220,7 @@ export function WhatChangedView() {
           className="h-12"
           onClick={() => navigate(routes.roadmap)}
         >
-          {isMay ? 'See My Updated Roadmap' : 'See My April Roadmap'}
+          {isMay ? t.roadmapUpdated : t.roadmapApril}
         </Button>
       </div>
 
@@ -245,7 +233,7 @@ export function WhatChangedView() {
           className="h-[52px]"
           onClick={() => navigate(routes.roadmap)}
         >
-          {isMay ? 'See My Updated Roadmap' : 'See My April Roadmap'}
+          {isMay ? t.roadmapUpdated : t.roadmapApril}
         </Button>
       </div>
     </div>

@@ -9,7 +9,9 @@ import {
   type SuggestedRole
 } from '@kotak/sdk'
 import type { GuestSession, Profile } from '@kotak/shared'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { contentFor, overlayCheckupBundle, overlayRoleBundle, overlaySdgReasons } from '../i18n/content/overlay'
+import { useLocale } from '../i18n/locale'
 
 // The static client bundle (#88), read through @kotak/sdk from the page's origin: each file fetched once and checked
 // with its Zod schema (TRD.md "Client runtime"). The React hooks stay here.
@@ -77,10 +79,34 @@ function useLoaded<T>(key: string | null, load: (key: string) => Promise<T>): Lo
 
 export const useManifest = () => useLoaded('manifest', loadManifest)
 export const useRoleIndex = () => useLoaded('roles', loadRoleIndex)
-export const useRoleBundle = (onetCode: string | null) => useLoaded(onetCode, loadRoleBundle)
+export const useRoleBundle = (onetCode: string | null) => {
+  const loaded = useLoaded(onetCode, loadRoleBundle)
+  const locale = useLocale()
+  // In English the loaded bundle passes through untouched (same identity); otherwise its roles are overlaid.
+  return useMemo(() => {
+    const overlay = contentFor(locale)
+    return loaded.status === 'ready' && overlay ? { ...loaded, data: overlayRoleBundle(loaded.data, overlay) } : loaded
+  }, [loaded, locale])
+}
 export const usePathways = () => useLoaded('pathways', loadPathways)
-export const useSdgReasons = () => useLoaded('sdg-reasons', loadSdgReasons)
+export const useSdgReasons = () => {
+  const loaded = useLoaded('sdg-reasons', loadSdgReasons)
+  const locale = useLocale()
+  return useMemo(() => {
+    const overlay = contentFor(locale)
+    return loaded.status === 'ready' && overlay ? { ...loaded, data: overlaySdgReasons(loaded.data, overlay) } : loaded
+  }, [loaded, locale])
+}
 export const useSuggestions = (profile: Profile | null, currentCode: string | null) =>
   useLoaded(profile ? JSON.stringify({ profile, current_role_code: currentCode }) : null, loadSuggestionsFor)
 /** The check-up's roles for the session: the assessed role first, then the roles it is ranked against. */
-export const useCheckupBundle = (session: GuestSession) => useLoaded(checkupBundleKey(session), loadCheckupBundleFor)
+export const useCheckupBundle = (session: GuestSession) => {
+  const loaded = useLoaded(checkupBundleKey(session), loadCheckupBundleFor)
+  const locale = useLocale()
+  return useMemo(() => {
+    const overlay = contentFor(locale)
+    return loaded.status === 'ready' && overlay
+      ? { ...loaded, data: overlayCheckupBundle(loaded.data, overlay) }
+      : loaded
+  }, [loaded, locale])
+}

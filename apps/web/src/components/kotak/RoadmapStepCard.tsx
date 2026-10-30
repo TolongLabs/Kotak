@@ -5,6 +5,9 @@ import type { RoadmapStep } from '../../demo/types'
 import { fmt } from '../../views/roadmap/planSupport'
 import { Citation } from '../ui/Citation'
 import { SdgTargetChip } from './SdgReasonChip'
+import { commonText } from '../../i18n/common'
+import { roadmapText } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 
 export interface RoadmapStepCardProps {
   step: RoadmapStep
@@ -39,6 +42,8 @@ export function RoadmapStepCard({
   onToggle,
   toggleDisabled = false
 }: RoadmapStepCardProps) {
+  const t = useText(roadmapText)
+  const common = useText(commonText)
   // The refresher carries no level, SDG or resource.
   const refresher = step.id === REFRESHER_ID
   const next = step.state === 'next'
@@ -46,7 +51,7 @@ export function RoadmapStepCard({
   const hasResource = Boolean(step.resource.href && step.resource.label)
   const [weeksLabel, ...dateParts] = step.when.split(' · ')
   const [firstWeek, lastWeek] = step.weeks
-  const weeksName = firstWeek === lastWeek ? `week ${firstWeek}` : `weeks ${firstWeek} to ${lastWeek}`
+  const weeksName = t.stepCard.weekName(firstWeek, lastWeek)
   // The header names the skill, so the level pill drops the gain's trailing " · <skill>".
   const skillSuffix = ` · ${step.skill}`
   const level = step.gain.endsWith(skillSuffix) ? step.gain.slice(0, -skillSuffix.length) : step.gain
@@ -137,7 +142,7 @@ export function RoadmapStepCard({
                       next || refresher ? '' : 'hidden max-[479px]:inline'
                     }`}
                   >
-                    {refresher ? 'Refresher' : next ? 'Next' : 'Later'}
+                    {refresher ? t.stepCard.refresher : next ? common.next : t.stepCard.later}
                   </span>
                 )}
                 {dateParts.length > 0 && (
@@ -155,7 +160,7 @@ export function RoadmapStepCard({
                 type="checkbox"
                 disabled={toggleDisabled}
                 checked={done}
-                aria-label={`Done: ${step.skill}, ${weeksName}`}
+                aria-label={t.stepCard.doneLabel(step.skill, weeksName)}
                 onChange={(event) => onToggle(event.currentTarget.checked)}
                 className="peer absolute inset-0 h-full w-full cursor-[inherit] opacity-0"
               />
@@ -165,7 +170,7 @@ export function RoadmapStepCard({
               >
                 <Check className="h-3.5 w-3.5 stroke-current" />
               </span>
-              Done
+              {t.stepCard.done}
               {toggleDisabled && <Lock className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />}
             </label>
           )}
@@ -201,22 +206,24 @@ export function RoadmapStepCard({
                 }}
                 className="inline-flex min-h-6 items-center rounded-sm text-label-s text-text-primary underline underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
               >
-                {expanded ? 'Show Less' : 'Show More'}
+                {expanded ? t.stepCard.showLess : t.stepCard.showMore}
               </button>
             )}
           </div>
 
           <dl className="flex flex-wrap items-center gap-2 border-t border-border-subtle pt-3">
             <div className="flex items-center">
-              <dt className="sr-only">Time</dt>
+              <dt className="sr-only">{t.stepCard.time}</dt>
               <dd className="inline-flex items-center gap-1.5 text-label-s text-text-primary">
                 <Clock3 className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-                {totalHours !== undefined ? `About ${fmt(totalHours)} h total` : `${fmt(step.hoursPerWeek)} h a week`}
+                {totalHours !== undefined
+                  ? t.stepCard.aboutTotal(fmt(totalHours))
+                  : t.stepCard.perWeek(fmt(step.hoursPerWeek))}
               </dd>
             </div>
             {!refresher && level && (
               <div className="flex min-w-0 items-center">
-                <dt className="sr-only">Builds</dt>
+                <dt className="sr-only">{t.stepCard.builds}</dt>
                 <dd className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-border-control px-2.5 py-0.5 text-label-s text-text-primary">
                   <Sparkles className="h-3.5 w-3.5 shrink-0 stroke-current" aria-hidden="true" />
                   <span className="min-w-0 [overflow-wrap:anywhere]">{level}</span>
@@ -225,7 +232,7 @@ export function RoadmapStepCard({
             )}
             {(step.sdgTargets ?? []).length > 0 && (
               <div className="flex items-center">
-                <dt className="sr-only">SDG Targets</dt>
+                <dt className="sr-only">{t.stepCard.sdgTargets}</dt>
                 <dd className="flex flex-wrap gap-2">
                   {step.sdgTargets!.map((target) => (
                     <SdgTargetChip key={target} target={target} />
@@ -246,10 +253,10 @@ export function RoadmapStepCard({
                 <BookOpen className="mt-0.5 h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
                 <span className="min-w-0 flex-1 [overflow-wrap:anywhere]">{step.resource.label}</span>
                 <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-                <span className="sr-only">(opens in a new tab)</span>
+                <span className="sr-only">{t.stepCard.opensInNewTab}</span>
               </a>
               <p className="flex flex-wrap items-center gap-x-2 text-label-s text-text-muted">
-                {step.resource.kind === 'search' ? 'Search suggestion, not checked' : 'Free'}
+                {step.resource.kind === 'search' ? t.timeline.searchSuggestion : t.timeline.free}
                 {step.resource.citation !== undefined && <Citation n={step.resource.citation} />}
               </p>
             </div>

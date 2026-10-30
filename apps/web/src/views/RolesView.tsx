@@ -14,7 +14,7 @@ import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Citation } from '../components/ui/Citation'
-import { checkUpSteps, Stepper } from '../components/ui/Stepper'
+import { Stepper } from '../components/ui/Stepper'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
@@ -29,11 +29,14 @@ import {
   pickDisplayRoles,
   selectionNote,
   sessionHeading,
+  translateRoleReasons,
   type SelectionReason
 } from './roles/derived'
 import { estimatedCorners, formatFitPercent, formatLevel } from './roles/fit'
 import type { SourceRef } from '../demo/types'
 import { startAgain } from './checkup/startAgain'
+import { rolesText } from '../i18n/messages/roles'
+import { useText } from '../i18n/text'
 
 interface FitRow {
   name: string
@@ -46,7 +49,8 @@ interface FitRow {
 }
 
 function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated: boolean; title: string }) {
-  const skillLabel = (row: FitRow) => (row.estimated && !allEstimated ? `${row.name} (est.)` : row.name)
+  const t = useText(rolesText)
+  const skillLabel = (row: FitRow) => (row.estimated && !allEstimated ? t.rolesView.estimatedSkill(row.name) : row.name)
   const data = rows.map((row) => ({
     skill: skillLabel(row),
     You: row.youLevel,
@@ -54,11 +58,7 @@ function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated:
   }))
   return (
     <div>
-      <div
-        role="img"
-        aria-label={`${title}: your level against the level needed, per skill`}
-        style={{ height: rows.length * 64 + 56 }}
-      >
+      <div role="img" aria-label={t.rolesView.chartLabel(title)} style={{ height: rows.length * 64 + 56 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ top: 0, right: 12, bottom: 0, left: 0 }} barGap={2}>
             <CartesianGrid horizontal={false} stroke="var(--color-border-subtle)" />
@@ -80,8 +80,8 @@ function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated:
               content={() => (
                 <ul className="flex justify-center gap-4 text-label-m text-text-primary">
                   {[
-                    { label: 'You', color: 'var(--color-radar-you)' },
-                    { label: 'Needed', color: 'var(--color-text-primary)' }
+                    { label: t.rolesView.chartYou, color: 'var(--color-radar-you)' },
+                    { label: t.rolesView.chartNeeded, color: 'var(--color-text-primary)' }
                   ].map(({ label, color }) => (
                     <li key={label} className="flex items-center gap-1.5">
                       <span
@@ -108,9 +108,7 @@ function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated:
       </div>
       <ul className="sr-only">
         {rows.map((row) => (
-          <li key={row.name}>
-            {skillLabel(row)}: you {row.you}, needed {row.needed}
-          </li>
+          <li key={row.name}>{t.rolesView.chartRow(skillLabel(row), row.you, row.needed)}</li>
         ))}
       </ul>
     </div>
@@ -118,6 +116,7 @@ function FitChart({ rows, allEstimated, title }: { rows: FitRow[]; allEstimated:
 }
 
 export function RolesView() {
+  const t = useText(rolesText)
   const session = useGuestSession()
   const [scenario, setScenario] = useScenario()
   const loaded = useCheckup({ scenario })
@@ -131,13 +130,20 @@ export function RolesView() {
   const level = jobMarketLevelForYears(yearsOfWork(session.profile))
 
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
+    const restart = startAgain(session)
+    const restartCopy =
+      restart.route === routes.questions
+        ? t.rolesView.restart.questions
+        : restart.route === routes.choose
+          ? t.rolesView.restart.role
+          : t.rolesView.restart.job
     return (
       <div className="space-y-5 lg:space-y-6">
-        <h1 className="sr-only">Matched Roles</h1>
-        <Stepper step={4} labels={checkUpSteps} />
-        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can find roles that fit.`} />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
-          {startAgain(session).label}
+        <h1 className="sr-only">{t.rolesView.matched}</h1>
+        <Stepper step={4} />
+        <CatDialogue pose="worried" speech={restartCopy.speech} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(restart.route)}>
+          {restartCopy.label}
         </Button>
       </div>
     )
@@ -146,12 +152,12 @@ export function RolesView() {
   if (loaded.status !== 'ready' || !checkup) {
     return (
       <div className="space-y-5 lg:space-y-6">
-        <h1 className="sr-only">Matched Roles</h1>
-        <Stepper step={4} labels={checkUpSteps} />
+        <h1 className="sr-only">{t.rolesView.matched}</h1>
+        <Stepper step={4} />
         {loaded.status === 'error' ? (
-          <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+          <Banner type="error" title={t.rolesView.errorTitle} body={t.rolesView.errorBody} />
         ) : (
-          <CatDialogue pose="thinking" speech="Finding roles that fit your work…" />
+          <CatDialogue pose="thinking" speech={t.rolesView.loading} />
         )}
       </div>
     )
@@ -237,9 +243,11 @@ export function RolesView() {
   // When every level is carried over, one caption replaces a badge on every row.
   const allEstimated = fitRows.length > 0 && fitRows.every((fitRow) => fitRow.estimated)
   const mathsFormula = detailCheckupRole
-    ? `Fit = sum of min(your level, needed level) ÷ sum of needed levels; here ${formatLevel(
-        detailCheckupRole.fit.numerator
-      )} / ${formatLevel(detailCheckupRole.fit.denominator)} gives ${formatFitPercent(detailCheckupRole.fit.score)}.`
+    ? t.rolesView.fitFormula(
+        formatLevel(detailCheckupRole.fit.numerator),
+        formatLevel(detailCheckupRole.fit.denominator),
+        formatFitPercent(detailCheckupRole.fit.score)
+      )
     : ''
   const mathsAnswer = (
     <>
@@ -249,22 +257,22 @@ export function RolesView() {
           <ScenarioMathsNote anchors={scenarioAnchors} />
         </div>
       )}
-      <div role="region" tabIndex={0} aria-label="Fit by skill" className="overflow-x-auto">
+      <div role="region" tabIndex={0} aria-label={t.rolesView.fitBySkill} className="overflow-x-auto">
         <table className="w-full text-body-s text-text-primary">
-          <caption className="sr-only">Your level, needed level and counted level per skill</caption>
+          <caption className="sr-only">{t.rolesView.fitTableCaption}</caption>
           <thead>
             <tr className="bg-bg-panel text-left text-label-m">
               <th scope="col" className="px-2 py-1.5">
-                Skill
+                {t.rolesView.skills}
               </th>
               <th scope="col" className="px-2 py-1.5 text-right">
-                You
+                {t.rolesView.chartYou}
               </th>
               <th scope="col" className="px-2 py-1.5 text-right">
-                Needed
+                {t.rolesView.chartNeeded}
               </th>
               <th scope="col" className="px-2 py-1.5 text-right">
-                Counts
+                {t.rolesView.counts}
               </th>
             </tr>
           </thead>
@@ -280,7 +288,7 @@ export function RolesView() {
                     {fitRow.you}
                     {fitRow.estimated && !allEstimated && (
                       <span className="rounded-full border border-border-control px-1.5 py-0.5 font-sans text-label-s text-text-muted">
-                        Estimated
+                        {t.rolesView.estimated}
                       </span>
                     )}
                   </span>
@@ -303,21 +311,19 @@ export function RolesView() {
 
   return (
     <div className="flex flex-col gap-5 lg:gap-6">
-      <Stepper step={4} labels={checkUpSteps} />
+      <Stepper step={4} />
 
       <CatDialogue pose="explaining" speech={speech} />
 
       <header className="flex flex-col gap-1.5">
         <h1 className="text-title-m font-bold text-text-primary lg:text-title-l">{heading}</h1>
         <p className="text-body-s text-text-muted">
-          Fit is the share of each role’s needed levels you already meet. Outlook comes from DOSM job ads and AI use for
-          that role.{widened && ' Roles from your own choices come first.'} The details below and your roadmap follow
-          the highlighted card; pick any card to switch.
+          {t.rolesView.intro.fitAndOutlook}
+          {widened && t.rolesView.intro.widened} {t.rolesView.intro.cardSelection}
           {marketSource && (
             <>
               {' '}
-              Active ads, JobStreet estimates and median pay come from JobStreet ads Kotak’s admins approved{' '}
-              <Citation n={marketSource.n} />.
+              {t.rolesView.intro.marketSource} <Citation n={marketSource.n} />.
             </>
           )}
         </p>
@@ -344,18 +350,20 @@ export function RolesView() {
                       <AccessChip access={displayRole.access} className="self-start" />
                     )}
                     {displayRole.reasons && displayRole.reasons.length > 0 && (
-                      <span className="text-body-s text-text-muted">{displayRole.reasons.join(' · ')}</span>
+                      <span className="text-body-s text-text-muted">
+                        {translateRoleReasons(displayRole.reasonCodes, displayRole.reasons).join(' · ')}
+                      </span>
                     )}
                     {market && (
                       <span className="text-body-s text-text-primary">
-                        {market.ads.active.toLocaleString('en-MY')} active {market.ads.active === 1 ? 'ad' : 'ads'}
+                        {t.market.activeAdsCount(market.ads.active)}
                         {popularityLabel(market) && ` · ${popularityLabel(market)}`}
                         {payLabel(market, level) && ` · ${payLabel(market, level)}`}
                       </span>
                     )}
                     {targets.length > 0 && (
                       <span className="flex flex-wrap items-center gap-1.5">
-                        <span className="font-mono text-mono-s text-text-muted">Linked SDG Targets</span>
+                        <span className="font-mono text-mono-s text-text-muted">{t.rolesView.linkedSdgTargets}</span>
                         {targets.map((target) => (
                           <SdgTargetChip key={target} target={target} workReason={occupation?.reason} />
                         ))}
@@ -382,29 +390,28 @@ export function RolesView() {
           {/* How Fit Is Worked Out */}
           <section aria-labelledby="fit-maths-title" className="surface-card flex flex-col gap-3 p-5">
             <h2 id="fit-maths-title" className="text-title-s text-text-primary">
-              How Fit Is Worked Out
+              {t.rolesView.fitMaths}
             </h2>
             <p className="text-body-s text-text-primary">
               {detailCheckupRole
-                ? `You meet ${formatLevel(detailCheckupRole.fit.numerator)} of ${formatLevel(
-                    detailCheckupRole.fit.denominator
-                  )} needed levels for ${selected.title}, so fit is ${formatFitPercent(detailCheckupRole.fit.score)}.`
-                : `Fit for ${selected.title} is not ready yet.`}
+                ? t.rolesView.fitDetail(
+                    formatLevel(detailCheckupRole.fit.numerator),
+                    formatLevel(detailCheckupRole.fit.denominator),
+                    selected.title,
+                    formatFitPercent(detailCheckupRole.fit.score)
+                  )
+                : t.rolesView.fitNotReady(selected.title)}
             </p>
             {fitRows.length > 0 && <FitChart rows={fitRows} allEstimated={allEstimated} title={selected.title} />}
-            {allEstimated && (
-              <p className="text-body-s text-text-muted">
-                Your levels here are estimated from your {role.title} answers.
-              </p>
-            )}
+            {allEstimated && <p className="text-body-s text-text-muted">{t.rolesView.estimatedFrom(role.title)}</p>}
             {detailCheckupRole && mathsFormula && (
-              <Accordion items={[{ id: 'fit-maths', question: 'See the Maths', answer: mathsAnswer }]} />
+              <Accordion items={[{ id: 'fit-maths', question: t.rolesView.seeMaths, answer: mathsAnswer }]} />
             )}
           </section>
 
           {/* Why This Role */}
           {/* Stretches with the fit card, so both boxes in the row end on one line. */}
-          <section aria-label="Why This Role" className="flex flex-col justify-between gap-3">
+          <section aria-label={t.rolesView.whyRole} className="flex flex-col justify-between gap-3">
             <Reasoning text={reasoningText} source="template" paused={aiOff} rows={roleEvidence?.rows ?? []} />
             <SourceList sources={displaySources} />
           </section>
@@ -414,7 +421,7 @@ export function RolesView() {
       {/* Action CTA */}
       <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
         <Button variant="primary" size="lg" fullWidth onClick={pick}>
-          Build My Roadmap
+          {t.rolesView.buildRoadmap}
         </Button>
       </div>
     </div>

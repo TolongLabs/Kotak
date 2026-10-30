@@ -1,5 +1,7 @@
 import { X } from 'lucide-react'
 import { forwardRef, useEffect, useId, useRef, type ComponentPropsWithoutRef, type ReactNode } from 'react'
+import { commonText } from '../../i18n/common'
+import { useText } from '../../i18n/text'
 import { IconButton } from './IconButton'
 import { cn } from './cn'
 
@@ -15,6 +17,7 @@ export const Modal = forwardRef<HTMLDialogElement, ModalProps>(function Modal(
   { open, onClose, title, children, actions, className, ...props },
   ref
 ) {
+  const common = useText(commonText)
   const dialogRef = useRef<HTMLDialogElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
   const openRef = useRef(open)
@@ -84,7 +87,7 @@ export const Modal = forwardRef<HTMLDialogElement, ModalProps>(function Modal(
           <h2 id={titleId} className="text-title-s">
             {title}
           </h2>
-          <IconButton label="Close" icon={X} variant="plain" className="-mr-2 -mt-2" onClick={onClose} />
+          <IconButton label={common.close} icon={X} variant="plain" className="-mr-2 -mt-2" onClick={onClose} />
         </div>
         <div className="break-words text-body-m text-text-primary">{children}</div>
         {actions ? <div className="flex justify-end gap-3">{actions}</div> : null}

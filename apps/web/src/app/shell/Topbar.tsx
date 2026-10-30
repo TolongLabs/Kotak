@@ -1,14 +1,17 @@
 import { CalendarDays, Menu, UserRound } from 'lucide-react'
 import { useEffect, useId, useRef, useState, type RefObject } from 'react'
+import { LanguageToggle } from '../../components/ui/LanguageToggle'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { cn } from '../../components/ui/cn'
 import { useRoleIndex } from '../../engine/bundle'
 import { assessedRoleCode, planRoleCodeOf } from '../../engine/checkup'
+import { commonText } from '../../i18n/common'
+import { shellText } from '../../i18n/messages/shell'
+import { useLocale } from '../../i18n/locale'
+import { useText } from '../../i18n/text'
 import { useGuestSession } from '../../session/store'
 import { Brand } from './Sidebar'
 import { TopbarSearch } from './TopbarSearch'
-
-const listFormat = new Intl.ListFormat('en', { type: 'conjunction' })
 
 /** Each role in play (the assessed role and, if different, the one the roadmap plans for) and whether its skills are
  * AI-drafted. */
@@ -41,6 +44,10 @@ export function DataChip({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
+  const locale = useLocale()
+  const t = useText(shellText)
+  const listLocale = locale === 'zh' ? 'zh-Hans-MY' : locale === 'ms' ? 'ms-MY' : 'en'
+  const listFormat = new Intl.ListFormat(listLocale, { type: 'conjunction' })
   const { roles, failed } = useSkillProvenance()
   const draftedTitles = roles.filter((role) => role.drafted).map((role) => role.title)
   const checkedTitles = roles.filter((role) => !role.drafted).map((role) => role.title)
@@ -91,11 +98,11 @@ export function DataChip({
           className={cn('shrink-0 stroke-current', compact ? 'h-3.5 w-3.5' : 'h-4 w-4')}
           aria-hidden="true"
         />
-        {compact ? snapshot : `Data ${snapshot}`}
+        {compact ? snapshot : t.topbar.data(snapshot)}
         {drafted && (
           <>
             <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-text-primary" />
-            <span className="sr-only">, AI-drafted skills</span>
+            <span className="sr-only">{t.topbar.aiDraftedSkills}</span>
           </>
         )}
       </button>
@@ -104,31 +111,29 @@ export function DataChip({
           id={panelId}
           className="absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] space-y-3 rounded-md border border-border-subtle bg-bg-default p-4 text-left shadow-popover"
         >
-          <p className="text-label-m text-text-primary">About This Data</p>
+          <p className="text-label-m text-text-primary">{t.topbar.aboutThisData}</p>
           <dl className="space-y-3">
             <div className="space-y-0.5">
-              <dt className="font-mono text-mono-s text-text-muted">Snapshot</dt>
+              <dt className="font-mono text-mono-s text-text-muted">{t.topbar.snapshot}</dt>
               <dd className="text-body-s text-text-primary">{snapshot}</dd>
             </div>
             {failed && (
               <div className="space-y-0.5">
-                <dt className="font-mono text-mono-s text-text-muted">Skills</dt>
-                <dd className="text-body-s text-text-primary">Kotak couldn’t load how this job’s skills were made.</dd>
+                <dt className="font-mono text-mono-s text-text-muted">{t.topbar.skills}</dt>
+                <dd className="text-body-s text-text-primary">{t.topbar.skillsUnavailable}</dd>
               </div>
             )}
             {roles.length > 0 && (
               <div className="space-y-0.5">
-                <dt className="font-mono text-mono-s text-text-muted">Skills</dt>
+                <dt className="font-mono text-mono-s text-text-muted">{t.topbar.skills}</dt>
                 {draftedTitles.length > 0 && (
                   <dd className="text-body-s text-text-primary">
-                    {listFormat.format(draftedTitles)}: Kopi drafted these skills from{' '}
-                    {draftedTitles.length > 1 ? 'each job’s' : 'the job’s'} O*NET tasks. The team has not checked them
-                    by hand yet.
+                    {t.topbar.draftedSkills(listFormat.format(draftedTitles), draftedTitles.length > 1)}
                   </dd>
                 )}
                 {checkedTitles.length > 0 && (
                   <dd className="text-body-s text-text-primary">
-                    {listFormat.format(checkedTitles)}: checked by hand by the Kotak team.
+                    {t.topbar.checkedSkills(listFormat.format(checkedTitles))}
                   </dd>
                 )}
               </div>
@@ -149,6 +154,7 @@ function isTyping(target: EventTarget | null) {
 
 export function Topbar({ dataLabel, className }: { dataLabel: string; className?: string }) {
   const searchRef = useRef<HTMLInputElement>(null)
+  const c = useText(commonText)
 
   useEffect(() => {
     function focusSearch(event: KeyboardEvent) {
@@ -170,8 +176,9 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
             <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
           </span>
-          Guest
+          {c.guest}
         </div>
+        <LanguageToggle />
         <ThemeToggle />
       </div>
     </header>
@@ -186,12 +193,14 @@ interface PhoneTopBarProps {
 }
 
 export function PhoneTopBar({ dataLabel, onOpenMenu, menuButtonRef, className }: PhoneTopBarProps) {
+  const t = useText(shellText)
+
   return (
     <header className={cn('surface-glass h-14 items-center gap-2 rounded-full pl-1 pr-2', className)}>
       <button
         ref={menuButtonRef}
         type="button"
-        aria-label="Open Menu"
+        aria-label={t.navigation.openMenu}
         onClick={onOpenMenu}
         className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-bg-default text-text-primary transition-colors duration-150 ease-out hover:bg-bg-panel"
       >

@@ -1,4 +1,4 @@
-import { accessFor, biggestGaps, cornerReasoning, isEstimatedLevel, rankedReasons, roleOutlook } from '@kotak/sdk'
+import { accessFor, biggestGaps, isEstimatedLevel, rankedReasons, roleOutlook } from '@kotak/sdk'
 import {
   addMonths,
   describeReasons,
@@ -13,12 +13,17 @@ import {
 import type { CheckupBundle } from './bundle'
 import type { Corner, Role, SourceRef, VerdictId } from '../demo/types'
 import type { Checkup } from './checkup'
+import { dateLocale } from '../i18n/locale'
+import { cornerReasoning } from '../i18n/messages/reasoning'
+import { radarText } from '../i18n/messages/radar'
+import { textNow } from '../i18n/text'
 
 // Turns the engine's check-up into the shapes the screens' components already take (demo/types.ts), so the approved
 // components stay as they are. Every value here comes from the role's bundle file; nothing is typed in by hand. The
 // words and gaps come from @kotak/sdk, which the SDK's report reads too, so the app and the agents agree.
 
-export { cornerReasoning, isEstimatedLevel, roleOutlook } from '@kotak/sdk'
+export { isEstimatedLevel, roleOutlook } from '@kotak/sdk'
+export { cornerReasoning }
 
 export const verdictId = (status: CornerVerdict['status']) => status.toLowerCase() as VerdictId
 
@@ -27,14 +32,14 @@ export const verdictId = (status: CornerVerdict['status']) => status.toLowerCase
 const neededLevel = (target: number) => Math.min(3, Math.max(1, Math.ceil(target * 2) / 2))
 
 const monthLabel = (date: string) =>
-  new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+  new Date(`${date}T00:00:00Z`).toLocaleDateString(dateLocale(), { month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 /** "Needed by Apr 2027": the end of the projection, 12 months after the latest data month. */
 export function neededByLabel(checkup: Checkup) {
   const projected = checkup.corners
     .map((corner) => corner.verdict.scenarios[checkup.scenario].projection?.projected_to)
     .find(Boolean)
-  return `Needed by ${monthLabel(projected ?? addMonths(`${checkup.snapshotId}-01`, HORIZON_MONTHS))}`
+  return textNow(radarText).neededBy(monthLabel(projected ?? addMonths(`${checkup.snapshotId}-01`, HORIZON_MONTHS)))
 }
 
 const sourceKey = (source: Source) => [source.source_url, source.vintage_date, source.geo_or_layer].join('|')

@@ -1,3 +1,5 @@
+import { radarText } from '../../i18n/messages/radar'
+import { useText } from '../../i18n/text'
 import { cn } from '../ui/cn'
 
 export interface LevelMeterProps {
@@ -30,14 +32,14 @@ function MeterLine({ label, value }: { label: string; value: number }) {
   )
 }
 
-export function LevelMeter({ you, needed, neededLabel = 'Needed by 2027' }: LevelMeterProps) {
+export function LevelMeter({ you, needed, neededLabel }: LevelMeterProps) {
+  const t = useText(radarText)
+  const neededText = neededLabel ?? t.neededByDefault
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-      <MeterLine label="You" value={you} />
-      <MeterLine label={neededLabel} value={needed} />
-      <span className="sr-only">
-        You level {you} of 3. Needed level {needed} of 3.
-      </span>
+      <MeterLine label={t.you} value={you} />
+      <MeterLine label={neededText} value={needed} />
+      <span className="sr-only">{t.levelMeterSr(you, needed)}</span>
     </div>
   )
 }

@@ -2,6 +2,8 @@ import type { BaseTickContentProps } from 'recharts'
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts'
 import type { Corner, Scenario } from '../../demo/types'
 import { cn } from '../../components/ui/cn'
+import { changesText } from '../../i18n/messages/changes'
+import { useText } from '../../i18n/text'
 
 export interface WhatChangedRadarProps {
   beforeCorners: Corner[]
@@ -63,10 +65,13 @@ export function WhatChangedRadar({
   beforeCorners,
   afterCorners,
   scenario,
-  neededNowLabel = 'Needed Now (May)',
-  beforeLabel = 'Before (April)',
+  neededNowLabel,
+  beforeLabel,
   className
 }: WhatChangedRadarProps) {
+  const t = useText(changesText)
+  const neededNow = neededNowLabel ?? t.neededNowMay
+  const before = beforeLabel ?? t.beforeApril
   const beforeMap = new Map(beforeCorners.map((corner) => [corner.id, corner]))
   const data: RadarDatum[] = afterCorners.map((corner) => {
     const prev = beforeMap.get(corner.id)
@@ -86,7 +91,7 @@ export function WhatChangedRadar({
 
   return (
     <figure className={cn('mx-auto w-full max-w-[342px] lg:max-w-[428px]', className)}>
-      <figcaption className="sr-only">Future Skills Radar comparison</figcaption>
+      <figcaption className="sr-only">{t.radarComparison}</figcaption>
       <div className="h-[290px] w-full md:h-[340px] lg:h-[362px]">
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <RadarChart data={data} margin={{ top: 16, right: 28, bottom: 16, left: 28 }} outerRadius="62%">
@@ -109,7 +114,7 @@ export function WhatChangedRadar({
             />
             {/* You (Self-Reported) Fill */}
             <Radar
-              name="You (Self-Reported)"
+              name={t.youSelfReported}
               dataKey="you"
               zIndex={100}
               stroke="none"
@@ -122,7 +127,7 @@ export function WhatChangedRadar({
             />
             {/* You (Self-Reported) Outline */}
             <Radar
-              name="You (Self-Reported)"
+              name={t.youSelfReported}
               dataKey="you"
               zIndex={175}
               stroke="var(--color-text-primary)"
@@ -135,7 +140,7 @@ export function WhatChangedRadar({
             />
             {/* Before line */}
             <Radar
-              name={beforeLabel}
+              name={before}
               dataKey="before"
               zIndex={190}
               stroke="var(--color-border-control)"
@@ -149,7 +154,7 @@ export function WhatChangedRadar({
             />
             {/* Needed Now line */}
             <Radar
-              name={neededNowLabel}
+              name={neededNow}
               dataKey="neededNow"
               zIndex={200}
               stroke="var(--color-radar-role)"
@@ -167,36 +172,34 @@ export function WhatChangedRadar({
 
       <ul
         className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-label-s text-text-primary"
-        aria-label="Radar chart legend"
+        aria-label={t.radarLegend}
       >
         <li className="flex items-center gap-2">
           <span
             className="h-3.5 w-3.5 shrink-0 rounded-[4px] border-[1.5px] border-text-primary bg-radar-you-fill"
             aria-hidden="true"
           />
-          You (Self-Reported)
+          {t.youSelfReported}
         </li>
         <li className="flex items-center gap-2">
           <span className="w-5 shrink-0 border-t-[3px] border-radar-role" aria-hidden="true" />
-          {neededNowLabel}
+          {neededNow}
         </li>
         <li className="flex items-center gap-2">
           <span className="w-5 shrink-0 border-t-2 border-border-control" aria-hidden="true" />
-          {beforeLabel}
+          {before}
         </li>
       </ul>
 
       <div className="sr-only">
         <table>
-          <caption>
-            Skill levels from 0 to 3. Values for You, {neededNowLabel}, and {beforeLabel} by skill.
-          </caption>
+          <caption>{t.tableCaption(neededNow, before)}</caption>
           <thead>
             <tr>
-              <th scope="col">Skill</th>
-              <th scope="col">You</th>
-              <th scope="col">{neededNowLabel}</th>
-              <th scope="col">{beforeLabel}</th>
+              <th scope="col">{t.thSkill}</th>
+              <th scope="col">{t.thYou}</th>
+              <th scope="col">{neededNow}</th>
+              <th scope="col">{before}</th>
             </tr>
           </thead>
           <tbody>

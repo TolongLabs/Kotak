@@ -4,8 +4,18 @@ import { verdictId } from '../../engine/viewModel'
 import type { Checkup } from '../../engine/checkup'
 import { toRoadmapSteps } from '../../engine/roadmapModel'
 import { fmt } from '../roadmap/planSupport'
+import { commonText } from '../../i18n/common'
+import { dateLocale } from '../../i18n/locale'
+import { changesText } from '../../i18n/messages/changes'
+import { textNow } from '../../i18n/text'
 
 export type MovedRow = { label: string; effect: string }
+
+// Verdict enum words travel inside translated sentences; anything unmapped falls back to the English word.
+function verdictWord(label: string): string {
+  const words: Record<string, string> = textNow(commonText).verdicts
+  return words[label] ?? label
+}
 
 function sourceNumber(source: CornerDiffItem['sources']['before'][number], refs: SourceRef[], offset = 0) {
   const reference = refs.find(
@@ -15,7 +25,8 @@ function sourceNumber(source: CornerDiffItem['sources']['before'][number], refs:
 }
 
 function formatStorySource(sources: CornerDiffItem['sources']['after']): string {
-  if (sources.length === 0) return 'New data'
+  const t = textNow(changesText)
+  if (sources.length === 0) return t.newData
   // A verdict's sources list the AI-use trend from its first point, so the first is April's. The card names the newest
   // Economic Index point, the May data that moved it, or the newest source when no Economic Index row is cited (#325).
   const newest = (list: typeof sources) => [...list].sort((a, b) => b.vintage_date.localeCompare(a.vintage_date))[0]
@@ -29,9 +40,9 @@ function formatStorySource(sources: CornerDiffItem['sources']['after']): string 
   let dateText = primary.vintage_date
   const date = new Date(primary.vintage_date)
   if (!isNaN(date.getTime())) {
-    dateText = date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+    dateText = date.toLocaleDateString(dateLocale(), { month: 'long', year: 'numeric', timeZone: 'UTC' })
   }
-  return `May data · ${title}, ${dateText}`
+  return t.storySource(title, dateText)
 }
 
 // One decimal, or two when one would print the same number before and after ("about 2 to about 2").
@@ -46,6 +57,7 @@ function citationSuffix(citations: number[]) {
 }
 
 function splitReasoning(corner: Checkup['corners'][number]) {
+  const t = textNow(changesText)
   const [first, second] = corner.verdict.futures
   if (!first || !second) return ''
 
@@ -53,13 +65,13 @@ function splitReasoning(corner: Checkup['corners'][number]) {
     const observed = corner.verdict.futures.find((future) => future.scenario === 'slow')
     const faster = corner.verdict.futures.find((future) => future.scenario === 'fast')
     if (observed && faster) {
-      return `At the observed AI-use pace, this points to ${observed.status}; with faster uptake, it points to ${faster.status}.`
+      return t.splitPace(verdictWord(observed.status), verdictWord(faster.status))
     }
   }
 
-  const firstSource = first.demand_source?.source_name ?? 'One source'
-  const secondSource = second.demand_source?.source_name ?? 'Another source'
-  return `The sources disagree: ${firstSource} points to ${first.status}, while ${secondSource} points to ${second.status}.`
+  const firstSource = first.demand_source?.source_name ?? t.oneSource
+  const secondSource = second.demand_source?.source_name ?? t.anotherSource
+  return t.splitSources(firstSource, verdictWord(first.status), secondSource, verdictWord(second.status))
 }
 
 function storyWhyFor(
@@ -70,6 +82,7 @@ function storyWhyFor(
   afterCitations: number[]
 ): string {
   const details: string[] = []
+  const t = textNow(changesText)
   const beforeRefs = citationSuffix(beforeCitations)
   const afterRefs = citationSuffix(afterCitations)
   // The verdict and target sentences always cite; the follow-on sentences cite only when nothing above did, so the
@@ -77,27 +90,26 @@ function storyWhyFor(
   let cited = false
 
   if (item.changes.includes('verdict')) {
-    details.push(
-      `April's verdict was ${item.before.label}${beforeRefs}, and May's verdict is ${item.after.label}${afterRefs}.`
-    )
+    details.push(t.verdictChange(verdictWord(item.before.label), verdictWord(item.after.label), beforeRefs, afterRefs))
     cited = true
   }
   if (item.changes.includes('target')) {
     const [before, after] = formatTargets(item.before.target, item.after.target)
-    details.push(
-      `The estimated target moved from about ${before} in April${beforeRefs} to about ${after} in May${afterRefs}.`
-    )
+    details.push(t.targetChange(before, after, beforeRefs, afterRefs))
     cited = true
   }
   if (item.changes.includes('ai_use')) {
-    details.push(
-      `The AI-use reading or its projection changed between April${cited ? '' : beforeRefs} and May${cited ? '' : afterRefs}.`
-    )
+    details.push(t.aiUseChange(cited ? '' : beforeRefs, cited ? '' : afterRefs))
     cited = true
   }
   if (item.changes.includes('roadmap')) {
     details.push(
-      `The roadmap position moved from ${item.before.roadmap_rank ?? 'not planned'} in April${cited ? '' : beforeRefs} to ${item.after.roadmap_rank ?? 'not planned'} in May${cited ? '' : afterRefs}.`
+      t.roadmapChange(
+        String(item.before.roadmap_rank ?? t.notPlanned),
+        String(item.after.roadmap_rank ?? t.notPlanned),
+        cited ? '' : beforeRefs,
+        cited ? '' : afterRefs
+      )
     )
   }
 
@@ -106,29 +118,30 @@ function storyWhyFor(
   const splitCorner = splitCheckup?.corners.find((corner) => corner.corner_id === item.corner_id)
   if (splitCorner) details.push(splitReasoning(splitCorner))
 
-  return details.join(' ') || 'The skill data changed between April and May.'
+  return details.join(' ') || t.fallbackWhy
 }
 
 function storyEffectFor(item: CornerDiffItem, role: BundleRole | undefined, afterCheckup: Checkup | undefined): string {
+  const t = textNow(changesText)
   if (afterCheckup && role) {
     const steps = toRoadmapSteps(afterCheckup, role, [])
     const step = steps.find((s) => s.id.startsWith(item.corner_id + ':'))
 
     if (step && item.changes.includes('roadmap')) {
       if (item.before.roadmap_rank === null) {
-        return `Your roadmap: “${step.title}” joined weeks ${step.weeks[0]}–${step.weeks[1]}.`
+        return t.roadmapJoined(step.title, step.weeks[0], step.weeks[1])
       }
-      return `Your roadmap: “${step.title}” moved to step ${item.after.roadmap_rank}.`
+      return t.roadmapMovedStep(step.title, item.after.roadmap_rank)
     }
   }
 
   const effects: string[] = []
-  if (item.changes.includes('target')) effects.push(`Estimated target: about ${fmt(item.after.target)}.`)
+  if (item.changes.includes('target')) effects.push(t.estimatedTarget(fmt(item.after.target)))
   if (item.changes.includes('roadmap')) {
-    effects.push(`Roadmap position: ${item.after.roadmap_rank ?? 'not planned'}.`)
+    effects.push(t.roadmapPosition(String(item.after.roadmap_rank ?? t.notPlanned)))
   }
-  if (item.changes.includes('verdict')) effects.push(`Kopi now labels this skill ${item.after.label}.`)
-  if (item.changes.includes('ai_use')) effects.push('Kopi uses the changed AI-use signal.')
+  if (item.changes.includes('verdict')) effects.push(t.kopiLabels(verdictWord(item.after.label)))
+  if (item.changes.includes('ai_use')) effects.push(t.kopiSignal)
   return effects.join(' ')
 }
 
@@ -167,28 +180,27 @@ export function whatChangedItems(
 }
 
 export function whatMovedRows(diff: SnapshotDiff): MovedRow[] {
+  const t = textNow(changesText)
   const targetChanges = diff.corners.filter((item) => item.changes.includes('target'))
   const changedFitRoles = diff.roles.filter((item) => item.changes.includes('fit_score'))
 
   const targetsEffect =
     targetChanges.length === 0
-      ? 'No estimated skill targets changed between snapshots.'
-      : `${targetChanges.length} estimated skill target${targetChanges.length === 1 ? '' : 's'} changed: ${targetChanges.map((item) => item.name).join(', ')}.`
+      ? t.movedTargetNone
+      : t.movedTargets(targetChanges.length, targetChanges.map((item) => item.name).join(', '))
 
   const rolesEffect = diff.roles_reordered
-    ? 'Matched roles changed order between snapshots.'
+    ? t.movedRolesReordered
     : changedFitRoles.length > 0
-      ? `Fit scores changed for ${changedFitRoles.map((item) => item.title).join(', ')}, while the rank order stayed the same.`
-      : 'Matched role fits and order stayed the same.'
+      ? t.movedFitChanged(changedFitRoles.map((item) => item.title).join(', '))
+      : t.movedRolesSame
 
   return [
-    { label: 'Target Levels', effect: targetsEffect },
-    { label: 'Role Ranking', effect: rolesEffect },
+    { label: t.labelTargets, effect: targetsEffect },
+    { label: t.labelRoles, effect: rolesEffect },
     {
-      label: 'Roadmap Order',
-      effect: diff.roadmap_reordered
-        ? 'The suggested learning order changed between snapshots.'
-        : 'The suggested learning order stayed the same.'
+      label: t.labelRoadmap,
+      effect: diff.roadmap_reordered ? t.roadmapOrderChanged : t.roadmapOrderSame
     }
   ]
 }

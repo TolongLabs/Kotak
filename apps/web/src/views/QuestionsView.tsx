@@ -15,10 +15,12 @@ import { PageTransition } from '../components/kotak/PageTransition'
 import { useReducedMotion } from '../components/kopi/motion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { checkUpSteps, Stepper } from '../components/ui/Stepper'
+import { Stepper } from '../components/ui/Stepper'
 import { cn } from '../components/ui/cn'
 import { checkupBundleKey, loadCheckupBundleFor, useRoleBundle } from '../engine/bundle'
 import { assessedRoleCode } from '../engine/checkup'
+import { checkupText } from '../i18n/messages/checkup'
+import { useText } from '../i18n/text'
 import { updateGuestSession, useGuestSession } from '../session/store'
 import { KopiAside } from './checkup/KopiDialogue'
 import { QuestionInfo } from './checkup/QuestionInfo'
@@ -41,14 +43,10 @@ function toSessionAnswers(role: BundleRole, order: string[], asked: Rating[]) {
 // The question counter and topic row, shown once and hidden once per topic to hold the tallest topic's height.
 const TOPIC_ROW = 'col-start-1 row-start-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1'
 
-const RATINGS: { value: Rating; caption: string }[] = [
-  { value: 1, caption: 'Not yet' },
-  { value: 2, caption: 'A little' },
-  { value: 3, caption: 'Mostly' },
-  { value: 4, caption: 'Yes, on my own' }
-]
+const RATING_VALUES: Rating[] = [1, 2, 3, 4]
 
 export function QuestionsView() {
+  const t = useText(checkupText)
   const session = useGuestSession()
   const assessedCode = assessedRoleCode(session)
   const bundle = useRoleBundle(assessedCode)
@@ -69,11 +67,12 @@ export function QuestionsView() {
   )
 
   if (!assessedCode) {
+    const restart = startAgain(session)
     return (
       <QuestionsFrame>
-        <KopiAside pose="worried" speech={`${startAgain(session).speech}, then I can ask about it.`} />
-        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
-          {startAgain(session).label}
+        <KopiAside pose="worried" speech={t.startAgain.noRoleSuffix(restart.speech)} />
+        <Button variant="primary" size="lg" fullWidth onClick={() => navigate(restart.route)}>
+          {restart.label}
         </Button>
       </QuestionsFrame>
     )
@@ -83,9 +82,9 @@ export function QuestionsView() {
     return (
       <QuestionsFrame>
         {bundle.status === 'error' ? (
-          <Banner type="error" title="Kopi Could Not Open This Job" body="Reload the page, or choose your job again." />
+          <Banner type="error" title={t.questions.loadingErrorTitle} body={t.questions.reloadJob} />
         ) : (
-          <KopiAside pose="thinking" speech="Opening the box on your job…" />
+          <KopiAside pose="thinking" speech={t.questions.loading} />
         )}
       </QuestionsFrame>
     )
@@ -99,13 +98,9 @@ export function QuestionsView() {
   if (!role.questions_ready) {
     return (
       <QuestionsFrame>
-        <Banner
-          type="info"
-          title="Questions Not Written Yet"
-          body="Kopi has no questions for this job yet. Choose a related job for now."
-        />
+        <Banner type="info" title={t.questions.notReadyTitle} body={t.questions.notReadyBody} />
         <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Choose Another Job
+          {t.questions.anotherJob}
         </Button>
       </QuestionsFrame>
     )
@@ -154,7 +149,7 @@ export function QuestionsView() {
   return (
     <QuestionsFrame>
       <AnswerKeys onAnswer={onAnswer} />
-      <h2 className="text-title-s text-text-primary">Testing You Against {role.title}</h2>
+      <h2 className="text-title-s text-text-primary">{t.questions.testing(role.title)}</h2>
 
       {/* Every topic's row sits hidden in one grid cell with the shown row, so a long topic that wraps on a phone can't
           move the answers (#350). The hidden rows keep the counter's and the info button's footprints. */}
@@ -164,7 +159,7 @@ export function QuestionsView() {
             {/* The widest counter's footprint without its text (mono glyphs are 1ch each), so only the shown row reads. */}
             <span
               className="inline-block h-4 font-mono text-mono-s"
-              style={{ width: `${`Question ${totalQuestions} of ${totalQuestions}`.length}ch` }}
+              style={{ width: `${t.questions.counter(totalQuestions, totalQuestions).length}ch` }}
             />
             <span className="inline-flex items-center gap-2 font-mono text-mono-s">
               {name}
@@ -178,7 +173,7 @@ export function QuestionsView() {
             key={questionIndex}
             className={cn('font-mono text-mono-s text-text-muted', !reduced && 'question-enter')}
           >
-            Question {questionIndex + 1} of {totalQuestions}
+            {t.questions.counter(questionIndex + 1, totalQuestions)}
           </span>
           <span className="inline-flex items-center gap-2 font-mono text-mono-s text-text-primary">
             {/* Only the name rises in: a transform around the (i) would pin its fixed popover to this span meanwhile. */}
@@ -195,7 +190,7 @@ export function QuestionsView() {
         </div>
       </div>
 
-      <section className="space-y-2 sm:space-y-3" aria-label="Question Card">
+      <section className="space-y-2 sm:space-y-3" aria-label={t.questions.cardLabel}>
         <KopiAside
           pose={chosen !== null ? 'happy' : 'asking'}
           speech={statement}
@@ -204,39 +199,40 @@ export function QuestionsView() {
           centred
         />
 
-        <p className="text-center text-body-s text-text-muted">
-          Answer for real work, not tutorials. Not sure? Choose 1 or 2.
-        </p>
+        <p className="text-center text-body-s text-text-muted">{t.questions.answerHint(1, 2)}</p>
 
         <div className="grid grid-cols-4 gap-3">
-          {RATINGS.map(({ value, caption }) => (
-            <Button
-              key={value}
-              variant={chosen === value ? 'primary' : 'secondary'}
-              size="lg"
-              fullWidth
-              className={cn(
-                'h-auto min-h-[56px] px-1 py-2 !transition-[scale,background-color,color] !duration-[120ms]',
-                chosen === value && '!bg-accent-chosen',
-                chosen === value && !reduced && 'scale-[0.96]'
-              )}
-              aria-label={`${value} ${caption}`}
-              aria-pressed={chosen === value}
-              onClick={() => onAnswer(value)}
-            >
-              <span className="flex flex-col items-center gap-1">
-                <span className="flex items-center gap-1">
-                  {value}
-                  {chosen === value && <Check className="h-4 w-4" aria-hidden="true" />}
+          {RATING_VALUES.map((value) => {
+            const caption = t.questions.ratings[value]
+            return (
+              <Button
+                key={value}
+                variant={chosen === value ? 'primary' : 'secondary'}
+                size="lg"
+                fullWidth
+                className={cn(
+                  'h-auto min-h-[56px] px-1 py-2 !transition-[scale,background-color,color] !duration-[120ms]',
+                  chosen === value && '!bg-accent-chosen',
+                  chosen === value && !reduced && 'scale-[0.96]'
+                )}
+                aria-label={t.questions.ratingAria(value, caption)}
+                aria-pressed={chosen === value}
+                onClick={() => onAnswer(value)}
+              >
+                <span className="flex flex-col items-center gap-1">
+                  <span className="flex items-center gap-1">
+                    {value}
+                    {chosen === value && <Check className="h-4 w-4" aria-hidden="true" />}
+                  </span>
+                  <span className="hidden text-label-s font-normal sm:block">{caption}</span>
                 </span>
-                <span className="hidden text-label-s font-normal sm:block">{caption}</span>
-              </span>
-            </Button>
-          ))}
+              </Button>
+            )
+          })}
         </div>
         <div className="flex justify-between text-body-s text-text-muted sm:hidden">
-          <span>Not yet</span>
-          <span>Yes, on my own</span>
+          <span>{t.questions.ratings[1]}</span>
+          <span>{t.questions.ratings[4]}</span>
         </div>
       </section>
 
@@ -247,9 +243,9 @@ export function QuestionsView() {
           onClick={() => setAsked((current) => current.slice(0, -1))}
           className="inline-flex h-12 items-center justify-center rounded-sm px-2 text-label-l font-semibold text-text-primary underline underline-offset-4 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:text-text-muted disabled:no-underline"
         >
-          Previous Question
+          {t.questions.previous}
         </button>
-        <span className="hidden font-mono text-mono-s text-text-muted lg:block">Press 1 to 4</span>
+        <span className="hidden font-mono text-mono-s text-text-muted lg:block">{t.questions.pressKeys(1, 4)}</span>
       </div>
     </QuestionsFrame>
   )
@@ -258,10 +254,11 @@ export function QuestionsView() {
 // Phones get tighter gaps here and in the question card, so the tallest sessions (long titles and lines, held at full
 // size by #350) still fit one screen at 390x844 (#230).
 function QuestionsFrame({ children }: { children: ReactNode }) {
+  const t = useText(checkupText)
   return (
     <div className="mx-auto flex w-full min-w-0 max-w-[45rem] flex-col gap-4 sm:gap-5 lg:gap-6">
-      <h1 className="sr-only">Check-Up Questions</h1>
-      <Stepper step={2} labels={checkUpSteps} />
+      <h1 className="sr-only">{t.questions.hiddenHeading}</h1>
+      <Stepper step={2} />
       {children}
     </div>
   )

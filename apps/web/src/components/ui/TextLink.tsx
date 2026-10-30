@@ -1,5 +1,7 @@
 import { ExternalLink } from 'lucide-react'
 import { forwardRef, type ComponentPropsWithoutRef } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
 export interface TextLinkProps extends ComponentPropsWithoutRef<'a'> {
@@ -11,6 +13,7 @@ export const TextLink = forwardRef<HTMLAnchorElement, TextLinkProps>(function Te
   { href, external = false, className, children, target, rel, ...props },
   ref
 ) {
+  const t = useText(uiText)
   const computedTarget = external ? (target ?? '_blank') : target
   const computedRel = external ? (rel ? `${rel} noreferrer noopener` : 'noreferrer noopener') : rel
 
@@ -30,7 +33,7 @@ export const TextLink = forwardRef<HTMLAnchorElement, TextLinkProps>(function Te
       {external && (
         <>
           <ExternalLink className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-          <span className="sr-only">(opens in a new tab)</span>
+          <span className="sr-only">{t.opensInNewTab}</span>
         </>
       )}
     </a>

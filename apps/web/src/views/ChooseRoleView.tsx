@@ -16,26 +16,20 @@ import { CatDialogue } from '../components/kotak/CatDialogue'
 import { SourceList } from '../components/kotak/SourceList'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { checkUpSteps, Stepper } from '../components/ui/Stepper'
+import { Stepper } from '../components/ui/Stepper'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
 import { usePathways, useSuggestions } from '../engine/bundle'
+import { checkupText } from '../i18n/messages/checkup'
+import { useText } from '../i18n/text'
 import { updateGuestSession, useGuestSession } from '../session/store'
 
 // Roles to check before any question (#284), for a user with no job to test or no role in mind: first what they
 // enjoy, if they said they're not sure, then up to six roles from their study, picked areas and interests, each with
 // why it's there, its outlook and what stands in the way. The one they pick becomes the target the 12 questions test.
 
-const AREA_NAMES: Record<(typeof RIASEC)[number], string> = {
-  R: 'hands-on',
-  I: 'investigating',
-  A: 'creative',
-  S: 'helping',
-  E: 'leading',
-  C: 'organising'
-}
-
 function InterestScreen({ onDone }: { onDone: (ids: string[]) => void }) {
+  const t = useText(checkupText)
   const [picked, setPicked] = useState<string[]>([])
   // The same count in every area points nowhere, so Kotak can't match it.
   const even = !hasInterestPattern(interestPicks(picked))
@@ -45,12 +39,9 @@ function InterestScreen({ onDone }: { onDone: (ids: string[]) => void }) {
     <section className="space-y-4" aria-labelledby="interests-heading">
       <div className="space-y-1.5">
         <h1 id="interests-heading" className="text-title-m text-text-primary lg:text-title-l">
-          What Do You Enjoy?
+          {t.suggestions.interestsHeading}
         </h1>
-        <p className="text-body-s text-text-muted">
-          Pick everything that sounds good, at least {MIN_INTEREST_PICKS}. It’s a pointer, not a test: Kopi matches your
-          picks to the interests O*NET records for each job.
-        </p>
+        <p className="text-body-s text-text-muted">{t.interestPrompt(MIN_INTEREST_PICKS)}</p>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {INTEREST_ACTIVITIES.map((activity) => {
@@ -77,19 +68,19 @@ function InterestScreen({ onDone }: { onDone: (ids: string[]) => void }) {
               >
                 {on && <Check className="h-3.5 w-3.5" />}
               </span>
-              {activity.label}
+              {t.interestActivities[activity.id] ?? activity.label}
             </button>
           )
         })}
       </div>
       <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 space-y-2 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
         <p className="text-body-s text-text-muted" aria-live="polite">
-          {picked.length} picked
+          {t.interestCount(picked.length)}
           {picked.length < MIN_INTEREST_PICKS
-            ? `; pick ${MIN_INTEREST_PICKS - picked.length} more.`
+            ? t.interestMore(MIN_INTEREST_PICKS - picked.length)
             : even
-              ? '. They’re spread evenly, so they don’t point anywhere yet: leave out the ones you like least.'
-              : '.'}
+              ? t.interestEven
+              : t.interestEnough}
         </p>
         <Button
           variant="primary"
@@ -98,7 +89,7 @@ function InterestScreen({ onDone }: { onDone: (ids: string[]) => void }) {
           disabled={picked.length < MIN_INTEREST_PICKS || even}
           onClick={() => onDone(picked)}
         >
-          Show Roles for Me
+          {t.buttons.showRoles}
         </Button>
       </div>
     </section>
@@ -117,6 +108,7 @@ function RoleOption({
   // Why the card is highlighted, in bold above its title.
   note?: string
 }) {
+  const t = useText(checkupText)
   return (
     <label
       className={cn(
@@ -144,12 +136,12 @@ function RoleOption({
             <span className="text-title-m tabular-nums text-text-primary">
               {Math.round(role.interest_match * 100)}%
             </span>
-            <span className="font-mono text-mono-s text-text-muted">interest match</span>
+            <span className="font-mono text-mono-s text-text-muted">{t.roleLabels.interestMatch}</span>
           </span>
         )}
       </span>
       <span className="flex flex-wrap items-center gap-2">
-        <span className="font-mono text-mono-s text-text-muted">Outlook</span>
+        <span className="font-mono text-mono-s text-text-muted">{t.roleLabels.outlook}</span>
         <VerdictChip verdict={role.outlook} size="sm" />
         <AccessChip access={role.access} />
       </span>
@@ -160,6 +152,7 @@ function RoleOption({
 }
 
 export function ChooseRoleView() {
+  const t = useText(checkupText)
   const session = useGuestSession()
   const pathways = usePathways()
   const askInterests = new URLSearchParams(window.location.search).get('step') === 'interests'
@@ -181,11 +174,11 @@ export function ChooseRoleView() {
   if (!interestsDone)
     return (
       <div className="flex w-full min-w-0 flex-col gap-5 lg:gap-6">
-        <Stepper step={1} labels={checkUpSteps} />
-        <CatDialogue pose="asking" speech="Not sure yet? Tell me what you enjoy, and I’ll suggest roles to try." />
+        <Stepper step={1} />
+        <CatDialogue pose="asking" speech={t.speech.interestPrompt} />
         <InterestScreen onDone={finishInterests} />
         <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Change My Answers
+          {t.buttons.changeAnswers}
         </Button>
       </div>
     )
@@ -193,7 +186,9 @@ export function ChooseRoleView() {
   const roles = suggestions.status === 'ready' ? suggestions.data : []
   const selected = roles.find((role) => role.onet_code === selectedId) ?? roles[0]
   const strongest = profile.interests
-    ? RIASEC.filter((_, i) => profile.interests![i] === Math.max(...profile.interests!)).map((area) => AREA_NAMES[area])
+    ? RIASEC.filter((_, i) => profile.interests![i] === Math.max(...profile.interests!)).map(
+        (area) => t.interestAreas[area]
+      )
     : []
   const sources =
     pathways.status === 'ready'
@@ -220,45 +215,39 @@ export function ChooseRoleView() {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-5 lg:gap-6">
-      <Stepper step={1} labels={checkUpSteps} />
+      <Stepper step={1} />
       <CatDialogue
         pose={suggestions.status === 'ready' ? 'explaining' : 'thinking'}
         speech={
           suggestions.status !== 'ready'
-            ? 'Looking for roles that suit you…'
+            ? t.speech.lookingForRoles
             : roles.length
-              ? `${strongest.length ? `Your picks lean to ${strongest.join(' and ')} work. ` : ''}Pick a role, and I’ll test you against it.`
-              : 'I need a little more to go on.'
+              ? strongest.length
+                ? t.speech.rolesFromInterests(strongest)
+                : t.speech.pickRole
+              : t.speech.needMore
         }
       />
 
       <header className="space-y-1.5">
         <h1 ref={headingRef} tabIndex={-1} className="text-title-m text-text-primary outline-none lg:text-title-l">
-          Roles to Check
+          {t.suggestions.heading}
         </h1>
-        <p className="text-body-s text-text-muted">
-          From your study, the areas you picked and what you enjoy. A role that needs a qualification says so; pick it
-          anyway if it interests you, and your answers will show how well it suits you. The 12 questions test the
-          highlighted role; pick any card to switch.
-        </p>
+        <p className="text-body-s text-text-muted">{t.suggestions.intro(12)}</p>
       </header>
 
       {suggestions.status === 'error' && (
-        <Banner type="error" title="Kopi Could Not Load the Roles" body="Reload the page, or go back and try again." />
+        <Banner type="error" title={t.suggestions.openErrorTitle} body={t.suggestions.reloadOrBack} />
       )}
 
       {suggestions.status === 'ready' && roles.length === 0 && (
-        <Banner
-          type="info"
-          title="Nothing to Go On Yet"
-          body="Pick an area that interests you, your field of study, or what you enjoy, and Kopi can suggest roles."
-        />
+        <Banner type="info" title={t.suggestions.nothingTitle} body={t.suggestions.nothingBody} />
       )}
 
       {roles.length > 0 && (
         <section
           role="radiogroup"
-          aria-label="Roles to Check"
+          aria-label={t.suggestions.ariaLabel}
           className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
         >
           {roles.map((role) => (
@@ -270,8 +259,8 @@ export function ChooseRoleView() {
                 role.onet_code !== selected?.onet_code
                   ? undefined
                   : selectedId
-                    ? 'You picked this role.'
-                    : 'Picked for you: Kopi’s top suggestion for your answers.'
+                    ? t.roleLabels.youPicked
+                    : t.roleLabels.pickedForYou
               }
               onSelect={() => setSelectedId(role.onet_code)}
             />
@@ -283,10 +272,10 @@ export function ChooseRoleView() {
 
       <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 grid grid-cols-1 gap-3 rounded-md p-3 sm:grid-cols-2 lg:static lg:rounded-none lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
         <Button variant="secondary" size="lg" fullWidth onClick={() => navigate(routes.checkUp)}>
-          Change My Answers
+          {t.buttons.changeAnswers}
         </Button>
         <Button variant="primary" size="lg" fullWidth disabled={!selected} onClick={check}>
-          {selected ? `Test Me on ${selected.title}` : 'Pick a Role'}
+          {selected ? t.buttons.testMeOn(selected.title) : t.buttons.pickRole}
         </Button>
       </div>
     </div>

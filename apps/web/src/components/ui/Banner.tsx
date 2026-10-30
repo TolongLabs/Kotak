@@ -1,5 +1,7 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ComponentType } from 'react'
 import { FlaskConical, Info, TriangleAlert } from 'lucide-react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
 export type BannerType = 'info' | 'error' | 'sample'
@@ -45,8 +47,9 @@ export const Banner = forwardRef<HTMLDivElement, BannerProps>(function Banner(
   { type, title, body, className, ...props },
   ref
 ) {
+  const t = useText(uiText)
   const Icon = iconByType[type]
-  const label = title ?? (type === 'sample' ? 'Sample Data' : undefined)
+  const label = title ?? (type === 'sample' ? t.sampleData : undefined)
   return (
     <div
       ref={ref}

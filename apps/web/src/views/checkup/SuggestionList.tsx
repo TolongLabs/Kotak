@@ -1,6 +1,8 @@
 import type { Occupation, RoleMatchResponse } from '@kotak/shared'
 import { useId, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { cn } from '../../components/ui/cn'
+import { checkupText } from '../../i18n/messages/checkup'
+import { textNow } from '../../i18n/text'
 import { getRoleCodeLine, getRoleDisplayTitle, type RoleSuggestion } from './roleSearch'
 
 // The suggestion list under the job and target-role fields and the top-bar search, an ARIA combobox: focus stays in
@@ -17,16 +19,17 @@ export function roleOptions(
   picks: Role[],
   pick: (role: Role, label?: string) => void
 ): SuggestionOption[] {
+  const t = textNow(checkupText)
   return [
     ...(match
       ? [
           {
             key: 'kopi',
-            title: `Kopi thinks you mean ${getRoleDisplayTitle(match.role)}`,
+            title: t.roleSearch.match(getRoleDisplayTitle(match.role)),
             detail:
               getRoleCodeLine(match.role) +
-              (match.source === 'claude' ? ' · Matched by Claude' : '') +
-              (match.source === 'title_search' ? ' · Matched by Title Search' : ''),
+              (match.source === 'claude' ? t.roleSearch.matchedByClaude : '') +
+              (match.source === 'title_search' ? t.roleSearch.matchedByTitleSearch : ''),
             pick: () => pick(match.role)
           }
         ]

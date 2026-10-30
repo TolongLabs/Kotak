@@ -1,5 +1,7 @@
 import { AlertTriangle, Eye, EyeOff, KeyRound, Lock, type LucideIcon } from 'lucide-react'
 import { forwardRef, useId, useState, type ComponentPropsWithoutRef } from 'react'
+import { uiText } from '../../i18n/messages/ui'
+import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
 export interface PasswordFieldProps extends Omit<ComponentPropsWithoutRef<'input'>, 'type'> {
@@ -24,6 +26,7 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(fu
   },
   ref
 ) {
+  const t = useText(uiText)
   const generatedId = useId()
   const id = providedId ?? generatedId
   const [visible, setVisible] = useState(false)
@@ -63,7 +66,7 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(fu
         ) : (
           <button
             type="button"
-            aria-label={visible ? 'Hide password' : 'Show password'}
+            aria-label={visible ? t.hidePassword : t.showPassword}
             aria-pressed={visible}
             onClick={() => setVisible((current) => !current)}
             className="-mr-2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-bg-default text-text-muted transition-colors duration-150 ease-out hover:bg-bg-panel hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus-ring"

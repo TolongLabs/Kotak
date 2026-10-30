@@ -6,6 +6,7 @@ import { routes } from './app/routes'
 import { AppShell } from './app/shell/AppShell'
 import { Gallery } from './dev/Gallery'
 import { useActiveSnapshot } from './session/snapshot'
+import { dateLocale, useLocale } from './i18n/locale'
 import { CheckUpView } from './views/CheckUpView'
 import { ChooseRoleView } from './views/ChooseRoleView'
 import { ConnectView } from './views/ConnectView'
@@ -72,13 +73,17 @@ function Screen({ path, dataLabel }: { path: string; dataLabel: string }) {
 export function App() {
   const path = usePath().replace(/(.)\/+$/, '$1')
   const [activeSnapshot] = useActiveSnapshot()
+  // Read here so a language switch re-renders every screen (#431).
+  const locale = useLocale()
 
   if (import.meta.env.DEV && window.location.hash === '#gallery') return <Gallery />
 
-  // The data date the shell shows, e.g. "May 2026" for the 2026-05 snapshot.
-  const dataLabel = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
-    new Date(`${activeSnapshot}-01T00:00:00Z`)
-  )
+  // The data date the shell shows, e.g. "May 2026" for the 2026-05 snapshot ("Mei 2026" in Malay).
+  const dataLabel = new Intl.DateTimeFormat(dateLocale(locale), {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  }).format(new Date(`${activeSnapshot}-01T00:00:00Z`))
 
   return (
     <div className="contents" data-snapshot-id={activeSnapshot}>

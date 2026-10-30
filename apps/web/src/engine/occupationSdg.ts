@@ -1,3 +1,6 @@
+import { roadmapText, type OccupationSdgReasonKey } from '../i18n/messages/roadmap'
+import { textNow } from '../i18n/text'
+
 /**
  * Which UN Sustainable Development Goal targets a job's own work serves, by O*NET occupation.
  * This is Kotak's mapping: a fixed table the team can review, kept apart from the skill tags
@@ -11,7 +14,7 @@ export interface OccupationSdg {
 
 // The most specific key wins: the detailed occupation ("29-1141"), then the minor group ("13-2"), then the major group
 // ("29").
-const MAPPING: Record<string, OccupationSdg> = {
+const MAPPING: Record<OccupationSdgReasonKey, OccupationSdg> = {
   '11': { targets: ['8.5'], reason: 'Managers organise the work that provides productive employment (SDG 8.5).' },
   '13': { targets: ['8.2'], reason: 'Business operations work helps organisations run productively (SDG 8.2).' },
   '15': {
@@ -229,5 +232,10 @@ export const OCCUPATION_SDG_TARGETS = [...new Set(Object.values(MAPPING).flatMap
 /** The SDGs a job's work serves, or null for an unknown code. */
 export function occupationSdgs(onetCode: string | null | undefined): OccupationSdg | null {
   if (!onetCode) return null
-  return MAPPING[onetCode.slice(0, 7)] ?? MAPPING[onetCode.slice(0, 4)] ?? MAPPING[onetCode.slice(0, 2)] ?? null
+  const key = [onetCode.slice(0, 7), onetCode.slice(0, 4), onetCode.slice(0, 2)].find(
+    (candidate): candidate is OccupationSdgReasonKey => candidate in MAPPING
+  )
+  if (!key) return null
+  const entry = MAPPING[key]
+  return { ...entry, reason: textNow(roadmapText).occupationReasons[key] ?? entry.reason }
 }

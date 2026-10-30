@@ -3,6 +3,8 @@ import { Quote } from 'lucide-react'
 import { Citation } from '../ui/Citation'
 import { VerdictChip, type VerdictType } from '../ui/VerdictChip'
 import { renderCited } from './renderCited'
+import { roadmapText } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 
 export type ExplanationSource = 'claude' | 'template'
 
@@ -31,6 +33,7 @@ export interface ReasoningProps {
 }
 
 export function Reasoning({ text, paused = false, source, rows }: ReasoningProps) {
+  const t = useText(roadmapText)
   const contextualSource = useContext(ExplanationSourceContext)
   const textSource = source ?? contextualSource ?? 'template'
 
@@ -38,11 +41,9 @@ export function Reasoning({ text, paused = false, source, rows }: ReasoningProps
     <section className="space-y-2 rounded-md border border-border-subtle bg-bg-panel p-4">
       <h3 className="flex items-center gap-2 text-label-m text-text-primary">
         <Quote className="h-4 w-4 stroke-current" aria-hidden="true" />
-        {paused ? 'Explanation Paused' : 'Why Kopi Says This'}
+        {paused ? t.reasoning.paused : t.reasoning.title}
       </h3>
-      <p className="text-body-m text-text-primary">
-        {paused ? 'Fixed rules set this verdict from the dated sources below, so it still holds.' : renderCited(text)}
-      </p>
+      <p className="text-body-m text-text-primary">{paused ? t.reasoning.pausedText : renderCited(text)}</p>
       {rows && rows.length > 0 && (
         <ul className="space-y-1.5">
           {rows.map((row, index) => (
@@ -50,7 +51,10 @@ export function Reasoning({ text, paused = false, source, rows }: ReasoningProps
               <VerdictChip verdict={row.verdict} size="sm" />
               <span className="min-w-0 text-body-s text-text-primary">{row.name}</span>
               <span className="font-mono text-mono-s text-text-muted">
-                You {row.you} · Needed {row.needed}
+                {t.reasoning.youNeeded(
+                  t.reasoning.levels[row.you as keyof typeof t.reasoning.levels] ?? row.you,
+                  t.reasoning.levels[row.needed as keyof typeof t.reasoning.levels] ?? row.needed
+                )}
               </span>
               {row.citation ? <Citation n={row.citation} /> : null}
             </li>
@@ -59,10 +63,10 @@ export function Reasoning({ text, paused = false, source, rows }: ReasoningProps
       )}
       <p className="font-mono text-mono-s text-text-muted">
         {paused
-          ? 'Fixed rules set this verdict from the sources below.'
+          ? t.reasoning.pausedFooter
           : textSource === 'claude'
-            ? 'Kopi wrote this with Claude from the cited rows only. Fixed rules set the verdict.'
-            : 'Fixed rules set the verdict. This summary is built from the cited inputs.'}
+            ? t.reasoning.claudeFooter
+            : t.reasoning.templateFooter}
       </p>
     </section>
   )

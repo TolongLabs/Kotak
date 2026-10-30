@@ -1,6 +1,8 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { useRoleIndex } from '../../engine/bundle'
+import { shellText } from '../../i18n/messages/shell'
+import { useText } from '../../i18n/text'
 import { normalizeJobQuery, searchRoles } from '../../views/checkup/roleSearch'
 import { SuggestionList, useSuggestionList } from '../../views/checkup/SuggestionList'
 import { navigate } from '../router'
@@ -10,6 +12,7 @@ import { jobPath, routes } from '../routes'
 // Enter on a typed title with no match still goes to the check-up, as before.
 export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_, ref) {
   const index = useRoleIndex()
+  const t = useText(shellText)
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const wrapperRef = useRef<HTMLFormElement>(null)
@@ -64,9 +67,9 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
           else if (ref) ref.current = node
         }}
         name="job"
-        label="Search Jobs"
+        label={t.topbar.searchJobs}
         hideLabel
-        placeholder="Search 900 Jobs"
+        placeholder={t.topbar.searchJobsPlaceholder}
         autoComplete="off"
         value={query}
         onChange={(event) => {
@@ -86,7 +89,12 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
         shortcutHint="/"
       />
       {listOpen && (
-        <SuggestionList list={list} label="Job Suggestions" status={matches.length === 0 && 'No match yet'} inline />
+        <SuggestionList
+          list={list}
+          label={t.topbar.jobSuggestions}
+          status={matches.length === 0 && t.topbar.noMatchYet}
+          inline
+        />
       )}
     </form>
   )

@@ -1,5 +1,8 @@
 import { Info } from 'lucide-react'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { commonText } from '../../i18n/common'
+import { checkupText } from '../../i18n/messages/checkup'
+import { useText } from '../../i18n/text'
 
 interface QuestionInfoProps {
   cornerName: string
@@ -57,6 +60,8 @@ function frameFor(trigger: HTMLElement): Frame {
 
 /** The (i) beside a question and its popover. Key it on the question so it closes on change. */
 export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps) {
+  const t = useText(checkupText)
+  const common = useText(commonText)
   const [open, setOpen] = useState(false)
   const [frame, setFrame] = useState<Frame>()
   const root = useRef<HTMLSpanElement>(null)
@@ -108,7 +113,7 @@ export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps
       <button
         ref={button}
         type="button"
-        aria-label="About this question"
+        aria-label={t.questions.about}
         aria-expanded={open}
         aria-controls={open ? 'question-info' : undefined}
         onClick={toggle}
@@ -125,7 +130,7 @@ export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps
             id="question-info"
             tabIndex={-1}
             role="dialog"
-            aria-label="About this question"
+            aria-label={t.questions.about}
             className="pointer-events-auto max-h-full shrink-0 overflow-y-auto overscroll-contain rounded-md border-[1.5px] border-text-primary bg-bg-default p-4 text-left shadow-popover focus:outline-none"
           >
             <button
@@ -136,19 +141,19 @@ export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps
               }}
               className="float-right -mr-2 -mt-2 inline-flex h-10 items-center rounded-sm px-2 text-label-m font-semibold text-text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring sm:hidden"
             >
-              Close
+              {common.close}
             </button>
-            <p className="font-mono text-mono-s text-text-muted">Skill area</p>
+            <p className="font-mono text-mono-s text-text-muted">{t.questions.skillArea}</p>
             <p className="text-label-l font-semibold text-text-primary">{cornerName}</p>
             {explainer && (
               <>
-                <p className="mt-3 font-mono text-mono-s text-text-muted">This question is about</p>
+                <p className="mt-3 font-mono text-mono-s text-text-muted">{t.questions.thisQuestion}</p>
                 <p className="text-body-s text-text-primary">{explainer}</p>
               </>
             )}
             {tasks.length > 0 ? (
               <>
-                <p className="mt-3 font-mono text-mono-s text-text-muted">Real job tasks in this area</p>
+                <p className="mt-3 font-mono text-mono-s text-text-muted">{t.questions.realTasks}</p>
                 <ul className="list-disc space-y-1 pl-4 text-body-s text-text-primary">
                   {tasks.map((task) => (
                     <li key={task}>{task}</li>
@@ -156,9 +161,7 @@ export function QuestionInfo({ cornerName, explainer, tasks }: QuestionInfoProps
                 </ul>
               </>
             ) : (
-              !explainer && (
-                <p className="mt-3 text-body-s text-text-primary">Kopi has no task list for this skill yet.</p>
-              )
+              !explainer && <p className="mt-3 text-body-s text-text-primary">{t.questions.noTasks}</p>
             )}
           </div>
         </div>

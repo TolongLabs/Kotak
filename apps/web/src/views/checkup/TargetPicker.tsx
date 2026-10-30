@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { cn } from '../../components/ui/cn'
 import { fetchRoleMatch, type ApiResult, type RoleAlias } from '../../engine/api'
+import { checkupText } from '../../i18n/messages/checkup'
+import { useText } from '../../i18n/text'
 import {
   closestRoles,
   getRoleDisplayTitle,
@@ -33,6 +35,7 @@ export function TargetPicker({
   currentCode: string | null
   onChange: (targets: Role[]) => void
 }) {
+  const t = useText(checkupText)
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [match, setMatch] = useState<{ key: string; result: ApiResult<RoleMatchResponse> | null } | null>(null)
@@ -120,7 +123,7 @@ export function TargetPicker({
       }}
     >
       {targets.length > 0 && (
-        <ul className="flex flex-wrap gap-2" aria-label="Roles You Picked">
+        <ul className="flex flex-wrap gap-2" aria-label={t.target.listLabel}>
           {targets.map((target, index) => (
             <li
               key={target.onet_code}
@@ -133,13 +136,11 @@ export function TargetPicker({
             >
               <span className="min-w-0 break-words">
                 {getRoleDisplayTitle(target)}
-                {index === 0 && targets.length > 1 && (
-                  <span className="sr-only"> (the questions test you on this)</span>
-                )}
+                {index === 0 && targets.length > 1 && <span className="sr-only">{t.target.firstRoleNote}</span>}
               </span>
               <button
                 type="button"
-                aria-label={`Remove ${getRoleDisplayTitle(target)}`}
+                aria-label={t.target.remove(getRoleDisplayTitle(target))}
                 onClick={() => remove(target)}
                 className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring"
               >
@@ -153,9 +154,9 @@ export function TargetPicker({
         <div className="relative">
           <SearchField
             ref={inputRef}
-            label="Target Role"
+            label={t.target.label}
             hideLabel
-            placeholder={targets.length ? 'Add Another Role (Optional)' : 'Type the Role You Want'}
+            placeholder={targets.length ? t.target.addOptional : t.target.typeRole}
             shortcutHint=""
             value={query}
             onChange={(event) => {
@@ -169,18 +170,14 @@ export function TargetPicker({
           {listOpen && (
             <SuggestionList
               list={list}
-              label="Target Role Suggestions"
-              status={
-                waiting ? 'Kopi is matching your title…' : noMatch && 'No match yet. Try a simpler title, or pick one:'
-              }
+              label={t.target.suggestions}
+              status={waiting ? t.roleSearch.matching : noMatch && t.roleSearch.noMatch}
             />
           )}
         </div>
       )}
       {targets.length > 1 && (
-        <p className="text-body-s text-text-muted">
-          The questions test you on {getRoleDisplayTitle(targets[0]!)}; Roles That Fit compares the others beside it.
-        </p>
+        <p className="text-body-s text-text-muted">{t.target.comparison(getRoleDisplayTitle(targets[0]!))}</p>
       )}
     </div>
   )

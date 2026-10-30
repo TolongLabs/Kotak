@@ -5,6 +5,9 @@ import { SdgChip } from '../../components/ui/SdgChip'
 import { useSdgReasons } from '../../engine/bundle'
 import { Button } from '../../components/ui/Button'
 import { IconButton } from '../../components/ui/IconButton'
+import { dateLocale, useLocale } from '../../i18n/locale'
+import { roadmapText } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 import { fmt, type TimelineStep } from './planSupport'
 
 interface RoadmapTimelineProps {
@@ -37,8 +40,8 @@ const MONTH_LABEL_PX = 9 * MONO_CHAR_PX
 const WEEK_GRID_PX = 24
 const MONTH_STRIDES = [1, 2, 3, 6, 12]
 
-function weekRange([first, last]: [number, number]) {
-  return first === last ? `W${first}` : `W${first}–${last}`
+function weekRange([first, last]: [number, number], t: typeof roadmapText.en) {
+  return t.timeline.weekRange(first, last)
 }
 
 interface HoverState {
@@ -52,6 +55,7 @@ interface HoverState {
 }
 
 function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }) {
+  const t = useText(roadmapText)
   const reasons = useSdgReasons()
   const targets = reasons.status === 'ready' ? reasons.data.targets : {}
   return (
@@ -60,22 +64,20 @@ function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }
       <p className="text-body-s text-text-primary">{step.title}</p>
       <dl className="space-y-1">
         <div className="flex gap-2 text-label-s text-text-primary">
-          <dt className="shrink-0 font-mono text-text-muted">Weeks</dt>
+          <dt className="shrink-0 font-mono text-text-muted">{t.timeline.weeks}</dt>
           <dd className="font-mono">
             {step.weeks[0]}–{step.weeks[1]}
           </dd>
         </div>
         <div className="flex gap-2 text-label-s text-text-primary">
-          <dt className="shrink-0 font-mono text-text-muted">Hours</dt>
-          <dd>
-            {fmt(step.hoursPerWeek)} h a week · about {fmt(step.totalHours)} h total
-          </dd>
+          <dt className="shrink-0 font-mono text-text-muted">{t.timeline.hours}</dt>
+          <dd>{t.timeline.hoursLine(fmt(step.hoursPerWeek), fmt(step.totalHours))}</dd>
         </div>
       </dl>
       {step.resource.label && (
         <div className="space-y-1 text-label-s text-text-muted">
-          <p>Resource: {step.resource.label}</p>
-          <p>{step.resource.kind === 'search' ? 'Search suggestion, not checked' : 'Free'}</p>
+          <p>{t.timeline.resource(step.resource.label)}</p>
+          <p>{step.resource.kind === 'search' ? t.timeline.searchSuggestion : t.timeline.free}</p>
         </div>
       )}
       {(step.sdgTargets ?? []).map((target) => (
@@ -84,7 +86,7 @@ function StepTooltip({ step, tapHint }: { step: TimelineStep; tapHint: boolean }
           {targets[target]?.reason}
         </p>
       ))}
-      {tapHint && <p className="text-label-s text-text-muted">Tap again to see its step details.</p>}
+      {tapHint && <p className="text-label-s text-text-muted">{t.timeline.tapHint}</p>}
     </div>
   )
 }
@@ -97,6 +99,8 @@ export function RoadmapTimeline({
   selectedStepId,
   onSelectStep
 }: RoadmapTimelineProps) {
+  const locale = useLocale()
+  const t = useText(roadmapText)
   const sectionRef = useRef<HTMLElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [viewport, setViewport] = useState(0)
@@ -133,10 +137,10 @@ export function RoadmapTimeline({
   const tickWeeks = useMemo(() => {
     const weeks: number[] = []
     for (let week = 1; week <= totalWeeks; week += tickInterval) {
-      if ((week - 1) * pxWeek + `W${week}`.length * MONO_CHAR_PX + 6 <= trackW) weeks.push(week)
+      if ((week - 1) * pxWeek + t.timeline.axisWeek(week).length * MONO_CHAR_PX + 6 <= trackW) weeks.push(week)
     }
     return weeks
-  }, [totalWeeks, tickInterval, pxWeek, trackW])
+  }, [totalWeeks, tickInterval, pxWeek, trackW, locale, t])
   const monthBuckets = useMemo(() => {
     let last: number | null = null
     const buckets: { week: number; date: Date }[] = []
@@ -169,7 +173,7 @@ export function RoadmapTimeline({
       }
       const year = bucket.date.getFullYear()
       const text = new Intl.DateTimeFormat(
-        'en-GB',
+        dateLocale(locale),
         year !== lastYear ? { month: 'short', year: 'numeric' } : { month: 'short' }
       )
         .format(bucket.date)
@@ -182,7 +186,7 @@ export function RoadmapTimeline({
       freeFrom = x + width + LABEL_GAP_PX
     }
     return labels
-  }, [monthBuckets, pxWeek, trackW])
+  }, [monthBuckets, pxWeek, trackW, locale])
   // Gridlines follow the labelled months, so long plans keep a calm grid.
   const monthWeeks = monthLabels.filter((label) => label.week > 1).map((label) => label.week)
 
@@ -292,9 +296,9 @@ export function RoadmapTimeline({
     return steps.map((step) => {
       const count = (seen.get(step.skill) ?? 0) + 1
       seen.set(step.skill, count)
-      return count === 1 ? step.skill : `${step.skill} · Step ${count}`
+      return count === 1 ? step.skill : `${step.skill} · ${t.timeline.rowStep(count)}`
     })
-  }, [steps])
+  }, [steps, locale, t])
 
   const todayX = (() => {
     const start = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
@@ -346,14 +350,24 @@ export function RoadmapTimeline({
     >
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 id="timeline-title" className="text-title-s text-text-primary">
-          Timeline
+          {t.timeline.title}
         </h2>
         {steps.length > 0 && (
           <div className="flex items-center gap-2">
-            <IconButton label="Zoom In" icon={Plus} onClick={() => zoomBy(ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} />
-            <IconButton label="Zoom Out" icon={Minus} onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={zoom <= 1} />
+            <IconButton
+              label={t.timeline.zoomIn}
+              icon={Plus}
+              onClick={() => zoomBy(ZOOM_STEP)}
+              disabled={zoom >= MAX_ZOOM}
+            />
+            <IconButton
+              label={t.timeline.zoomOut}
+              icon={Minus}
+              onClick={() => zoomBy(1 / ZOOM_STEP)}
+              disabled={zoom <= 1}
+            />
             <Button variant="secondary" onClick={fitPlan}>
-              Fit Plan
+              {t.timeline.fitPlan}
             </Button>
           </div>
         )}
@@ -361,31 +375,31 @@ export function RoadmapTimeline({
 
       {steps.length > 0 ? (
         <>
-          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label="Timeline Legend">
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label={t.timeline.legend}>
             <li className="inline-flex items-center gap-1.5 text-label-s text-text-muted">
               <span
                 aria-hidden="true"
                 className="h-3.5 w-6 rounded-sm border-[1.5px] border-text-primary bg-accent-box"
               />
-              Next Step
+              {t.timeline.nextStep}
             </li>
             <li className="inline-flex items-center gap-1.5 text-label-s text-text-muted">
               <span
                 aria-hidden="true"
                 className="h-3.5 w-6 rounded-sm border-[1.5px] border-text-primary bg-radar-you-fill"
               />
-              Upcoming Step
+              {t.timeline.upcomingStep}
             </li>
             <li className="inline-flex items-center gap-1.5 text-label-s text-text-muted">
               <span
                 aria-hidden="true"
                 className="h-3.5 w-6 rounded-sm border-[1.5px] border-state-success bg-state-success"
               />
-              Done Step
+              {t.timeline.doneStep}
             </li>
             <li className="inline-flex items-center gap-1.5 text-label-s text-text-muted">
               <span aria-hidden="true" className="h-3.5 border-l-2 border-text-primary" />
-              Today
+              {t.fit.today}
             </li>
           </ul>
 
@@ -393,7 +407,7 @@ export function RoadmapTimeline({
             ref={scrollRef}
             role="group"
             tabIndex={0}
-            aria-label="Zoom and pan the timeline. Ctrl or Cmd plus the mouse wheel zooms, arrow keys pan, dragging pans when zoomed in."
+            aria-label={t.timeline.groupLabel}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
@@ -426,7 +440,7 @@ export function RoadmapTimeline({
                         className="absolute top-0 h-6 border-l border-border-subtle pl-1.5 font-mono text-mono-s text-text-muted"
                         style={{ left: (week - 1) * pxWeek }}
                       >
-                        {`W${week}`}
+                        {t.timeline.axisWeek(week)}
                       </span>
                     ))}
                   </div>
@@ -447,7 +461,7 @@ export function RoadmapTimeline({
                 // The row already names the step, so the bar carries when and how much. It sits inside the bar when it
                 // fits, otherwise just outside it: to the right, or to the left at the end of the plan. A bar without a
                 // label has no padding, so it renders at exactly this width and the label beside it never touches it.
-                const fullLabel = `${weekRange(step.weeks)} · ${fmt(step.hoursPerWeek)} h/wk`
+                const fullLabel = t.timeline.barLabel(weekRange(step.weeks, t), fmt(step.hoursPerWeek))
                 const labelWidth = (text: string) => text.length * LABEL_CHAR_PX + 16
                 const barLabel = labelWidth(fullLabel) <= width ? fullLabel : null
                 const outsideLabel = barLabel ? null : fullLabel
@@ -509,7 +523,13 @@ export function RoadmapTimeline({
                         <button
                           type="button"
                           aria-pressed={selected}
-                          aria-label={`${step.skill}, weeks ${step.weeks[0]} to ${step.weeks[1]}, ${fmt(step.hoursPerWeek)} h a week, about ${fmt(step.totalHours)} h total`}
+                          aria-label={t.timeline.barAria(
+                            step.skill,
+                            step.weeks[0],
+                            step.weeks[1],
+                            fmt(step.hoursPerWeek),
+                            fmt(step.totalHours)
+                          )}
                           data-timeline-bar
                           onPointerDown={(event) => {
                             pointerTypeRef.current = event.pointerType
@@ -585,7 +605,7 @@ export function RoadmapTimeline({
                             }`}
                             style={{ left: todayX }}
                           >
-                            Today
+                            {t.fit.today}
                           </span>
                         </div>
                       </div>
@@ -613,20 +633,20 @@ export function RoadmapTimeline({
         </>
       ) : (
         <p className="rounded-md border border-border-subtle bg-bg-panel p-4 text-body-s text-text-muted">
-          No Roadmap Steps Are Available For This Snapshot.
+          {t.timeline.noSteps}
         </p>
       )}
 
       <div className="sr-only">
         <table>
-          <caption>Roadmap timeline by week</caption>
+          <caption>{t.timeline.tableCaption}</caption>
           <thead>
             <tr>
-              <th scope="col">Step</th>
-              <th scope="col">Start Week</th>
-              <th scope="col">End Week</th>
-              <th scope="col">Hours per Week</th>
-              <th scope="col">SDG Targets</th>
+              <th scope="col">{t.timeline.step}</th>
+              <th scope="col">{t.timeline.startWeek}</th>
+              <th scope="col">{t.timeline.endWeek}</th>
+              <th scope="col">{t.timeline.hoursPerWeek}</th>
+              <th scope="col">{t.timeline.sdgTargets}</th>
             </tr>
           </thead>
           <tbody>

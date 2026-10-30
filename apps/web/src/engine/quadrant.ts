@@ -1,5 +1,7 @@
 import { biggestGaps } from '@kotak/sdk'
 import type { VerdictId } from '../demo/types'
+import { rolesText } from '../i18n/messages/roles'
+import { textNow } from '../i18n/text'
 
 export type Trend = 'rising' | 'steady' | 'declining'
 export type PointKind = 'you' | 'target' | 'suggested'
@@ -58,13 +60,28 @@ export function placePoints(points: QuadrantPoint[]): Placed[] {
   })
 }
 
-/** The role's biggest gap, named from its corners with its levels: "Name (you 1.0, needed 2.8)". */
+/** The role's biggest gap, named from its corners with its levels. */
+export function topGapLabel(gap: { name: string; you: number; needed: number }): string
 export function topGapLabel(
   fit: Parameters<typeof biggestGaps>[0],
   corners: { corner_id: string; name: string }[]
+): string | undefined
+export function topGapLabel(
+  source: { name: string; you: number; needed: number } | Parameters<typeof biggestGaps>[0],
+  corners?: { corner_id: string; name: string }[]
 ): string | undefined {
-  const term = biggestGaps(fit)[0]
-  if (!term) return undefined
-  const name = corners.find((corner) => corner.corner_id === term.corner_id)?.name ?? term.corner_id
-  return `${name} (you ${term.user_level.toFixed(1)}, needed ${term.target_level.toFixed(1)})`
+  const gap =
+    'terms' in source
+      ? (() => {
+          const term = biggestGaps(source)[0]
+          return term
+            ? {
+                name: corners?.find((corner) => corner.corner_id === term.corner_id)?.name ?? term.corner_id,
+                you: term.user_level,
+                needed: term.target_level
+              }
+            : undefined
+        })()
+      : source
+  return gap ? textNow(rolesText).quadrant.gapLabel(gap.name, gap.you.toFixed(1), gap.needed.toFixed(1)) : undefined
 }

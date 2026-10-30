@@ -1,6 +1,8 @@
 import { Clock3 } from 'lucide-react'
 import { Citation } from '../../components/ui/Citation'
 import { Button } from '../../components/ui/Button'
+import { roadmapText } from '../../i18n/messages/roadmap'
+import { useText } from '../../i18n/text'
 import { fmt } from './planSupport'
 
 export interface FreeUpTimeTask {
@@ -25,17 +27,23 @@ interface FreeUpTimeCardProps {
   onApply: () => void
 }
 
-function resultLine(applied: boolean, before: number | null, after: number | null, planWeeks: number): string | null {
-  if (before === 0 || after === 0) return 'Already at least 80% Fit'
+function resultLine(
+  t: typeof roadmapText.en,
+  applied: boolean,
+  before: number | null,
+  after: number | null,
+  planWeeks: number
+): string | null {
+  if (before === 0 || after === 0) return t.fit.already
   if (!applied) {
-    if (after !== null && before !== null && after !== before) return `80% Fit by Week ${after}, Was Week ${before}`
-    if (after !== null && before === null) return `80% Fit by Week ${after} · Was Below 80%`
-    if (after !== null) return `80% Fit by Week ${after} With These Hours`
-    if (before !== null) return `80% Fit by Week ${before} With Current Hours`
-    return `Below 80% Fit Within ${planWeeks} Weeks`
+    if (after !== null && before !== null && after !== before) return t.freeTime.changedWeek(after, before)
+    if (after !== null && before === null) return t.freeTime.newlyReady(after)
+    if (after !== null) return t.freeTime.withTheseHours(after)
+    if (before !== null) return t.freeTime.withCurrentHours(before)
+    return t.freeTime.belowWithin(planWeeks)
   }
-  if (before !== null) return `80% Fit by Week ${before}`
-  return `Below 80% Fit Within ${planWeeks} Weeks`
+  if (before !== null) return t.fit.byWeek(before)
+  return t.freeTime.belowWithin(planWeeks)
 }
 
 export function FreeUpTimeCard({
@@ -47,15 +55,16 @@ export function FreeUpTimeCard({
   planWeeks,
   onApply
 }: FreeUpTimeCardProps) {
+  const t = useText(roadmapText)
   if (!estimate) {
     return (
       <section aria-labelledby="free-time-title" className="space-y-2">
         <div className="space-y-2 rounded-md border-[1.5px] border-text-primary bg-accent-box p-4 text-accent-on-box">
           <h3 id="free-time-title" className="flex items-center gap-2 text-label-l">
             <Clock3 className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
-            Free Up Time With AI
+            {t.freeTime.title}
           </h3>
-          <p className="text-body-s">There is no source-backed estimate of time saved for this role yet.</p>
+          <p className="text-body-s">{t.freeTime.noEstimate}</p>
         </div>
       </section>
     )
@@ -66,15 +75,15 @@ export function FreeUpTimeCard({
   const canApply = proposedWeeklyHours !== null && proposedWeeklyHours > currentWeeklyHours + 0.001
   const appliedNow = proposedWeeklyHours !== null && proposedWeeklyHours <= currentWeeklyHours + 0.001
   const line = canApply
-    ? resultLine(false, readyWeekBefore, readyWeekAfter, planWeeks)
-    : resultLine(appliedNow, readyWeekBefore, readyWeekAfter, planWeeks)
+    ? resultLine(t, false, readyWeekBefore, readyWeekAfter, planWeeks)
+    : resultLine(t, appliedNow, readyWeekBefore, readyWeekAfter, planWeeks)
 
   return (
     <section aria-labelledby="free-time-title" className="space-y-2">
       <div className="space-y-3 rounded-md border-[1.5px] border-text-primary bg-accent-box p-4 text-accent-on-box">
         <h3 id="free-time-title" className="flex items-center gap-2 text-label-l">
           <Clock3 className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
-          Free Up Time With AI
+          {t.freeTime.title}
         </h3>
 
         {hasTasks ? (
@@ -82,28 +91,30 @@ export function FreeUpTimeCard({
             {estimate.tasks.map((task) => (
               <li key={task.id} className="flex items-baseline justify-between gap-3 text-body-s">
                 <span className="min-w-0">{task.name}</span>
-                <span className="shrink-0 font-mono text-mono-s">-{fmt(task.weeklyHoursSaved)} h</span>
+                <span className="shrink-0 font-mono text-mono-s">
+                  {t.freeTime.savedHours(fmt(task.weeklyHoursSaved))}
+                </span>
               </li>
             ))}
           </ul>
         ) : null}
 
         <p className="text-title-s">
-          About {fmt(total)} h a week
-          <span className="text-body-s"> goes free with AI on tasks like these.</span>
+          {t.freeTime.aboutHours(fmt(total))}
+          <span className="text-body-s"> {t.freeTime.goesFree}</span>
         </p>
 
         {line && <p className="text-label-m">{line}</p>}
 
         {canApply && (
           <Button variant="inverse" onClick={onApply} className="w-full justify-center">
-            Use {fmt(total)} h a Week for My Plan
+            {t.freeTime.apply(fmt(total))}
           </Button>
         )}
 
         {estimate.citations.length > 0 && (
           <p className="flex flex-wrap items-center gap-1.5 text-label-s">
-            Source: Anthropic Economic Index
+            {t.freeTime.source}
             {estimate.citations.map((citation) => (
               <Citation key={citation} n={citation} />
             ))}

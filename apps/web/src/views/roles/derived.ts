@@ -4,6 +4,7 @@ import {
   roleVerdicts,
   uniqueSources,
   type BundleRole,
+  type CandidateReason,
   type ExplanationRequest,
   type GuestSession,
   type Scenario,
@@ -14,29 +15,41 @@ import type { Role, SourceRef, VerdictId } from '../../demo/types'
 import type { CheckupRole } from '../../engine/checkup'
 import { roleOutlook, verdictId } from '../../engine/viewModel'
 import { formatLevel } from './fit'
+import { commonText } from '../../i18n/common'
+import { textNow } from '../../i18n/text'
+import { rolesText } from '../../i18n/messages/roles'
 
 /** Generates Kopi's dialogue speech matching the screen state and engine data. */
 export function kopiRoleSpeech(ranked: Role[], focus?: Role, pick?: { role: Role; reason: SelectionReason }): string {
+  const t = textNow(rolesText)
+  const common = textNow(commonText)
+  const outlookKey: Record<VerdictId, keyof typeof common.verdicts> = {
+    rising: 'Rising',
+    steady: 'Steady',
+    split: 'Split',
+    unknown: 'Unknown',
+    declining: 'Declining'
+  }
   if (focus?.access?.profession && needsQualification(focus.access))
-    return `${focus.title} fits you at ${focus.fitEstimated ? 'an estimated ' : ''}${focus.fit}%. ${
-      focus.access.status === 'qualify'
-        ? 'It also needs a set qualification in Malaysia, so weigh the fit before you commit to the degree.'
-        : 'It is regulated in Malaysia, so check the steps below as well.'
-    }`
+    return t.kopi.qualifiedFocus(focus.title, Boolean(focus.fitEstimated), focus.fit, focus.access.status === 'qualify')
   if (focus) {
     const nextGap = focus.missing.split(', ')[0]
-    return `${focus.title} fits you at ${focus.fitEstimated ? 'an estimated ' : ''}${focus.fit}%. ${nextGap ? `Close ${nextGap} next.` : 'You already meet every needed level.'}`
+    return t.kopi.focus(focus.title, Boolean(focus.fitEstimated), focus.fit, nextGap || undefined)
   }
   const bestFit = bestOf(ranked)
   // When Kopi highlights a Rising role over a better fit, say why, so the speech and the highlight agree.
   if (pick?.reason.kind === 'rising' && bestFit && bestFit.fit > pick.role.fit)
-    return `${pick.role.title} fits you best of the Rising roles, at ${pick.role.fitEstimated ? 'an estimated ' : ''}${
-      pick.role.fit
-    }%. ${bestFit.title} fits best overall, at ${bestFit.fit}%, with a ${outlookText[bestFit.outlook]} outlook.`
+    return t.kopi.rising(
+      pick.role.title,
+      Boolean(pick.role.fitEstimated),
+      pick.role.fit,
+      common.verdicts.Rising,
+      bestFit.title,
+      bestFit.fit,
+      common.verdicts[outlookKey[bestFit.outlook]]
+    )
 
-  return bestFit
-    ? `${bestFit.title} is your best fit at ${bestFit.fitEstimated ? 'an estimated ' : ''}${bestFit.fit}%.`
-    : 'No role fit is available yet.'
+  return bestFit ? t.kopi.best(bestFit.title, bestFit.fit, Boolean(bestFit.fitEstimated)) : t.kopi.noRole
 }
 
 const sourceKey = (source: Source) =>
@@ -65,7 +78,9 @@ export function deriveRoleEvidence(
   bundleRole: BundleRole | undefined,
   snapshotId: SnapshotId
 ): RoleEvidence {
-  if (!bundleRole || !checkupRole) return { summary: 'No read is available for this role yet.', rows: [], sources: [] }
+  const t = textNow(rolesText)
+  const common = textNow(commonText)
+  if (!bundleRole || !checkupRole) return { summary: t.kopi.noRead, rows: [], sources: [] }
 
   const verdicts = roleVerdicts(bundleRole.signals[snapshotId]).corners
   const allSources = uniqueSources(verdicts.flatMap((verdict) => verdict.sources))
@@ -96,18 +111,24 @@ export function deriveRoleEvidence(
       }
     ]
   })
-  if (skills.length === 0) return { summary: 'No skill read is available for this role yet.', rows: [], sources }
+  if (skills.length === 0) return { summary: t.kopi.noSkillRead, rows: [], sources }
 
   const gap = (skill: { you: string; needed: string }) => Number(skill.needed) - Number(skill.you)
   const biggestGap = skills.filter((skill) => gap(skill) > 0).sort((a, b) => gap(b) - gap(a))[0]
   const biggestStrength = skills.filter((skill) => gap(skill) <= 0).sort((a, b) => gap(a) - gap(b))[0]
 
-  const outlook = outlookText[roleOutlook(bundleRole, snapshotId)]
+  const outlookId = roleOutlook(bundleRole, snapshotId)
+  const outlookKey: Record<VerdictId, keyof typeof common.verdicts> = {
+    rising: 'Rising',
+    steady: 'Steady',
+    split: 'Split',
+    unknown: 'Unknown',
+    declining: 'Declining'
+  }
+  const outlook = common.verdicts[outlookKey[outlookId]]
   const summary = [
-    biggestGap
-      ? `Outlook for this role is ${outlook}, and your biggest gap is ${biggestGap.name}.`
-      : `Outlook for this role is ${outlook}, and you meet every needed level.`,
-    biggestStrength ? `A strength to lean on is ${biggestStrength.name}.` : undefined
+    t.kopi.outlookAndGap(outlook, biggestGap?.name ?? '', Boolean(biggestGap)),
+    biggestStrength ? t.kopi.strength(biggestStrength.name) : undefined
   ]
     .filter(Boolean)
     .join(' ')
@@ -121,26 +142,16 @@ export function deriveRoleEvidence(
   return { summary, rows, sources }
 }
 
-const outlookText: Record<VerdictId, string> = {
-  rising: 'Rising',
-  steady: 'Steady',
-  split: 'Split',
-  unknown: 'Unknown',
-  declining: 'Declining'
-}
-
 // Portrait order for "Show Me Where I Could Go": Rising, Steady, Split, Unknown, Declining, then by fit.
 const outlookOrder: Record<VerdictId, number> = { rising: 0, steady: 1, split: 2, unknown: 3, declining: 4 }
 
-const goalHeadings: Record<NonNullable<GuestSession['goal']>, string> = {
-  stay: "Your Job's Future",
-  target: 'Your Target Role',
-  explore: 'Roles You Could Move To'
-}
-
 /** The heading the session goal asks for; the neutral list keeps the old one. */
 export function sessionHeading(goal: GuestSession['goal']): string {
-  return (goal && goalHeadings[goal]) || 'Roles That Fit You'
+  const headings = textNow(rolesText).rolesView.heading
+  if (goal === 'stay') return headings.stay
+  if (goal === 'target') return headings.target
+  if (goal === 'explore') return headings.explore
+  return headings.default
 }
 
 /** The best fit of a list; the first one wins a tie, so the order of the cards breaks it. */
@@ -157,22 +168,51 @@ export type SelectionReason =
 
 /** The bold line on the highlighted card, so a 75% card picked over an 84% one says why. */
 export function selectionNote(reason: SelectionReason): string {
+  const t = textNow(rolesText).rolesView
+  const rising = textNow(commonText).verdicts.Rising
   switch (reason.kind) {
     case 'picked':
-      return 'You picked this role.'
+      return t.notePicked
     case 'plan':
-      return 'Your roadmap is for this role.'
+      return t.notePlan
     case 'target':
-      return 'Picked for you: the role you said you want.'
-    case 'rising': {
-      const beside = reason.besideJob ? ' besides your job' : ''
-      return reason.count === 1
-        ? `Picked for you: the only Rising role${beside}.`
-        : `Picked for you: your best fit of the ${reason.count} Rising roles${beside}.`
-    }
+      return t.noteTarget
+    case 'rising':
+      return t.noteRising(reason.count, reason.besideJob, rising)
     case 'fit':
-      return 'Picked for you: your best fit, as none is Rising.'
+      return t.noteFit(rising)
   }
+}
+
+/** Translates the shared package's reason labels by their stable reason enum; unknown labels keep their source text. */
+export function translateRoleReasons(codes: CandidateReason[] | undefined, reasons: string[] | undefined): string[] {
+  if (!codes || !reasons) return reasons ?? []
+  const t = textNow(rolesText)
+  const codeFor = (reason: string) =>
+    codes.find((code) => {
+      switch (code) {
+        case 'target':
+          return reason === 'You chose this role'
+        case 'area':
+          return reason.startsWith('In ')
+        case 'field':
+          return reason.startsWith('Your ') && reason.endsWith(' study leads here')
+        case 'interests':
+          return reason === 'Matches what you enjoy'
+        case 'activity_area':
+          return reason.startsWith('Your picks point to ')
+        case 'job_related':
+          return reason === 'Related to your job'
+        case 'related':
+          return reason.startsWith('Related to ') && reason !== 'Related to your job'
+        case 'current':
+          return reason === 'Your current job'
+      }
+    })
+  return reasons.map((reason) => {
+    const code = codeFor(reason)
+    return code ? t.reason(code, reason) : reason
+  })
 }
 
 /** The card to select until the visitor picks one: their best fit of the Rising roles that aren't their job, else their best fit. */
