@@ -1,0 +1,150 @@
+{
+  "note": "Three runs: the main batch, then reruns of the skills that failed validation. One Malay skill (15-1252.00 code-maintenance) failed all tries and was translated by hand.",
+  "totals": {
+    "request_count": 174,
+    "retries": 30,
+    "prompt_tokens": 276636,
+    "completion_tokens": 82652,
+    "failures": 1
+  },
+  "runs": [
+    {
+      "endpoint_id": "5yjk19uqmrpbp7",
+      "model": "Qwen/Qwen3.8-27B-FP8",
+      "languages": [
+        "ms",
+        "zh"
+      ],
+      "job_codes": [
+        "15-1252.00",
+        "15-2051.00",
+        "13-2011.00",
+        "13-1111.00",
+        "13-1071.00",
+        "11-2021.00",
+        "11-1021.00",
+        "11-1011.00",
+        "29-1141.00",
+        "25-2031.00"
+      ],
+      "started_at": "2026-10-30T14:06:56.922Z",
+      "finished_at": "2026-10-30T14:39:11.790Z",
+      "request_count": 147,
+      "retries": 27,
+      "failures": [
+        {
+          "onet_code": "15-1252.00",
+          "corner_id": "code-maintenance",
+          "language": "ms",
+          "errors": [
+            "15-1252.00.code-maintenance.statements.working: exceeds 1.6× the English length"
+          ]
+        },
+        {
+          "onet_code": "13-1071.00",
+          "corner_id": "recruitment-strategy",
+          "language": "zh",
+          "errors": [
+            "13-1071.00.recruitment-strategy.name: contains no Chinese characters"
+          ]
+        },
+        {
+          "onet_code": "13-1071.00",
+          "corner_id": "employee-relations",
+          "language": "zh",
+          "errors": [
+            "13-1071.00.employee-relations.name: must keep Relations verbatim"
+          ]
+        },
+        {
+          "onet_code": "13-1071.00",
+          "corner_id": "staff-training",
+          "language": "zh",
+          "errors": [
+            "13-1071.00.staff-training.name: contains no Chinese characters"
+          ]
+        },
+        {
+          "onet_code": "13-1071.00",
+          "corner_id": "hr-policy-guidance",
+          "language": "zh",
+          "errors": [
+            "13-1071.00.hr-policy-guidance.name: must keep Policy verbatim",
+            "13-1071.00.hr-policy-guidance.name: must keep Guidance verbatim"
+          ]
+        },
+        {
+          "onet_code": "13-1071.00",
+          "corner_id": "hiring-and-selection",
+          "language": "zh",
+          "errors": [
+            "13-1071.00.hiring-and-selection.name: must keep Selection verbatim"
+          ]
+        },
+        {
+          "onet_code": "13-1071.00",
+          "corner_id": "hr-records-management",
+          "language": "zh",
+          "errors": [
+            "13-1071.00.hr-records-management.name: contains no Chinese characters"
+          ]
+        },
+        {
+          "onet_code": "11-1021.00",
+          "corner_id": "work-assignment",
+          "language": "ms",
+          "errors": [
+            "11-1021.00.work-assignment.scenarios.basic.options.a: must keep Saturdays verbatim"
+          ]
+        }
+      ],
+      "prompt_tokens": 233306,
+      "completion_tokens": 68983
+    },
+    {
+      "endpoint_id": "5yjk19uqmrpbp7",
+      "model": "Qwen/Qwen3.8-27B-FP8",
+      "languages": [
+        "zh"
+      ],
+      "job_codes": [
+        "13-1071.00"
+      ],
+      "started_at": "2026-10-30T14:45:47.607Z",
+      "finished_at": "2026-10-30T14:52:47.766Z",
+      "request_count": 6,
+      "retries": 0,
+      "failures": [],
+      "prompt_tokens": 9277,
+      "completion_tokens": 2610
+    },
+    {
+      "endpoint_id": "5yjk19uqmrpbp7",
+      "model": "Qwen/Qwen3.8-27B-FP8",
+      "languages": [
+        "ms"
+      ],
+      "job_codes": [
+        "15-1252.00",
+        "11-1021.00",
+        "13-1071.00"
+      ],
+      "started_at": "2026-10-30T14:52:47.912Z",
+      "finished_at": "2026-10-30T14:53:13.209Z",
+      "request_count": 21,
+      "retries": 3,
+      "failures": [
+        {
+          "onet_code": "15-1252.00",
+          "corner_id": "code-maintenance",
+          "language": "ms",
+          "errors": [
+            "15-1252.00.code-maintenance.statements.working: exceeds 1.6× the English length"
+          ]
+        }
+      ],
+      "prompt_tokens": 34053,
+      "completion_tokens": 11059
+    }
+  ]
+}
