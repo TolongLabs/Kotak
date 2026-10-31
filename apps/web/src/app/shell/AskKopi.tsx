@@ -58,6 +58,28 @@ function checkupOf(session: GuestSession): AgentChatCheckup | null {
 /** The chat window's id, for every toggle's aria-controls. */
 export const ASK_KOPI_PANEL_ID = 'ask-kopi-panel'
 
+/** A question a page sends to Kopi, such as the radar's Interpret; `id` tells two sends of one question apart. */
+export interface AskKopiRequest {
+  question: string
+  id: number
+}
+
+let requestListener: ((request: AskKopiRequest) => void) | null = null
+let requestCount = 0
+
+/** Opens Ask Kopi and sends `question`, as if the user had typed it. The app shell listens. */
+export function askKopiAbout(question: string) {
+  requestListener?.({ question, id: ++requestCount })
+}
+
+/** The app shell's subscription to `askKopiAbout`; returns the unsubscribe. */
+export function onAskKopiRequest(listener: (request: AskKopiRequest) => void) {
+  requestListener = listener
+  return () => {
+    if (requestListener === listener) requestListener = null
+  }
+}
+
 // Floats in the bottom-right corner of every /app page and toggles the chat window above it. The label stays "Ask Kopi";
 // aria-expanded says whether the window is open.
 export function AskKopiButton({
@@ -92,12 +114,15 @@ export function AskKopiPanel({
   open,
   onClose,
   dataLabel,
-  returnFocusRef
+  returnFocusRef,
+  request
 }: {
   open: boolean
   onClose: () => void
   dataLabel: string
   returnFocusRef: RefObject<HTMLButtonElement | null>
+  /** A question a page asked Kopi to answer; sent once per id. */
+  request?: AskKopiRequest | null
 }) {
   const session = useGuestSession()
   const c = useText(commonText)
@@ -128,19 +153,29 @@ export function AskKopiPanel({
       ]
     : [t.askKopi.suggestions.risingSkills, t.askKopi.suggestions.dataSource]
 
-  // Opens as a non-modal window above the button, so the page stays in view and usable; focus starts in the question
-  // box, Escape closes it, and focus returns to the Ask Kopi button (some browsers don't focus a clicked button).
+  // Opens as a modal in the middle of the screen over a blurred page; focus starts in the question box, Escape or a
+  // click on the backdrop closes it, and focus returns to the Ask Kopi button (some browsers don't focus a clicked
+  // button).
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
     if (open && !dialog.open) {
-      dialog.show()
+      dialog.showModal()
       inputRef.current?.focus()
     } else if (!open && dialog.open) {
       dialog.close()
       returnFocusRef.current?.focus()
     }
   }, [open, returnFocusRef])
+
+  // A page's question (the radar's Interpret) is sent once the window is open; mid-reply, it waits in the box instead.
+  const handledRequest = useRef(0)
+  useEffect(() => {
+    if (!open || !request || request.id === handledRequest.current) return
+    handledRequest.current = request.id
+    if (sending) setDraft(request.question)
+    else void send(request.question)
+  })
 
   // Each new question scrolls to the top of the log, so the question and the start of Kopi's reply show together.
   useEffect(() => {
@@ -209,11 +244,11 @@ export function AskKopiPanel({
       id={ASK_KOPI_PANEL_ID}
       aria-labelledby={titleId}
       onClose={onClose}
-      onKeyDown={(event) => {
-        // A non-modal dialog doesn't close on Escape by itself.
-        if (event.key === 'Escape' && !event.nativeEvent.isComposing) onClose()
+      onClick={(event) => {
+        // The window's content fills the dialog, so a click that lands on the dialog itself is on the backdrop.
+        if (event.target === event.currentTarget) onClose()
       }}
-      className="fixed inset-auto bottom-(--ask-kopi-clearance) right-4 z-40 m-0 h-[min(36rem,calc(100dvh-6.5rem))] w-[calc(100vw-2rem)] overflow-hidden rounded-md border-[1.5px] border-text-primary bg-bg-default p-0 text-text-primary shadow-[var(--shadow-popover)] sm:w-[26rem]"
+      className="fixed inset-0 m-auto h-[calc(100dvh-2rem)] max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] overflow-hidden rounded-md border-[1.5px] border-text-primary bg-bg-default p-0 text-text-primary shadow-[var(--shadow-popover)] backdrop:bg-black/35 backdrop:backdrop-blur-[3px] sm:aspect-video sm:h-auto sm:w-[min(72rem,calc(100vw-4rem),calc((100dvh-4rem)*16/9))]"
     >
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-3">
@@ -239,141 +274,145 @@ export function AskKopiPanel({
           </button>
         </div>
 
-        <div ref={logRef} className="relative min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
-          <KopiBubble>
-            {hasCheckup ? (
-              <p className="text-body-m">{t.askKopi.introWithCheckup}</p>
-            ) : (
-              <>
-                <p className="text-body-m">{t.askKopi.introWithoutCheckup}</p>
-                <Button variant="primary" onClick={() => go(routes.checkUp)}>
-                  {t.askKopi.startCheckup}
-                </Button>
-              </>
-            )}
-          </KopiBubble>
-
-          {exchanges.length === 0 && !pending && (
-            <section aria-labelledby={`${titleId}-try`} className="space-y-2">
-              <h3 id={`${titleId}-try`} className="text-label-m text-text-primary">
-                {t.askKopi.tryAsking}
-              </h3>
-              <ul className="space-y-2">
-                {suggestions.map((question) => (
-                  <li key={question}>
-                    <button
-                      type="button"
-                      onClick={() => ask(question)}
-                      className="min-h-11 w-full rounded-sm border-[1.5px] border-border-subtle bg-bg-panel px-3 py-2 text-left text-label-m text-text-primary transition-colors duration-150 ease-out hover:border-border-control hover:bg-bg-default"
-                    >
-                      {question}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {exchanges.map(({ question, answer }, index) => (
-            <div key={index} className="space-y-4">
-              <Question text={question} />
-              <Reply answer={answer} />
-            </div>
-          ))}
-
-          {pending && <Question text={pending.question} />}
-          {sending && (
+        <div ref={logRef} className="relative min-h-0 flex-1 overflow-y-auto p-4 sm:px-8 sm:py-6">
+          <div className="mx-auto max-w-3xl space-y-4">
             <KopiBubble>
-              <p className="flex items-center gap-2 text-body-s text-text-muted">
-                <span aria-hidden="true" className="flex gap-1">
-                  {[0, 1, 2].map((dot) => (
-                    <span
-                      key={dot}
-                      className={cn('h-1.5 w-1.5 rounded-full bg-text-muted', !reduced && 'animate-pulse')}
-                      style={reduced ? undefined : { animationDelay: `${dot * 200}ms` }}
-                    />
-                  ))}
-                </span>
-                {t.askKopi.thinking}
-              </p>
-            </KopiBubble>
-          )}
-          {pending?.status === 'unavailable' && (
-            <div className="space-y-3">
-              <Banner
-                type="info"
-                title={t.askKopi.unavailableTitle}
-                body={hasCheckup ? t.askKopi.unavailableWithCheckup : t.askKopi.unavailableWithoutCheckup}
-              />
-              <div className="flex flex-wrap gap-2">
-                {hasCheckup ? (
-                  <>
-                    <Button variant="secondary" onClick={() => go(routes.radar)}>
-                      {t.askKopi.openRadar}
-                    </Button>
-                    <Button variant="secondary" onClick={() => go(routes.roadmap)}>
-                      {t.askKopi.openRoadmap}
-                    </Button>
-                  </>
-                ) : (
-                  <Button variant="secondary" onClick={() => go(routes.checkUp)}>
+              {hasCheckup ? (
+                <p className="text-body-m">{t.askKopi.introWithCheckup}</p>
+              ) : (
+                <>
+                  <p className="text-body-m">{t.askKopi.introWithoutCheckup}</p>
+                  <Button variant="primary" onClick={() => go(routes.checkUp)}>
                     {t.askKopi.startCheckup}
                   </Button>
-                )}
+                </>
+              )}
+            </KopiBubble>
+
+            {exchanges.length === 0 && !pending && (
+              <section aria-labelledby={`${titleId}-try`} className="space-y-2">
+                <h3 id={`${titleId}-try`} className="text-label-m text-text-primary">
+                  {t.askKopi.tryAsking}
+                </h3>
+                <ul className="space-y-2">
+                  {suggestions.map((question) => (
+                    <li key={question}>
+                      <button
+                        type="button"
+                        onClick={() => ask(question)}
+                        className="min-h-11 w-full rounded-sm border-[1.5px] border-border-subtle bg-bg-panel px-3 py-2 text-left text-label-m text-text-primary transition-colors duration-150 ease-out hover:border-border-control hover:bg-bg-default"
+                      >
+                        {question}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {exchanges.map(({ question, answer }, index) => (
+              <div key={index} className="space-y-4">
+                <Question text={question} />
+                <Reply answer={answer} />
               </div>
-            </div>
-          )}
-          {pending?.status === 'error' && (
-            <div className="space-y-3">
-              <Banner type="error" title={t.askKopi.errorTitle} body={t.askKopi.errorBody} />
-              <Button
-                variant="secondary"
-                iconStart={<RotateCcw className="h-5 w-5 stroke-current" aria-hidden="true" />}
-                onClick={() => ask(pending.question)}
-              >
-                {c.tryAgain}
-              </Button>
-            </div>
-          )}
+            ))}
+
+            {pending && <Question text={pending.question} />}
+            {sending && (
+              <KopiBubble>
+                <p className="flex items-center gap-2 text-body-s text-text-muted">
+                  <span aria-hidden="true" className="flex gap-1">
+                    {[0, 1, 2].map((dot) => (
+                      <span
+                        key={dot}
+                        className={cn('h-1.5 w-1.5 rounded-full bg-text-muted', !reduced && 'animate-pulse')}
+                        style={reduced ? undefined : { animationDelay: `${dot * 200}ms` }}
+                      />
+                    ))}
+                  </span>
+                  {t.askKopi.thinking}
+                </p>
+              </KopiBubble>
+            )}
+            {pending?.status === 'unavailable' && (
+              <div className="space-y-3">
+                <Banner
+                  type="info"
+                  title={t.askKopi.unavailableTitle}
+                  body={hasCheckup ? t.askKopi.unavailableWithCheckup : t.askKopi.unavailableWithoutCheckup}
+                />
+                <div className="flex flex-wrap gap-2">
+                  {hasCheckup ? (
+                    <>
+                      <Button variant="secondary" onClick={() => go(routes.radar)}>
+                        {t.askKopi.openRadar}
+                      </Button>
+                      <Button variant="secondary" onClick={() => go(routes.roadmap)}>
+                        {t.askKopi.openRoadmap}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button variant="secondary" onClick={() => go(routes.checkUp)}>
+                      {t.askKopi.startCheckup}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+            {pending?.status === 'error' && (
+              <div className="space-y-3">
+                <Banner type="error" title={t.askKopi.errorTitle} body={t.askKopi.errorBody} />
+                <Button
+                  variant="secondary"
+                  iconStart={<RotateCcw className="h-5 w-5 stroke-current" aria-hidden="true" />}
+                  onClick={() => ask(pending.question)}
+                >
+                  {c.tryAgain}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
 
         <p aria-live="polite" className="sr-only">
           {announcement}
         </p>
 
-        <form onSubmit={submit} className="flex items-end gap-2 border-t border-border-subtle p-4">
-          <label htmlFor={inputId} className="sr-only">
-            {t.askKopi.questionLabel}
-          </label>
-          <textarea
-            ref={inputRef}
-            id={inputId}
-            rows={2}
-            maxLength={CHAT_QUESTION_MAX_LENGTH}
-            value={draft}
-            readOnly={sending}
-            aria-disabled={sending || undefined}
-            aria-describedby={hintId}
-            placeholder={hasCheckup ? t.askKopi.placeholderWithCheckup : t.askKopi.placeholderWithoutCheckup}
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return
-              event.preventDefault()
-              event.currentTarget.form?.requestSubmit()
-            }}
-            className="block min-w-0 flex-1 resize-none rounded-sm border border-border-control bg-bg-default px-3 py-2.5 font-sans text-body-m text-text-primary placeholder:text-text-muted transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:bg-bg-panel aria-disabled:text-text-muted"
-          />
-          <span id={hintId} className="sr-only">
-            {t.askKopi.inputHint}
-          </span>
-          <Button
-            type="submit"
-            variant="primary"
-            iconStart={<SendHorizontal className="h-5 w-5 stroke-current" aria-hidden="true" />}
-            disabled={sending || !draft.trim()}
-          >
-            {t.askKopi.send}
-          </Button>
+        <form onSubmit={submit} className="border-t border-border-subtle p-4 sm:px-8">
+          <div className="mx-auto flex max-w-3xl items-end gap-2">
+            <label htmlFor={inputId} className="sr-only">
+              {t.askKopi.questionLabel}
+            </label>
+            <textarea
+              ref={inputRef}
+              id={inputId}
+              rows={2}
+              maxLength={CHAT_QUESTION_MAX_LENGTH}
+              value={draft}
+              readOnly={sending}
+              aria-disabled={sending || undefined}
+              aria-describedby={hintId}
+              placeholder={hasCheckup ? t.askKopi.placeholderWithCheckup : t.askKopi.placeholderWithoutCheckup}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return
+                event.preventDefault()
+                event.currentTarget.form?.requestSubmit()
+              }}
+              className="block min-w-0 flex-1 resize-none rounded-sm border border-border-control bg-bg-default px-3 py-2.5 font-sans text-body-m text-text-primary placeholder:text-text-muted transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:bg-bg-panel aria-disabled:text-text-muted"
+            />
+            <span id={hintId} className="sr-only">
+              {t.askKopi.inputHint}
+            </span>
+            <Button
+              type="submit"
+              variant="primary"
+              iconStart={<SendHorizontal className="h-5 w-5 stroke-current" aria-hidden="true" />}
+              disabled={sending || !draft.trim()}
+            >
+              {t.askKopi.send}
+            </Button>
+          </div>
         </form>
       </div>
     </dialog>

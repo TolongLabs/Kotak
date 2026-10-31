@@ -11,6 +11,14 @@ export const commonText = defineText(
       Split: 'Split',
       Unknown: 'Unknown'
     },
+    // What each verdict means, on hover over its chip.
+    verdictMeanings: {
+      Rising: 'Worth building: AI use on this work is rising and mostly helps people, or job-ad demand is up.',
+      Steady: "No big change expected: AI use isn't rising fast and job-ad demand is flat.",
+      Declining: 'Losing value: AI is starting to do this work, or job-ad demand is falling.',
+      Split: 'The two AI futures disagree: slow and fast AI uptake give different verdicts.',
+      Unknown: 'Not enough dated data to call it yet.'
+    },
     scenarios: { slow: 'Slow AI Uptake', fast: 'Fast AI Uptake' },
     nav: {
       home: 'Home',
@@ -57,6 +65,15 @@ export const commonText = defineText(
       Split: 'Berbelah Bahagi',
       Unknown: 'Belum Diketahui'
     },
+    verdictMeanings: {
+      Rising:
+        'Berbaloi dibina: penggunaan AI untuk kerja ini meningkat dan kebanyakannya membantu manusia, atau permintaan iklan kerja naik.',
+      Steady:
+        'Tiada perubahan besar dijangka: penggunaan AI tidak naik dengan pantas dan permintaan iklan kerja mendatar.',
+      Declining: 'Nilainya menurun: AI mula melakukan kerja ini, atau permintaan iklan kerja jatuh.',
+      Split: 'Dua masa depan AI tidak sepakat: penggunaan AI perlahan dan pantas memberi keputusan berbeza.',
+      Unknown: 'Data bertarikh belum cukup untuk membuat keputusan.'
+    },
     scenarios: { slow: 'Guna AI Perlahan', fast: 'Guna AI Pantas' },
     nav: {
       home: 'Utama',
@@ -102,6 +119,13 @@ export const commonText = defineText(
       Declining: '下降',
       Split: '分歧',
       Unknown: '未知'
+    },
+    verdictMeanings: {
+      Rising: '值得培养：这项工作的 AI 使用正在上升且主要是辅助人，或招聘广告需求在增长。',
+      Steady: '预计变化不大：AI 使用没有快速上升，招聘广告需求持平。',
+      Declining: '价值在下降：AI 开始承担这项工作，或招聘广告需求在减少。',
+      Split: '两种 AI 未来结论不同：AI 采用较慢与较快会给出不同判断。',
+      Unknown: '带日期的数据还不够，暂时无法判断。'
     },
     scenarios: { slow: 'AI 采用较慢', fast: 'AI 采用较快' },
     nav: {

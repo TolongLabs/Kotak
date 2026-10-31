@@ -21,7 +21,10 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
+import { VERDICT_KEYS } from '../components/ui/VerdictChip'
 import { routeLinkClassName } from '../components/ui/TextLink'
+import { askKopiAbout } from '../app/shell/AskKopi'
+import { commonText } from '../i18n/common'
 import { changesText } from '../i18n/messages/changes'
 import { radarText } from '../i18n/messages/radar'
 import { useText } from '../i18n/text'
@@ -42,6 +45,9 @@ import type { ExplanationResponse } from '@kotak/shared'
 import { buildExplanationRequest } from './roles/derived'
 import { startAgain } from './checkup/startAgain'
 
+/** A level as the gap card's meter shows it: whole numbers plain, halves with one decimal. */
+const formatLevel = (level: number) => (Number.isInteger(level) ? String(level) : level.toFixed(1))
+
 function gapFor(corner: Corner, scenario: Scenario) {
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
   return needed - corner.you
@@ -50,6 +56,7 @@ function gapFor(corner: Corner, scenario: Scenario) {
 export function RadarView() {
   const session = useGuestSession()
   const t = useText(radarText)
+  const common = useText(commonText)
   const futures = useText(changesText).receipts
   const bundle = useCheckupBundle(session)
   // The map's candidates are the check-up's, whose titles stay English; each label is shown translated (#449).
@@ -291,6 +298,16 @@ export function RadarView() {
           scenario={scenario}
           neededLabel={neededLabel}
           paused={explanationsPaused}
+          onInterpret={() =>
+            askKopiAbout(
+              t.interpretQuestion(
+                corner.name,
+                formatLevel(corner.you),
+                formatLevel(scenario === 'slow' ? corner.neededSlow : corner.neededFast),
+                common.verdicts[VERDICT_KEYS[corner.verdict]]
+              )
+            )
+          }
           aside={
             (targets.length > 0 || sgfSkills.length > 0) && (
               <div className="space-y-2">

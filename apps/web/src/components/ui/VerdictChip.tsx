@@ -3,15 +3,18 @@ import { forwardRef, type ComponentPropsWithoutRef } from 'react'
 import { commonText } from '../../i18n/common'
 import { useText } from '../../i18n/text'
 import { cn } from './cn'
+import { Tooltip } from './Tooltip'
 
 export type VerdictType = 'rising' | 'steady' | 'declining' | 'split' | 'unknown'
 
 export interface VerdictChipProps extends ComponentPropsWithoutRef<'span'> {
   verdict: VerdictType
   size?: 'sm' | 'md'
+  /** On hover, a one-line meaning of the verdict; false where the chip already sits beside its meaning. */
+  explain?: boolean
 }
 
-const VERDICT_KEYS = {
+export const VERDICT_KEYS = {
   rising: 'Rising',
   steady: 'Steady',
   declining: 'Declining',
@@ -55,7 +58,7 @@ const iconSizes = {
 }
 
 export const VerdictChip = forwardRef<HTMLSpanElement, VerdictChipProps>(function VerdictChip(
-  { verdict, size = 'md', className, ...props },
+  { verdict, size = 'md', explain = true, className, ...props },
   ref
 ) {
   const common = useText(commonText)
@@ -63,7 +66,7 @@ export const VerdictChip = forwardRef<HTMLSpanElement, VerdictChipProps>(functio
   const Icon = config.icon
   const label = common.verdicts[VERDICT_KEYS[verdict]]
 
-  return (
+  const chip = (
     <span
       ref={ref}
       className={cn(
@@ -78,5 +81,14 @@ export const VerdictChip = forwardRef<HTMLSpanElement, VerdictChipProps>(functio
       <Icon className={cn('shrink-0 stroke-current', iconSizes[size])} aria-hidden="true" />
       <span>{label}</span>
     </span>
+  )
+
+  // Many first-time users don't know what a verdict means, so hovering a chip says it.
+  return explain ? (
+    <Tooltip content={common.verdictMeanings[VERDICT_KEYS[verdict]]} multiline className="shrink-0">
+      {chip}
+    </Tooltip>
+  ) : (
+    chip
   )
 })

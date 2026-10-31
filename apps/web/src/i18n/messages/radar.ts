@@ -18,6 +18,11 @@ export const radarText = defineText(
     you: 'You',
     levelMeterSr: (you: number, needed: number) => `You level ${you} of 3. Needed level ${needed} of 3.`,
     sourcesFor: (name: string) => `Sources for ${name}`,
+    // The gap card's Interpret row opens Ask Kopi with this question, so Claude Haiku explains the gap.
+    interpret: 'Interpret',
+    interpretFor: (name: string) => `Ask Kopi to interpret ${name}`,
+    interpretQuestion: (name: string, you: string, needed: string, verdict: string) =>
+      `Interpret my gap in "${name}". I'm at level ${you} of 3, this job needs level ${needed}, and its verdict is ${verdict}. In three short parts, tell me WHAT this skill means in my job, WHY the gap matters given its verdict and sources, and HOW I can start closing it this week.`,
     swotTitle: 'Your Skills SWOT',
     swotSubtitle: 'Your six skills, sorted by your level and where the market is heading.',
     openRadar: 'Open Radar',
@@ -131,6 +136,10 @@ export const radarText = defineText(
     you: 'Anda',
     levelMeterSr: (you, needed) => `Tahap anda ${you} daripada 3. Tahap diperlukan ${needed} daripada 3.`,
     sourcesFor: (name) => `Sumber untuk ${name}`,
+    interpret: 'Tafsir',
+    interpretFor: (name) => `Minta Kopi mentafsir ${name}`,
+    interpretQuestion: (name, you, needed, verdict) =>
+      `Tafsirkan jurang saya dalam "${name}". Tahap saya ${you} daripada 3, kerja ini perlukan tahap ${needed}, dan keputusannya ${verdict}. Dalam tiga bahagian ringkas, terangkan APA maksud kemahiran ini dalam kerja saya, MENGAPA jurang ini penting berdasarkan keputusan dan sumbernya, dan BAGAIMANA saya boleh mula menutupnya minggu ini.`,
     swotTitle: 'SWOT Kemahiran Anda',
     swotSubtitle: 'Enam kemahiran anda, disusun mengikut tahap anda dan hala tuju pasaran.',
     openRadar: 'Buka Radar',
@@ -247,6 +256,10 @@ export const radarText = defineText(
     you: '你',
     levelMeterSr: (you, needed) => `你的水平为 ${you}/3，需要达到 ${needed}/3。`,
     sourcesFor: (name) => `${name} 的来源`,
+    interpret: '解读',
+    interpretFor: (name) => `请 Kopi 解读${name}`,
+    interpretQuestion: (name, you, needed, verdict) =>
+      `请解读我在「${name}」上的差距。我目前是 3 级中的 ${you} 级，这份工作需要 ${needed} 级，判断是「${verdict}」。请分三小段说明：这项技能在我的工作中是什么（WHAT），结合判断和来源这个差距为什么重要（WHY），以及我这周可以如何开始弥补（HOW）。`,
     swotTitle: '你的技能 SWOT',
     swotSubtitle: '根据你的水平和市场走向排序的六项技能。',
     openRadar: '打开雷达',
