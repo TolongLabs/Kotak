@@ -381,7 +381,7 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
 
         <!-- Boundaries (behind everything) -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Build time · before deployment" x="262" y="452" width="546" height="140" rx="12" class="c-region" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Build Time · Before Deployment" x="262" y="452" width="546" height="140" rx="12" class="c-region" stroke-width="1"/>
 
         <!-- Connection paths (before components for correct z-order) -->
         <g data-graph-role="automatic-crossover" style="--step:0">
@@ -535,8 +535,8 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <text x="130" y="550" class="t-muted" font-size="9" text-anchor="middle">O*NET · AEI · DOSM · SGF</text>
         </g>
 
-        <g id="node-scripts" data-node-id="scripts" data-node-label="Bun Data Scripts" tabindex="0" role="button" aria-label="Focus Bun Data Scripts, ingest:* · build:data, Build time · before deployment" aria-pressed="false" data-node-kind="backend" data-node-sublabel="ingest:* · build:data" data-node-context="Build time · before deployment">
-          <title>Bun Data Scripts · ingest:* · build:data · Build time · before deployment</title>
+        <g id="node-scripts" data-node-id="scripts" data-node-label="Bun Data Scripts" tabindex="0" role="button" aria-label="Focus Bun Data Scripts, ingest:* · build:data, Build Time · Before Deployment" aria-pressed="false" data-node-kind="backend" data-node-sublabel="ingest:* · build:data" data-node-context="Build Time · Before Deployment">
+          <title>Bun Data Scripts · ingest:* · build:data · Build Time · Before Deployment</title>
           <rect x="310" y="500" width="180" height="72" rx="12" class="c-mask" stroke-width="1"/>
           <rect x="310" y="500" width="180" height="72" rx="12" class="c-backend" data-animate="node" style="--step: 8; --flow-node-name: archify-relay-node-5;" stroke-width="1"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(316 506) scale(0.6875)">
@@ -546,8 +546,8 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <text x="400" y="550" class="t-muted" font-size="9" text-anchor="middle">ingest:* · build:data</text>
         </g>
 
-        <g id="node-runpod" data-node-id="runpod" data-node-label="RunPod GPU Batch" tabindex="0" role="button" aria-label="Focus RunPod GPU Batch, Qwen3.8-27B · drafts skills once, Build time · before deployment" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="Qwen3.8-27B · drafts skills once" data-node-context="Build time · before deployment">
-          <title>RunPod GPU Batch · Qwen3.8-27B · drafts skills once · Build time · before deployment</title>
+        <g id="node-runpod" data-node-id="runpod" data-node-label="RunPod GPU Batch" tabindex="0" role="button" aria-label="Focus RunPod GPU Batch, Qwen3.8-27B · drafts skills once, Build Time · Before Deployment" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="Qwen3.8-27B · drafts skills once" data-node-context="Build Time · Before Deployment">
+          <title>RunPod GPU Batch · Qwen3.8-27B · drafts skills once · Build Time · Before Deployment</title>
           <rect x="580" y="500" width="180" height="72" rx="12" class="c-mask" stroke-width="1"/>
           <rect x="580" y="500" width="180" height="72" rx="12" class="c-cloud" data-animate="node" style="--step: 9; --flow-node-name: archify-relay-node-10;" stroke-width="1"/>
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(586 506) scale(0.6875)">
@@ -600,9 +600,9 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         </g>
 
         <!-- Boundary labels (foreground masks keep routes out of titles) -->
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Build time · before deployment">
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Build Time · Before Deployment">
 
-          <text data-boundary-label="" x="790" y="475" class="t-cloud" font-size="9" font-weight="600" text-anchor="end">Build time · before deployment</text>
+          <text data-boundary-label="" x="790" y="475" class="t-cloud" font-size="9" font-weight="600" text-anchor="end">Build Time · Before Deployment</text>
         </g>
 
         <!-- Legend -->
