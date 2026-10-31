@@ -119,8 +119,44 @@ export const changesText = defineText(
     roadmapOrderSame: 'The suggested learning order stayed the same.',
 
     // ScenarioControl, ScenarioMathsNote and CopyBlock
-    scenarioChoice: 'AI Uptake Scenario',
-    scenarioNote: 'Estimate: the targets, fit and levels here follow this choice.',
+    scenarioChoice: 'Which AI Future?',
+    scenarioChoiceShort: 'AI Future',
+    estimateTag: 'Estimate',
+    scenarioLines: { slow: 'Malaysia keeps today’s AI pace', fast: 'AI use moves halfway to Singapore’s' },
+    scenarioLinesShort: { slow: 'Today’s AI pace', fast: 'Halfway to Singapore' },
+    scenarioShort: { slow: 'Slow', fast: 'Fast' },
+    whatChanges: 'What Changes?',
+    estimatesOnly:
+      'Only estimates move: needed levels, fit and plan weeks. Verdicts such as Rising and Declining stay the same in both futures.',
+    rulerTitle: 'Malaysia’s AI Usage Index',
+    rulerMalaysia: 'Malaysia now',
+    rulerHalfway: 'halfway',
+    rulerSingapore: 'Singapore',
+    rulerLabel: (mys: number, sgp: number) =>
+      `Malaysia’s AI usage index is ${mys} today; Singapore’s is ${sgp}. Fast AI Uptake moves Malaysia halfway.`,
+    receipts: {
+      radarPreview: (n: number, total: number) => `Fast AI Uptake would move ${n} of ${total} skills’ needed levels.`,
+      radarDone: (n: number, total: number) =>
+        `Fast AI Uptake moved ${n} of ${total} needed levels. Verdicts stay the same.`,
+      radarSame: 'Both futures give this job the same needed levels.',
+      radarFitPreview: (from: number, to: number) =>
+        `Fast AI Uptake keeps these needed levels; your fit would move from ${from}% to ${to}%.`,
+      radarFitDone: (from: number, to: number) =>
+        `Same needed levels as Slow AI Uptake; your fit moved from ${from}% to ${to}%. Verdicts stay the same.`,
+      rolesPreview: (title: string, from: number, to: number) =>
+        `Fast AI Uptake would move ${title} from ${from}% to ${to}% fit.`,
+      rolesDone: (title: string, from: number, to: number) =>
+        `Fast AI Uptake moved ${title} from ${from}% to ${to}% fit. Verdicts stay the same.`,
+      rolesSame: 'Fit stays the same for these roles in both futures.',
+      planSame: 'Same steps, hours and fit in both futures.',
+      planStart: (from: number, to: number) =>
+        `Same steps and hours; Fast AI Uptake starts you at ${to}%, not ${from}%.`,
+      planStartDone: (from: number, to: number) => `Same steps and hours; you start at ${to}%, not ${from}%.`,
+      planHours: (hours: string) => `Fast AI Uptake changes the plan to about ${hours} h.`,
+      planHoursDone: (hours: string) => `Slow AI Uptake plans about ${hours} h.`,
+      planOrder: 'Fast AI Uptake keeps the hours but changes the steps or their order.',
+      planOrderDone: 'Same hours as Slow AI Uptake, with different steps or a different order.'
+    },
     mathsBefore: (fast: string, mys: number, sgp: number, source: string) =>
       `${fast} is an estimate with one assumption: Malaysia’s AI usage index (${mys}) moves halfway to Singapore’s (${sgp}), from ${source}. So growing AI use grows`,
     mathsAfter: ' faster, and shrinking use shrinks that much slower. Verdicts stay the same in both futures.',
@@ -273,8 +309,45 @@ export const changesText = defineText(
     roadmapOrderSame: 'Susunan pembelajaran yang dicadangkan kekal sama.',
 
     // ScenarioControl, ScenarioMathsNote and CopyBlock
-    scenarioChoice: 'Senario Penggunaan AI',
-    scenarioNote: 'Anggaran: sasaran, padanan dan tahap di sini mengikut pilihan ini.',
+    scenarioChoice: 'Masa Depan AI yang Mana?',
+    scenarioChoiceShort: 'Masa Depan AI',
+    estimateTag: 'Anggaran',
+    scenarioLines: {
+      slow: 'Malaysia kekal pada kadar AI hari ini',
+      fast: 'Penggunaan AI separuh jalan ke Singapura'
+    },
+    scenarioLinesShort: { slow: 'Kadar AI hari ini', fast: 'Separuh ke Singapura' },
+    scenarioShort: { slow: 'Perlahan', fast: 'Pantas' },
+    whatChanges: 'Apa yang Berubah?',
+    estimatesOnly:
+      'Hanya anggaran yang berubah: tahap diperlukan, padanan dan minggu pelan. Keputusan seperti Meningkat dan Menurun kekal sama dalam kedua-dua masa depan.',
+    rulerTitle: 'Indeks Penggunaan AI Malaysia',
+    rulerMalaysia: 'Malaysia kini',
+    rulerHalfway: 'separuh jalan',
+    rulerSingapore: 'Singapura',
+    rulerLabel: (mys, sgp) =>
+      `Indeks penggunaan AI Malaysia ialah ${mys} hari ini; Singapura ${sgp}. Guna AI Pantas membawa Malaysia separuh jalan.`,
+    receipts: {
+      radarPreview: (n, total) => `Guna AI Pantas akan mengubah tahap diperlukan ${n} daripada ${total} kemahiran.`,
+      radarDone: (n, total) => `Guna AI Pantas mengubah ${n} daripada ${total} tahap diperlukan. Keputusan kekal sama.`,
+      radarSame: 'Kedua-dua masa depan memberi tahap diperlukan yang sama untuk kerja ini.',
+      radarFitPreview: (from, to) =>
+        `Guna AI Pantas mengekalkan tahap diperlukan ini; padanan anda akan berubah daripada ${from}% kepada ${to}%.`,
+      radarFitDone: (from, to) =>
+        `Tahap diperlukan sama seperti Guna AI Perlahan; padanan anda berubah daripada ${from}% kepada ${to}%. Keputusan kekal sama.`,
+      rolesPreview: (title, from, to) =>
+        `Guna AI Pantas akan mengubah padanan ${title} daripada ${from}% kepada ${to}%.`,
+      rolesDone: (title, from, to) =>
+        `Guna AI Pantas mengubah padanan ${title} daripada ${from}% kepada ${to}%. Keputusan kekal sama.`,
+      rolesSame: 'Padanan peranan ini kekal sama dalam kedua-dua masa depan.',
+      planSame: 'Langkah, jam dan padanan sama dalam kedua-dua masa depan.',
+      planStart: (from, to) => `Langkah dan jam sama; Guna AI Pantas memulakan anda pada ${to}%, bukan ${from}%.`,
+      planStartDone: (from, to) => `Langkah dan jam sama; anda bermula pada ${to}%, bukan ${from}%.`,
+      planHours: (hours) => `Guna AI Pantas mengubah pelan kepada kira-kira ${hours} j.`,
+      planHoursDone: (hours) => `Guna AI Perlahan merancang kira-kira ${hours} j.`,
+      planOrder: 'Guna AI Pantas mengekalkan jam tetapi mengubah langkah atau susunannya.',
+      planOrderDone: 'Jam sama seperti Guna AI Perlahan, dengan langkah atau susunan yang berbeza.'
+    },
     mathsBefore: (fast, mys, sgp, source) =>
       `${fast} ialah anggaran dengan satu andaian: indeks penggunaan AI Malaysia (${mys}) bergerak separuh jalan ke Singapura (${sgp}), daripada ${source}. Jadi penggunaan AI yang meningkat berkembang`,
     mathsAfter:
@@ -427,8 +500,36 @@ export const changesText = defineText(
     roadmapOrderSame: '建议的学习顺序保持不变。',
 
     // ScenarioControl, ScenarioMathsNote and CopyBlock
-    scenarioChoice: 'AI 采用情景',
-    scenarioNote: '估算：此处的目标、匹配度和水平均随此选择而变化。',
+    scenarioChoice: '哪一种 AI 未来？',
+    scenarioChoiceShort: 'AI 未来',
+    estimateTag: '估算',
+    scenarioLines: { slow: '马来西亚保持目前的 AI 步伐', fast: 'AI 使用向新加坡靠拢一半' },
+    scenarioLinesShort: { slow: '目前的 AI 步伐', fast: '向新加坡靠拢一半' },
+    scenarioShort: { slow: '较慢', fast: '较快' },
+    whatChanges: '会改变什么？',
+    estimatesOnly: '只有估算会变化：所需水平、匹配度和计划周数。上升、下降等判定在两种未来中保持不变。',
+    rulerTitle: '马来西亚 AI 使用指数',
+    rulerMalaysia: '马来西亚现在',
+    rulerHalfway: '一半',
+    rulerSingapore: '新加坡',
+    rulerLabel: (mys, sgp) => `马来西亚目前的 AI 使用指数为 ${mys}，新加坡为 ${sgp}。AI 采用较快会让马来西亚靠拢一半。`,
+    receipts: {
+      radarPreview: (n, total) => `AI 采用较快会改变 ${total} 项技能中 ${n} 项的所需水平。`,
+      radarDone: (n, total) => `AI 采用较快改变了 ${total} 项所需水平中的 ${n} 项。判定保持不变。`,
+      radarSame: '两种未来给这份工作的所需水平相同。',
+      radarFitPreview: (from, to) => `AI 采用较快时所需水平不变；你的匹配度会从 ${from}% 变为 ${to}%。`,
+      radarFitDone: (from, to) => `所需水平与 AI 采用较慢时相同；你的匹配度从 ${from}% 变为 ${to}%。判定保持不变。`,
+      rolesPreview: (title, from, to) => `AI 采用较快会让 ${title} 的匹配度从 ${from}% 变为 ${to}%。`,
+      rolesDone: (title, from, to) => `AI 采用较快让 ${title} 的匹配度从 ${from}% 变为 ${to}%。判定保持不变。`,
+      rolesSame: '这些职位的匹配度在两种未来中相同。',
+      planSame: '两种未来的步骤、时数和匹配度相同。',
+      planStart: (from, to) => `步骤和时数相同；AI 采用较快时你从 ${to}% 起步，而不是 ${from}%。`,
+      planStartDone: (from, to) => `步骤和时数相同；你从 ${to}% 起步，而不是 ${from}%。`,
+      planHours: (hours) => `AI 采用较快会把计划改为约 ${hours} 小时。`,
+      planHoursDone: (hours) => `AI 采用较慢的计划约为 ${hours} 小时。`,
+      planOrder: 'AI 采用较快时时数不变，但步骤或顺序不同。',
+      planOrderDone: '时数与 AI 采用较慢时相同，但步骤或顺序不同。'
+    },
     mathsBefore: (fast, mys, sgp, source) =>
       `${fast}是一项估算，只有一个假设：马来西亚的 AI 使用指数（${mys}）向新加坡（${sgp}）靠拢一半，数据来自${source}。因此，增长的 AI 使用会以`,
     mathsAfter: '倍的速度增长，而萎缩的使用则以同样的幅度放缓。两种前景的结论保持不变。',

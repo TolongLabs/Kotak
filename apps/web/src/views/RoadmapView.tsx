@@ -1,7 +1,7 @@
 import { accessFor } from '@kotak/sdk'
 import { addDays, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS, needsQualification, REFRESHER_ID } from '@kotak/shared'
 import { Gauge } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { AccessNotice } from '../components/kotak/AccessNotice'
@@ -14,8 +14,8 @@ import { ToolsCard } from '../components/kotak/ToolsCard'
 import { renderCited } from '../components/kotak/renderCited'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
+import { cn } from '../components/ui/cn'
 import { DatePicker } from '../components/ui/DatePicker'
-import { SdgChip } from '../components/ui/SdgChip'
 import { Slider } from '../components/ui/Slider'
 import { Stepper } from '../components/ui/Stepper'
 import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
@@ -33,7 +33,6 @@ import { isEstimatedLevel } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { useScenario } from '../session/scenario'
 import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
-import { FreeUpTimeCard } from './roadmap/FreeUpTimeCard'
 import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
 import { PathContributionCard } from './roadmap/PathContributionCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
@@ -43,6 +42,7 @@ import { type TimelineStep } from './roadmap/planSupport'
 import { startAgain } from './checkup/startAgain'
 import { commonText } from '../i18n/common'
 import { dateLocale, useLocale } from '../i18n/locale'
+import { changesText } from '../i18n/messages/changes'
 import { roadmapText } from '../i18n/messages/roadmap'
 import { useText } from '../i18n/text'
 
@@ -140,6 +140,15 @@ export function RoadmapView() {
   const [today] = useState(() => toIsoDate(new Date()))
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null)
   const [selectedStepId, setSelectedStepId] = useState<string | null>(null)
+  // Counts selections, so picking the same step again still scrolls back to it.
+  const [selectionCount, setSelectionCount] = useState(0)
+  // Steps the user opened or folded; any other step is open only when it is the next one.
+  const [openSteps, setOpenSteps] = useState<Record<string, boolean>>({})
+  const [paceOpen, setPaceOpen] = useState(false)
+  // The plan island's controls on phones and narrow desktops, where it folds to one line.
+  const [controlsOpen, setControlsOpen] = useState(false)
+  const futuresText = useText(changesText)
+  const futures = futuresText.receipts
   const cardRefs = useRef(new Map<string, HTMLElement | null>())
   const startDate = selectedStartDate ?? today
 
@@ -176,33 +185,32 @@ export function RoadmapView() {
     cardRefs.current
       .get(selectedStepId)
       ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' })
-  }, [selectedStepId])
+  }, [selectedStepId, selectionCount])
 
-  // The Weekly Hours after applying the AI dividend, with the readiness week it would bring.
-  const projection = useMemo(() => {
-    if (!checkup || bundle.status !== 'ready') return null
-    const dividend = checkup.roadmap.dividend
-    if (!(dividend.sources.length > 0 && dividend.weekly_hours_saved > 0)) return null
-    const base = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
-    const proposed = Math.min(MAX_WEEKLY_HOURS, Math.round((base + dividend.weekly_hours_saved) * 2) / 2)
-    if (proposed <= base + 0.001) return { proposed: null, readyWeek: null }
-    const data = bundle.data
-    const role =
-      [data.role, ...data.related].find((candidate) => candidate.onet_code === checkup.planRoleCode) ?? data.role
-    const checkupWithHours = computeCheckup({
-      role: data.role,
-      related: data.related,
+  // The other AI future, so the plan island can say what switching changes.
+  const otherCheckup = useMemo(() => {
+    if (bundle.status !== 'ready') return null
+    return computeCheckup({
+      role: bundle.data.role,
+      related: bundle.data.related,
       answers: session.answers,
-      snapshotId: checkup.snapshotId,
-      scenario: checkup.scenario,
-      weeklyHours: proposed,
+      snapshotId: session.active_snapshot_id,
+      scenario: scenario === 'slow' ? 'fast' : 'slow',
+      weeklyHours: session.custom_weekly_hours,
       profile: session.profile,
       startDate,
-      planRoleCode: checkup.planRoleCode
+      planRoleCode: session.plan_role_code
     })
-    const readyWeek = toReadinessPoints(checkupWithHours, role).find((point) => point.plan >= 80)?.week ?? null
-    return { proposed, readyWeek }
-  }, [checkup, bundle, session.answers, session.custom_weekly_hours, session.profile, startDate, locale])
+  }, [
+    bundle,
+    session.answers,
+    session.custom_weekly_hours,
+    session.active_snapshot_id,
+    session.plan_role_code,
+    session.profile,
+    startDate,
+    scenario
+  ])
 
   if (!assessedRoleCode(session) || !hasAnswers(session)) {
     const next = startAgain(session)
@@ -322,22 +330,6 @@ export function RoadmapView() {
   const qualificationNeeded = needsQualification(planAccess)
   const planFit = checkup.roles.find((entry) => entry.onet_code === role.onet_code)
 
-  const cornerNames = new Map(checkup.corners.map((corner) => [corner.corner_id, corner.name]))
-  const dividend = checkup.roadmap.dividend
-  const hasEstimate = dividend.sources.length > 0 && dividend.weekly_hours_saved > 0
-  const dividendTasks = hasEstimate
-    ? [...dividend.corners]
-        .filter((row) => row.weekly_hours_saved > 0)
-        .sort((left, right) => right.weekly_hours_saved - left.weekly_hours_saved)
-        .slice(0, 3)
-        .map((row) => ({
-          id: row.corner_id,
-          name: cornerNames.get(row.corner_id) ?? row.corner_id,
-          weeklyHoursSaved: row.weekly_hours_saved
-        }))
-    : []
-  const currentWeeklyHours = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
-
   const lessImportant: LessImportantItem[] = checkup.roadmap.items
     .filter((item) => item.tag !== null)
     .map((item) => {
@@ -358,6 +350,33 @@ export function RoadmapView() {
     : readinessPoints.length > 0
       ? t.fit.belowWithin(planWeeks)
       : t.fit.noEstimate
+  // What the other AI future changes in this plan: its total hours (refresher included), else its steps or their
+  // order, else the fit you start from. "Same" is said only when all three match.
+  const stepOrder = (result: Checkup) =>
+    result.roadmap.items.map((item) => `${item.corner_id}:${item.statement}`).join()
+  const startFit = (result: Checkup) =>
+    Math.round(result.roles.find((entry) => entry.onet_code === role.onet_code)?.fit.score ?? Number.NaN)
+  const [slowPlan, fastPlan] = scenario === 'slow' ? [checkup, otherCheckup] : [otherCheckup, checkup]
+  const futureReceipt =
+    slowPlan && fastPlan
+      ? Math.abs(slowPlan.roadmap.total_hours - fastPlan.roadmap.total_hours) >= 0.05
+        ? {
+            slow: futures.planHours(formatEstimate(fastPlan.roadmap.total_hours)),
+            fast: futures.planHoursDone(formatEstimate(slowPlan.roadmap.total_hours))
+          }
+        : stepOrder(slowPlan) !== stepOrder(fastPlan)
+          ? { slow: futures.planOrder, fast: futures.planOrderDone }
+          : startFit(slowPlan) !== startFit(fastPlan)
+            ? {
+                slow: futures.planStart(startFit(slowPlan), startFit(fastPlan)),
+                fast: futures.planStartDone(startFit(slowPlan), startFit(fastPlan))
+              }
+            : { slow: futures.planSame, fast: futures.planSame }
+      : null
+  const nextStepId = listSteps.find((step) => step.state === 'next')?.id
+  const stepOpen = (stepId: string) => openSteps[stepId] ?? stepId === nextStepId
+  const weeklyHours = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
+
   const reasonStep = steps[0]
   const reasonCorner = reasonStep && checkup.corners.find((corner) => corner.corner_id === reasonStep.id.split(':')[0])
   const reasonNumbers = reasonCorner ? (sourceRefs.cornerNumbers.get(reasonCorner.corner_id) ?? []) : []
@@ -394,28 +413,12 @@ export function RoadmapView() {
     updateGuestSession({ impact_area: goal === null ? null : String(goal) })
   }
 
-  function applyDividend() {
-    if (!projection?.proposed) return
-    updateGuestSession({ custom_weekly_hours: projection.proposed })
-  }
-
-  // On desktop the right column sticks, and when it is taller than the screen the browser's own jump stops where See
-  // the Maths sits while stuck, below the fold. Scroll to where the column's end has pushed the card up instead.
-  function showPaceMaths(event: MouseEvent<HTMLAnchorElement>) {
-    const card = document.getElementById('pace-maths')
-    const column = card?.parentElement
-    const columns = column?.parentElement
-    if (!card || !column || !columns || getComputedStyle(column).position !== 'sticky') return
-    event.preventDefault()
-    const columnsEnd = columns.getBoundingClientRect().bottom + window.scrollY
-    const top = columnsEnd - column.offsetHeight + card.offsetTop - parseFloat(getComputedStyle(card).scrollMarginTop)
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' })
-    card.focus({ preventScroll: true })
-  }
-
   function selectStep(stepId: string) {
     setSelectedStepId(stepId)
+    setSelectionCount((count) => count + 1)
+    setOpenSteps((current) => ({ ...current, [stepId]: true }))
+    // An open island stacks its controls below 1280 px; fold it so it cannot cover the step it scrolls to.
+    setControlsOpen(false)
   }
 
   function printPlan() {
@@ -477,8 +480,6 @@ export function RoadmapView() {
           </div>
         </header>
 
-        <ScenarioControl scenario={scenario} onChange={setScenario} className="roadmap-print-actions" />
-
         {planAccess.status !== 'open' && (
           <div className="space-y-2">
             <AccessNotice
@@ -494,29 +495,71 @@ export function RoadmapView() {
           </div>
         )}
 
+        {/* The plan island: the three controls that reshape the plan stay in view with their result, so dragging the
+            hours moves the chart and timeline under it. Phones and narrow desktops fold it to one line. */}
         <section
           aria-label={t.controls.planControls}
-          className="grid gap-6 rounded-md border border-border-subtle bg-bg-panel p-5 lg:grid-cols-2"
+          className="roadmap-print-actions surface-glass sticky top-20 z-20 rounded-md p-3 lg:top-24 xl:p-4"
         >
-          <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3 xl:hidden">
+            <div className="min-w-0">
+              <p className="truncate font-mono text-mono-s text-text-muted">
+                {t.controls.islandSummary(
+                  formatEstimate(weeklyHours),
+                  formatDayMonth(checkup.roadmap.start_date),
+                  futuresText.scenarioShort[scenario]
+                )}
+              </p>
+              <p className="text-label-l text-text-primary">{readyCopy}</p>
+            </div>
+            <button
+              type="button"
+              aria-expanded={controlsOpen}
+              aria-controls="plan-controls"
+              onClick={() => setControlsOpen((value) => !value)}
+              className="inline-flex min-h-11 shrink-0 items-center rounded-sm px-2 text-label-m text-text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+            >
+              {controlsOpen ? t.controls.done : t.controls.change}
+            </button>
+          </div>
+          <div
+            id="plan-controls"
+            className={cn(
+              'gap-4 xl:grid xl:grid-cols-[auto_minmax(0,1fr)_minmax(0,12rem)_minmax(0,14rem)] xl:items-center xl:gap-5',
+              controlsOpen ? 'mt-3 grid xl:mt-0' : 'hidden'
+            )}
+          >
+            <ScenarioControl compact scenario={scenario} onChange={setScenario} />
             <Slider
               label={t.controls.hoursPerWeek}
               min={MIN_WEEKLY_HOURS}
               max={MAX_WEEKLY_HOURS}
               step={1}
-              value={session.custom_weekly_hours ?? checkup.roadmap.weekly_hours}
+              value={weeklyHours}
               onChange={(value) => updateGuestSession({ custom_weekly_hours: value })}
               unit="h"
               formatValue={formatEstimate}
             />
+            <DatePicker
+              label={t.controls.planStartDate}
+              value={fromIsoDate(checkup.roadmap.start_date)}
+              onChange={(date) => setSelectedStartDate(toIsoDate(date))}
+              className="w-full"
+            />
+            <div role="status" className="space-y-0.5 xl:border-l xl:border-border-subtle xl:pl-4">
+              <p className="hidden font-mono text-mono-s text-text-muted xl:block">{t.controls.yourPlan}</p>
+              <p className="hidden text-title-s text-text-primary xl:block">{readyCopy}</p>
+              {futureReceipt && <p className="text-label-s text-text-muted">{futureReceipt[scenario]}</p>}
+            </div>
           </div>
-          <DatePicker
-            label={t.controls.planStartDate}
-            value={fromIsoDate(checkup.roadmap.start_date)}
-            onChange={(date) => setSelectedStartDate(toIsoDate(date))}
-            className="w-full"
-          />
         </section>
+
+        <PathContributionCard
+          steps={timelineSteps}
+          impactArea={selectedImpactArea}
+          goals={impactAreaGoals}
+          onSelectGoal={selectImpactArea}
+        />
 
         <ReadinessChart
           points={readinessPoints}
@@ -526,54 +569,6 @@ export function RoadmapView() {
           steps={timelineSteps}
           onSelectStep={selectStep}
         />
-
-        {impactAreaGoals.length > 0 && (
-          <section
-            aria-labelledby="impact-area-title"
-            className="space-y-3 rounded-md border border-border-subtle bg-bg-panel p-4"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 id="impact-area-title" className="text-label-l text-text-primary">
-                {t.controls.impactArea}
-              </h2>
-              <p className="text-body-s text-text-muted">{t.controls.highlightStepsBySdg}</p>
-            </div>
-            <div className="flex flex-wrap gap-2" role="group" aria-label={t.controls.filterStepsByImpact}>
-              <button
-                type="button"
-                aria-pressed={selectedImpactArea === null}
-                onClick={() => selectImpactArea(null)}
-                className={`inline-flex min-h-11 items-center rounded-full border px-3 py-2 text-label-s transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
-                  selectedImpactArea === null
-                    ? 'border-text-primary bg-text-primary text-bg-default'
-                    : 'border-border-control bg-bg-default text-text-primary hover:bg-bg-panel'
-                }`}
-              >
-                {t.controls.showAll}
-              </button>
-              {impactAreaGoals.map((goal) => (
-                <button
-                  key={goal}
-                  type="button"
-                  aria-pressed={selectedImpactArea === goal}
-                  onClick={() => selectImpactArea(goal)}
-                  className="inline-flex min-h-11 items-center rounded-full p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-                >
-                  <SdgChip
-                    goal={goal}
-                    className={
-                      selectedImpactArea === goal
-                        ? 'outline outline-2 outline-offset-2 outline-text-primary'
-                        : undefined
-                    }
-                  />
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <PathContributionCard steps={timelineSteps} impactArea={selectedImpactArea} />
 
         <RoadmapTimeline
           steps={timelineSteps}
@@ -596,15 +591,18 @@ export function RoadmapView() {
               <Gauge className="mt-0.5 h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
               <p>
                 <b>{t.stepDetails.paceSet}</b> {paceNote}{' '}
-                <a
-                  href="#pace-maths"
-                  onClick={showPaceMaths}
-                  className="font-semibold underline underline-offset-[3px]"
+                <button
+                  type="button"
+                  aria-expanded={paceOpen}
+                  aria-controls="pace-maths"
+                  onClick={() => setPaceOpen((value) => !value)}
+                  className="rounded-sm font-semibold underline underline-offset-[3px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                 >
                   {t.stepDetails.seeMaths}
-                </a>
+                </button>
               </p>
             </div>
+            {paceOpen && <PaceMathsCard pace={pace} scenarioAnchors={scenarioAnchors} profile={session.profile} />}
             {listSteps.length > 0 ? (
               <div className="space-y-0">
                 {listSteps.map((step, index) => (
@@ -620,6 +618,8 @@ export function RoadmapView() {
                     stepRef={recordRef(step.id)}
                     onToggle={(checked) => toggleMilestone(step.id, checked)}
                     toggleDisabled={partialIds.has(step.id)}
+                    open={stepOpen(step.id)}
+                    onToggleOpen={() => setOpenSteps((current) => ({ ...current, [step.id]: !stepOpen(step.id) }))}
                   />
                 ))}
               </div>
@@ -629,7 +629,7 @@ export function RoadmapView() {
               </p>
             )}
             {later.length > 0 && (
-              <div className="space-y-2 text-body-s text-text-muted">
+              <div className="space-y-2 rounded-md border border-dashed border-border-control bg-bg-panel p-4 text-body-s text-text-muted">
                 <h3 className="text-label-l text-text-primary">{t.stepDetails.afterWeek(planWeeks)}</h3>
                 <p>{t.stepDetails.remaining(formatEstimate(remainingHours), Math.ceil(checkup.roadmap.weeks))}</p>
                 <ul className="list-disc pl-5">
@@ -644,54 +644,41 @@ export function RoadmapView() {
             )}
           </section>
 
-          <div className="roadmap-sticky-column space-y-4 lg:sticky lg:top-24 lg:self-start">
-            <EmployerFundingCard sourceNumber={fundingSourceNumber} />
+          <div className="roadmap-sticky-column space-y-4 lg:sticky lg:top-52 lg:self-start">
             {reasonText && (
               <section aria-label={t.controls.stepDetailsAria} className="[&>section>p:first-of-type]:text-body-s">
                 <Reasoning text={reasonText} />
               </section>
             )}
-            <FreeUpTimeCard
-              estimate={
-                hasEstimate
-                  ? {
-                      weeklyHoursSaved: dividend.weekly_hours_saved,
-                      tasks: dividendTasks,
-                      citations: sourceRefs.dividendNumbers
-                    }
-                  : null
-              }
-              currentWeeklyHours={currentWeeklyHours}
-              proposedWeeklyHours={projection?.proposed ?? null}
-              readyWeekBefore={readyPoint?.week ?? null}
-              readyWeekAfter={projection?.readyWeek ?? null}
-              planWeeks={planWeeks}
-              onApply={applyDividend}
-            />
-            <div className="space-y-2">
-              {lessImportant.length > 0 ? (
-                lessImportant.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-2.5 rounded-md border border-border-subtle bg-bg-default px-4 py-3"
-                  >
-                    {item.verdict && <VerdictChip verdict={item.verdict} size="sm" />}
-                    <p className="min-w-0 text-body-s text-text-primary [overflow-wrap:anywhere]">
-                      {renderCited(item.text)}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-md border border-border-subtle bg-bg-default p-3">
-                  <p className="text-body-s text-text-muted">{t.stepDetails.noLessImportant}</p>
-                </div>
-              )}
-            </div>
-            <PaceMathsCard pace={pace} scenarioAnchors={scenarioAnchors} profile={session.profile} />
+            <EmployerFundingCard sourceNumber={fundingSourceNumber} />
           </div>
         </div>
 
-        <ToolsCard role={role} sourceNumber={toolsSourceNumber} heading={t.tools.learnWith} />
+        {lessImportant.length > 0 && (
+          <section aria-labelledby="less-important-title" className="space-y-3">
+            <div className="space-y-1">
+              <h2 id="less-important-title" className="text-title-s text-text-primary">
+                {t.stepDetails.lessImportantTitle}
+              </h2>
+              <p className="text-body-s text-text-muted">{t.stepDetails.lessImportantHint}</p>
+            </div>
+            <div className="space-y-2">
+              {lessImportant.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-2.5 rounded-md border border-border-subtle bg-bg-default px-4 py-3"
+                >
+                  {item.verdict && <VerdictChip verdict={item.verdict} size="sm" />}
+                  <p className="min-w-0 text-body-s text-text-primary [overflow-wrap:anywhere]">
+                    {renderCited(item.text)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <ToolsCard role={role} sourceNumber={toolsSourceNumber} heading={t.tools.learnWith} folded />
 
         <SourceList sources={sources} label={common.sources} />
 

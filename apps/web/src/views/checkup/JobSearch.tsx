@@ -113,7 +113,7 @@ export function JobSearch({
   return (
     <div
       ref={wrapperRef}
-      className="w-full min-w-0 max-w-[532px] space-y-2"
+      className="w-full min-w-0 space-y-2"
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false)
       }}
@@ -130,6 +130,8 @@ export function JobSearch({
         <SearchField
           ref={inputRef}
           label={label}
+          // The check-up step's heading names the field, so the label stays for screen readers only.
+          hideLabel
           placeholder={placeholder}
           shortcutHint=""
           value={query}

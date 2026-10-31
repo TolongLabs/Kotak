@@ -9,7 +9,7 @@ import {
   Route,
   Search
 } from 'lucide-react'
-import { useEffect, useState, type ComponentType } from 'react'
+import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
 import {
   EducationLevelSchema,
   type EducationLevel,
@@ -21,6 +21,7 @@ import {
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { Button } from '../components/ui/Button'
+import { cn } from '../components/ui/cn'
 import { ChoiceCard } from '../components/ui/ChoiceCard'
 import { Select } from '../components/ui/Select'
 import { Stepper } from '../components/ui/Stepper'
@@ -80,10 +81,28 @@ function wasUnsure() {
   }
 }
 
-function initialGoal(goal: string | null, profile: Profile): IntakeGoal {
+// A new visitor starts with no goal picked, so the first yellow card on the form is their own choice.
+function initialGoal(goal: string | null, profile: Profile): IntakeGoal | null {
   if (goal === 'stay' || goal === 'target') return goal
   if (goal === 'explore' && (profile.interests || wasUnsure())) return 'unsure'
-  return 'explore'
+  return goal === 'explore' ? 'explore' : null
+}
+
+// One numbered step of the form, ruled off from the one above.
+function FormStep({ n, id, title, children }: { n: number; id: string; title: string; children: ReactNode }) {
+  return (
+    <section className="@container space-y-3 border-t border-border-subtle pt-5 lg:pt-6" aria-labelledby={id}>
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-mono-m text-text-muted" aria-hidden="true">
+          {String(n).padStart(2, '0')}
+        </span>
+        <h2 id={id} className="text-title-s text-text-primary">
+          {title}
+        </h2>
+      </div>
+      {children}
+    </section>
+  )
 }
 
 export function CheckUpView() {
@@ -104,7 +123,7 @@ export function CheckUpView() {
   const [field, setField] = useState<string | null>(saved.field_of_study)
   const [years, setYears] = useState<number | null>(saved.years_experience)
   const [job, setJob] = useState<Pick<Occupation, 'onet_code' | 'title'> | null>(null)
-  const [goal, setGoal] = useState<IntakeGoal>(() => initialGoal(session.goal, saved))
+  const [goal, setGoal] = useState<IntakeGoal | null>(() => initialGoal(session.goal, saved))
   const [targets, setTargets] = useState<Pick<Occupation, 'onet_code' | 'title'>[]>([])
   const [areas, setAreas] = useState<string[]>(saved.interest_areas)
   const [restored, setRestored] = useState(false)
@@ -133,7 +152,7 @@ export function CheckUpView() {
   // Between jobs or returning, "stay" becomes getting back into the last job, once the user has named it.
   const backToLastJob = (situation === 'between_jobs' || situation === 'returning') && job !== null
   const goals = goalOptions.filter((option) => option.id !== 'stay' || jobNow || backToLastJob)
-  const effectiveGoal: IntakeGoal = goal === 'stay' && !jobNow && !backToLastJob ? 'explore' : goal
+  const effectiveGoal: IntakeGoal | null = goal === 'stay' && !jobNow && !backToLastJob ? 'explore' : goal
   const targetIsJob = job !== null && targets.some((target) => target.onet_code === job.onet_code)
   // Without a job to test, "show me where" needs something to go on, and Kopi suggests roles before any question.
   const suggestsFirst = effectiveGoal === 'unsure' || (effectiveGoal === 'explore' && !job)
@@ -145,17 +164,19 @@ export function CheckUpView() {
         ? targets.length > 0 && !targetIsJob
         : effectiveGoal === 'explore'
           ? job !== null || areas.length > 0 || (field !== null && field !== 'other')
-          : true)
+          : effectiveGoal === 'unsure')
   const missing =
     situation === null
       ? t.copy.missingSituation
-      : effectiveGoal === 'stay' && !job
-        ? t.copy.missingJob
-        : effectiveGoal === 'target' && targets.length === 0
-          ? t.copy.missingTarget
-          : effectiveGoal === 'explore' && !canStart
-            ? t.copy.missingExplore
-            : null
+      : effectiveGoal === null
+        ? t.copy.missingGoal
+        : effectiveGoal === 'stay' && !job
+          ? t.copy.missingJob
+          : effectiveGoal === 'target' && targets.length === 0
+            ? t.copy.missingTarget
+            : effectiveGoal === 'explore' && !canStart
+              ? t.copy.missingExplore
+              : null
 
   const educationOptions = [
     { value: '', label: t.study.preferNot },
@@ -191,7 +212,7 @@ export function CheckUpView() {
 
   // A new check-up starts from blank answers, so the radar never mixes two jobs' answers.
   const start = () => {
-    if (!canStart) return
+    if (!canStart || effectiveGoal === null) return
     rememberUnsure(effectiveGoal === 'unsure')
     const fresh = {
       role_code: job?.onet_code ?? null,
@@ -224,14 +245,17 @@ export function CheckUpView() {
         <h1 id="about-heading" className="text-title-m text-text-primary lg:text-title-l">
           {t.copy.heading}
         </h1>
-        <p className="text-body-s text-text-muted">{t.copy.intro}</p>
+        <p className="max-w-[65ch] text-body-s text-text-muted">{t.copy.intro}</p>
       </section>
 
-      <section className="space-y-3" aria-labelledby="situation-heading">
-        <h2 id="situation-heading" className="text-label-l text-text-primary">
-          {t.copy.situationHeading}
-        </h2>
-        <div role="radiogroup" aria-labelledby="situation-heading" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {/* One grid for the whole form (#410 polish): every step fills equal columns, so no card sits alone and every
+          step ends on the same right edge. Five situations take one row once there is room, else two and one wide. */}
+      <FormStep n={1} id="situation-heading" title={t.copy.situationHeading}>
+        <div
+          role="radiogroup"
+          aria-labelledby="situation-heading"
+          className="grid gap-3 @xl:grid-cols-2 @xl:[&>*:last-child]:col-span-2 @4xl:grid-cols-5 @4xl:[&>*:last-child]:col-span-1"
+        >
           {situations.map((option) => (
             <ChoiceCard
               key={option.id}
@@ -242,16 +266,14 @@ export function CheckUpView() {
               icon={option.icon}
               selected={situation === option.id}
               onSelect={(value) => setSituation(value as Situation)}
+              stacked
             />
           ))}
         </div>
-      </section>
+      </FormStep>
 
-      <section className="space-y-3" aria-labelledby="study-heading">
-        <h2 id="study-heading" className="text-label-l text-text-primary">
-          {t.copy.studyHeading}
-        </h2>
-        <div className="grid max-w-[720px] gap-4 sm:grid-cols-2">
+      <FormStep n={2} id="study-heading" title={t.copy.studyHeading}>
+        <div className={cn('grid gap-4', situation === 'studying' ? '@xl:grid-cols-2' : '@xl:grid-cols-3')}>
           <Select
             label={t.copy.qualification}
             options={educationOptions}
@@ -278,13 +300,9 @@ export function CheckUpView() {
             />
           )}
         </div>
-      </section>
+      </FormStep>
 
-      <section className="space-y-3" aria-labelledby="work-heading">
-        <h2 id="work-heading" className="text-label-l text-text-primary">
-          {jobNow ? t.copy.work : t.copy.workIfAny}
-        </h2>
-        <p className="text-body-s text-text-muted">{t.copy.jobSearchHint(900)}</p>
+      <FormStep n={3} id="work-heading" title={jobNow ? t.copy.work : t.copy.workIfAny}>
         <JobSearch
           key={restored ? 'restored' : 'initial'}
           roles={roles}
@@ -295,13 +313,15 @@ export function CheckUpView() {
           onAccept={setJob}
           initialQuery={jobQuery || job?.title || ''}
         />
-      </section>
+        <p className="text-body-s text-text-muted">{t.copy.jobSearchHint(900)}</p>
+      </FormStep>
 
-      <section className="space-y-3" aria-labelledby="goal-heading">
-        <h2 id="goal-heading" className="text-label-l text-text-primary">
-          {t.copy.goalHeading}
-        </h2>
-        <div role="radiogroup" aria-labelledby="goal-heading" className="grid gap-4 sm:grid-cols-2">
+      <FormStep n={4} id="goal-heading" title={t.copy.goalHeading}>
+        <div
+          role="radiogroup"
+          aria-labelledby="goal-heading"
+          className={cn('grid gap-3', goals.length === 4 ? '@xl:grid-cols-2 @4xl:grid-cols-4' : '@2xl:grid-cols-3')}
+        >
           {goals.map((option) => (
             <ChoiceCard
               key={option.id}
@@ -316,16 +336,14 @@ export function CheckUpView() {
               icon={option.icon}
               selected={effectiveGoal === option.id}
               onSelect={(value) => setGoal(value as IntakeGoal)}
+              stacked
             />
           ))}
         </div>
-      </section>
+      </FormStep>
 
       {effectiveGoal === 'target' && (
-        <section className="space-y-3" aria-labelledby="target-role-heading">
-          <h2 id="target-role-heading" className="text-label-l text-text-primary">
-            {t.copy.targetHeading}
-          </h2>
+        <FormStep n={5} id="target-role-heading" title={t.copy.targetHeading}>
           <TargetPicker
             roles={roles}
             aliases={aliases}
@@ -338,17 +356,13 @@ export function CheckUpView() {
               {t.copy.targetDifferent}
             </p>
           )}
-        </section>
+        </FormStep>
       )}
 
       {effectiveGoal === 'explore' && pathways.status === 'ready' && (
-        <section className="space-y-3" aria-labelledby="areas-heading">
-          <h2 id="areas-heading" className="text-label-l text-text-primary">
-            {t.copy.areasHeading}
-            {job ? t.copy.optional : ''}
-          </h2>
+        <FormStep n={5} id="areas-heading" title={`${t.copy.areasHeading}${job ? t.copy.optional : ''}`}>
           <AreaPicker areas={pathways.data.areas} selected={areas} onChange={setAreas} />
-        </section>
+        </FormStep>
       )}
 
       <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 space-y-2 rounded-md p-3 lg:static lg:rounded-none lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">

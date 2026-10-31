@@ -614,7 +614,7 @@ export const checkupText = defineText(
     copy: {
       heading: 'Tell Kopi About You',
       intro:
-        'Your study and situation decide which roles Kopi shows, and tell you when a role needs a qualification. It stays in this browser, unless you ask Kopi a question, which sends it with your check-up.',
+        'Kopi uses this to pick the roles worth checking and to flag a role that needs a qualification. It stays in this browser; asking Kopi a question sends it with your check-up.',
       situationHeading: 'Right Now, I’m',
       studyHeading: 'Your Study and Experience',
       qualification: 'Highest Qualification',
@@ -629,6 +629,7 @@ export const checkupText = defineText(
       areasHeading: 'Areas That Interest You',
       optional: ' (Optional)',
       missingSituation: 'Pick where you are right now.',
+      missingGoal: 'Pick what you want from Kotak.',
       missingJob: 'Type your job title to test you on it.',
       missingTarget: 'Name the role you want.',
       missingExplore: 'Pick an area, your field of study or a job, so Kopi has something to go on.'
@@ -691,7 +692,6 @@ export const checkupText = defineText(
       ratings: { 1: 'Not yet', 2: 'A little', 3: 'Mostly', 4: 'Yes, on my own' },
       ratingAria: (value: number, caption: string) => `${value} ${caption}`,
       previous: 'Previous Question',
-      pressKeys: (from: number, to: number) => `Press ${from} to ${to}`,
       hiddenHeading: 'Check-Up Questions',
       about: 'About this question',
       skillArea: 'Skill area',
@@ -825,6 +825,7 @@ export const checkupText = defineText(
       areasHeading: 'Bidang Yang Anda Minati',
       optional: ' (Pilihan)',
       missingSituation: 'Pilih keadaan anda sekarang.',
+      missingGoal: 'Pilih apa yang anda mahu daripada Kotak.',
       missingJob: 'Taip jawatan anda untuk diuji.',
       missingTarget: 'Namakan peranan yang anda mahu.',
       missingExplore: 'Pilih bidang, bidang pengajian atau pekerjaan supaya Kopi boleh mencadangkan sesuatu.'
@@ -887,7 +888,6 @@ export const checkupText = defineText(
       ratings: { 1: 'Belum', 2: 'Sedikit', 3: 'Kebanyakannya', 4: 'Ya, sendiri' },
       ratingAria: (value: number, caption: string) => `${value} ${caption}`,
       previous: 'Soalan Sebelumnya',
-      pressKeys: (from: number, to: number) => `Tekan ${from} hingga ${to}`,
       hiddenHeading: 'Soalan Semakan',
       about: 'Tentang soalan ini',
       skillArea: 'Bidang Kemahiran',
@@ -1009,6 +1009,7 @@ export const checkupText = defineText(
       areasHeading: '你感兴趣的领域',
       optional: '（选填）',
       missingSituation: '请选择你目前的情况。',
+      missingGoal: '请选择你想从 Kotak 得到什么。',
       missingJob: '输入你的职位名称，才能检测你的能力。',
       missingTarget: '填写你想要的职位。',
       missingExplore: '选择一个感兴趣的领域、学业领域或工作，让 Kopi 有更多线索。'
@@ -1070,7 +1071,6 @@ export const checkupText = defineText(
       ratings: { 1: '还不会', 2: '会一点', 3: '大多会', 4: '能独立完成' },
       ratingAria: (value: number, caption: string) => `${value} ${caption}`,
       previous: '上一题',
-      pressKeys: (from: number, to: number) => `按 ${from} 至 ${to} 键`,
       hiddenHeading: '检测问题',
       about: '关于这个问题',
       skillArea: '技能领域',

@@ -94,7 +94,7 @@ SDG chips use the official UN colours. The text is ink (`#191812`) or white per 
 - Verdict chips keep their icon and word. Rising uses the success green and Declining the error red (text, border and a light tint over an opaque background); Steady, Split and Unknown stay ink. Decided by the user on 23 October 2026.
 - Use the state colours for messages only: success, warning and error.
 - Every card, container and CTA has a solid or glass background. Never use a see-through or half-transparent one. The 3D space is the one exception: everything over its scene is drawn straight on it (see Layout).
-- Use glass only for floating islands: the landing nav, the app top bars and sticky action bars. Glass always pairs the `color/surface/glass` fill with a 24 px background blur and a 1 px `color/border/subtle` line.
+- Use glass only for floating islands: the landing nav, the app top bars, sticky action bars and the Roadmap's plan island. Glass always pairs the `color/surface/glass` fill with a 24 px background blur and a 1 px `color/border/subtle` line.
 
 ## Typography
 
@@ -139,7 +139,7 @@ The smallest text is 12 px.
 - An Ask Kopi button floats in the bottom-right corner of every `/app` page and opens Kopi's chat as a window just above it, about 26rem wide and up to 36rem tall, leaving the page in view and usable. The window is non-modal: the button, the window's close button or Escape inside the window closes it, and focus returns to the button. Phone action bars stick `--ask-kopi-clearance` above the bottom, and pages leave extra room at the end, so the button never covers either.
 - Columns are symmetrical. Two columns are 532 + 24 + 532 px, three are equal thirds and the four stat cards are equal quarters. Cards in one row share one height.
 - Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the page header, then the content. The Dashboard opens with its greeting, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
-- Sticky parts: the top bar everywhere; on desktop, the radar column on the Radar and What Changed pages and the reasoning column on the Roadmap page; on phone, the main action bar at the bottom.
+- Sticky parts: the top bar everywhere; the Roadmap's plan island just under it; on desktop, the radar column on the What Changed page and the Roadmap's side column (Why Kopi Says This and the funding card) under the island; on phone, the main action bar at the bottom.
 - Questions and the AI Unavailable state centre a single column. Every other app page and state uses the full content width, including Check-Up Start, No Job Match, and the empty, loading and error states.
 - Every landing section fills the viewport (at least `100svh`) and centres its content in a 1312 px column with 64 px side padding. The hero fits the nav, headline and example stage in one screen at 1440 × 790; taller content grows a section instead of clipping. Sections alternate panel, white and dark grounds, split by a 1 px `color/border/subtle` line.
 - Landing lists are ruled rows, not card grids: the three sample worries and the five data sources each set one row in Display/33, after [mkdir.directory](https://mkdir.directory/). How It Works is three ruled columns whose artifacts share a floor.
@@ -202,7 +202,7 @@ Every component lives on the Components page. Build each one as a custom compone
 - Focus rings use `color/focus/ring`: ink in light mode, yellow in dark mode.
 - A quadrant map dot's focus ring has a 2 px `color/bg/default` halo inside and outside it, so the ring keeps 3:1 against whatever it touches. The yellow ring alone is 2.5:1 on the dark Best box.
 - Disabled fields show a lock icon and the not-allowed cursor, as on the pilot's guest-only Auth page.
-- The Questions page takes the number keys 1 to 4 on desktop.
+- The Questions page takes the number keys 1 to 4 on desktop, with no visible hint; each option announces its key.
 - Respect reduced motion, and keep Kopi's mute button one tap away.
 
 ## Screens
@@ -232,7 +232,16 @@ On Matched Roles and Roles to Check, the highlighted card carries one bold line 
 
 The 3D space has no mockup; its rules are under [Layout](#layout) and [Motion](#motion).
 
-The app dropped two parts of the mockups in #167: the National View screen and the radar's Scenario Switch. The radar shows the slow scenario, and the national view is read through Kotak's `national_skill_gaps` tool in Ask Kopi or an MCP client.
+The app dropped the National View screen in #167; it is read through Kotak's `national_skill_gaps` tool in Ask Kopi or an MCP client. The radar's Scenario Switch came back in #389 as the AI futures switch below.
+
+The results pages changed after the mockups in the finals polish (31 October 2026):
+
+- **Check-Up: Start** is four numbered steps, ruled apart, on one grid of equal columns: situations in fifths, study and experience in thirds, the job at full width and goals in thirds or quarters. No goal is picked until the user picks one.
+- **The AI futures switch** sits under the page header on Radar, Roles and the job page, and in the Roadmap's plan island. It asks "Which AI Future?" beside an Estimate tag, gives each option the 3D space's one line, opens What Changes? with Malaysia's usage-index ruler, and has a status line that says what switching would change and then what it changed.
+- **Evidence one tap away**: a gap's sources, the quadrant map's table, the job ads' breakdown (with the O*NET tools), See the Maths and Tools to Learn With start folded. The gap list prints the reasoning footer once.
+- **Skills SWOT** is four ruled rows, each with its quadrant's colour as a swatch; an empty quadrant takes one line.
+- **Matched Roles**: every role card keeps the same rows in the same places (tag line, title and fit, bar, outlook, missing, one meta line). The SDG chips sit once, in the selected role's detail card, beside the role's title.
+- **Roadmap**: the plan island holds the AI future, Hours Per Week, Plan Start Date and the result; below 1280 px it folds to one line with a Change button. The impact card (What This Path Contributes To, with the SDG filter) opens the page. Steps fold to one row except the next one, and Export as PDF prints them all. The readiness line is smooth but stays level through each step and rises only in its last week, so it reaches 80% no more than a week before the week the plan names. Free Up Time With AI is gone.
 
 ## See also
 

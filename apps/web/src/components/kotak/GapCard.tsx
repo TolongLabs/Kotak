@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import type { ReactNode } from 'react'
 import type { Corner, Scenario, SourceRef } from '../../demo/types'
+import { commonText } from '../../i18n/common'
 import { radarText } from '../../i18n/messages/radar'
 import { useText } from '../../i18n/text'
+import { Disclosure } from '../ui/Disclosure'
+import { cn } from '../ui/cn'
 import { Reasoning } from './Reasoning'
 import { SourceReference } from './SourceReference'
 import { LevelMeter } from './LevelMeter'
@@ -13,48 +16,41 @@ export interface GapCardProps {
   paused?: boolean
   scenario?: Scenario
   neededLabel?: string
+  /** Beside the level meter, such as the SDG targets that closing the gap supports. */
+  aside?: ReactNode
 }
 
-export function GapCard({ corner, sources, paused = false, scenario = 'slow', neededLabel }: GapCardProps) {
+// The verdict, the levels and the one-line why up front; the sources one tap away, since every citation in the why
+// also opens All Sources. The list under the cards prints the rules footer once (ReasoningFooter).
+export function GapCard({ corner, sources, paused = false, scenario = 'slow', neededLabel, aside }: GapCardProps) {
   const t = useText(radarText)
+  const common = useText(commonText)
   const needed = scenario === 'slow' ? corner.neededSlow : corner.neededFast
-  // Two sources up front, as on the landing example card; the rest open and close in place.
-  const [showAll, setShowAll] = useState(false)
-  const shownSources = showAll ? sources : sources.slice(0, 2)
-  const hiddenCount = sources.length - shownSources.length
 
   return (
-    <article className="surface-card space-y-3 p-4">
+    <article className={cn('surface-card space-y-3 px-4 pt-4', sources.length === 0 && 'pb-4')}>
       <header className="flex items-start justify-between gap-3">
         <h3 className="min-w-0 break-words text-title-s text-text-primary">{corner.name}</h3>
         <VerdictChip verdict={corner.verdict} size="sm" />
       </header>
 
-      <LevelMeter you={corner.you} needed={needed} neededLabel={neededLabel} />
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+        <LevelMeter you={corner.you} needed={needed} neededLabel={neededLabel} />
+        {aside}
+      </div>
 
-      {corner.reasoning ? <Reasoning text={corner.reasoning} paused={paused} /> : null}
+      {corner.reasoning ? <Reasoning text={corner.reasoning} paused={paused} compact /> : null}
 
-      {shownSources.length > 0 ? (
-        <ul className="space-y-2" aria-label={t.sourcesFor(corner.name)}>
-          {shownSources.map((source) => (
-            <li key={source.n}>
-              <SourceReference source={source} />
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {sources.length > 2 ? (
-        <div className="flex justify-center">
-          <button
-            type="button"
-            aria-expanded={showAll}
-            onClick={() => setShowAll((value) => !value)}
-            className="inline-flex min-h-11 items-center px-2 text-label-s font-semibold text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted"
-          >
-            {showAll ? t.showFewerSources : t.moreSources(hiddenCount)}
-          </button>
-        </div>
+      {sources.length > 0 ? (
+        <Disclosure title={`${common.sources} (${sources.length})`}>
+          <ul className="space-y-2" aria-label={t.sourcesFor(corner.name)}>
+            {sources.map((source) => (
+              <li key={source.n}>
+                <SourceReference source={source} />
+              </li>
+            ))}
+          </ul>
+        </Disclosure>
       ) : null}
     </article>
   )

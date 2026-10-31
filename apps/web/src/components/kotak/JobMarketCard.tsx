@@ -1,5 +1,8 @@
 import { JOB_MARKET_MIN_SKILL_ADS, JobMarketLevelSchema, type JobMarketLevel } from '@kotak/shared'
 import type { JobMarket } from '../../engine/api'
+import type { ReactNode } from 'react'
+import { Disclosure } from '../ui/Disclosure'
+import { cn } from '../ui/cn'
 import { Citation } from '../ui/Citation'
 import { dateLocale } from '../../i18n/locale'
 import { rolesText } from '../../i18n/messages/roles'
@@ -128,13 +131,16 @@ export function JobMarketCard({
   market,
   roleTitle,
   sourceNumber,
-  level = null
+  level = null,
+  children
 }: {
   market: JobMarket
   roleTitle: string
   sourceNumber: number
   // The user's level from their years of work, whose pay leads when enough ads at that level state it.
   level?: JobMarketLevel | null
+  /** More detail for the end of the breakdown, such as the O*NET tools. */
+  children?: ReactNode
 }) {
   const t = useText(rolesText)
   const { ads, pay, skills, benefits, popularity } = market
@@ -156,23 +162,8 @@ export function JobMarketCard({
         {t.market.intro(ads.reviewed, roleTitle, dateLabel(market.source.vintage_date))}
       </p>
 
-      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {popularity && (
-          <div className="rounded-md border border-border-subtle p-3 sm:col-span-2">
-            <dt className="text-label-m text-text-muted">{t.market.popularityTitle}</dt>
-            <dd className="text-title-m tabular-nums text-text-primary">
-              {t.market.popularityHeadline(popularity.estimated_ads, rank ?? null)}
-            </dd>
-            <dd className="text-body-s text-text-muted">
-              {t.market.popularitySample(
-                popularity.search_ads,
-                popularity.search_title,
-                shareLabel(popularity.sample_approved, popularity.sample_reviewed),
-                popularity.sample_reviewed
-              )}
-            </dd>
-          </div>
-        )}
+      {/* Three headline tiles; the rest of what the ads say is one tap away. */}
+      <dl className={cn('grid grid-cols-1 gap-3', popularity ? 'sm:grid-cols-3' : 'sm:grid-cols-2')}>
         <div className="rounded-md border border-border-subtle p-3">
           <dt className="text-label-m text-text-muted">{t.market.activeAds}</dt>
           <dd className="text-title-m tabular-nums text-text-primary">{ads.active.toLocaleString('en-MY')}</dd>
@@ -213,68 +204,91 @@ export function JobMarketCard({
             </>
           )}
         </div>
+        {popularity && (
+          <div className="rounded-md border border-border-subtle p-3">
+            <dt className="text-label-m text-text-muted">{t.market.popularityTitle}</dt>
+            <dd className="text-title-m tabular-nums text-text-primary">{t.market.about(popularity.estimated_ads)}</dd>
+            {rank && <dd className="text-body-s text-text-muted first-letter:uppercase">{rank}</dd>}
+          </div>
+        )}
       </dl>
 
-      <LevelPay market={market} level={level} />
-
-      <ShareList label={t.market.whereJobs} items={market.regions} base={ads.active} />
-      {(otherStates > 0 || market.without_state > 0 || market.remote > 0 || market.hybrid > 0) && (
-        <p className="text-body-s text-text-muted">
-          {t.market.distribution(otherStates, market.without_state, market.remote, market.hybrid)}
-        </p>
-      )}
-
-      {skills ? (
-        <>
-          <ShareList
-            label={t.market.toolsNamed}
-            items={skills.tools.map((skill) => ({ name: skill.label, ads: skill.ads }))}
-            base={skills.ads_checked}
-          />
-          <ShareList
-            label={t.market.languagesAsked}
-            items={skills.languages.map((skill) => ({ name: skill.label, ads: skill.ads }))}
-            base={skills.ads_checked}
-          />
-          <div className="space-y-1">
-            <h3 className="text-label-m text-text-primary">{t.market.aiInAds}</h3>
-            <p className="text-body-s text-text-primary">
-              {skills.ai_ads > 0
-                ? t.market.aiShare(
-                    shareLabel(skills.ai_ads, skills.ads_checked),
-                    skills.ai.map((skill) => skill.label).join(t.market.skillSeparator)
-                  )
-                : t.market.noAi}
-            </p>
-          </div>
-          <p className="text-body-s text-text-muted">
-            {t.market.sharesOfAds(skills.ads_checked)} {t.market.skillCaveat}
-          </p>
-        </>
-      ) : (
-        <p className="text-body-s text-text-muted">
-          {ads.active >= JOB_MARKET_MIN_SKILL_ADS ? t.market.notEnoughRead : t.market.tooFewAdsSkills}
-        </p>
-      )}
-
-      {benefits &&
-        (benefits.items.length ? (
-          <>
-            <ShareList
-              label={t.market.benefitsNamed}
-              items={benefits.items.map((benefit) => ({
-                name: t.benefits[benefit.key] ?? benefit.label,
-                ads: benefit.ads
-              }))}
-              base={benefits.ads_checked}
-            />
+      <Disclosure title={t.market.fullBreakdown} meta={t.market.fullBreakdownMeta}>
+        <div className="space-y-4">
+          {popularity && (
             <p className="text-body-s text-text-muted">
-              {t.market.benefitShare(benefits.ads_checked)} {t.market.benefitCaveat}
+              {t.market.popularitySample(
+                popularity.search_ads,
+                popularity.search_title,
+                shareLabel(popularity.sample_approved, popularity.sample_reviewed),
+                popularity.sample_reviewed
+              )}
             </p>
-          </>
-        ) : (
-          <p className="text-body-s text-text-muted">{t.market.noBenefits(benefits.ads_checked)}</p>
-        ))}
+          )}
+
+          <LevelPay market={market} level={level} />
+
+          <ShareList label={t.market.whereJobs} items={market.regions} base={ads.active} />
+          {(otherStates > 0 || market.without_state > 0 || market.remote > 0 || market.hybrid > 0) && (
+            <p className="text-body-s text-text-muted">
+              {t.market.distribution(otherStates, market.without_state, market.remote, market.hybrid)}
+            </p>
+          )}
+
+          {skills ? (
+            <>
+              <ShareList
+                label={t.market.toolsNamed}
+                items={skills.tools.map((skill) => ({ name: skill.label, ads: skill.ads }))}
+                base={skills.ads_checked}
+              />
+              <ShareList
+                label={t.market.languagesAsked}
+                items={skills.languages.map((skill) => ({ name: skill.label, ads: skill.ads }))}
+                base={skills.ads_checked}
+              />
+              <div className="space-y-1">
+                <h3 className="text-label-m text-text-primary">{t.market.aiInAds}</h3>
+                <p className="text-body-s text-text-primary">
+                  {skills.ai_ads > 0
+                    ? t.market.aiShare(
+                        shareLabel(skills.ai_ads, skills.ads_checked),
+                        skills.ai.map((skill) => skill.label).join(t.market.skillSeparator)
+                      )
+                    : t.market.noAi}
+                </p>
+              </div>
+              <p className="text-body-s text-text-muted">
+                {t.market.sharesOfAds(skills.ads_checked)} {t.market.skillCaveat}
+              </p>
+            </>
+          ) : (
+            <p className="text-body-s text-text-muted">
+              {ads.active >= JOB_MARKET_MIN_SKILL_ADS ? t.market.notEnoughRead : t.market.tooFewAdsSkills}
+            </p>
+          )}
+
+          {benefits &&
+            (benefits.items.length ? (
+              <>
+                <ShareList
+                  label={t.market.benefitsNamed}
+                  items={benefits.items.map((benefit) => ({
+                    name: t.benefits[benefit.key] ?? benefit.label,
+                    ads: benefit.ads
+                  }))}
+                  base={benefits.ads_checked}
+                />
+                <p className="text-body-s text-text-muted">
+                  {t.market.benefitShare(benefits.ads_checked)} {t.market.benefitCaveat}
+                </p>
+              </>
+            ) : (
+              <p className="text-body-s text-text-muted">{t.market.noBenefits(benefits.ads_checked)}</p>
+            ))}
+          {children}
+        </div>
+      </Disclosure>
     </section>
   )
 }

@@ -474,8 +474,9 @@ export const rolesText = defineText(
         default: 'Roles That Fit You'
       },
       intro: {
-        fitAndOutlook:
-          'Fit is the share of each role’s needed levels you already meet. Outlook comes from DOSM job ads and AI use for that role.',
+        fit: 'Fit is the share of each role’s needed levels you already meet.',
+        outlook: 'Outlook comes from DOSM job ads and AI use for that role.',
+        about: 'About These Numbers',
         widened: ' Roles from your own choices come first.',
         cardSelection: 'The details below and your roadmap follow the highlighted card; pick any card to switch.',
         marketSource: 'Active ads, JobStreet estimates and median pay come from JobStreet ads Kotak’s admins approved'
@@ -618,6 +619,8 @@ export const rolesText = defineText(
       intro: (reviewed: number, title: string, date: string) =>
         `From ${reviewed.toLocaleString('en-MY')} ${reviewed === 1 ? 'JobStreet ad' : 'JobStreet ads'} Kotak’s admins approved for ${title}, last seen ${date}. This is context: it sets no verdict.`,
       popularityTitle: 'Ads on JobStreet',
+      fullBreakdown: 'Show the Full Breakdown',
+      fullBreakdownMeta: 'Pay by level, places, tools, languages, AI in ads and benefits',
       about: (count: number) => `About ${count.toLocaleString('en-MY')}`,
       popularityHeadline: (count: number, rank: string | null) =>
         `About ${count.toLocaleString('en-MY')}${rank ? `, ${rank}` : ''}`,
@@ -806,8 +809,9 @@ export const rolesText = defineText(
         default: 'Peranan yang Sesuai untuk Anda'
       },
       intro: {
-        fitAndOutlook:
-          'Padanan menunjukkan bahagian tahap yang diperlukan bagi setiap peranan yang sudah anda capai. Prospek berdasarkan iklan kerja DOSM dan penggunaan AI untuk peranan itu.',
+        fit: 'Padanan menunjukkan bahagian tahap yang diperlukan bagi setiap peranan yang sudah anda capai.',
+        outlook: 'Prospek berdasarkan iklan kerja DOSM dan penggunaan AI untuk peranan itu.',
+        about: 'Tentang Angka Ini',
         widened: ' Peranan daripada pilihan anda sendiri dipaparkan dahulu.',
         cardSelection:
           'Butiran di bawah dan peta jalan anda mengikut kad yang diserlahkan; pilih mana-mana kad untuk menukarnya.',
@@ -948,6 +952,8 @@ export const rolesText = defineText(
       intro: (reviewed, title, date) =>
         `Daripada ${reviewed.toLocaleString('en-MY')} iklan JobStreet yang diluluskan oleh pentadbir Kotak untuk ${title}, terakhir dilihat pada ${date}. Ini sebagai konteks sahaja; bukan penilaian.`,
       popularityTitle: 'Iklan di JobStreet',
+      fullBreakdown: 'Tunjukkan Pecahan Penuh',
+      fullBreakdownMeta: 'Gaji ikut tahap, lokasi, alatan, bahasa, AI dalam iklan dan faedah',
       about: (count) => `Kira-kira ${count.toLocaleString('en-MY')}`,
       popularityHeadline: (count, rank) => `Kira-kira ${count.toLocaleString('en-MY')}${rank ? `, ${rank}` : ''}`,
       popularitySample: (count, title, approved, reviewed) =>
@@ -1123,7 +1129,9 @@ export const rolesText = defineText(
         default: '适合你的职位'
       },
       intro: {
-        fitAndOutlook: '匹配度表示你已达到每个职位所需水平的比例。前景依据 DOSM 招聘广告和该职位的 AI 使用情况。',
+        fit: '匹配度表示你已达到每个职位所需水平的比例。',
+        outlook: '前景依据 DOSM 招聘广告和该职位的 AI 使用情况。',
+        about: '关于这些数字',
         widened: ' 你自己选择的职位会优先显示。',
         cardSelection: '下方详情和路线图会跟随突出显示的卡片；选择其他卡片即可切换。',
         marketSource: '活跃招聘广告、JobStreet 估算数据和薪资中位数，来自 Kotak 管理员审核过的 JobStreet 广告'
@@ -1256,6 +1264,8 @@ export const rolesText = defineText(
       intro: (reviewed, title, date) =>
         `Kotak 管理员审核的 ${reviewed.toLocaleString('en-MY')} 则 JobStreet 招聘广告，涉及 ${title}，最近查看于 ${date}。这些信息仅供参考，不代表趋势判断。`,
       popularityTitle: 'JobStreet 招聘广告',
+      fullBreakdown: '查看完整细分',
+      fullBreakdownMeta: '按级别的薪资、地点、工具、语言、广告中的 AI 和福利',
       about: (count) => `约 ${count.toLocaleString('en-MY')}`,
       popularityHeadline: (count, rank) =>
         `JobStreet 估算约有 ${count.toLocaleString('en-MY')} 则广告${rank ? `，${rank}` : ''}`,

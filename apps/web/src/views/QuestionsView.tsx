@@ -261,7 +261,7 @@ export function QuestionsView() {
         )}
       </section>
 
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+      <div className="flex justify-center">
         <button
           type="button"
           disabled={asked.length === 0 || chosen !== null}
@@ -274,7 +274,6 @@ export function QuestionsView() {
         >
           {t.questions.previous}
         </button>
-        <span className="hidden font-mono text-mono-s text-text-muted lg:block">{t.questions.pressKeys(1, 4)}</span>
       </div>
     </QuestionsFrame>
   )
