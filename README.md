@@ -383,14 +383,14 @@ bun test
 
 ### Run CI Locally
 
-TolongLabs' free GitHub Actions minutes are used up, so pull requests get no checks and a merge to `main` doesn't deploy. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
+GitHub Actions checks pull requests and deploys merges to `main`. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
 
 ```bash
 echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' >> ~/.actrc
 ```
 
 ```bash
-bun run ci:local       # the pull request check: typecheck, build and a Worker dry run
+bun run ci:local       # the pull request check: typecheck, build, fairness and a Worker dry run
 bun run deploy:local   # the production deploy, as a push to main would run it
 bun run refresh:local  # the weekly data refresh; add --input dry_run=true to only check
 ```
