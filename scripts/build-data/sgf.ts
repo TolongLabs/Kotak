@@ -27,6 +27,16 @@ type Inputs = Awaited<ReturnType<typeof loadSgfInputs>>
 /** A title that names a rank, such as Lead UI Designer, shows after the plain one, so the equivalent reads as the job. */
 const RANKED = /\b(associate|assistant|senior|lead|principal|head|chief|director|manager|partner|vice)\b/i
 
+/** Two sectors can name the same skill with different codes; a corner shows it once, at the higher level. */
+function uniqueByTitle<T extends { title: string; proficiency_level: number | null }>(skills: T[]): T[] {
+  const best = new Map<string, T>()
+  for (const skill of skills) {
+    const seen = best.get(skill.title)
+    if (!seen || (skill.proficiency_level ?? 0) > (seen.proficiency_level ?? 0)) best.set(skill.title, skill)
+  }
+  return skills.filter((skill) => best.get(skill.title) === skill)
+}
+
 export function roleSgf(inputs: Inputs, code: string, cornerIds: string[]): BundleRole['sgf'] {
   const roles = sgfMatchedRoles(inputs.crosswalk, code).map((id) => {
     const role = inputs.roles.roles[id]
@@ -42,7 +52,7 @@ export function roleSgf(inputs: Inputs, code: string, cornerIds: string[]): Bund
   const corners = Object.fromEntries(
     cornerIds.flatMap((id) =>
       (linked[id]?.length ?? 0) > 0
-        ? [[id, linked[id].map((skill) => ({ ...skill, description: describe(skill.code) }))]]
+        ? [[id, uniqueByTitle(linked[id]).map((skill) => ({ ...skill, description: describe(skill.code) }))]]
         : []
     )
   )

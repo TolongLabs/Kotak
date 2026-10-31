@@ -6,15 +6,16 @@
 //   bun scripts/sgf/link.ts corners [--concurrency 8]   corner → skill codes, writes data/sgf/corner-skills.json
 //   bun scripts/sgf/link.ts report                      coverage counts and spend
 //
-// The model is the hackathon's KrackedDevs LiteLLM key (KD_API_KEY, gpt-5.6-luna): an OpenAI-compatible
-// /v1/chat/completions with a strict JSON schema. Answers are cached under --dir, one file per request keyed by a
-// hash of it, so a rerun sends only what is missing and the written files are deterministic from the cache. --cap
+// The model is Claude Haiku 5.5 through the Claude API (ANTHROPIC_API_KEY, which Bun reads from .env), answering in
+// a strict JSON schema; the long system prompt is cached. Answers are cached under --dir, one file per request keyed by
+// a hash of it, so a rerun sends only what is missing and the written files are deterministic from the cache. --cap
 // stops new requests once the cached answers have cost that many US dollars. A code the model names outside its
 // candidate list never ships: a crosswalk code outside O*NET is rejected and asked again, and a corner skill outside
 // its own role's SkillsFuture equivalents is dropped. Both outputs are labelled "auto-generated".
-// API docs: https://docs.litellm.ai/docs/completion/json_mode, https://docs.litellm.ai/docs/completion/prompt_caching,
-// https://platform.openai.com/docs/guides/structured-outputs
+// API docs: https://platform.claude.com/docs/en/build-with-claude/structured-outputs,
+// https://platform.claude.com/docs/en/build-with-claude/prompt-caching, https://platform.claude.com/docs/en/api/rate-limits
 
+import Anthropic from '@anthropic-ai/sdk'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -42,8 +43,8 @@ const ROOT = resolve(import.meta.dir, '../..')
 const { values: args, positionals } = parseArgs({
   args: Bun.argv.slice(2),
   options: {
-    dir: { type: 'string', default: `${ROOT}/.cache/sgf-link` },
-    concurrency: { type: 'string', default: '8' },
+    dir: { type: 'string', default: `${ROOT}/.cache/sgf-link-haiku` },
+    concurrency: { type: 'string', default: '10' },
     cap: { type: 'string', default: '5' },
     /** Send only the first N requests, then stop without writing: a smoke test. */
     limit: { type: 'string' }
@@ -52,11 +53,10 @@ const { values: args, positionals } = parseArgs({
 })
 const DIR = resolve(args.dir)
 const CAP_USD = Number(args.cap)
-const API = 'https://litellm.rapidscreen.io/v1/chat/completions'
-const MODEL = 'gpt-5.6-luna'
-const EFFORT = 'low'
-/** US dollars per million tokens, from `cc list --provider krackeddevs` on 31 October 2026. */
-const PRICE = { input: 0.2, cached: 0.02, output: 1.2 }
+const MODEL = 'claude-haiku-5-5'
+const EFFORT = 'medium'
+/** US dollars per million tokens, for prompts up to 100K tokens: https://platform.claude.com/docs/en/about-claude/pricing */
+const PRICE = { input: 0.1, cache_write: 0.125, cache_read: 0.01, output: 0.5 }
 const ATTEMPTS = 3
 /** SkillsFuture roles per crosswalk request, taken from one sector and track so the model sees the ladder. */
 const ROLE_GROUP = 12
@@ -85,9 +85,10 @@ For each corner, pick up to ${PER_CORNER} skill codes from the list in the user 
 Answer for every corner, by its id, in the order given.`
 
 interface Usage {
-  prompt_tokens: number
-  completion_tokens: number
-  cached_tokens: number
+  input_tokens: number
+  output_tokens: number
+  cache_creation_input_tokens: number
+  cache_read_input_tokens: number
 }
 interface CacheEntry<T> {
   key: string
@@ -97,9 +98,10 @@ interface CacheEntry<T> {
 
 const sha = (text: string) => createHash('sha256').update(text).digest('hex')
 const costOf = (u: Usage) =>
-  ((u.prompt_tokens - u.cached_tokens) * PRICE.input +
-    u.cached_tokens * PRICE.cached +
-    u.completion_tokens * PRICE.output) /
+  (u.input_tokens * PRICE.input +
+    u.cache_creation_input_tokens * PRICE.cache_write +
+    u.cache_read_input_tokens * PRICE.cache_read +
+    u.output_tokens * PRICE.output) /
   1e6
 
 function spent(): number {
@@ -117,7 +119,14 @@ function spent(): number {
 
 class FatalError extends Error {}
 
-/** One structured-output request, cached at `<dir>/<kind>/<file>.json` under a hash of the request. */
+// A pinned base URL keeps the key from following an ANTHROPIC_BASE_URL set in the host environment. The SDK retries
+// 429s and 5xx itself, waiting out retry-after.
+const client = new Anthropic({ baseURL: 'https://api.anthropic.com', maxRetries: 4, timeout: 5 * 60_000 })
+
+/**
+ * One structured-output request, cached at `<dir>/<kind>/<file>.json` under a hash of the request. No sampling
+ * settings (the model rejects them) and no thinking setting: Haiku 5.5 runs adaptive thinking, its depth set by effort.
+ */
 async function ask<T>(
   kind: 'roles' | 'corners',
   file: string,
@@ -133,59 +142,49 @@ async function ask<T>(
   const cached = existsSync(path) ? ((await Bun.file(path).json()) as CacheEntry<T>) : null
   if (cached?.key === key && cached.result) return cached.result
   const entry: CacheEntry<T> = { key, attempts: [...(cached?.attempts ?? [])], result: null }
-  const apiKey = process.env.KD_API_KEY
-  if (!apiKey) throw new FatalError('Set KD_API_KEY (source ~/.config/tolong/secrets.env).')
   // A retry tells the model why its last answer was rejected; the cache key stays the first request's.
   let rejected = cached?.attempts.at(-1)?.error ?? null
   for (let tries = 0; tries < ATTEMPTS && !entry.result; tries++) {
     if (budget.usd >= CAP_USD) throw new FatalError(`spend cap of US$${CAP_USD} reached`)
     let error: string | null = null
-    let usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cached_tokens: 0 }
+    let usage: Usage = { input_tokens: 0, output_tokens: 0, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
     try {
-      const response = await fetch(API, {
-        method: 'POST',
-        headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-        body: JSON.stringify({
-          model: MODEL,
-          reasoning_effort: EFFORT,
-          messages: [
-            { role: 'system', content: sys },
-            {
-              role: 'user',
-              content: rejected
-                ? `${user}\n\nYour last answer was rejected: ${rejected}. Answer again, using only codes from the list.`
-                : user
-            }
-          ],
-          response_format: { type: 'json_schema', json_schema: { name: kind, schema, strict: true } }
-        }),
-        signal: AbortSignal.timeout(180_000)
+      const message = await client.messages.create({
+        model: MODEL,
+        max_tokens: 16_000,
+        system: [{ type: 'text', text: sys, cache_control: { type: 'ephemeral' } }],
+        messages: [
+          {
+            role: 'user',
+            content: rejected
+              ? `${user}\n\nYour last answer was rejected: ${rejected}. Answer again, using only codes from the list.`
+              : user
+          }
+        ],
+        output_config: { effort: EFFORT, format: { type: 'json_schema', schema } }
       })
-      const body = (await response.json()) as {
-        choices?: { message: { content: string | null }; finish_reason: string }[]
-        usage?: { prompt_tokens: number; completion_tokens: number; prompt_tokens_details?: { cached_tokens?: number } }
-        error?: { message?: string }
+      usage = {
+        input_tokens: message.usage.input_tokens,
+        output_tokens: message.usage.output_tokens,
+        cache_creation_input_tokens: message.usage.cache_creation_input_tokens ?? 0,
+        cache_read_input_tokens: message.usage.cache_read_input_tokens ?? 0
       }
-      if (response.status === 401 || response.status === 403) {
-        throw new FatalError(`HTTP ${response.status}: ${body.error?.message ?? 'check KD_API_KEY'}`)
-      }
-      if (!response.ok) error = `HTTP ${response.status}: ${body.error?.message ?? ''}`
+      const text = message.content.flatMap((block) => (block.type === 'text' ? [block.text] : [])).join('')
+      if (message.stop_reason !== 'end_turn') error = `stopped with ${message.stop_reason}`
       else {
-        usage = {
-          prompt_tokens: body.usage?.prompt_tokens ?? 0,
-          completion_tokens: body.usage?.completion_tokens ?? 0,
-          cached_tokens: body.usage?.prompt_tokens_details?.cached_tokens ?? 0
-        }
-        const choice = body.choices?.[0]
-        if (choice?.finish_reason !== 'stop') error = `finished with ${choice?.finish_reason}`
-        else {
-          const value = JSON.parse(choice.message.content ?? '') as T
-          error = check(value)
-          if (!error) entry.result = value
-        }
+        const value = JSON.parse(text) as T
+        error = check(value)
+        if (!error) entry.result = value
       }
     } catch (caught) {
-      if (caught instanceof FatalError) throw caught
+      // 4xx other than 429 (a bad key, a bad request) won't fix itself on a retry.
+      if (
+        caught instanceof Anthropic.APIError &&
+        caught.status !== undefined &&
+        caught.status < 500 &&
+        caught.status !== 429
+      )
+        throw new FatalError(`HTTP ${caught.status}: ${caught.message}`)
       error = caught instanceof Error ? caught.message : String(caught)
     }
     const cost = costOf(usage)
@@ -235,7 +234,7 @@ const ROLE_SCHEMA = {
         type: 'object',
         properties: {
           n: { type: 'integer' },
-          onet_code: { type: ['string', 'null'] },
+          onet_code: { anyOf: [{ type: 'string' }, { type: 'null' }] },
           confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
           reason: { type: 'string' }
         },
