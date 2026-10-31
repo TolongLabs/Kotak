@@ -1,5 +1,5 @@
 import type { Scenario, SnapshotId, Verdict } from '@kotak/shared'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react'
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react'
 import { SourceList } from '../../components/kotak/SourceList'
 import { Banner } from '../../components/ui/Banner'
@@ -9,7 +9,7 @@ import { cn } from '../../components/ui/cn'
 import { Link } from '../../app/router'
 import { jobPath } from '../../app/routes'
 import { commonText } from '../../i18n/common'
-import { spaceText } from '../../i18n/messages/space'
+import { spaceText, type SpaceText } from '../../i18n/messages/space'
 import { textNow, useText } from '../../i18n/text'
 import { formatFitPercent } from '../roles/fit'
 import {
@@ -34,6 +34,45 @@ import type { SpaceJob, SpaceModel } from './model'
 
 /** Rows on one page of the table. */
 const PAGE_SIZE = 20
+
+/** The columns a reader can order the table by. */
+type SortKey = 'title' | 'group' | 'fit' | 'zone' | 'growth' | 'verdicts'
+type Sort = { key: SortKey; dir: 'asc' | 'desc' }
+
+/**
+ * What a column's first press gives: words run A to Z, numbers start at the highest, which is the end a reader looks
+ * for. A second press reverses it, a third drops back to the table's own order. The column the table already orders
+ * by is the exception, and has two states rather than three: see `pressTakes`.
+ */
+const FIRST_DIR: Record<SortKey, Sort['dir']> = {
+  title: 'asc',
+  group: 'asc',
+  fit: 'desc',
+  zone: 'desc',
+  growth: 'desc',
+  verdicts: 'desc'
+}
+
+/** One column's ascending order. Ties keep the table's own order, because `sort` is stable. */
+function ascendingBy(key: SortKey, snapshotId: SnapshotId, scenario: Scenario, t: SpaceText) {
+  return (a: SpaceJob, b: SpaceJob) => {
+    switch (key) {
+      case 'title':
+        return a.title.localeCompare(b.title)
+      case 'group':
+        // By the group as the reader sees it, which is translated, not by its SOC code.
+        return groupName(t, a).localeCompare(groupName(t, b))
+      case 'fit':
+        return a.fit![snapshotId][scenario] - b.fit![snapshotId][scenario]
+      case 'zone':
+        return a.zone - b.zone
+      case 'growth':
+        return (a.growth[snapshotId][scenario] ?? 0) - (b.growth[snapshotId][scenario] ?? 0)
+      case 'verdicts':
+        return a.verdicts[snapshotId][scenario].Rising - b.verdicts[snapshotId][scenario].Rising
+    }
+  }
+}
 
 const markOf = new Map(VERDICT_MARKS.map((mark) => [mark.verdict, mark]))
 
@@ -348,13 +387,27 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
   const anchors = model.anchors[snapshotId]
   const moved = model.moved?.[snapshotId]
   // Sorted once per model, snapshot and future, not on every render, such as opening a job's skills.
-  const rows = useMemo(
-    () =>
-      model.answers
-        ? [...model.jobs].sort((a, b) => b.fit![snapshotId][scenario] - a.fit![snapshotId][scenario])
-        : [...model.jobs].sort((a, b) => a.zone - b.zone || a.title.localeCompare(b.title)),
-    [model, snapshotId, scenario]
-  )
+  // The column the reader ordered the table by, if any; null is the table's own order below.
+  const [sort, setSort] = useState<Sort | null>(null)
+  const rows = useMemo(() => {
+    const own = model.answers
+      ? [...model.jobs].sort((a, b) => b.fit![snapshotId][scenario] - a.fit![snapshotId][scenario])
+      : [...model.jobs].sort((a, b) => a.zone - b.zone || a.title.localeCompare(b.title))
+    if (!sort) return own
+    const ascending = ascendingBy(sort.key, snapshotId, scenario, t)
+    /**
+     * A cell with no number to show sits last whichever way the column runs, so "lowest first" opens on jobs the
+     * reader can act on rather than on a page of blanks: an AI-use change of Unknown, and a fit of "No estimate yet",
+     * which is stored as 0 but is not a zero the reader should sort to the top.
+     */
+    const blank = (job: SpaceJob) =>
+      sort.key === 'growth' ? job.growth[snapshotId][scenario] === null : sort.key === 'fit' && hasNoEstimate(job)
+    return own.sort((a, b) => {
+      if (blank(a) !== blank(b)) return blank(a) ? 1 : -1
+      const by = ascending(a, b)
+      return sort.dir === 'asc' ? by : -by
+    })
+  }, [model, snapshotId, scenario, sort, t])
   const future = c.scenarios[scenario]
   const month = monthLabel(snapshot)
   const zoneScale = t.table.zoneScale(zoneWord(t, 1), zoneWord(t, 5))
@@ -369,6 +422,8 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
 
   // Said once the dialog has opened on the target's page, as a live region only speaks a change after it mounts.
   const [opened, setOpened] = useState('')
+  // Said when a reader changes the order, so the rows do not rearrange in silence.
+  const [sorted, setSorted] = useState('')
 
   // Once the dialog shows (its showModal runs after this effect), bring the target's row to the middle of the table's
   // box, the dialog's one scroller, and say where it opened.
@@ -406,21 +461,109 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
     []
   )
 
-  // Set lines, such as "AI Use," over "12-Month Change"; the spaces between them keep the accessible name whole.
-  const header = (lines: string[], { sorted = false, right = true } = {}) => (
-    <th
-      scope="col"
-      aria-sort={sorted ? 'descending' : undefined}
-      className={cn('whitespace-nowrap px-3 py-2 font-normal', right && 'text-right', sorted && 'text-text-primary')}
-    >
-      {lines.map((line, i) => (
-        <Fragment key={line}>
-          {i > 0 && ' '}
-          <span className="block">{line}</span>
-        </Fragment>
-      ))}
-    </th>
-  )
+  /** Each column's name as its head reads it, and the words for each way it can run. */
+  const column: Record<SortKey, { name: string; asc: string; desc: string }> = {
+    title: { name: t.table.job, asc: t.table.sort.azAsc, desc: t.table.sort.azDesc },
+    group: { name: t.table.group, asc: t.table.sort.azAsc, desc: t.table.sort.azDesc },
+    fit: { name: t.fit, asc: t.table.sort.lowFirst, desc: t.table.sort.highFirst },
+    zone: { name: t.table.jobZone, asc: t.table.sort.lowFirst, desc: t.table.sort.highFirst },
+    growth: { name: t.table.change.join(' '), asc: t.table.sort.lowFirst, desc: t.table.sort.highFirst },
+    // The cell shows every verdict, so the words say which of them the order reads.
+    verdicts: { name: t.table.skillVerdicts, asc: t.table.sort.risingFewest, desc: t.table.sort.risingMost }
+  }
+
+  /**
+   * The table's own order is itself a column and a direction: best fit first with answers, lowest Job Zone first
+   * without. Saying so keeps the arrow and aria-sort honest before anything is pressed, and keeps that column's
+   * press from landing on the order it already shows.
+   */
+  const ownSort: Sort = model.answers ? { key: 'fit', dir: 'desc' } : { key: 'zone', dir: 'asc' }
+  const shownSort = sort ?? ownSort
+  const opposite = (dir: Sort['dir']) => (dir === 'asc' ? 'desc' : 'asc')
+
+  /** Where a press on this column's head would take the table. Null is the table's own order. */
+  const pressTakes = (key: SortKey): Sort | null => {
+    // The column the table already orders by has two states, not three: its own order, and the reverse of it.
+    if (key === ownSort.key) return sort === null ? { key, dir: opposite(ownSort.dir) } : null
+    if (sort?.key !== key) return { key, dir: FIRST_DIR[key] }
+    return sort.dir === FIRST_DIR[key] ? { key, dir: opposite(sort.dir) } : null
+  }
+
+  /**
+   * A header press walks the column through its own order, the reverse, then the table's order again. The rows start
+   * over at the first page, because a new order makes the page a reader was on meaningless.
+   */
+  const cycle = (key: SortKey) => {
+    const next = pressTakes(key)
+    setSort(next)
+    setPage(0)
+    setSorted(
+      next
+        ? t.table.sort.said(column[next.key].name, column[next.key][next.dir])
+        : model.answers
+          ? t.table.sort.backFit
+          : t.table.sort.backZone
+    )
+    if (regionRef.current && tableRef.current) regionRef.current.scrollTop = tableRef.current.offsetTop
+  }
+
+  /**
+   * One sortable column head: the label, and an arrow that shows the order only while this column holds it. Set
+   * lines, such as "AI Use," over "12-Month Change"; the spaces between them keep the accessible name whole.
+   */
+  const header = (
+    lines: string[],
+    key: SortKey,
+    { right = true, after }: { right?: boolean; after?: ReactNode } = {}
+  ) => {
+    // The column the rows actually stand in, whether a reader chose it or the table opened on it.
+    const held = shownSort.key === key
+    const dir = held ? shownSort.dir : null
+    const Arrow = dir === 'asc' ? ChevronUp : ChevronDown
+    const button = (
+      <button
+        type="button"
+        onClick={() => cycle(key)}
+        className={cn(
+          'flex items-center gap-1.5 px-3 py-3 text-left transition-colors duration-150 ease-out hover:text-text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring',
+          right ? 'justify-end text-right' : 'justify-start',
+          after ? 'pr-1.5' : 'w-full'
+        )}
+      >
+        <span className={cn('flex flex-col', right && 'items-end')}>
+          {lines.map((line, i) => (
+            <Fragment key={line}>
+              {i > 0 && ' '}
+              <span className="block">{line}</span>
+            </Fragment>
+          ))}
+        </span>
+        {/* The arrow marks the column the rows stand in; aria-sort says the same thing for a reader who cannot see
+            it, so the button's name stays just the column's, unchanged from press to press. */}
+        <Arrow
+          className={cn('size-3.5 shrink-0 stroke-current transition-opacity duration-150', !held && 'opacity-0')}
+          aria-hidden="true"
+        />
+      </button>
+    )
+    return (
+      <th
+        scope="col"
+        aria-sort={held ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+        className={cn('whitespace-nowrap p-0 font-normal', held && 'text-text-primary')}
+      >
+        {/* A citation is a link, so it sits beside the button, never inside it: one control, one job. */}
+        {after ? (
+          <span className={cn('flex items-center pr-3', right && 'justify-end')}>
+            {button}
+            {after}
+          </span>
+        ) : (
+          button
+        )}
+      </th>
+    )
+  }
 
   const pagerButton =
     'aria-disabled:cursor-not-allowed aria-disabled:border-border-subtle aria-disabled:text-text-muted'
@@ -504,7 +647,11 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
               {sources.map((source) => (
                 <Citation key={source.n} n={source.n} />
               ))}
-              {model.answers ? t.table.byFit(future) : t.table.byZone}
+              {sort
+                ? t.table.sort.line(column[sort.key].name, column[sort.key][sort.dir])
+                : model.answers
+                  ? t.table.byFit(future)
+                  : t.table.byZone}
             </p>
             <ul
               className="flex flex-wrap items-center gap-3 font-mono text-mono-s text-text-muted"
@@ -522,38 +669,36 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
 
         <table ref={tableRef} className="w-full border-t border-border-subtle text-left">
           <caption className="sr-only">
-            {(model.answers ? t.table.captionFit : t.table.captionZone)(
-              first + 1,
-              first + shown.length,
-              rows.length,
-              future,
-              month
-            )}
+            {sort
+              ? t.table.sort.caption(
+                  first + 1,
+                  first + shown.length,
+                  rows.length,
+                  future,
+                  month,
+                  column[sort.key].name,
+                  column[sort.key][sort.dir]
+                )
+              : (model.answers ? t.table.captionFit : t.table.captionZone)(
+                  first + 1,
+                  first + shown.length,
+                  rows.length,
+                  future,
+                  month
+                )}
           </caption>
           <thead className="sticky top-0 z-10 bg-bg-default shadow-[0_1px_0_var(--color-border-subtle)]">
             <tr className="font-mono text-mono-s text-text-muted">
-              <th scope="col" className="px-3 py-2 font-normal">
-                {t.table.job}
-              </th>
-              <th scope="col" className="px-3 py-2 font-normal">
-                {t.table.group}
-              </th>
-              {model.answers ? (
-                header([t.fit], { sorted: true })
-              ) : (
-                <th
-                  scope="col"
-                  aria-sort="ascending"
-                  className="whitespace-nowrap px-3 py-2 font-normal text-text-primary"
-                >
-                  <span className="flex items-center gap-1.5">
-                    {t.table.jobZone}
-                    {zoneN !== null && <Citation n={zoneN} />}
-                  </span>
-                </th>
-              )}
-              {header(t.table.change)}
-              {header([t.table.skillVerdicts], { right: false })}
+              {header([t.table.job], 'title', { right: false })}
+              {header([t.table.group], 'group', { right: false })}
+              {model.answers
+                ? header([t.fit], 'fit')
+                : header([t.table.jobZone], 'zone', {
+                    right: false,
+                    after: zoneN !== null ? <Citation n={zoneN} /> : undefined
+                  })}
+              {header(t.table.change, 'growth')}
+              {header([t.table.skillVerdicts], 'verdicts', { right: false })}
             </tr>
           </thead>
           <tbody>
@@ -604,7 +749,7 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
         </Button>
       </nav>
       <p className="sr-only" aria-live="polite">
-        {opened}
+        {sorted || opened}
       </p>
 
       <div className="shrink-0">

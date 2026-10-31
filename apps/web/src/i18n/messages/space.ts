@@ -125,6 +125,30 @@ export const spaceText = defineText(
       jobZone: 'Job Zone',
       change: ['AI Use,', '12-Month Change'],
       skillVerdicts: 'Skill Verdicts',
+      /** Ordering the table by a column, in place of the order it opens in. */
+      sort: {
+        azAsc: 'A to Z',
+        azDesc: 'Z to A',
+        lowFirst: 'lowest first',
+        highFirst: 'highest first',
+        risingFewest: 'fewest rising first',
+        risingMost: 'most rising first',
+        /** The line over the rows, in place of byFit or byZone. */
+        line: (column: string, order: string) => `· sorted by ${column}, ${order}`,
+        /** The caption while a column holds the order, in place of captionFit or captionZone. */
+        caption: (
+          first: number,
+          last: number,
+          total: number,
+          future: string,
+          month: string,
+          column: string,
+          order: string
+        ) => `Jobs ${first} to ${last} of ${total}, in ${future}, for ${month} data, sorted by ${column}, ${order}.`,
+        said: (column: string, order: string) => `Sorted by ${column}, ${order}.`,
+        backFit: 'Back to best fit first.',
+        backZone: 'Back to Job Zone, then title.'
+      },
       pages: 'Jobs Table Pages',
       previous: 'Previous',
       previousPage: 'Previous Page',
@@ -367,6 +391,20 @@ export const spaceText = defineText(
       jobZone: 'Zon Pekerjaan',
       change: ['Penggunaan AI,', 'Perubahan 12 Bulan'],
       skillVerdicts: 'Verdik Kemahiran',
+      sort: {
+        azAsc: 'A ke Z',
+        azDesc: 'Z ke A',
+        lowFirst: 'terendah dahulu',
+        highFirst: 'tertinggi dahulu',
+        risingFewest: 'paling sedikit meningkat dahulu',
+        risingMost: 'paling banyak meningkat dahulu',
+        line: (column, order) => `· diisih mengikut ${column}, ${order}`,
+        caption: (first, last, total, future, month, column, order) =>
+          `Pekerjaan ${first} hingga ${last} daripada ${total}, dalam ${future}, bagi data ${month}, diisih mengikut ${column}, ${order}.`,
+        said: (column, order) => `Diisih mengikut ${column}, ${order}.`,
+        backFit: 'Kembali kepada padanan terbaik dahulu.',
+        backZone: 'Kembali kepada Zon Pekerjaan, kemudian tajuk.'
+      },
       pages: 'Halaman Jadual Pekerjaan',
       previous: 'Sebelumnya',
       previousPage: 'Halaman Sebelumnya',
@@ -601,6 +639,20 @@ export const spaceText = defineText(
       jobZone: '准备等级',
       change: ['AI 使用，', '12 个月变化'],
       skillVerdicts: '技能结论',
+      sort: {
+        azAsc: 'A 到 Z',
+        azDesc: 'Z 到 A',
+        lowFirst: '从低到高',
+        highFirst: '从高到低',
+        risingFewest: '上升最少优先',
+        risingMost: '上升最多优先',
+        line: (column, order) => `· 按${column}排序，${order}`,
+        caption: (first, last, total, future, month, column, order) =>
+          `第 ${first} 至 ${last} 个工作，共 ${total} 个，${future}，${month}数据，按${column}排序，${order}。`,
+        said: (column, order) => `已按${column}排序，${order}。`,
+        backFit: '回到匹配度从高到低。',
+        backZone: '回到按准备等级，再按职位名称。'
+      },
       pages: '工作表格分页',
       previous: '上一页',
       previousPage: '上一页',
