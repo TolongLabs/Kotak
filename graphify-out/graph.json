@@ -45842,13 +45842,22 @@
       "source_location": "L1"
     },
     {
+      "id": "scripts_readme_architecture_appendix",
+      "label": "appendix",
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "appendix",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L9"
+    },
+    {
       "id": "scripts_readme_architecture_archify",
       "label": "archify",
       "_origin": "ast",
       "file_type": "code",
       "norm_label": "archify",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L11"
+      "source_location": "L14"
     },
     {
       "id": "scripts_readme_architecture_artifacts",
@@ -45857,7 +45866,7 @@
       "file_type": "code",
       "norm_label": "artifacts",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L14"
+      "source_location": "L17"
     },
     {
       "id": "scripts_readme_architecture_chromium",
@@ -45866,7 +45875,7 @@
       "file_type": "code",
       "norm_label": "{ chromium }",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L41"
+      "source_location": "L44"
     },
     {
       "id": "scripts_readme_architecture_common",
@@ -45875,7 +45884,7 @@
       "file_type": "code",
       "norm_label": "common",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L8"
+      "source_location": "L11"
     },
     {
       "id": "scripts_readme_architecture_finalized",
@@ -45884,7 +45893,7 @@
       "file_type": "code",
       "norm_label": "finalized",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L20"
+      "source_location": "L23"
     },
     {
       "id": "scripts_readme_architecture_html",
@@ -45893,7 +45902,7 @@
       "file_type": "code",
       "norm_label": "html",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L19"
+      "source_location": "L22"
     },
     {
       "id": "scripts_readme_architecture_repository",
@@ -45902,7 +45911,7 @@
       "file_type": "code",
       "norm_label": "repository",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L10"
+      "source_location": "L13"
     },
     {
       "id": "scripts_readme_architecture_root",
@@ -45911,7 +45920,7 @@
       "file_type": "code",
       "norm_label": "root",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L7"
+      "source_location": "L8"
     },
     {
       "id": "scripts_readme_architecture_submissionfont",
@@ -45920,7 +45929,7 @@
       "file_type": "code",
       "norm_label": "submissionfont",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L46"
+      "source_location": "L49"
     },
     {
       "id": "scripts_readme_architecture_vertical",
@@ -45929,7 +45938,7 @@
       "file_type": "code",
       "norm_label": "vertical",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L50"
+      "source_location": "L53"
     },
     {
       "id": "node_fs",
@@ -134170,7 +134179,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -134182,7 +134191,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -134194,106 +134203,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L5",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_repository",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_archify",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_artifacts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L14",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_html",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L19",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_finalized",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_chromium",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L41",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_submissionfont",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L46",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_vertical",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L50",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_readme_architecture",
-      "target": "scripts_readme_architecture_root",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L7",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -134304,7 +134214,117 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_repository",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_archify",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_artifacts",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_html",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_finalized",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_chromium",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_submissionfont",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_vertical",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_root",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
       "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_appendix",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
