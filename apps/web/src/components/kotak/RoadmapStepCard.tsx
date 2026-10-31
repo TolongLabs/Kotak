@@ -20,7 +20,7 @@ import { fmt } from '../../views/roadmap/planSupport'
 import { Citation } from '../ui/Citation'
 import { Spinner } from '../ui/Spinner'
 import { SdgTargetChip } from './SdgReasonChip'
-import { SgfSkillList } from './SgfSkills'
+import { SgfSkillChip } from './SgfSkills'
 import { commonText } from '../../i18n/common'
 import { evidenceText } from '../../i18n/messages/evidence'
 import { roadmapText } from '../../i18n/messages/roadmap'
@@ -401,9 +401,17 @@ export function RoadmapStepCard({
                 </dd>
               </div>
             )}
+            {(step.sgfSkills ?? []).length > 0 && (
+              <div className="flex items-center">
+                <dt className="sr-only">{common.sgf.name}</dt>
+                <dd className="flex flex-wrap gap-2">
+                  {step.sgfSkills!.map((skill) => (
+                    <SgfSkillChip key={skill.code} skill={skill} />
+                  ))}
+                </dd>
+              </div>
+            )}
           </dl>
-
-          <SgfSkillList skills={step.sgfSkills ?? []} />
 
           {hasResource && (
             <div className="space-y-1">

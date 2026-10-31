@@ -125,6 +125,13 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     else if (forwardedRef) forwardedRef.current = node
   }
 
+  // A browser without the popover API keeps the panel in place, still fixed.
+  const showInTopLayer = (element: HTMLDivElement | null) => {
+    if (element && typeof element.showPopover === 'function' && !element.matches(':popover-open')) {
+      element.showPopover()
+    }
+  }
+
   const close = (returnFocus: boolean) => {
     setOpen(false)
     if (returnFocus) triggerRef.current?.focus()
@@ -273,13 +280,17 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
         <Calendar className="h-5 w-5 shrink-0 stroke-current text-text-muted" aria-hidden="true" />
       </button>
       {open && (
+        // A manual popover in the browser's top layer: its fixed place is the screen's even inside a glass island,
+        // whose backdrop filter would otherwise make the island the box it's placed in and push it off to the side.
         <div
+          ref={showInTopLayer}
+          popover="manual"
           id={id + '-dialog'}
           role="dialog"
           aria-labelledby={titleId}
           aria-modal="false"
           style={popoverStyle}
-          className="z-50 max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-sm border border-border-subtle bg-bg-default p-4 shadow-[var(--shadow-popover)]"
+          className="inset-auto m-0 max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-sm border border-border-subtle bg-bg-default p-4 text-text-primary shadow-[var(--shadow-popover)]"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <IconButton

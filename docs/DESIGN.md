@@ -135,7 +135,7 @@ The smallest text is 12 px.
 
 - Phone frames are 390 px wide with 24 px side padding. Desktop frames are 1440 px wide.
 - The desktop app shell has a 256 px sidebar (72 px collapsed) and a main column with 48 px padding, so content is 1088 px wide.
-- The top bar is a glass island that stays at the top of the main column. It has no sound button; the mute button lives in Kopi's speech box. Its data chip opens About This Data, which names the snapshot and says whether each role's skills are AI-drafted or hand-checked; a dot on the chip marks AI-drafted skills. Pages carry no inline AI-drafted notice.
+- The top bar is a glass island that stays at the top of the main column. It has no sound button, since the mute button lives in Kopi's speech box, and no guest avatar, since the sidebar's guest card shows who is signed in. Its data chip opens About This Data, which names the snapshot and says whether each role's skills are AI-drafted or hand-checked; a dot on the chip marks AI-drafted skills. Pages carry no inline AI-drafted notice.
 - An Ask Kopi button floats in the bottom-right corner of every `/app` page and opens Kopi's chat as a modal in the middle of the screen: 16:9, up to 72rem wide, over the page dimmed and blurred by 3 px. On phones it fills the screen less a 16 px margin. The conversation and the question box sit in a centred reading column, up to 48rem. The close button, Escape or a click on the backdrop closes it, and focus returns to the button. A page can open it with a question already asked, as the radar's Interpret row does. Phone action bars stick `--ask-kopi-clearance` above the bottom, and pages leave extra room at the end, so the button never covers either.
 - Columns are symmetrical. Two columns are 532 + 24 + 532 px, three are equal thirds and the four stat cards are equal quarters. Cards in one row share one height.
 - Results pages stack in one order: the Stepper (Check-Up flow pages only), Kopi, the page header, then the content. The Dashboard opens with its greeting, then Kopi and the Next Step. Loading, error and no-job states lead with their message instead.
@@ -156,7 +156,9 @@ Every component lives on the Components page. Build each one as a custom compone
 - **Kotak parts**: Counsellor, Cat Dialogue, Voice Toggle, Verdict Chip, Scenario Switch, Future Skills Radar, Skills SWOT, Skill Row, Gap Card, Reasoning, Citation, Source Reference, Role Card, Roadmap Step, Roadmap Timeline, Readiness Graph, What Changed Card, SDG Chip, Choice Card, Job Suggestions and Action Menu.
 - **Verdict Chip** shows what its verdict means in a Tooltip on hover. The Tooltip sits in the browser's top layer, above every bar and dialog, and stays 8 px inside the screen.
 - **Gap Card** ends in two ruled rows: Sources, which folds open (+), and Interpret, which opens Ask Kopi with a question about that gap (an up-right arrow, since it leaves the card).
-- A compact action beside a control strip, such as See These Roles in the Space, is a 36 px ink pill with a leading and a trailing icon, never an underlined link.
+- On a Roadmap step, each SkillsFuture skill is a chip on the SDG chips' line, named with its level and a down chevron, that opens a panel like an SDG chip's: Singapore's framework, the level, Emerging when flagged, the framework's first sentence about the skill, and that an AI matched it. No separate SkillsFuture heading.
+- Every way into the 3D space outside a sentence (See These Roles, See This Future, See This Change and Find This Job in the Space) is the Space Link: a 36 px ink pill with an orbit icon and a trailing up-right arrow, never an underlined link.
+- Date Picker's calendar opens in the top layer, under its field, so a glass island's backdrop filter can't move it.
 - **Legacy from v0.1**: App Bar, Milestone, SDG tag and Source line. Don't use them in new screens.
 
 ## Iconography

@@ -1,4 +1,4 @@
-import { ArrowUpRight, Info, Orbit } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { jobMarketLevelForYears, yearsOfWork } from '@kotak/shared'
@@ -11,12 +11,13 @@ import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { ScenarioMathsNote } from '../components/kotak/ScenarioMathsNote'
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SourceList } from '../components/kotak/SourceList'
+import { SpaceLink } from '../components/kotak/SpaceLink'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Citation } from '../components/ui/Citation'
 import { Disclosure } from '../components/ui/Disclosure'
 import { Stepper } from '../components/ui/Stepper'
-import { Link, navigate } from '../app/router'
+import { navigate } from '../app/router'
 import { routes, spacePath } from '../app/routes'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
@@ -373,14 +374,7 @@ export function RolesView() {
         anchors={scenarioAnchors}
         trailing={
           // The highlighted card's role opens pinned; the other cards' roles are the space's related tufts.
-          <Link
-            to={spacePath(selected?.id)}
-            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-text-primary px-3.5 text-label-m text-bg-default transition-colors duration-150 ease-out hover:bg-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-          >
-            <Orbit className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-            {t.rolesView.seeInSpace}
-            <ArrowUpRight className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-          </Link>
+          <SpaceLink to={spacePath(selected?.id)}>{t.rolesView.seeInSpace}</SpaceLink>
         }
       />
 

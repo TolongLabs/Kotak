@@ -2,11 +2,11 @@ import { diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@
 import { RefreshCw } from 'lucide-react'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { SourceList } from '../components/kotak/SourceList'
+import { SpaceLink } from '../components/kotak/SpaceLink'
 import { WhatChangedCard } from '../components/kotak/WhatChangedCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { routeLinkClassName } from '../components/ui/TextLink'
-import { Link, navigate } from '../app/router'
+import { navigate } from '../app/router'
 import { routes, spacePath } from '../app/routes'
 import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, computeCheckup } from '../engine/checkup'
@@ -144,9 +144,7 @@ export function WhatChangedView() {
             <p className="text-body-s text-text-muted" aria-live="polite">
               {isMay ? t.activeMay(afterLabel) : t.activeApril(beforeLabel)}
             </p>
-            <Link to={spacePath(role.onet_code)} className={routeLinkClassName}>
-              {t.seeChangeInSpace}
-            </Link>
+            <SpaceLink to={spacePath(role.onet_code)}>{t.seeChangeInSpace}</SpaceLink>
           </div>
         </div>
         <div

@@ -5,6 +5,7 @@ import {
   SgfCornerSkillsFileSchema,
   SgfCrosswalkFileSchema,
   SgfRolesFileSchema,
+  SgfSkillsFileSchema,
   sgfMatchedRoles,
   type BundleRole
 } from '../../packages/shared/src/index'
@@ -12,12 +13,13 @@ import {
 export async function loadSgfInputs(root: string) {
   const read = async <T>(path: string, schema: { parse: (value: unknown) => T }) =>
     schema.parse(await Bun.file(`${root}/${path}`).json())
-  const [crosswalk, cornerSkills, roles] = await Promise.all([
+  const [crosswalk, cornerSkills, roles, skills] = await Promise.all([
     read('data/sgf/onet-crosswalk.json', SgfCrosswalkFileSchema),
     read('data/sgf/corner-skills.json', SgfCornerSkillsFileSchema),
-    read('data/sgf/roles.json', SgfRolesFileSchema)
+    read('data/sgf/roles.json', SgfRolesFileSchema),
+    read('data/sgf/skills.json', SgfSkillsFileSchema)
   ])
-  return { crosswalk, cornerSkills, roles }
+  return { crosswalk, cornerSkills, roles, skills }
 }
 
 type Inputs = Awaited<ReturnType<typeof loadSgfInputs>>
@@ -35,8 +37,14 @@ export function roleSgf(inputs: Inputs, code: string, cornerIds: string[]): Bund
   const rank = (r: (typeof roles)[number]) => (r.confidence === 'high' ? 0 : 2) + (RANKED.test(r.title) ? 1 : 0)
   roles.sort((a, b) => rank(a) - rank(b))
   const linked = inputs.cornerSkills.roles[code] ?? {}
+  // The chip's panel is brief: the description's first sentence only.
+  const describe = (code: string) => inputs.skills.skills[code]?.description.split(/(?<=\.)\s+/)[0] ?? null
   const corners = Object.fromEntries(
-    cornerIds.flatMap((id) => ((linked[id]?.length ?? 0) > 0 ? [[id, linked[id]]] : []))
+    cornerIds.flatMap((id) =>
+      (linked[id]?.length ?? 0) > 0
+        ? [[id, linked[id].map((skill) => ({ ...skill, description: describe(skill.code) }))]]
+        : []
+    )
   )
   return { roles, corners }
 }

@@ -16,13 +16,13 @@ import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { SgfSkillList } from '../components/kotak/SgfSkills'
 import { SourceList } from '../components/kotak/SourceList'
+import { SpaceLink } from '../components/kotak/SpaceLink'
 import { ToolsCard } from '../components/kotak/ToolsCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { VERDICT_KEYS } from '../components/ui/VerdictChip'
-import { routeLinkClassName } from '../components/ui/TextLink'
 import { askKopiAbout } from '../app/shell/AskKopi'
 import { commonText } from '../i18n/common'
 import { changesText } from '../i18n/messages/changes'
@@ -390,11 +390,7 @@ export function RadarView() {
         onChange={setScenario}
         receipt={futureReceipt}
         anchors={role.signals[checkup.snapshotId]?.anchors}
-        trailing={
-          <Link to={spacePath()} className={routeLinkClassName}>
-            {t.seeFutureInSpace}
-          </Link>
-        }
+        trailing={<SpaceLink to={spacePath()}>{t.seeFutureInSpace}</SpaceLink>}
       />
 
       <AccessNotice
