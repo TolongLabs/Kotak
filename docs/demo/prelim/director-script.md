@@ -1,6 +1,6 @@
 # Kotak video director script
 
-The script for the Kotak pitching video: ten narrated slides with a live demo of the working app between slides 5 and 6. One narrator, a team member, reads every `VOICEOVER` block, at 1.0× speed. A Playwright harness films the app, Remotion assembles the demo segment with its graphics, and the team edits the slides, the narration and the demo segment together in Adobe Premiere Pro; [`video.md`](/docs/demo/video.md) owns the recording and editing steps. The voice follows the team's MyTakziah finals scripts: say who we are in a breath, open on real people and real numbers, carry one argument with a link from each part to the next, say the honest limits plainly, and close by echoing the opening.
+The script for the Kotak pitching video: ten narrated slides with a live demo of the working app between slides 5 and 6. One narrator, a team member, reads every `VOICEOVER` block, at 1.0× speed. A Playwright harness films the app, Remotion assembles the demo segment with its graphics, and the team edits the slides, the narration and the demo segment together in Adobe Premiere Pro; [`video.md`](/docs/demo/prelim/video.md) owns the recording and editing steps. The voice follows the team's MyTakziah finals scripts: say who we are in a breath, open on real people and real numbers, carry one argument with a link from each part to the next, say the honest limits plainly, and close by echoing the opening.
 
 Contents:
 
@@ -133,9 +133,9 @@ Pause marks such as `[pause 0.4s]` are silence of that length. Everything else i
 
 ### Live demo
 
-**TIME:** `1:47–4:47` · three minutes of the live app, recorded by the harness on a production build ([shot list](/docs/demo/video.md#shot-list)).
+**TIME:** `1:47–4:47` · three minutes of the live app, recorded by the harness on a production build ([shot list](/docs/demo/prelim/video.md#shot-list)).
 
-**ON SCREEN:** the app fills the frame. The graphics pack frames it in three acts: Problem (D1 to D3), Solution (D4 and D5) and Outcome (D6 to M1). An act banner opens each act, the HUD at the bottom shows the act and the step, and at most one callout or result card is on screen at a time ([cue sheet](/docs/demo/demo-graphics.md#cue-sheet)). The tag "Sample persona · demo answers" stays on throughout. Cut on the narration, not on the clicks.
+**ON SCREEN:** the app fills the frame. The graphics pack frames it in three acts: Problem (D1 to D3), Solution (D4 and D5) and Outcome (D6 to M1). An act banner opens each act, the HUD at the bottom shows the act and the step, and at most one callout or result card is on screen at a time ([cue sheet](/docs/demo/prelim/demo-graphics.md#cue-sheet)). The tag "Sample persona · demo answers" stays on throughout. Cut on the narration, not on the clicks.
 
 **DELIVERY:** The demo narration says why each moment matters to Aina, never which button is pressed. Keep the energy a little higher than the slides, as if sitting beside her.
 
@@ -381,7 +381,7 @@ Pronunciation: T010NG is "Tolong"; Kotak is "KO-tak"; Kopi is "KO-pee"; e-LATiH 
 
 ## Sources
 
-- [Recording and editing steps](/docs/demo/video.md), with the shot list, the answer key, the demo pipeline and the Premiere edit.
-- [Pitch deck](/docs/demo/deck/kotak-pitch-deck.html): the slide text and sources each segment reads from.
+- [Recording and editing steps](/docs/demo/prelim/video.md), with the shot list, the answer key, the demo pipeline and the Premiere edit.
+- [Pitch deck](/docs/demo/prelim/kotak-pitch-deck.pdf): the slide text and sources each segment reads from.
 - [Brief: deliverables and judging](/docs/BRIEF.md).
 - [Design system: content rules](/docs/DESIGN.md).

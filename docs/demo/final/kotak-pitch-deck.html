@@ -791,34 +791,6 @@
         object-fit: cover;
         object-position: left top;
       }
-      .musts {
-        position: absolute;
-        left: 96px;
-        right: 96px;
-        bottom: 104px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .musts .k {
-        margin-right: 8px;
-        color: var(--ink);
-      }
-      .musts span {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 11px 16px;
-        border: 2px solid var(--ink);
-        border-radius: 999px;
-        font: 700 21px/1 var(--sans);
-        white-space: nowrap;
-      }
-      .musts span .ic {
-        width: 22px;
-        height: 22px;
-        color: var(--green);
-      }
 
       /* 04 How it's built */
       .arch-fig {
@@ -1137,6 +1109,10 @@
         <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </symbol>
       <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" /></symbol>
+      <symbol id="i-wallet" viewBox="0 0 24 24">
+        <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
+        <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
+      </symbol>
     </svg>
 
     
@@ -1154,11 +1130,12 @@
       /* 1 · team */
       .s1 h1.title { font-size: 112px; margin-top: 18px; }
       .s1 .lead { max-width: 900px; }
-      .s1 .hero { position: absolute; right: 96px; top: 250px; width: 540px; height: 460px; }
+      .s1 .head2 { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 540px; gap: 48px; align-items: center; }
+      .s1 .hero { position: relative; width: 540px; height: 460px; }
       .s1 .hero img.box { position: absolute; right: 0; bottom: 0; width: 100%; }
       .s1 .hero img.kopi { position: absolute; right: 31%; bottom: 46%; width: 30%; }
       .s1 .hero .bubble { position: absolute; left: 2%; top: 4%; border-radius: 20px 20px 4px 20px; white-space: nowrap; }
-      .team { position: absolute; left: 96px; right: 96px; bottom: 100px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px; padding-top: 28px; border-top: 2px solid var(--ink); }
+      .team { margin: 0 0 104px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px; padding-top: 28px; border-top: 2px solid var(--ink); }
       .member { display: flex; gap: 20px; align-items: center; }
       .member img, .member .anon { flex: none; width: 132px; height: 132px; border: 3px solid var(--ink); border-radius: 16px; object-fit: cover; background: var(--panel); }
       .member .anon { display: grid; place-items: center; }
@@ -1167,76 +1144,91 @@
       .member span { display: block; margin-top: 6px; color: var(--muted); font: 500 17px/1.3 var(--mono); }
       .member em { display: inline-block; margin-top: 8px; padding: 3px 9px; background: var(--yellow); border: 2px solid var(--ink); border-radius: 6px; font: 700 14px/1.2 var(--mono); font-style: normal; }
       /* 2 · problem */
-      .s2 .p2x { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 64px; margin-top: 30px; }
-      .s2 .art { position: absolute; right: 96px; top: 112px; width: 560px; height: 290px; }
-      .one-in-two { font: 800 200px/0.82 var(--sans); letter-spacing: -0.06em; }
-      .then-now { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 26px; border-top: 2px solid var(--ink); }
-      .then-now div { padding: 16px 16px 0 0; }
-      .then-now b { display: block; font: 800 40px/1 var(--sans); }
-      .then-now span { display: block; margin-top: 8px; color: var(--muted); font: 500 19px/1.3 var(--mono); }
-      .then-now span.pct { margin-top: 4px; color: var(--ink); font: 800 30px/1 var(--sans); }
-      .then-now div.now b { background: var(--yellow); display: inline-block; padding: 2px 10px; border: 2px solid var(--ink); border-radius: 8px; }
-      .clips { display: flex; flex-direction: column; gap: 18px; }
-      .clip { padding: 22px 28px 20px; background: var(--panel); border: 2px solid var(--ink); border-radius: 14px; box-shadow: 8px 8px 0 var(--ink); }
-      .clip:nth-child(2) { transform: rotate(-0.6deg); margin-left: 26px; }
-      .clip:nth-child(3) { transform: rotate(0.5deg); }
+      .s2 .head2 { display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: 48px; align-items: end; }
+      .s2 .art { height: 260px; justify-content: flex-end; }
+      .s2 .p2x { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+      .s2 .why-now { position: static; margin: 0 0 104px; }
+      .one-in-two { font: 800 220px/0.82 var(--sans); letter-spacing: -0.06em; }
+      .clips { display: flex; flex-direction: column; gap: 24px; }
+      .clip { padding: 26px 30px 24px; background: var(--panel); border: 2px solid var(--ink); border-radius: 14px; box-shadow: 8px 8px 0 var(--ink); }
       .clip .pub { color: var(--muted); font: 600 17px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
-      .clip p { margin: 10px 0 0; font: 700 30px/1.2 var(--sans); letter-spacing: -0.01em; }
+      .clip p { margin: 12px 0 0; font: 700 32px/1.2 var(--sans); letter-spacing: -0.01em; }
       .clip p em { font-style: normal; background: var(--yellow); padding: 0 6px; }
-      /* 3 · users */
-      .s3 .u3 { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 56px; margin-top: 30px; }
-      .defs { border-top: 2px solid var(--ink); }
-      .defs div { display: grid; grid-template-columns: 200px 1fr; gap: 24px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line); }
-      .defs b { font: 800 26px/1.15 var(--sans); }
-      .defs p { margin: 0; font: 500 26px/1.32 var(--sans); }
-      .defs p strong { font-weight: 800; }
-      .aina { display: flex; align-items: center; gap: 22px; margin-top: 24px; }
       .bubble { padding: 20px 26px; background: var(--dark); color: var(--on-dark); border-radius: 20px 20px 20px 4px; font: 700 28px/1.2 var(--sans); }
-      .bubble small { display: block; margin-bottom: 8px; color: var(--yellow); font: 600 16px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
-      .s3 .right { position: relative; height: 540px; }
-      .s3 .right .dev { position: absolute; left: 0; bottom: 0; width: 58%; }
-      .s3 .right .dev img { width: 100%; display: block; }
-      .s3 .right figure.phone { position: absolute; right: 0; top: 0; width: 290px; height: 540px; margin: 0; border: 3px solid var(--ink); border-radius: 30px; overflow: hidden; box-shadow: 10px 10px 0 var(--ink); background: var(--bg); }
-      .s3 .right figure.phone img { width: 100%; display: block; }
-      /* 4 · solution */
-      .s4 .sol { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.6fr); gap: 40px; margin-top: 30px; }
-      .must { width: 100%; border-collapse: collapse; }
-      .must th { padding: 0 16px 12px 0; text-align: left; color: var(--muted); font: 600 17px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 2px solid var(--ink); }
-      .must td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
-      .must td.n { width: 44px; font: 700 18px/1 var(--mono); color: var(--muted); }
-      .must td.ask { width: 330px; font: 800 25px/1.2 var(--sans); }
-      .must td.arrow svg { width: 28px; height: 28px; }
-      .must td.arrow { width: 44px; }
-      .must td.do { font: 500 24px/1.3 var(--sans); }
-      .must td.do b { font-weight: 800; }
-      .s4 figure.shot { margin: 0; height: auto; align-self: start; }
-      .s4 figure.shot img { width: 100%; display: block; }
-      .beyond { position: absolute; left: 96px; right: 96px; bottom: 100px; display: grid; grid-template-columns: auto 1fr 1fr 1fr; align-items: center; gap: 28px; padding: 20px 30px; background: var(--dark); color: var(--on-dark); border-radius: 16px; }
-      .beyond small { color: var(--yellow); font: 600 17px/1.2 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
-      .beyond p { margin: 0; font: 600 22px/1.3 var(--sans); }
-      .beyond p b { color: var(--yellow); }
-      /* 5 · how it works */
-      .flow { display: grid; grid-template-columns: 1fr 64px 1.25fr 64px 1fr; align-items: stretch; margin-top: 54px; }
-      .flow .arrow { display: grid; place-items: center; }
-      .flow .arrow .ic { width: 40px; height: 40px; }
-      .step3 { padding: 30px 30px 28px; border: 3px solid var(--ink); border-radius: 18px; background: var(--bg); }
-      .step3.rules { background: var(--yellow); }
-      .step3 em { font: 600 22px/1 var(--mono); font-style: normal; color: var(--muted); }
-      .step3.rules em { color: var(--ink-2); }
-      .step3 h2 { margin: 14px 0 0; font: 800 48px/1 var(--sans); letter-spacing: -0.03em; }
-      .step3 p { margin: 12px 0 0; font: 500 26px/1.3 var(--sans); }
-      .stamps { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-      .stamps span { padding: 8px 12px; background: var(--bg); border: 2px solid var(--ink); border-radius: 8px; font: 600 17px/1 var(--mono); }
-      .s5 .art { height: 250px; margin-top: 24px; }
-      .lock { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; font: 700 28px/1 var(--sans); }
-      .lock .ic { width: 30px; height: 30px; }
+      /* 3 · users */
+      .s3 .who4 { flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; align-content: center; }
+      .s3 .why-now { position: static; margin: 0 0 104px; }
+      .wcard { display: flex; flex-direction: column; padding: 30px 28px 28px; border: 3px solid var(--ink); border-radius: 18px; background: var(--bg); }
+      .wcard.y { background: var(--yellow); }
+      .wcard.soft { background: var(--panel); }
+      .wcard .ic { width: 44px; height: 44px; }
+      .wcard b { margin-top: 26px; color: var(--muted); font: 600 18px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+      .wcard.y b { color: var(--ink-2); }
+      .wcard h2 { margin: 14px 0 0; font: 800 38px/1.1 var(--sans); letter-spacing: -0.02em; }
+      .wcard p { margin: 0; padding-top: 18px; margin-top: auto; color: var(--ink-2); font: 500 24px/1.3 var(--sans); }
+      /* 4 · how it works */
+      .s5 svg.hw { display: block; width: 100%; height: auto; margin-top: 30px; }
+      .hw .pn { fill: var(--bg); stroke: var(--ink); stroke-width: 3; }
+      .hw .pn.y { fill: var(--yellow); }
+      .hw .rule { stroke: var(--ink); stroke-opacity: 0.18; stroke-width: 1.5; }
+      .hw .n { font: 600 20px var(--mono); letter-spacing: 0.06em; fill: var(--muted); }
+      .hw .h { font: 800 48px var(--sans); letter-spacing: -0.03em; fill: var(--ink); }
+      .hw .sub { font: 500 21px var(--sans); fill: var(--ink-2); }
+      .hw .l { font: 600 14px var(--mono); letter-spacing: 0.08em; fill: var(--muted); }
+      .hw .n.k, .hw .l.k { fill: var(--ink-2); }
+      .hw .q { font: 600 19px var(--sans); fill: var(--ink); }
+      .hw .opt { fill: var(--bg); stroke: var(--line); stroke-width: 2; }
+      .hw .opt.pick { fill: #eb4799; stroke: var(--ink); }
+      .hw .o { font: 500 17px var(--sans); fill: var(--ink); }
+      .hw .d { fill: var(--line); }
+      .hw .d.f { fill: var(--control); }
+      .hw .d.k { fill: var(--ink); }
+      .hw .u { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .hw .u.g { stroke: var(--green); stroke-width: 2.6; }
+      .hw .t { font: 500 18px var(--sans); fill: var(--ink-2); }
+      .hw .lv { font: 800 24px var(--sans); fill: var(--ink); }
+      .hw .tk { font: 500 13px var(--mono); fill: var(--muted); }
+      .hw .seg { fill: var(--ink); }
+      .hw .seg.e { fill: none; stroke: var(--control); stroke-width: 1.5; }
+      .hw .gauge { stroke: var(--ink); stroke-width: 2; }
+      .hw .grid { fill: none; stroke: var(--line); stroke-width: 1.5; }
+      .hw .need { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 8 6; }
+      .hw .you { fill: #fae784; stroke: var(--yellow); stroke-width: 3; }
+      .hw .gap { stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+      .hw .ax { font: 600 15px var(--sans); fill: var(--ink-2); }
+      .hw .axb { font: 700 18px var(--sans); fill: var(--ink); }
+      .hw .up { font: 700 13px var(--mono); letter-spacing: 0.08em; fill: var(--green); }
+      .hw .stamp rect { fill: var(--bg); stroke: var(--ink); stroke-width: 2; }
+      .hw .stamp text { font: 600 14px var(--mono); fill: var(--ink); }
+      .hw .pill rect { fill: var(--ink); }
+      .hw .pill text { font: 700 14px var(--mono); letter-spacing: 0.06em; fill: var(--yellow); }
+      .hw .chip rect { fill: var(--bg); stroke: var(--ink); stroke-width: 2; }
+      .hw .chip text { font: 700 16px var(--sans); fill: var(--ink); }
+      .hw .big { font: 800 34px var(--sans); letter-spacing: -0.02em; fill: var(--ink); }
+      .hw .val { font: 800 36px var(--sans); letter-spacing: -0.02em; fill: var(--ink); }
+      .hw .val.s { font-size: 30px; }
+      .hw .bar { fill: var(--bg); stroke: var(--ink); stroke-width: 2; }
+      .hw .bar.now { fill: var(--ink); }
+      .hw .tk.k { fill: var(--ink-2); }
+      /* 5 · live demo */
+      .sdemo .head2 { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px; align-items: center; }
+      .sdemo h1.title { font-size: 112px; }
+      .sdemo .qr { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .sdemo .qr img { width: 300px; height: 300px; }
+      .sdemo .why-now { position: static; margin: 0 0 104px; }
       /* 6 · innovation */
       .s6 h1.title { font-size: 72px; }
-      .s6 .matrix { width: 100%; margin-top: 22px; }
-      .s6 .matrix td { height: 64px; }
-      .s6 .matrix th { padding-bottom: 10px; font-size: 16px; }
-      .s6 .callout { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 22px; padding: 20px 30px; background: var(--dark); color: var(--on-dark); border-radius: 16px; font: 700 30px/1.2 var(--sans); }
-      .s6 .callout small { flex: none; color: var(--yellow); font: 600 16px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; text-align: right; }
+      .s6 .mwrap { flex: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 104px; }
+      .s6 .matrix { table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+      .s6 .matrix col.who { width: 27%; }
+      .s6 .matrix th { padding: 0 8px 14px; font-size: 17px; }
+      .s6 .matrix th:first-child, .s6 .matrix td:first-child { padding-left: 22px; }
+      .s6 .matrix td { height: 66px; }
+      .s6 .matrix td:first-child { font-size: 30px; }
+      .s6 .matrix td:first-child small { font-size: 18px; }
+      .s6 .matrix .y, .s6 .matrix .n, .s6 .matrix .m { width: 54px; height: 54px; }
+      .s6 .matrix .ic { width: 30px; height: 30px; }
+      .s6 .legend { align-self: flex-end; margin: 16px 0 0; }
       /* 7 · impact */
       .s7 .art { position: absolute; right: 96px; top: 120px; width: 330px; height: 250px; }
       .cards4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 40px; }
@@ -1251,7 +1243,8 @@
       .mission .for { font: 600 22px/1.35 var(--sans); color: #d8d6cc; }
       /* 8 · business model */
       .s8 h1.title { font-size: 66px; }
-      .s8 .bm8 { display: grid; grid-template-columns: 1110px minmax(0, 1fr); gap: 30px; margin-top: 22px; align-items: start; }
+      .s8 .bm8 { flex: 1; display: grid; grid-template-columns: 1110px minmax(0, 1fr); gap: 30px; align-content: center; align-items: stretch; }
+      .s8 .tier { flex: 1; align-content: center; }
       .s8 svg.bmd { width: 100%; height: auto; display: block; }
       .bmd .tag rect { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
       .bmd .tag.dark rect { fill: var(--ink); }
@@ -1268,7 +1261,7 @@
       .tier p { grid-column: 1 / -1; margin: 4px 0 0; font: 500 20px/1.3 var(--sans); }
       .tag2 { justify-self: end; padding: 6px 10px; border: 2px solid var(--ink); border-radius: 8px; font: 700 14px/1 var(--mono); letter-spacing: 0.06em; }
       .tag2.live { background: var(--ink); color: var(--yellow); }
-      .anchors { position: absolute; left: 96px; right: 96px; bottom: 100px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; background: var(--dark); color: var(--on-dark); border-radius: 16px; }
+      .anchors { margin: 0 0 104px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; background: var(--dark); color: var(--on-dark); border-radius: 16px; }
       .anchors div { padding: 20px 28px; border-left: 1px solid var(--dark-line); }
       .anchors div:first-child { border-left: 0; }
       .anchors small { display: block; color: var(--yellow); font: 600 16px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
@@ -1289,13 +1282,18 @@
       .tarch .el text { font: 600 14px/1 var(--mono); fill: var(--ink-2); }
       .s9 .why-now { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
       /* 10 · close */
-      .s10 h1.title { font-size: 112px; margin-top: 50px; }
+      .s10 .head2 { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 560px; gap: 48px; align-items: center; margin-bottom: 104px; }
+      .s10 h1.title { font-size: 112px; margin-top: 0; }
       .qrs { display: flex; gap: 40px; margin-top: 50px; }
+      .s10 .qrs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+      .s10 .qr { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .s10 .qr img { width: 200px; height: 200px; }
+      .s10 .qr b { font-size: 30px; }
       .qr { display: flex; gap: 22px; align-items: center; text-decoration: none; color: var(--ink); }
       .qr img { width: 200px; height: 200px; padding: 12px; background: #fff; border: 3px solid var(--ink); border-radius: 14px; }
       .qr b { display: block; font: 800 34px/1.1 var(--sans); }
       .qr span { display: block; margin-top: 8px; color: var(--muted); font: 500 20px/1.3 var(--mono); }
-      .s10 .hero { position: absolute; right: 96px; bottom: 120px; width: 620px; height: 640px; }
+      .s10 .hero { position: relative; width: 560px; height: 580px; }
       .s10 .hero img.box { position: absolute; right: 0; bottom: 0; width: 100%; }
       .s10 .hero img.kopi { position: absolute; right: 33%; bottom: 52%; width: 32%; }
     </style>
@@ -1309,13 +1307,17 @@
             </div>
             <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
           </div>
-          <p class="eyebrow">SDC Hackathon 2026 · Domain 1: Aiversecity Future-Ready Workforce</p>
-          <h1 class="title">Open the Box<br /><span class="hl">on Your Job.</span></h1>
-          <p class="lead">Kotak shows a worker <b>what AI changes in their job</b>, and <b>what to learn next</b>.</p>
-          <div class="hero">
-            <img class="box" src="assets/art/hero-box.webp" alt="" />
-            <img class="kopi" src="assets/kopi/happy.png" alt="Kopi, Kotak's cat, peeking out of the box" />
-            <p class="bubble">I am Kopi!</p>
+          <div class="head2">
+            <div>
+              <p class="eyebrow">SDC Hackathon 2026 · Domain 1: Aiversecity Future-Ready Workforce</p>
+              <h1 class="title">Open the Box<br /><span class="hl">on Your Job.</span></h1>
+              <p class="lead">Kotak shows a worker <b>what AI changes in their job</b>, and <b>what to learn first</b>.</p>
+            </div>
+            <div class="hero">
+              <img class="box" src="assets/art/hero-box.webp" alt="" />
+              <img class="kopi" src="assets/kopi/happy.png" alt="Kopi, Kotak's cat, peeking out of the box" />
+              <p class="bubble">I am Kopi!</p>
+            </div>
           </div>
           <div class="team">
             <div class="member"><img src="assets/team/AlaskanTuna.webp" alt="Hee Zi Jie" /><div><b>Hee Zi Jie</b><span>@AlaskanTuna</span><em>Team Leader</em></div></div>
@@ -1337,33 +1339,29 @@
             </div>
             <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
           </div>
-          <p class="eyebrow">Malaysia · 2026</p>
-          <h1 class="title">This Time,<br /><span class="hl">It’s the Office.</span></h1>
-          <div class="art"><img src="assets/art/problem-crossroads.webp" alt="" /></div>
+          <div class="head2">
+            <div>
+              <p class="eyebrow">Hands Up · Malaysia · 2026</p>
+              <h1 class="title">Which Skill Next?<br /><span class="hl">How Long? Who Pays?</span></h1>
+            </div>
+            <div class="art"><img src="assets/art/problem-crossroads.webp" alt="" /></div>
+          </div>
           <div class="p2x">
             <div>
-              <span class="one-in-two">1 in 2</span>
-              <p class="giant-cap">who lost their jobs were professionals, managers, executives or technicians (51%).</p>
-              <p class="src">PERKESO data via SAYS · BusinessToday · 4 Oct 2026</p>
-              <div class="then-now">
-                <div><b>1998</b><span>Production Workers</span><span class="pct">54%</span></div>
-                <div><b>2009</b><span>Machine Operators</span><span class="pct">4 in 10</span></div>
-                <div class="now"><b>2026</b><span>PMETs</span><span class="pct">51%</span></div>
-              </div>
-              <p class="src">Bank Negara · Labour Department · via BusinessToday</p>
+              <span class="one-in-two">51%</span>
+              <p class="giant-cap">of people retrenched in Malaysia this year were professionals, managers, executives or technicians.</p>
+              <p class="src">PERKESO EIS, to mid-July · via SAYS · 20 Jul 2026</p>
             </div>
             <div class="clips">
-              <div class="clip"><span class="pub">PERKESO EIS · to 16 Jul 2026</span><p><em>52,607</em> Malaysians lost their jobs by mid-July. About 270 a day.</p></div>
-              <div class="clip"><span class="pub">HR Minister · Malay Mail · 24 Jun 2026</span><p>AI is <em>not</em> among the six main factors.</p></div>
-              <div class="clip"><span class="pub">ISIS Malaysia &amp; CERT · Jun 2026</span><p>Jobs most exposed to AI: <em>69% more</em> job losses than average.</p></div>
+              <div class="clip"><span class="pub">Khazanah Research Institute · 28 Sep 2026</span><p>Is AI behind it? <em>Not yet</em>, rather than not ever.</p></div>
+              <div class="clip"><span class="pub">Budget 2026 · HRD Corp</span><p><em>RM3 billion</em> for 3 million training opportunities.</p></div>
             </div>
           </div>
           <div class="why-now">
-            <span class="k">And the Training?</span>
-            <span>56% use AI at work. Only 26% have been trained.</span>
-            <small>Hays Asia Salary Guide 2025</small>
+            <span class="k">“Not Yet” Is Not a Plan.</span>
+            <span>The money is there. What’s missing is which skill to learn first.</span>
           </div>
-          <div class="foot"><span>02 / 10 · Problem Statement</span><span>PERKESO via SAYS · BusinessToday · Malay Mail · ISIS &amp; CERT · Hays</span></div>
+          <div class="foot"><span>02 / 10 · Problem Statement</span><span>PERKESO via SAYS · Khazanah Research Institute · Budget 2026 touchpoints, p. 20</span></div>
         </div>
       </section>
 
@@ -1378,61 +1376,21 @@
           </div>
           <p class="eyebrow">Who Uses It · When · Who Pays</p>
           <h1 class="title">Digital Workers Whose Jobs<br /><span class="hl">AI Is Changing Now.</span></h1>
-          <div class="u3">
-            <div>
-              <div class="defs">
-                <div><b>Who Uses It</b><p>Working adults in AI-exposed digital jobs: <strong>developers, QA testers, UI/UX designers</strong>.</p></div>
-                <div><b>The Moment</b><p>The week tech companies roll out <strong>AI coding tools</strong>, and nobody says <strong>which skill to build next</strong>.</p></div>
-                <div><b>Who Pays</b><p>HR and L&amp;D managers at <strong>HRD Corp levy-paying employers</strong>, choosing what to fund.</p></div>
-                <div><b>Also For</b><p>Career switchers and fresh graduates picking their next role.</p></div>
-              </div>
-              <div class="aina"><div class="bubble"><small>Aina, Front-End Developer, KL · Sample Persona</small>Her manager asks: “Which training do we fund this year?”</div></div>
-            </div>
-            <div class="right">
-              <div class="dev"><img src="assets/art/user-developer.webp" alt="" /></div>
-              <figure class="phone"><img src="assets/screens/radar-phone.png" alt="Kotak's skills radar on a phone" /></figure>
-            </div>
+          <div class="who4">
+            <div class="wcard y"><svg class="ic"><use href="#i-users" /></svg><b>Who Uses It</b><h2>Developers, QA testers, UI/UX designers</h2><p>Working adults in AI-exposed digital jobs.</p></div>
+            <div class="wcard"><svg class="ic"><use href="#i-zap" /></svg><b>The Moment</b><h2>A new AI model launches.</h2><p>Nobody says which skill to build next.</p></div>
+            <div class="wcard"><svg class="ic"><use href="#i-wallet" /></svg><b>Who Pays</b><h2>HR and L&amp;D managers</h2><p>At HRD Corp levy-paying employers.</p></div>
+            <div class="wcard soft"><svg class="ic"><use href="#i-route" /></svg><b>Also For</b><h2>Career switchers and fresh graduates</h2><p>Picking their next role.</p></div>
+          </div>
+          <div class="why-now">
+            <span class="k">Aina, Web Developer, KL · Sample Persona</span>
+            <span>Her manager asks: “Which training do we fund first?”</span>
           </div>
           <div class="foot"><span>03 / 10 · Target Users</span><span>Aina is a sample persona · 923 jobs from O*NET 30.1</span></div>
         </div>
       </section>
 
-      <section class="slide s4" data-label="04 Solution">
-        <div class="pad">
-          <div class="chrome">
-            <div class="chrome-left">
-              <img class="lockup" src="assets/brand/kotak-lockup.svg" alt="Kotak" />
-              <span class="tag">Solution</span>
-            </div>
-            <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
-          </div>
-          <p class="eyebrow">What Domain 1 Asks For · What Kotak Delivers</p>
-          <h1 class="title">Every Must-Have, <span class="hl">Not Just a Plan.</span></h1>
-          <div class="sol">
-            <table class="must">
-              <thead><tr><th></th><th>Domain 1 Asks For</th><th></th><th>Kotak Delivers</th></tr></thead>
-              <tbody>
-                <tr><td class="n">01</td><td class="ask">Skills Profile Intake</td><td class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></td><td class="do"><b>12 can-do questions</b> about your real work. 3 minutes, no CV.</td></tr>
-                <tr><td class="n">02</td><td class="ask">AI-Trend Signal Layer</td><td class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></td><td class="do"><b>Economic Index, O*NET, DOSM, JobStreet ads</b>, each with its date.</td></tr>
-                <tr><td class="n">03</td><td class="ask">Future-Role Matching</td><td class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></td><td class="do"><b>Ranked roles</b> with a fit score and the skills gap behind it.</td></tr>
-                <tr><td class="n">04</td><td class="ask">Reskilling Pathway</td><td class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></td><td class="do"><b>A dated plan to 80% fit</b>: hours a week, a free first step, the HRD Corp route.</td></tr>
-                <tr><td class="n">05</td><td class="ask">SDG Mapping</td><td class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></td><td class="do"><b>Every role and step</b> tagged to its SDG.</td></tr>
-                <tr><td class="n">06</td><td class="ask">Handling Uncertainty</td><td class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></td><td class="do"><b>Slow and fast AI-uptake targets</b>; every date labelled an estimate.</td></tr>
-              </tbody>
-            </table>
-            <figure class="shot"><img src="assets/screens/roadmap-plan.png" alt="Kotak roadmap: dated steps to 80% fit by week 35 at 10 hours a week" /></figure>
-          </div>
-          <div class="beyond">
-            <small>Beyond<br />the Brief</small>
-            <p><b>What Changed</b> re-plans when new monthly data lands.</p>
-            <p><b>Ask Kopi</b> explains any verdict, with its source.</p>
-            <p><b>Any AI</b> can call the same rules over MCP.</p>
-          </div>
-          <div class="foot"><span>04 / 10 · Solution</span><span>Domain 1 problem statement, section 4 · Kotak live demo</span></div>
-        </div>
-      </section>
-
-      <section class="slide s5" data-label="05 How It Works">
+      <section class="slide s5" data-label="04 How It Works">
         <div class="pad">
           <div class="chrome">
             <div class="chrome-left">
@@ -1441,19 +1399,131 @@
             </div>
             <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
           </div>
-          <p class="eyebrow">Three Steps · Then the Live Demo</p>
+          <p class="eyebrow">Twelve Questions · Six Skills · One Gap</p>
           <h1 class="title">Data Decides. <span class="hl">AI Explains.</span></h1>
-          <div class="flow">
-            <div class="step3"><em>01 · You</em><h2>Answer</h2><p>12 can-do questions about your real work.</p></div>
-            <div class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></div>
-            <div class="step3 rules"><em>02 · Fixed Rules</em><h2>Decide</h2><p>Your answers meet dated public data.</p>
-              <div class="stamps"><span>Economic Index · May 2026</span><span>O*NET 30.1</span><span>DOSM</span><span>JobStreet Ads</span></div></div>
-            <div class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></div>
-            <div class="step3"><em>03 · You Get</em><h2>Act</h2><p>A skills radar, ranked roles and a plan.</p></div>
+          <svg class="hw" viewBox="0 0 1728 660" role="img" aria-label="Aina's first question, scored by fixed rules into six skill levels on a radar against the 2027 need, and her biggest rising gap becoming the first step of her plan.">
+            <!-- 01 · Answer: Aina's real first question, from the Web Developers scenarios -->
+            <rect class="pn" x="1.5" y="1.5" width="477" height="657" rx="18" />
+            <text class="n" x="32" y="48">01 · YOU</text>
+            <text class="h" x="32" y="104">Answer</text>
+            <text class="sub" x="32" y="140">12 questions from her own job</text>
+            <line class="rule" x1="32" y1="166" x2="446" y2="166" />
+            <text class="l" x="32" y="204">Q1 OF 12 · TECHNICAL DOCUMENTATION</text>
+            <text class="q" x="32" y="238">You finished testing a new login page<tspan x="32" dy="28">and found two display faults on a</tspan><tspan x="32" dy="28">mobile phone. Your lead wants the</tspan><tspan x="32" dy="28">results written down for the team.</tspan></text>
+            <text class="l" x="32" y="362">SHE PICKS ONE</text>
+            <use class="u" href="#i-lock" x="302" y="348" width="16" height="16" />
+            <text class="l" x="446" y="362" text-anchor="end">HIDDEN SCORE</text>
+            <rect class="opt" x="32" y="378" width="414" height="54" rx="10" />
+            <text class="o" x="50" y="411">Message the developer about the…</text>
+            <circle class="d f" cx="383" cy="405" r="5" /><circle class="d f" cx="397" cy="405" r="5" /><circle class="d" cx="411" cy="405" r="5" /><circle class="d" cx="425" cy="405" r="5" />
+            <rect class="opt" x="32" y="442" width="414" height="54" rx="10" />
+            <text class="o" x="50" y="475">Record each fault with the phone…</text>
+            <circle class="d f" cx="383" cy="469" r="5" /><circle class="d f" cx="397" cy="469" r="5" /><circle class="d f" cx="411" cy="469" r="5" /><circle class="d f" cx="425" cy="469" r="5" />
+            <rect class="opt pick" x="32" y="506" width="414" height="54" rx="10" />
+            <text class="o" x="50" y="539">Note each fault with its page…</text>
+            <use class="u" href="#i-check" x="336" y="522" width="22" height="22" />
+            <circle class="d k" cx="383" cy="533" r="5" /><circle class="d k" cx="397" cy="533" r="5" /><circle class="d k" cx="411" cy="533" r="5" /><circle class="d" cx="425" cy="533" r="5" />
+            <rect class="opt" x="32" y="570" width="414" height="54" rx="10" />
+            <text class="o" x="50" y="603">Write that the login page passed…</text>
+            <circle class="d f" cx="383" cy="597" r="5" /><circle class="d" cx="397" cy="597" r="5" /><circle class="d" cx="411" cy="597" r="5" /><circle class="d" cx="425" cy="597" r="5" />
+
+            <use class="u" href="#i-arrow" x="487" y="312" width="36" height="36" />
+
+            <!-- 02 · Decide: two answers make one level; six levels meet the 2027 need -->
+            <rect class="pn" x="531.5" y="1.5" width="797" height="657" rx="18" />
+            <text class="n" x="564" y="48">02 · FIXED RULES</text>
+            <text class="h" x="564" y="104">Decide</text>
+            <text class="sub" x="564" y="140">Her answers meet dated public data</text>
+            <g class="pill"><rect x="1057" y="30" width="241" height="32" rx="16" /><text x="1177.5" y="51" text-anchor="middle">AI NEVER SETS A VERDICT</text></g>
+            <line class="rule" x1="564" y1="166" x2="1298" y2="166" />
+
+            <text class="l" x="564" y="204">Q1 + Q2 · ONE SKILL</text>
+            <text class="t" x="564" y="244">Basic</text>
+            <rect class="seg" x="664" y="230" width="22" height="18" rx="3" /><rect class="seg" x="691" y="230" width="22" height="18" rx="3" /><rect class="seg" x="718" y="230" width="22" height="18" rx="3" /><rect class="seg e" x="745" y="230" width="22" height="18" rx="3" />
+            <text class="t" x="564" y="280">Advanced</text>
+            <rect class="seg" x="664" y="266" width="22" height="18" rx="3" /><rect class="seg e" x="691" y="266" width="22" height="18" rx="3" /><rect class="seg e" x="718" y="266" width="22" height="18" rx="3" /><rect class="seg e" x="745" y="266" width="22" height="18" rx="3" />
+            <text class="lv" x="564" y="328">Level 1.0<tspan class="t"> of 3</tspan></text>
+            <line class="gauge" x1="564" y1="352" x2="767" y2="352" />
+            <line class="gauge" x1="564" y1="346" x2="564" y2="358" /><line class="gauge" x1="631.7" y1="346" x2="631.7" y2="358" /><line class="gauge" x1="699.3" y1="346" x2="699.3" y2="358" /><line class="gauge" x1="767" y1="346" x2="767" y2="358" />
+            <text class="tk" x="564" y="378" text-anchor="middle">0</text><text class="tk" x="631.7" y="378" text-anchor="middle">1</text><text class="tk" x="699.3" y="378" text-anchor="middle">2</text><text class="tk" x="767" y="378" text-anchor="middle">3</text>
+            <circle class="you" cx="631.7" cy="352" r="9" style="stroke: var(--ink); stroke-width: 2.5" />
+            <text class="lv" x="564" y="432">× 6 skills</text>
+            <use class="u" href="#i-arrow" x="700" y="413" width="26" height="26" />
+            <rect class="you" x="564" y="490" width="30" height="16" rx="3" />
+            <text class="t" x="604" y="504">Aina today</text>
+            <line class="need" x1="564" y1="530" x2="594" y2="530" />
+            <text class="t" x="604" y="536">Needed by 2027</text>
+
+            <polygon class="grid" points="1048,230 1177.9,305 1177.9,455 1048,530 918.1,455 918.1,305" />
+            <polygon class="grid" points="1048,280 1134.6,330 1134.6,430 1048,480 961.4,430 961.4,330" />
+            <polygon class="grid" points="1048,330 1091.3,355 1091.3,405 1048,430 1004.7,405 1004.7,355" />
+            <path class="grid" d="M1048 380L1048 230M1048 380L1177.9 305M1048 380L1177.9 455M1048 380L1048 530M1048 380L918.1 455M1048 380L918.1 305" />
+            <polygon class="you" points="1048,330 1091.3,355 1091.3,405 1048,430 1004.7,405 1004.7,355" />
+            <polygon class="need" points="1048,237.3 1168.9,310.2 1134.6,430 1048,480 961.4,430 996.7,350.4" />
+            <text class="up" x="1048" y="190" text-anchor="middle">RISING · BIGGEST GAP</text>
+            <text class="axb" x="1048" y="214" text-anchor="middle">Technical documentation</text>
+            <text class="ax" x="1190" y="300">Web specs<tspan x="1190" dy="18">and standards</tspan></text>
+            <text class="ax" x="1190" y="452">Web testing<tspan x="1190" dy="18">and updates</tspan></text>
+            <text class="ax" x="1048" y="556" text-anchor="middle">Web performance and support</text>
+            <text class="ax" x="906" y="452" text-anchor="end">Web design<tspan x="906" dy="18">and databases</tspan></text>
+            <text class="ax" x="906" y="300" text-anchor="end">Web site<tspan x="906" dy="18">building</tspan></text>
+
+            <g class="stamp"><rect x="564" y="596" width="240" height="32" rx="8" /><text x="684" y="617" text-anchor="middle">Economic Index · May 2026</text></g>
+            <g class="stamp"><rect x="814" y="596" width="116" height="32" rx="8" /><text x="872" y="617" text-anchor="middle">O*NET 30.1</text></g>
+            <g class="stamp"><rect x="940" y="596" width="66" height="32" rx="8" /><text x="973" y="617" text-anchor="middle">DOSM</text></g>
+            <g class="stamp"><rect x="1016" y="596" width="140" height="32" rx="8" /><text x="1086" y="617" text-anchor="middle">JobStreet Ads</text></g>
+
+            <use class="u" href="#i-arrow" x="1337" y="312" width="36" height="36" />
+
+            <!-- 03 · Act: the biggest rising gap, as the first step of her plan -->
+            <rect class="pn y" x="1381.5" y="1.5" width="345" height="657" rx="18" />
+            <text class="n k" x="1412" y="48">03 · YOU GET</text>
+            <text class="h" x="1412" y="104">Act</text>
+            <text class="sub" x="1412" y="140">Her plan, in order</text>
+            <line class="rule" x1="1412" y1="166" x2="1696" y2="166" />
+            <text class="l k" x="1412" y="204">LEARN FIRST</text>
+            <text class="big" x="1412" y="246">Technical<tspan x="1412" dy="38">documentation</tspan></text>
+            <g class="chip"><rect x="1412" y="304" width="112" height="32" rx="16" /><use class="u g" href="#i-up" x="1424" y="312" width="16" height="16" /><text x="1448" y="326">Rising</text></g>
+            <text class="l k" x="1412" y="382">HOURS</text>
+            <text class="val" x="1412" y="420">47.5</text><text class="t" x="1504" y="420">to level 2</text>
+            <text class="l k" x="1412" y="462">WHO PAYS</text>
+            <text class="val s" x="1412" y="498">HRD Corp</text>
+            <text class="t" x="1412" y="522">Claimable courses</text>
+            <text class="l k" x="1412" y="562">FIT TO 2027 NEED</text>
+            <text class="val" x="1412" y="600">47%</text>
+            <use class="u" href="#i-arrow" x="1494" y="580" width="24" height="24" />
+            <text class="val" x="1528" y="600">100%</text>
+            <rect class="bar" x="1412" y="614" width="284" height="12" rx="6" />
+            <rect class="bar now" x="1412" y="614" width="132.8" height="12" rx="6" />
+            <text class="tk k" x="1412" y="646">TODAY</text>
+            <text class="tk k" x="1696" y="646" text-anchor="end">FULL PLAN · JAN 2028</text>
+          </svg>
+          <div class="foot"><span>04 / 10 · How It Works</span><span>Engine output for Aina · Web Developers, 15-1254.00 · May 2026 snapshot · 10 h a week</span></div>
+        </div>
+      </section>
+
+      <section class="slide sdemo" data-label="05 Live Demo">
+        <div class="pad">
+          <div class="chrome">
+            <div class="chrome-left">
+              <img class="lockup" src="assets/brand/kotak-lockup.svg" alt="Kotak" />
+              <span class="tag">Live Demo</span>
+            </div>
+            <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
           </div>
-          <div class="lock"><svg class="ic"><use href="#i-check" /></svg> AI never sets a verdict. It explains one, with sources.</div>
-          <div class="art"><img src="assets/art/howitworks-trio.webp" alt="" /></div>
-          <div class="foot"><span>05 / 10 · How It Works</span><span>packages/shared/src/rules · dated snapshots</span></div>
+          <div class="head2">
+            <div>
+              <p class="eyebrow">Live Demo · Five Minutes</p>
+              <h1 class="title">Aina’s Check-Up,<br /><span class="hl">Live.</span></h1>
+              <p class="lead">Scan to follow along on your phone.</p>
+            </div>
+            <a class="qr" href="https://kotak-alaskxntxna.replit.app"><img src="assets/qr/live-replit.svg" alt="QR code for Kotak's live demo on Replit" /><div><b>Try It Live</b><span>kotak-alaskxntxna.replit.app</span></div></a>
+          </div>
+          <div class="why-now">
+            <span class="k">Watch For</span>
+            <span>Intake · Trend Signal · Role Matching · Pathway · SDGs · Uncertainty</span>
+          </div>
+          <div class="foot"><span>05 / 10 · Live Demo</span><span>Live on Replit · Domain 1’s six stages</span></div>
         </div>
       </section>
 
@@ -1468,8 +1538,10 @@
           </div>
           <p class="eyebrow">Public-Tool Review · Oct 2026</p>
           <h1 class="title">Others List Courses.<br /><span class="hl">Kotak Says What to Learn First.</span></h1>
+          <div class="mwrap">
           <table class="matrix">
-            <thead><tr><th>What Exists</th><th>Dated AI Trend per Skill</th><th>Visible Fixed Maths</th><th>Timed Plan to a Fit Target</th><th>Funding Route</th><th>Callable by Any AI (MCP)</th></tr></thead>
+            <colgroup><col class="who" /><col span="5" /></colgroup>
+            <thead><tr><th>What Exists</th><th>Dated AI Trend<br />per Skill</th><th>Visible<br />Fixed Maths</th><th>Timed Plan<br />to a Fit Target</th><th>Funding<br />Route</th><th>Callable by<br />Any AI (MCP)</th></tr></thead>
             <tbody>
                   <tr><td>MyMahir<small>TalentCorp role and skill maps</small></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td></tr>
                   <tr><td>LinkedIn Career Explorer<small>skills-similarity score</small></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td><td><span class="n"><svg class="ic"><use href="#i-x" /></svg></span></td></tr>
@@ -1480,12 +1552,122 @@
                   <tr class="us"><td>Kotak<small>this project</small></td><td><span class="y"><svg class="ic"><use href="#i-check" /></svg></span></td><td><span class="y"><svg class="ic"><use href="#i-check" /></svg></span></td><td><span class="y"><svg class="ic"><use href="#i-check" /></svg></span></td><td><span class="y"><svg class="ic"><use href="#i-check" /></svg></span></td><td><span class="y"><svg class="ic"><use href="#i-check" /></svg></span></td></tr>
             </tbody>
           </table>
-          <div class="callout"><span>Most teams build a chatbot. <span style="color: var(--yellow)">Kotak is the tool a chatbot calls.</span></span><small>The only one we found with all five<br />? = a plan with no source</small></div>
+          <p class="legend">? = a plan with no source</p>
+          </div>
           <div class="foot"><span>06 / 10 · Innovation</span><span>mymahir.my · linkedin.com · masterclass.com · reskills.com · elatih.hrdcorp.gov.my</span></div>
         </div>
       </section>
 
-      <section class="slide s7" data-label="07 Impact">
+      <section class="slide s9" data-label="07 Technical Architecture">
+        <div class="pad">
+          <div class="chrome">
+            <div class="chrome-left">
+              <img class="lockup" src="assets/brand/kotak-lockup.svg" alt="Kotak" />
+              <span class="tag">Technical Architecture</span>
+            </div>
+            <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
+          </div>
+          <p class="eyebrow">Engine + Product · One Rulebook</p>
+          <h1 class="title">Two Halves, One Rulebook, <span class="hl">No Guessing.</span></h1>
+            <svg class="tarch" viewBox="0 0 1728 530" role="img" aria-label="Kotak technical architecture: engine and product">
+              <defs><marker id="ta-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 z" fill="var(--ink)" /></marker></defs>
+              <rect class="zone" x="2" y="2" width="846" height="526" rx="16" />
+              <text class="zl" x="22" y="32">ENGINE · BUILD TIME</text>
+              <rect class="zone" x="878" y="2" width="848" height="526" rx="16" />
+              <text class="zl" x="898" y="32">PRODUCT · LIVE</text>
+              <rect class="box " x="22" y="56" width="250" height="100" rx="12" />
+              <image href="assets/icons/anthropic.svg" x="38" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="38" y="124">Public Data</text>
+              <text class="t2" x="38" y="144">Econ. Index · O*NET · DOSM</text>
+              <rect class="box " x="300" y="56" width="250" height="100" rx="12" />
+              <image href="assets/icons/bun.svg" x="316" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/githubactions.svg" x="352" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="316" y="124">Data Scripts</text>
+              <text class="t2" x="316" y="144">Bun · weekly GitHub Actions</text>
+              <rect class="box " x="578" y="56" width="250" height="100" rx="12" />
+              <image href="assets/icons/runpod.png" x="594" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/qwen.svg" x="630" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/vllm.svg" x="666" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="594" y="124">GPU Batch</text>
+              <text class="t2" x="594" y="144">RunPod · Qwen3.8-27B · vLLM</text>
+              <rect class="box " x="300" y="236" width="250" height="100" rx="12" />
+              <image href="assets/icons/json.svg" x="316" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="316" y="304">Dated Snapshots</text>
+              <text class="t2" x="316" y="324">JSON · April, May 2026</text>
+              <rect class="box " x="22" y="236" width="250" height="100" rx="12" />
+              <use href="#i-shield" x="38" y="250" width="28" height="28" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <text class="t1" x="38" y="304">Validators</text>
+              <text class="t2" x="38" y="324">task IDs · answer scores</text>
+              <rect class="box " x="22" y="406" width="250" height="100" rx="12" />
+              <image href="assets/icons/bun.svg" x="38" y="420" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="38" y="474">Job-Ad Collector</text>
+              <text class="t2" x="38" y="494">daily queue · resumes runs</text>
+              <rect class="box " x="300" y="406" width="250" height="100" rx="12" />
+              <image href="assets/icons/claude.svg" x="316" y="420" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="316" y="474">Ad Review</text>
+              <text class="t2" x="316" y="494">Claude sorts · human checks</text>
+              <rect class="box " x="578" y="406" width="250" height="100" rx="12" />
+              <image href="assets/icons/postgresql.svg" x="594" y="420" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="594" y="474">Neon Postgres</text>
+              <text class="t2" x="594" y="494">job ads · check-ups (k≥10)</text>
+              <rect class="box " x="898" y="56" width="250" height="100" rx="12" />
+              <g transform="translate(914 70)" fill="none" stroke="var(--ink)" stroke-width="2"><circle cx="14" cy="9" r="6" /><path d="M3 28c0-6 5-11 11-11s11 5 11 11" /></g>
+              <text class="t1" x="914" y="124">Malaysian Worker</text>
+              <text class="t2" x="914" y="144">phone or laptop</text>
+              <rect class="box " x="1178" y="56" width="250" height="100" rx="12" />
+              <image href="assets/icons/mcp.svg" x="1194" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/claude.svg" x="1230" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/cursor.svg" x="1266" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="1194" y="124">MCP Clients</text>
+              <text class="t2" x="1194" y="144">Claude · Cursor · any agent</text>
+              <rect class="box y" x="898" y="236" width="250" height="120" rx="12" />
+              <image href="assets/brand/kotak-mark.svg" x="914" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/react.svg" x="950" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="914" y="304">Kotak Web App</text>
+              <text class="t2 dark" x="914" y="324">React · rules in browser</text>
+              <text class="t2 dark" x="914" y="344">3D space · EN · BM · ZH</text>
+              <rect class="box " x="1178" y="236" width="250" height="120" rx="12" />
+              <image href="assets/icons/hono.svg" x="1194" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/cloudflareworkers.svg" x="1230" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/replit.svg" x="1266" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="1194" y="304">Hono API</text>
+              <text class="t2" x="1194" y="324">CF Workers · Durable Object</text>
+              <text class="t2" x="1194" y="344">Replit</text>
+              <rect class="box " x="1458" y="236" width="250" height="120" rx="12" />
+              <image href="assets/icons/claude.svg" x="1474" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <image href="assets/icons/elevenlabs.svg" x="1510" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+              <text class="t1" x="1474" y="304">Kopi</text>
+              <text class="t2" x="1474" y="324">Haiku 5.5 · ElevenLabs</text>
+              <text class="t2" x="1474" y="344">Live2D · chat with tools</text>
+              <path class="e" d="M272 106 H296" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M550 106 H574" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M425 156 V232" marker-end="url(#ta-arrow)" />
+              <g class="el"><rect x="396" y="182" width="57" height="22" rx="4" /><text x="425" y="198" text-anchor="middle">build</text></g>
+              <path class="e" d="M703 156 V196 H480 V232" marker-end="url(#ta-arrow)" />
+              <g class="el"><rect x="494" y="184" width="196" height="22" rx="4" /><text x="592" y="200" text-anchor="middle">skills + translations</text></g>
+              <path class="e" d="M272 286 H296" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M550 286 H894" marker-end="url(#ta-arrow)" />
+              <g class="el"><rect x="672" y="274" width="100" height="22" rx="4" /><text x="722" y="290" text-anchor="middle">fetch JSON</text></g>
+              <path class="e" d="M272 456 H296" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M550 456 H574" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M1023 156 V232" marker-end="url(#ta-arrow)" />
+              <g class="el"><rect x="982" y="182" width="83" height="22" rx="4" /><text x="1023" y="198" text-anchor="middle">check-up</text></g>
+              <path class="e" d="M1303 156 V232" marker-end="url(#ta-arrow)" />
+              <g class="el"><rect x="1262" y="182" width="83" height="22" rx="4" /><text x="1303" y="198" text-anchor="middle">/api/mcp</text></g>
+              <path class="e" d="M1148 286 H1174" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M1428 286 H1454" marker-end="url(#ta-arrow)" />
+              <path class="e" d="M1303 356 V456 H832" marker-end="url(#ta-arrow)" />
+              <g class="el"><rect x="976" y="444" width="169" height="22" rx="4" /><text x="1060" y="460" text-anchor="middle">SQL · job-ad stats</text></g>
+            </svg>
+          <div class="why-now">
+            <div><span class="k">Built, Not Mocked</span><br />923 jobs drafted in 13 min, 0 failed. 139 automated tests pass on every change.</div>
+            <div><span class="k">AI Explains, Never Decides</span><br />A check rejects any explanation that changes a verdict. A template answers if Claude fails.</div>
+          </div>
+          <div class="foot"><span>07 / 10 · Technical Architecture</span><span>Live · kotak.tp073654.workers.dev · Replit</span></div>
+        </div>
+      </section>
+
+      <section class="slide s7" data-label="08 Impact">
         <div class="pad">
           <div class="chrome">
             <div class="chrome-left">
@@ -1499,19 +1681,19 @@
           <div class="art"><img src="assets/art/impact-steps.webp" alt="" /></div>
           <div class="cards4">
             <div class="ncard"><b>3 Min</b><p>From 12 answers to ranked roles and a dated plan. No CV.</p></div>
-            <div class="ncard y"><b>Week 35</b><p>Aina reaches 80% fit at 10 hours a week.</p><p class="src">Sample persona · demo answers</p></div>
+            <div class="ncard y"><b>Week 34</b><p>Aina reaches 80% fit at 10 hours a week.</p><p class="src">Sample persona · demo answers</p></div>
             <div class="ncard"><b>923</b><p>Jobs covered, every skill with a dated AI trend.</p><p class="src">O*NET 30.1 · Economic Index, May 2026</p></div>
             <div class="ncard"><b>RM0</b><p>For workers, with a free first step per skill and the levy route.</p></div>
           </div>
           <div class="mission">
-            <div><small>Our Mission</small><p>Every Malaysian worker knows what AI changes in their job, and what to learn next.</p></div>
+            <div><small>Fair by Design</small><p>30 of 30 paired profiles get the same verdicts and fit. Name, gender, race, religion and age are never asked.</p></div>
             <div class="for"><small>For Malaysia</small>Levy-funded training aimed at the skills that are rising. Toward SDG 4.4: skills for decent work.</div>
           </div>
-          <div class="foot"><span>07 / 10 · Impact</span><span>@kotak/sdk · May 2026 snapshot · demo answers</span></div>
+          <div class="foot"><span>08 / 10 · Impact</span><span>@kotak/sdk · May 2026 snapshot · demo answers</span></div>
         </div>
       </section>
 
-      <section class="slide s8" data-label="08 Business Model">
+      <section class="slide s8" data-label="09 Business Model">
         <div class="pad">
           <div class="chrome">
             <div class="chrome-left">
@@ -1566,119 +1748,17 @@
               <g class="lg"><path class="e" d="M0 486 H40" /><text x="50" y="491">data from Kotak</text><path class="e d" d="M230 486 H270" /><text x="280" y="491">levy money, never Kotak’s</text></g>
             </svg>
             <div class="tiers">
-              <div class="tier"><span class="who">Workers</span><span class="tag2 live">LIVE</span><b>Free</b><p>Check-up, radar, roles, dated plan.</p></div>
-              <div class="tier y"><span class="who">Kotak Team</span><span class="tag2">NEXT</span><b>RM5 <small>/ Worker / Month</small></b><p>Billed yearly. Team gaps, who to train first.</p></div>
+              <div class="tier"><span class="who">Workers</span><span class="tag2 live">LIVE</span><b>Free</b><p>Check-up, radar, roles, dated plan, 3D space.</p></div>
+              <div class="tier y"><span class="who">Kotak Team</span><span class="tag2">NEXT · PILOT</span><b>Per Seat</b><p>Pilot with one HR team first, then billed yearly. Team gaps, who to train first.</p></div>
               <div class="tier"><span class="who">Agencies</span><span class="tag2">API BUILT</span><b>Licence</b><p>Yearly. Anonymous totals, groups of 10+.</p></div>
             </div>
           </div>
           <div class="anchors">
-            <div><small>Sized Against the Levy</small><p>The levy is 1% of wages: RM63 a month at the RM6,300 median. Kotak Team is under a tenth of that.</p><p class="src">HRD Corp FAQ · JobStreet ads, 24 Oct 2026</p></div>
-            <div><small>Priced Below</small><p>Coursera for Teams lists US$399 a seat a year.</p><p class="src">coursera.org list price</p></div>
+            <div><small>Cheap to Run</small><p>About 7 US cents a check-up, mostly Kopi’s voice.</p><p class="src">Kotak cost card · list prices</p></div>
+            <div><small>Money Already There</small><p>Employers in HRD Corp’s mandatory sectors pay 1% of wages for training.</p><p class="src">HRD Corp FAQ</p></div>
             <div><small>Trust Rule</small><p>No paid placement. A course never buys its way into a plan.</p><p class="src">Plans rank by data only</p></div>
           </div>
-          <div class="foot"><span>08 / 10 · Business Model</span><span>Prices to test, not contracts · team view: our next build</span></div>
-        </div>
-      </section>
-
-      <section class="slide s9" data-label="09 Technical Architecture">
-        <div class="pad">
-          <div class="chrome">
-            <div class="chrome-left">
-              <img class="lockup" src="assets/brand/kotak-lockup.svg" alt="Kotak" />
-              <span class="tag">Technical Architecture</span>
-            </div>
-            <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
-          </div>
-          <p class="eyebrow">Engine + Product · One Rulebook</p>
-          <h1 class="title">Two Halves, One Rulebook, <span class="hl">No Guessing.</span></h1>
-            <svg class="tarch" viewBox="0 0 1728 530" role="img" aria-label="Kotak technical architecture: engine and product">
-              <defs><marker id="ta-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 z" fill="var(--ink)" /></marker></defs>
-              <rect class="zone" x="2" y="2" width="846" height="526" rx="16" />
-              <text class="zl" x="22" y="32">ENGINE · BUILD TIME</text>
-              <rect class="zone" x="878" y="2" width="848" height="526" rx="16" />
-              <text class="zl" x="898" y="32">PRODUCT · LIVE</text>
-              <rect class="box " x="22" y="56" width="250" height="100" rx="12" />
-              <image href="assets/icons/anthropic.svg" x="38" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="38" y="124">Public Data</text>
-              <text class="t2" x="38" y="144">Econ. Index · O*NET · DOSM</text>
-              <rect class="box " x="300" y="56" width="250" height="100" rx="12" />
-              <image href="assets/icons/bun.svg" x="316" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/githubactions.svg" x="352" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="316" y="124">Data Scripts</text>
-              <text class="t2" x="316" y="144">Bun · weekly GitHub Actions</text>
-              <rect class="box " x="578" y="56" width="250" height="100" rx="12" />
-              <image href="assets/icons/runpod.png" x="594" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/qwen.svg" x="630" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/vllm.svg" x="666" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="594" y="124">GPU Batch</text>
-              <text class="t2" x="594" y="144">RunPod · Qwen3.8-27B · vLLM</text>
-              <rect class="box " x="300" y="236" width="250" height="100" rx="12" />
-              <image href="assets/icons/json.svg" x="316" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="316" y="304">Dated Snapshots</text>
-              <text class="t2" x="316" y="324">JSON · April, May 2026</text>
-              <rect class="box " x="22" y="406" width="250" height="100" rx="12" />
-              <image href="assets/icons/bun.svg" x="38" y="420" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="38" y="474">Job-Ad Collector</text>
-              <text class="t2" x="38" y="494">daily queue · resumes runs</text>
-              <rect class="box " x="300" y="406" width="250" height="100" rx="12" />
-              <image href="assets/icons/claude.svg" x="316" y="420" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="316" y="474">Ad Review</text>
-              <text class="t2" x="316" y="494">Claude sorts · human checks</text>
-              <rect class="box " x="578" y="406" width="250" height="100" rx="12" />
-              <image href="assets/icons/postgresql.svg" x="594" y="420" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="594" y="474">Neon Postgres</text>
-              <text class="t2" x="594" y="494">job ads · check-ups (k≥10)</text>
-              <rect class="box " x="898" y="56" width="250" height="100" rx="12" />
-              <g transform="translate(914 70)" fill="none" stroke="var(--ink)" stroke-width="2"><circle cx="14" cy="9" r="6" /><path d="M3 28c0-6 5-11 11-11s11 5 11 11" /></g>
-              <text class="t1" x="914" y="124">Malaysian Worker</text>
-              <text class="t2" x="914" y="144">phone or laptop</text>
-              <rect class="box " x="1178" y="56" width="250" height="100" rx="12" />
-              <image href="assets/icons/mcp.svg" x="1194" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/claude.svg" x="1230" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/cursor.svg" x="1266" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="1194" y="124">MCP Clients</text>
-              <text class="t2" x="1194" y="144">Claude · Cursor · any agent</text>
-              <rect class="box y" x="898" y="236" width="250" height="100" rx="12" />
-              <image href="assets/brand/kotak-mark.svg" x="914" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/react.svg" x="950" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="914" y="304">Kotak Web App</text>
-              <text class="t2 dark" x="914" y="324">React · rules in browser</text>
-              <rect class="box " x="1178" y="236" width="250" height="100" rx="12" />
-              <image href="assets/icons/hono.svg" x="1194" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/cloudflareworkers.svg" x="1230" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/replit.svg" x="1266" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="1194" y="304">Hono API</text>
-              <text class="t2" x="1194" y="324">CF Workers · Replit</text>
-              <rect class="box " x="1458" y="236" width="250" height="120" rx="12" />
-              <image href="assets/icons/claude.svg" x="1474" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <image href="assets/icons/elevenlabs.svg" x="1510" y="250" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-              <text class="t1" x="1474" y="304">Kopi</text>
-              <text class="t2" x="1474" y="324">Haiku 5.5 · ElevenLabs</text>
-              <text class="t2" x="1474" y="344">Live2D, in the browser</text>
-              <path class="e" d="M272 106 H296" marker-end="url(#ta-arrow)" />
-              <path class="e" d="M550 106 H574" marker-end="url(#ta-arrow)" />
-              <path class="e" d="M425 156 V232" marker-end="url(#ta-arrow)" />
-              <g class="el"><rect x="396" y="182" width="57" height="22" rx="4" /><text x="425" y="198" text-anchor="middle">build</text></g>
-              <path class="e" d="M703 156 V196 H480 V232" marker-end="url(#ta-arrow)" />
-              <g class="el"><rect x="508" y="184" width="169" height="22" rx="4" /><text x="592" y="200" text-anchor="middle">skills + questions</text></g>
-              <path class="e" d="M550 286 H894" marker-end="url(#ta-arrow)" />
-              <g class="el"><rect x="672" y="274" width="100" height="22" rx="4" /><text x="722" y="290" text-anchor="middle">fetch JSON</text></g>
-              <path class="e" d="M272 456 H296" marker-end="url(#ta-arrow)" />
-              <path class="e" d="M550 456 H574" marker-end="url(#ta-arrow)" />
-              <path class="e" d="M1023 156 V232" marker-end="url(#ta-arrow)" />
-              <g class="el"><rect x="982" y="182" width="83" height="22" rx="4" /><text x="1023" y="198" text-anchor="middle">check-up</text></g>
-              <path class="e" d="M1303 156 V232" marker-end="url(#ta-arrow)" />
-              <g class="el"><rect x="1262" y="182" width="83" height="22" rx="4" /><text x="1303" y="198" text-anchor="middle">/api/mcp</text></g>
-              <path class="e" d="M1148 286 H1174" marker-end="url(#ta-arrow)" />
-              <path class="e" d="M1428 286 H1454" marker-end="url(#ta-arrow)" />
-              <path class="e" d="M1303 336 V456 H832" marker-end="url(#ta-arrow)" />
-              <g class="el"><rect x="976" y="444" width="169" height="22" rx="4" /><text x="1060" y="460" text-anchor="middle">SQL · job-ad stats</text></g>
-            </svg>
-          <div class="why-now">
-            <div><span class="k">Built, Not Mocked</span><br />923 jobs drafted in 13 min, 0 failed. Over 120 automated tests pass on every change.</div>
-            <div><span class="k">AI Explains, Never Decides</span><br />A check rejects any explanation that changes a verdict. A template answers if Claude fails.</div>
-          </div>
-          <div class="foot"><span>09 / 10 · Technical Architecture</span><span>Live · kotak.tp073654.workers.dev · Replit</span></div>
+          <div class="foot"><span>09 / 10 · Business Model</span><span>Prices to test, not contracts · team view: our next build, piloted first</span></div>
         </div>
       </section>
 
@@ -1691,13 +1771,18 @@
             </div>
             <div class="orgs"><img src="assets/logos/sdc-mark.webp" alt="SDC" /><img src="assets/logos/aiversecity.webp" alt="Aiversecity" /><i></i><img class="sdg" src="assets/logos/sdg-04.webp" alt="SDG 4: Quality Education" /><img class="sdg" src="assets/logos/sdg-08.webp" alt="SDG 8: Decent Work and Economic Growth" /></div>
           </div>
-          <h1 class="title">Open the Box<br /><span class="hl">on Your Job.</span></h1>
-          <p class="lead">Data decides. AI explains. You choose.</p>
-          <div class="qrs">
-            <a class="qr" href="https://kotak-alaskxntxna.replit.app"><img src="assets/qr/live.svg" alt="QR code for the Kotak live demo" /><div><b>Live Demo</b><span>kotak-alaskxntxna<br />.replit.app</span></div></a>
-            <a class="qr" href="https://github.com/TolongLabs/Kotak"><img src="assets/qr/repo.svg" alt="QR code for the Kotak GitHub repository" /><div><b>Code</b><span>github.com/<br />TolongLabs/Kotak</span></div></a>
+          <div class="head2">
+            <div>
+              <h1 class="title">Open the Box<br /><span class="hl">on Your Job.</span></h1>
+              <p class="lead">Data decides. AI explains. You choose.</p>
+              <div class="qrs">
+                <a class="qr" href="https://kotak-alaskxntxna.replit.app"><img src="assets/qr/live-replit.svg" alt="QR code for the Kotak live demo" /><div><b>Live Demo</b><span>kotak-alaskxntxna<br />.replit.app</span></div></a>
+                <a class="qr" href="https://kotak-alaskxntxna.replit.app/app/connect"><img src="assets/qr/connect-replit.svg" alt="QR code for Connect Your AI" /><div><b>Connect Your AI</b><span>…replit.app<br />/app/connect</span></div></a>
+                <a class="qr" href="https://github.com/TolongLabs/Kotak"><img src="assets/qr/repo.svg" alt="QR code for the Kotak GitHub repository" /><div><b>Code</b><span>github.com/<br />TolongLabs/Kotak</span></div></a>
+              </div>
+            </div>
+            <div class="hero"><img class="box" src="assets/art/hero-box.webp" alt="" /><img class="kopi" src="assets/kopi/happy.png" alt="Kopi" /></div>
           </div>
-          <div class="hero"><img class="box" src="assets/art/hero-box.webp" alt="" /><img class="kopi" src="assets/kopi/happy.png" alt="Kopi" /></div>
           <div class="foot"><span>10 / 10 · Try Kotak</span><span>Team T010NG · Thank You</span></div>
         </div>
       </section>
@@ -1705,16 +1790,16 @@
 
     <script type="application/json" id="speaker-notes">
 [
-  "Hi, we're Team T010NG. Tolong is Malay for help. We're in Domain 1, the future-ready workforce, and we built Kotak. It shows a worker what AI is changing in their job, and what to learn next.",
-  "By mid-July 2026, 52,607 Malaysians had lost their jobs, about 270 a day. Half were professionals, managers, executives or technicians; in 1998 and 2009 production workers were hit hardest. This time, it's the office. The minister says AI isn't a main cause yet, but ISIS Malaysia found the most AI-exposed jobs see 69% more job losses than average. 56% of Malaysian professionals use AI at work; only 26% have been trained.",
-  "Kotak is for working adults in AI-exposed digital jobs: developers, QA testers and UI/UX designers, the week tech companies roll out AI coding tools. HR and L&D managers at HRD Corp levy-paying employers pay. Aina is a sample persona at a tech company; her manager asks which training to fund.",
-  "A course list can't answer that. Kotak can, in a three-minute check-up: 12 questions, no CV. She leaves with a dated plan: a week-by-week reskilling calendar, from her start date to 80% fit for her job, with which skill first, the hours each week, a free step for each skill, and her employer's funding route. And it covers all six must-haves in the Domain 1 brief.",
-  "Data decides, AI explains. Answer 12 questions; fixed rules compare them with dated public data; you get a radar, ranked roles and a plan. AI never sets a verdict.",
-  "MyMahir and LinkedIn map skills; MasterClass, ReSkills and e-LATiH offer courses; a chatbot can't say where its plan came from. Kotak is the only one we found that dates each skill's AI trend, shows its maths, times the plan, points to funding, and lets any AI call the same rules. Course sites tell you what you could learn. Kotak tells you what to learn first, and why.",
-  "For a worker, the gain is plain: three minutes, a plan to 80% fit, and nothing to pay, across 923 jobs. For Malaysia, the levy already funds training; Kotak helps aim it at the rising skills. That's SDG 4.4: skills for decent work.",
-  "Workers use Kotak free. Employers pay for a team view: RM5 per worker a month. For a developer on the median advertised pay the levy is RM63 a month, so Kotak costs under a tenth of it. Agencies license anonymous national totals. Prices to test, not contracts; the team view is our next build.",
-  "Two halves share one rulebook. Every week, dated public data becomes a snapshot; every day, new JobStreet ads come in, Claude sorts them and a person checks them. RunPod drafted skills and questions for 923 jobs in 13 minutes. In the app, the rules run in your browser. Claude Haiku explains, and a check rejects any explanation that changes a verdict. Live on Replit; over 120 automated tests pass on every change.",
-  "Aina doesn't need another course list. She needs to know where to start. Kotak is Malay for box. Data decides. AI explains. We're Team T010NG. Thank you."
+  "Good morning, judges. We're Team T010NG. Domain 1, Aiversecity. We built Kotak, Malay for box. It tells you how AI is changing your job and what to learn first, with dates. Before we show you, a question for the room.",
+  "Hands up if you used AI at work or in class this week. [Pause 2 s.] Now, keep your hand up if you know which skill to learn next, how many hours it takes, and who pays. [Pause 2 s. Hands drop.] That's the problem. More than half of those retrenched in Malaysia this year were professionals, managers, executives and technicians. People like many of us here. Is AI behind it? Khazanah Research Institute says: not yet, rather than not ever. But \"not yet\" is not a plan. You see, the money to retrain is there: RM3 billion for HRD Corp training in Budget 2026. However, what's missing is actually knowing which skill to learn first.",
+  "So who is Kotak for? Well, people in digital jobs; jobs that AI is changing now. Like Aina, our sample user, a web developer in KL. Every time a new AI model launches, she asks: is my job next? Fortunately, her manager has HRD Corp levy money, but faces one crucial question: which training do we fund first?",
+  "Here's how Kotak works, in three steps. One: Aina answers twelve questions about what she'd do at work. Two: Kotak checks her answers against dated public data on AI use and jobs in Malaysia. Fixed rules decide every result. AI only explains it. Three: she gets her plan. The skill to learn first, the hours, and who pays. Data decides. AI explains. Let's run Aina's check-up, live. [Advance to slide 5.]",
+  "Now, without further ado, let's see how things work in action. [The driver switches windows to the browser.] Live demo, five minutes: follow D1 to D8 in the pitch script, and name each stage aloud as it appears. Stage 1 of 6, intake. 2, the trend signal. 3, matching. 4, her pathway. 5, the SDGs. 6, uncertainty, in the 3D space. Then the change test: say when. [The driver switches back to the deck, on slide 6.]",
+  "Now, why Kotak? We compared it with MyMahir, LinkedIn, e-LATiH and a general chatbot. Kotak is the only one we found with all five you just saw: a dated AI trend for each skill, the maths shown, a timed plan, a funding route, and even a MCP server your AI can call.",
+  "Under the hood: two halves, one rulebook. First, the engine, at build time. Bun pipelines turn the Economic Index, ONET and DOSM into dated monthly snapshots. Each skill's AI trend resolves Malaysia-first, down six ONET levels, before any global figure. Then followed by RunPod GPU batch, Qwen on vLLM, drafted skills for all 923 jobs in 13 minutes, and validators reject any task that isn't the job's own. Finally the product. One TypeScript rulebook runs in your browser and on our edge API, so every result is reproducible. Our AI layer - Claude Haiku, only explains: a verifier keeps its text only if it names the exact verdict, cites each source by date, and adds no number of its own.",
+  "Here's what Aina gets. Her check-up took about three minutes. Her plan reaches 80% fit by week 34 at ten hours a week. Every step has a free course. For her, it costs nothing. [Only once #378 has run:] Across 20 test profiles, all 20 reached a plan in under three minutes, with every step cited. Is it fair? We tested 30 pairs of profiles differing only in situation, years or qualification. Verdicts and fit matched in all 30. Kotak never asks for name, gender, race, religion or age. Aina's answers stay on her device.",
+  "Now, who pays? Never the worker. Employers in HRD Corp's mandatory sectors already pay a training levy of 1% of wages. Kotak shows which skills to fund. Next, we're building a team view for HR, and we'll pilot it first with one HR team and their staff. Agencies get anonymous totals, only for groups of ten or more. It's cheap to run: about 7 US cents a check-up.",
+  "Kotak means box, and we built it to open the box on your job. Thank you. [Hold 3 seconds on the QR codes.]"
 ]
     </script>
   </body>

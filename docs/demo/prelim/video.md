@@ -1,6 +1,6 @@
 # Demo video
 
-How the team makes the pitching video: a narrated deck with a three-minute live demo of Kotak in the middle. A Playwright harness films the live app, Remotion assembles the three-minute demo segment with its narration and the [demo graphics](demo-graphics.md), and the team edits the slides, the slide narration and the finished demo segment together in Adobe Premiere Pro. The Remotion project lives outside this repository. [`kotak-director-script.md`](kotak-director-script.md) holds the words, the timing and what each segment shows.
+How the team makes the pitching video: a narrated deck with a three-minute live demo of Kotak in the middle. A Playwright harness films the live app, Remotion assembles the three-minute demo segment with its narration and the [demo graphics](demo-graphics.md), and the team edits the slides, the slide narration and the finished demo segment together in Adobe Premiere Pro. The Remotion project lives outside this repository. [`kotak-director-script.md`](director-script.md) holds the words, the timing and what each segment shows.
 
 Contents:
 
@@ -21,7 +21,7 @@ Contents:
 - **Our own voices.** A team member narrates. In Premiere, the slide segments (V1 to V10) play at 1.2× with the pitch kept; the demo segments (D1 to M1) stay at 1.0×. No generated narration. Kopi's voice is heard only as the app's own sound in shot D6.
 - **The team first, then the hook.** The first 13 seconds say who we are, the domain and what we built.
 - **Sample means labelled.** Aina is a sample persona and the answers are demo answers. The edit tags every app shot, and the app's own "self-reported" and "sample data" labels stay readable ([content rules](/docs/DESIGN.md#content-rules)).
-- **Every number has a source** in the script's [claims ledger](/docs/demo/kotak-director-script.md#claims-ledger).
+- **Every number has a source** in the script's [claims ledger](/docs/demo/prelim/director-script.md#claims-ledger).
 - **Declared tools:** Playwright films the takes, Remotion renders the demo segment, ffmpeg encodes it, OpenAI Whisper (`whisper-1`) times the demo narration's words, and Adobe Premiere Pro edits the whole video. All are in [`tech-declaration.md`](/docs/tech-declaration.md); a fallback tool joins them only if it is used.
 
 ## Shot list
@@ -81,7 +81,7 @@ Done when the roadmap, at 10 hours a week, reads "Your 35-Week Roadmap" and "80%
 
 ## Record the narration
 
-Follow the script's [voiceover steps](/docs/demo/kotak-director-script.md#recording-the-voiceover):
+Follow the script's [voiceover steps](/docs/demo/prelim/director-script.md#recording-the-voiceover):
 
 1.  One narrator, in a small, soft room, with the mic about 20 cm away.
 1.  One file per segment, named `V01` to `V10`, `D1` to `D7` and `M1`, two takes each, plus 10 seconds of room silence.
@@ -119,8 +119,8 @@ By hand, watching the whole video once with sound:
 
 ## Sources
 
-- [Director script](/docs/demo/kotak-director-script.md): the narration, the timing and the claims ledger.
-- [Demo graphics](/docs/demo/demo-graphics.md): the act banners, HUD, callouts, result cards and the cue sheet.
-- [Pitch deck](/docs/demo/deck/kotak-pitch-deck.html) and its stills.
+- [Director script](/docs/demo/prelim/director-script.md): the narration, the timing and the claims ledger.
+- [Demo graphics](/docs/demo/prelim/demo-graphics.md): the act banners, HUD, callouts, result cards and the cue sheet.
+- [Pitch deck](/docs/demo/prelim/kotak-pitch-deck.pdf) and its stills.
 - [Brief: deliverables](/docs/BRIEF.md#preliminary-deliverables) and [judging](/docs/BRIEF.md#judging).
 - [Playwright screencast](https://playwright.dev/docs/api/class-screencast), [Remotion](https://www.remotion.dev/docs/), [Whisper](https://platform.openai.com/docs/guides/speech-to-text) and [ffmpeg `loudnorm`](https://ffmpeg.org/ffmpeg-filters.html#loudnorm).

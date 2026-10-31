@@ -1,6 +1,6 @@
 # Demo graphics
 
-The live demo is the crux of the video, so it carries its own graphics: act banners that tell the story as problem, solution and outcome, a progress bar that shows where Aina is, callouts that say why each screen matters, and rings, arrows and zooms that point at the proof. Every graphic is a transparent PNG in [`graphics/png`](graphics/png), drawn in the deck's design system. Shot IDs and timecodes follow [the director script](/docs/demo/kotak-director-script.md#live-demo).
+The live demo is the crux of the video, so it carries its own graphics: act banners that tell the story as problem, solution and outcome, a progress bar that shows where Aina is, callouts that say why each screen matters, and rings, arrows and zooms that point at the proof. Every graphic is a transparent PNG in [`graphics/png`](graphics/png), drawn in the deck's design system. Shot IDs and timecodes follow [the director script](/docs/demo/prelim/director-script.md#live-demo).
 
 Contents:
 
