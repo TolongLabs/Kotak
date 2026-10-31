@@ -28,10 +28,11 @@ import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from 
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
-import { useCheckupBundle } from '../engine/bundle'
+import { useCheckupBundle, useLocaleIndex } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
 import { radarFutureDiff } from '../engine/futureDiff'
 import { useJobMarkets } from '../engine/useJobMarkets'
+import { roleTitle } from '../i18n/content/overlay'
 import { hasAnswers, useGuestSession } from '../session/store'
 import { useScenario } from '../session/scenario'
 import type { Corner, Scenario, SourceRef } from '../demo/types'
@@ -50,6 +51,8 @@ export function RadarView() {
   const t = useText(radarText)
   const futures = useText(changesText).receipts
   const bundle = useCheckupBundle(session)
+  // The map's candidates are the check-up's, whose titles stay English; each label is shown translated (#449).
+  const localeIndex = useLocaleIndex()
   const [scenario, setScenario] = useScenario()
   const roleData = bundle.status === 'ready' ? bundle.data : null
   const [today] = useState(() => new Date().toISOString().slice(0, 10))
@@ -228,7 +231,7 @@ export function RadarView() {
   }
   const quadrantOf = (candidate: (typeof roles)[number], kind: QuadrantPoint['kind']): QuadrantPoint => ({
     id: candidate.id,
-    label: candidate.title,
+    label: roleTitle(localeIndex, candidate.id, candidate.title),
     fit: candidate.fit,
     trend: trendOf(candidate.outlook),
     kind,

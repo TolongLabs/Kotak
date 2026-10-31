@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { cn } from '../../components/ui/cn'
 import { fetchRoleMatch, type ApiResult, type RoleAlias } from '../../engine/api'
+import { useLocaleIndex } from '../../engine/bundle'
+import { roleTitle } from '../../i18n/content/overlay'
 import { checkupText } from '../../i18n/messages/checkup'
 import { useText } from '../../i18n/text'
 import {
@@ -14,7 +16,7 @@ import {
   normalizeJobQuery,
   searchRoles
 } from './roleSearch'
-import { SuggestionList, roleOptions, useSuggestionList } from './SuggestionList'
+import { SuggestionList, useRoleOptions, useSuggestionList } from './SuggestionList'
 
 // Up to three roles the user wants (#284). The first is the one the 12 questions test them against; Roles That Fit
 // compares the others beside it. Like the job field, a title in any language that the local list doesn't know goes
@@ -36,6 +38,9 @@ export function TargetPicker({
   onChange: (targets: Role[]) => void
 }) {
   const t = useText(checkupText)
+  const localeIndex = useLocaleIndex()
+  // A chip shows the title in the language on show; the code identifies the role, as everywhere else.
+  const title = (role: Role) => roleTitle(localeIndex, role.onet_code, getRoleDisplayTitle(role))
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [match, setMatch] = useState<{ key: string; result: ApiResult<RoleMatchResponse> | null } | null>(null)
@@ -44,8 +49,10 @@ export function TargetPicker({
   const key = normalizeJobQuery(query)
   const chosen = new Set(targets.map((target) => target.onet_code))
   const allowed = (code: string) => !chosen.has(code) && code !== currentCode
-  const suggestions = searchRoles(roles, aliases, key).filter((suggestion) => allowed(suggestion.role.onet_code))
-  const needsMatch = key.length > 0 && suggestions.length === 0 && !hasExactMatch(roles, aliases, key)
+  const suggestions = searchRoles(roles, aliases, key, localeIndex).filter((suggestion) =>
+    allowed(suggestion.role.onet_code)
+  )
+  const needsMatch = key.length > 0 && suggestions.length === 0 && !hasExactMatch(roles, aliases, key, localeIndex)
   const settled = match?.key === key ? match.result : undefined
   const remote =
     settled?.status === 'available' && !settled.data.fallback_reason && settled.data.match_source !== 'none'
@@ -54,9 +61,10 @@ export function TargetPicker({
   const waiting = needsMatch && settled === undefined
   const noMatch = needsMatch && settled !== undefined && (!remote || !allowed(remote.onet_code))
   const picks = noMatch
-    ? (closestRoles(roles, key).length ? closestRoles(roles, key) : getSuggestedRoles(roles)).filter((role) =>
-        allowed(role.onet_code)
-      )
+    ? (closestRoles(roles, key, localeIndex).length
+        ? closestRoles(roles, key, localeIndex)
+        : getSuggestedRoles(roles)
+      ).filter((role) => allowed(role.onet_code))
     : []
   const full = targets.length >= MAX_TARGETS
   const listOpen = open && !full && (suggestions.length > 0 || waiting || remote !== null || noMatch)
@@ -96,7 +104,7 @@ export function TargetPicker({
     requestAnimationFrame(() => inputRef.current?.focus())
   }
 
-  const options = roleOptions(
+  const options = useRoleOptions(
     remote && allowed(remote.onet_code) && settled?.status === 'available'
       ? { role: remote, source: settled.data.match_source }
       : null,
@@ -135,12 +143,12 @@ export function TargetPicker({
               )}
             >
               <span className="min-w-0 break-words">
-                {getRoleDisplayTitle(target)}
+                {title(target)}
                 {index === 0 && targets.length > 1 && <span className="sr-only">{t.target.firstRoleNote}</span>}
               </span>
               <button
                 type="button"
-                aria-label={t.target.remove(getRoleDisplayTitle(target))}
+                aria-label={t.target.remove(title(target))}
                 onClick={() => remove(target)}
                 className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-focus-ring"
               >
@@ -176,9 +184,7 @@ export function TargetPicker({
           )}
         </div>
       )}
-      {targets.length > 1 && (
-        <p className="text-body-s text-text-muted">{t.target.comparison(getRoleDisplayTitle(targets[0]!))}</p>
-      )}
+      {targets.length > 1 && <p className="text-body-s text-text-muted">{t.target.comparison(title(targets[0]!))}</p>}
     </div>
   )
 }

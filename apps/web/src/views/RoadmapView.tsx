@@ -11,6 +11,7 @@ import { RoadmapStepCard } from '../components/kotak/RoadmapStepCard'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { SourceList } from '../components/kotak/SourceList'
 import { ToolsCard } from '../components/kotak/ToolsCard'
+import { UntranslatedNote } from '../components/kotak/UntranslatedNote'
 import { renderCited } from '../components/kotak/renderCited'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
@@ -464,6 +465,7 @@ export function RoadmapView() {
             <h1 className="text-title-m text-text-primary lg:text-title-l">
               {steps.length > 0 ? t.fit.roadmapTitle(planWeeks) : t.fit.roadmapTitleShort}
             </h1>
+            <UntranslatedNote onetCode={role.onet_code} />
             <p className="text-body-s text-text-muted">
               {t.fit.summary(
                 role.title,

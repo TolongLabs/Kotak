@@ -36,6 +36,7 @@ import {
   type SpaceFile
 } from '../packages/shared/src/index'
 import { cornerLinkErrors, loadCorners } from './build-data/corners'
+import { i18nFiles, I18N_LANGUAGES } from './build-data/i18n'
 import { buildPathways, loadPathwaysInputs, roleTools } from './build-data/pathways'
 
 const started = performance.now()
@@ -278,6 +279,9 @@ const manifest = check(BUNDLE_PATHS.manifest, BundleManifestSchema, {
   demo: { scenario: DEFAULT_SCENARIO, roles: demo, scenario_splits: scenarioSplits }
 })
 
+// 6b. The Malay and Chinese content, split per job (#449).
+const i18n = (await Promise.all(I18N_LANGUAGES.map((lang) => i18nFiles(ROOT, lang, roles, failures)))).flat()
+
 if (failures.length > 0 || !index || !manifest || !pathways) {
   console.error(`build:data failed with ${failures.length} problem(s); nothing was written:`)
   for (const failure of failures) console.error(`  ${failure}`)
@@ -300,7 +304,8 @@ const files: [string, unknown][] = [
   [BUNDLE_PATHS.pathways, pathways],
   [BUNDLE_PATHS.sdgReasons, sdgReasons],
   [BUNDLE_PATHS.space, space],
-  ...[...roles.values()].map((r): [string, unknown] => [BUNDLE_PATHS.role(r.onet_code), r])
+  ...[...roles.values()].map((r): [string, unknown] => [BUNDLE_PATHS.role(r.onet_code), r]),
+  ...i18n
 ]
 await rm(`${PUBLIC}${dirname(BUNDLE_PATHS.manifest)}`, { recursive: true, force: true })
 const sizes = await Promise.all(files.map(([path, value]) => Bun.write(`${PUBLIC}${path}`, JSON.stringify(value))))
@@ -325,6 +330,10 @@ console.info(
   `Wrote ${files.length} files (${(total / 1024 / 1024).toFixed(1)} MB) to apps/web/public${dirname(BUNDLE_PATHS.manifest)}: ` +
     `manifest ${kb(sizes[0]!)}, roles index ${kb(sizes[1]!)}, pathways ${kb(sizes[2]!)}, SDG reasons ${kb(sizes[3]!)}, ` +
     `space ${kb(sizeOf(BUNDLE_PATHS.space))} (${kb(Bun.gzipSync(JSON.stringify(space)).length)} gzipped), ${roleSizes.length} role files ` +
-    `(median ${kb(roleSizes[roleSizes.length >> 1]!)}, largest ${kb(roleSizes.at(-1)!)})`
+    `(median ${kb(roleSizes[roleSizes.length >> 1]!)}, largest ${kb(roleSizes.at(-1)!)}), ` +
+    I18N_LANGUAGES.map(
+      (lang) =>
+        `${lang} ${i18n.filter(([path]) => path.startsWith(dirname(BUNDLE_PATHS.i18nIndex(lang)))).length} files`
+    ).join(', ')
 )
 console.info(`build:data finished in ${((performance.now() - started) / 1000).toFixed(1)} s`)

@@ -54,11 +54,18 @@ const FIRST_DIR: Record<SortKey, Sort['dir']> = {
 }
 
 /** One column's ascending order. Ties keep the table's own order, because `sort` is stable. */
-function ascendingBy(key: SortKey, snapshotId: SnapshotId, scenario: Scenario, t: SpaceText) {
+function ascendingBy(
+  key: SortKey,
+  snapshotId: SnapshotId,
+  scenario: Scenario,
+  t: SpaceText,
+  title: (job: SpaceJob) => string
+) {
   return (a: SpaceJob, b: SpaceJob) => {
     switch (key) {
       case 'title':
-        return a.title.localeCompare(b.title)
+        // By the title as the reader sees it, like the group.
+        return title(a).localeCompare(title(b))
       case 'group':
         // By the group as the reader sees it, which is translated, not by its SOC code.
         return groupName(t, a).localeCompare(groupName(t, b))
@@ -118,11 +125,11 @@ interface StateProps {
 // Each skill of one job, as the 3D view draws its blades: the AI-use change and verdict in the future shown, and
 // whether its AI-use data is borrowed from a broader Malaysian row.
 function Skills({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
-  const { t, skillName } = useSpaceText()
+  const { t, skillName, jobTitle } = useSpaceText()
   const cell = 'whitespace-nowrap px-3 py-1.5'
   return (
     <table className="w-full text-left">
-      <caption className="sr-only">{t.table.skillsCaption(job.title)}</caption>
+      <caption className="sr-only">{t.table.skillsCaption(jobTitle(job))}</caption>
       <thead>
         <tr className="font-mono text-mono-s text-text-muted">
           <th scope="col" className="px-3 py-1.5 font-normal">
@@ -164,7 +171,7 @@ function Skills({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
 // One job in both AI futures, as its card in the space shows it: fit (with answers) and the median AI-use change, the
 // future shown in ink. It reads as one block with the skills under it: the same cells, header and rules.
 function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
-  const t = useText(spaceText)
+  const { t, jobTitle } = useSpaceText()
   const c = useText(commonText)
   const futures: Scenario[] = ['slow', 'fast']
   const value = (s: Scenario) =>
@@ -175,7 +182,7 @@ function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) 
   const head = 'px-3 py-1.5 text-body-s font-normal text-text-primary'
   return (
     <table className="w-full text-left">
-      <caption className="sr-only">{t.table.futuresCaption(job.title)}</caption>
+      <caption className="sr-only">{t.table.futuresCaption(jobTitle(job))}</caption>
       <thead>
         <tr className="font-mono text-mono-s text-text-muted">
           <th scope="col" className="px-3 py-1.5 font-normal">
@@ -270,6 +277,7 @@ const JobRow = memo(function JobRow({
   rowRef
 }: JobRowProps) {
   const t = useText(spaceText)
+  const { jobTitle } = useSpaceText()
   const yours = job.kind === 'yours'
   const detailsId = `space-details-${job.code}`
   return (
@@ -295,7 +303,7 @@ const JobRow = memo(function JobRow({
                 className={cn('size-4 stroke-current transition-transform duration-150', open && 'rotate-90')}
                 aria-hidden="true"
               />
-              <span className="sr-only">{t.table.detailsOf(job.title)}</span>
+              <span className="sr-only">{t.table.detailsOf(jobTitle(job))}</span>
             </button>
             <span className="pt-2.5">
               <Link
@@ -306,7 +314,7 @@ const JobRow = memo(function JobRow({
                   yours && 'font-bold'
                 )}
               >
-                {job.title}
+                {jobTitle(job)}
               </Link>
               {yours && <span className="ml-2 text-label-s font-bold text-text-primary">{t.yourJob}</span>}
               {pinned && !yours && <span className="ml-2 text-label-s font-bold text-text-primary">{t.pinned}</span>}
@@ -377,6 +385,7 @@ export interface SpaceTableProps extends StateProps {
 
 export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode, note, actions }: SpaceTableProps) {
   const t = useText(spaceText)
+  const { jobTitle } = useSpaceText()
   const c = useText(commonText)
   const regionRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLTableElement>(null)
@@ -394,7 +403,7 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
       ? [...model.jobs].sort((a, b) => b.fit![snapshotId][scenario] - a.fit![snapshotId][scenario])
       : [...model.jobs].sort((a, b) => a.zone - b.zone || a.title.localeCompare(b.title))
     if (!sort) return own
-    const ascending = ascendingBy(sort.key, snapshotId, scenario, t)
+    const ascending = ascendingBy(sort.key, snapshotId, scenario, t, jobTitle)
     /**
      * A cell with no number to show sits last whichever way the column runs, so "lowest first" opens on jobs the
      * reader can act on rather than on a page of blanks: an AI-use change of Unknown, and a fit of "No estimate yet",
@@ -407,7 +416,7 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
       const by = ascending(a, b)
       return sort.dir === 'asc' ? by : -by
     })
-  }, [model, snapshotId, scenario, sort, t])
+  }, [model, snapshotId, scenario, sort, t, jobTitle])
   const future = c.scenarios[scenario]
   const month = monthLabel(snapshot)
   const zoneScale = t.table.zoneScale(zoneWord(t, 1), zoneWord(t, 5))
@@ -436,7 +445,7 @@ export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode
       const at = row.getBoundingClientRect()
       region.scrollTop += at.top - box.top - (box.height - at.height) / 2
       const job = rows.find((j) => j.code === target)
-      if (job) setOpened(textNow(spaceText).table.opened(page + 1, pages, job.title))
+      if (job) setOpened(textNow(spaceText).table.opened(page + 1, pages, jobTitle(job)))
     })
     return () => cancelAnimationFrame(frame)
     // Once, on opening: the dialog remounts the table each time it opens.

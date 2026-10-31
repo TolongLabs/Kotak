@@ -7,12 +7,13 @@ import { jobPath, routes, spacePath } from '../app/routes'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
+import { UntranslatedNote } from '../components/kotak/UntranslatedNote'
 import { Button } from '../components/ui/Button'
 import { routeLinkClassName } from '../components/ui/TextLink'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
 import type { Corner } from '../demo/types'
-import { loadRoleBundle, useRoleBundle } from '../engine/bundle'
+import { loadRoleBundle, useRoleBundle, useRoleIndex } from '../engine/bundle'
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { verdictId } from '../engine/viewModel'
 import { hasAnswers, useGuestSession } from '../session/store'
@@ -193,6 +194,10 @@ export function JobView({ code }: { code: string }) {
   const [scenario, setScenario] = useScenario()
   const narrow = useNarrow()
   const bundle = useRoleBundle(code)
+  // The check-up finds a job by its English title, so the link sends that one in every language (#449).
+  const roleIndex = useRoleIndex()
+  const englishTitle =
+    (roleIndex.status === 'ready' && roleIndex.data.roles.find((r) => r.onet_code === code)?.title) || null
   const related = useMemo(
     () => (bundle.status === 'ready' ? relatedRoles(code, bundle.data.related) : []),
     [bundle, code]
@@ -252,6 +257,7 @@ export function JobView({ code }: { code: string }) {
             {t.jobView.jobs} / {role.title}
           </p>
           <h1 className="break-words text-title-l text-text-primary">{role.title}</h1>
+          <UntranslatedNote onetCode={role.onet_code} />
           <p className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-mono-s text-text-muted">O*NET {role.onet_code}</span>
             <VerdictChip verdict={outlook} size="sm" />
@@ -269,7 +275,7 @@ export function JobView({ code }: { code: string }) {
           variant="primary"
           size="lg"
           iconEnd={<ArrowUpRight className="h-5 w-5" aria-hidden="true" />}
-          onClick={() => navigate(`${routes.checkUp}?job=${encodeURIComponent(role.title)}`)}
+          onClick={() => navigate(`${routes.checkUp}?job=${encodeURIComponent(englishTitle ?? role.title)}`)}
         >
           {t.jobView.checkFit}
         </Button>

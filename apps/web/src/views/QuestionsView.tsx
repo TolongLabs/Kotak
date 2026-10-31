@@ -11,6 +11,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { PageTransition } from '../components/kotak/PageTransition'
+import { UntranslatedNote } from '../components/kotak/UntranslatedNote'
 import { useReducedMotion } from '../components/kopi/motion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
@@ -167,6 +168,7 @@ export function QuestionsView() {
     <QuestionsFrame>
       <AnswerKeys onAnswer={onAnswer} />
       <h2 className="text-title-s text-text-primary">{t.questions.testing(role.title)}</h2>
+      <UntranslatedNote onetCode={role.onet_code} />
 
       {/* Every topic's row sits hidden in one grid cell with the shown row, so a long topic that wraps on a phone can't
           move the answers (#350). The hidden rows keep the counter's and the info button's footprints. */}

@@ -2,6 +2,7 @@ import type { BundleRoleIndexEntry, Occupation, RoleMatchResponse } from '@kotak
 import { useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
 import { fetchRoleMatch, type ApiResult, type RoleAlias } from '../../engine/api'
+import { useLocaleIndex } from '../../engine/bundle'
 import { checkupText } from '../../i18n/messages/checkup'
 import { useText } from '../../i18n/text'
 import {
@@ -13,7 +14,7 @@ import {
   normalizeJobQuery,
   searchRoles
 } from './roleSearch'
-import { SuggestionList, roleOptions, useSuggestionList } from './SuggestionList'
+import { SuggestionList, useRoleOptions, useSuggestionList } from './SuggestionList'
 
 // The user's job title on the check-up start: local O*NET and market titles as they type, then Kopi's match through
 // /api/roles/match for any other title. The list stays folded until they type (#225), and an unknown title shows
@@ -39,6 +40,7 @@ export function JobSearch({
   initialQuery: string
 }) {
   const t = useText(checkupText)
+  const localeIndex = useLocaleIndex()
   const [query, setQuery] = useState(initialQuery)
   const [open, setOpen] = useState(initialQuery.length > 0)
   const [matchState, setMatchState] = useState<
@@ -59,8 +61,8 @@ export function JobSearch({
 
   const key = normalizeJobQuery(query)
   const situation = looksLikeSituation(key)
-  const exact = hasExactMatch(roles, aliases, key)
-  const suggestions = searchRoles(roles, aliases, key)
+  const exact = hasExactMatch(roles, aliases, key, localeIndex)
+  const suggestions = searchRoles(roles, aliases, key, localeIndex)
   const current = matchState?.key === key ? matchState : null
   const remote = current?.status === 'settled' ? current.result : null
   const remoteRole =
@@ -75,7 +77,11 @@ export function JobSearch({
     suggestions.length === 0 &&
     !remoteRole &&
     (current?.status === 'settled' || !waiting)
-  const picks = noMatch ? (closestRoles(roles, key).length ? closestRoles(roles, key) : getSuggestedRoles(roles)) : []
+  const picks = noMatch
+    ? closestRoles(roles, key, localeIndex).length
+      ? closestRoles(roles, key, localeIndex)
+      : getSuggestedRoles(roles)
+    : []
   const listOpen = open && !accepted && (suggestions.length > 0 || waiting || remoteRole !== null || noMatch)
 
   useEffect(() => {
@@ -102,7 +108,7 @@ export function JobSearch({
     onAccept(role)
   }
 
-  const options = roleOptions(
+  const options = useRoleOptions(
     remoteRole && remote?.status === 'available' ? { role: remoteRole, source: remote.data.match_source } : null,
     suggestions,
     picks,

@@ -1,5 +1,6 @@
 import { Pause, Play } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { useLocale } from '../../i18n/locale'
 import { uiText } from '../../i18n/messages/ui'
 import { useText } from '../../i18n/text'
 import { updateGuestSession, useGuestSession } from '../../session/store'
@@ -24,6 +25,7 @@ export interface KopiSpeechBoxProps {
 // Kopi's game-style speech box (DESIGN.md): types the line out, reads it aloud unless muted, and links citations.
 export function KopiSpeechBox({ speech, reserve, className }: KopiSpeechBoxProps) {
   const t = useText(uiText)
+  const locale = useLocale()
   const { tts_muted: muted } = useGuestSession()
   const motion = useReducedMotion()
   const [owner] = useState(() => ({}))
@@ -79,6 +81,8 @@ export function KopiSpeechBox({ speech, reserve, className }: KopiSpeechBoxProps
           <VoiceToggle muted={muted} onToggle={toggleVoice} />
         </div>
       </div>
+      {/* Kopi's replies follow the language on show but the voice is English only, so say so while the voice is on. */}
+      {locale !== 'en' && !muted && <p className="text-body-s text-text-muted">{t.voiceEnglishOnly}</p>}
       {/* The reserved lines sit hidden in the same grid cell as the shown line, so the cell takes the tallest one's height
           at any width. They're invisible, so screen readers read only the shown line. */}
       <div className="grid">
