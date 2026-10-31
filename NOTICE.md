@@ -26,8 +26,8 @@ Contents:
 
 ## Models and services
 
-- **Qwen3.8-27B-FP8** by Qwen, under the Apache License 2.0, run once on RunPod to draft each job's skills and questions.
-- **Claude Haiku 5.5** through the Claude API, under Anthropic's Commercial Terms of Service.
+- **Qwen3.8-27B-FP8** by Qwen, under the Apache License 2.0, run on RunPod twice before the demo: once to draft each job's skills and questions, once to translate ten of those jobs into Malay and Simplified Chinese.
+- **Claude Haiku 5.5** through the Claude API, under Anthropic's Commercial Terms of Service. Claude Haiku 5.5 and Claude Sonnet 5.5 also tagged each skill's SDG targets and wrote their reasons before the demo.
 - **ElevenLabs text to speech**, including the voice Johari, under the ElevenLabs Terms of Service.
 
 ## Kopi's model and fonts
@@ -38,4 +38,4 @@ Contents:
 
 ## Code
 
-Kotak depends on open-source packages under MIT, ISC, BSD-3-Clause and Apache 2.0 licences, including Bun, TypeScript, React, Vite, Tailwind CSS, Recharts, Lucide, pixi.js, pixi-live2d-display, Hono, Zod, the Anthropic TypeScript SDK, the MCP server SDK, the Neon serverless driver, Wrangler, Playwright and Clearcote. Each package's licence ships with it in `node_modules`, and `bun.lock` pins every version.
+Kotak depends on open-source packages under MIT, ISC, BSD-3-Clause, Zlib and Apache 2.0 licences, including Bun, TypeScript, React, Vite, Tailwind CSS, Recharts, Lucide, pixi.js, pixi-live2d-display, three, @react-three/fiber, postprocessing, Hono, Zod, the Anthropic TypeScript SDK, the MCP server SDK, the Neon serverless driver, Wrangler, Playwright, Clearcote, fflate and PGlite. Each package's licence ships with it in `node_modules`, and `bun.lock` pins every version.
