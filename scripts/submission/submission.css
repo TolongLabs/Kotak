@@ -272,7 +272,7 @@ li::marker {
 
 .figure {
   position: absolute;
-  background: #fff;
+  background: transparent;
   border: 1.5pt solid #444;
   padding: 8pt;
 }

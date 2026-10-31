@@ -218,7 +218,7 @@
   "boundaries": [
     {
       "kind": "region",
-      "label": "Build Time, Before Deploy",
+      "label": "Build Time · Before Deployment",
       "wraps": ["scripts", "runpod"],
       "pad": 48
     }
