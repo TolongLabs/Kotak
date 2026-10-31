@@ -3,23 +3,29 @@
   "diagram_type": "architecture",
   "meta": {
     "title": "Kotak Architecture",
-    "description": "Fixed rules in your browser. AI for language and evidence.",
-    "design_system": "docs/DESIGN.md",
-    "tokens": "apps/web/src/styles/tokens.css",
-    "fonts": "docs/demo/final/assets/fonts.css",
-    "generator": "scripts/readme-architecture.ts"
+    "output": "architecture.html",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/TolongLabs/Kotak",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4732d97c9fc28b985e5b503367b8ee4be5d9bb19"
+    }
   },
   "components": [
     {
       "id": "mcp-clients",
       "type": "external",
       "label": "MCP Clients",
-      "sublabel": ["Claude · Cursor · VS Code"],
-      "pos": [864, 112],
-      "size": [272, 80],
+      "sublabel": "Claude · Cursor · VS Code",
+      "pos": [580, 40],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "apps/api/src/routes/mcp.ts"
+          "path": "apps/api/src/routes/mcp.ts",
+          "line": 42,
+          "end_line": 47
         }
       ]
     },
@@ -27,43 +33,59 @@
       "id": "worker",
       "type": "external",
       "label": "Malaysian Worker",
-      "sublabel": ["Phone or desktop browser"],
-      "pos": [48, 272],
-      "size": [264, 112]
+      "sublabel": "Phone or desktop browser",
+      "pos": [40, 190],
+      "size": [170, 64],
+      "sources": [
+        {
+          "path": "apps/web/src/views/CheckUpView.tsx",
+          "line": 240,
+          "end_line": 252
+        }
+      ]
     },
     {
       "id": "web",
       "type": "frontend",
       "label": "Kotak Web App",
-      "sublabel": ["React 19 · @kotak/sdk", "Verdicts · fit · roadmap"],
-      "pos": [400, 256],
-      "size": [336, 144],
+      "sublabel": "React 19 · @kotak/sdk rules",
+      "pos": [310, 190],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "apps/web/src/engine/checkup.ts"
+          "path": "apps/web/src/engine/bundle.ts",
+          "line": 25,
+          "end_line": 38
         },
         {
-          "path": "apps/web/src/engine/bundle.ts"
+          "path": "apps/web/src/engine/checkup.ts",
+          "line": 30,
+          "end_line": 60
         }
-      ],
-      "emphasis": true
+      ]
     },
     {
       "id": "api",
       "type": "backend",
       "label": "Hono API",
-      "sublabel": ["Bun on Replit", "Cloudflare Workers"],
-      "pos": [864, 256],
-      "size": [272, 144],
+      "sublabel": "Replit Bun · Cloudflare Worker",
+      "pos": [580, 190],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "apps/api/src/app.ts"
+          "path": "apps/api/src/app.ts",
+          "line": 54,
+          "end_line": 63
         },
         {
-          "path": "apps/api/src/bun.ts"
+          "path": ".replit",
+          "line": 11,
+          "end_line": 14
         },
         {
-          "path": "apps/api/src/worker.ts"
+          "path": "apps/api/src/worker.ts",
+          "line": 75,
+          "end_line": 85
         }
       ]
     },
@@ -71,15 +93,19 @@
       "id": "claude",
       "type": "external",
       "label": "Claude Haiku 5.5",
-      "sublabel": ["Match · explain · chat · verify"],
-      "pos": [1240, 200],
-      "size": [312, 96],
+      "sublabel": "Match · explain · chat · verify",
+      "pos": [860, 110],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "apps/api/src/ai/claude.ts"
+          "path": "apps/api/src/ai/claude.ts",
+          "line": 1,
+          "end_line": 7
         },
         {
-          "path": "apps/api/src/routes/evidence.ts"
+          "path": "apps/api/src/routes/evidence.ts",
+          "line": 126,
+          "end_line": 154
         }
       ]
     },
@@ -87,12 +113,14 @@
       "id": "elevenlabs",
       "type": "external",
       "label": "ElevenLabs",
-      "sublabel": ["Kopi’s voice"],
-      "pos": [1240, 352],
-      "size": [312, 96],
+      "sublabel": "Kopi’s voice",
+      "pos": [860, 270],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "apps/api/src/routes/tts.ts"
+          "path": "apps/api/src/routes/tts.ts",
+          "line": 28,
+          "end_line": 40
         }
       ]
     },
@@ -100,18 +128,19 @@
       "id": "neon",
       "type": "database",
       "label": "Neon Postgres",
-      "sublabel": ["Reviewed job ads · samples"],
-      "pos": [864, 480],
-      "size": [272, 96],
+      "sublabel": "Job ads · national samples",
+      "pos": [580, 340],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "apps/api/src/routes/national-view.ts"
+          "path": "apps/api/src/routes/market.ts",
+          "line": 21,
+          "end_line": 36
         },
         {
-          "path": "apps/api/src/scrapers/jobstreet/database.ts"
-        },
-        {
-          "path": "apps/api/src/routes/market.ts"
+          "path": "apps/api/src/routes/national-view.ts",
+          "line": 80,
+          "end_line": 90
         }
       ]
     },
@@ -119,12 +148,14 @@
       "id": "bundle",
       "type": "database",
       "label": "Static Data Bundle",
-      "sublabel": ["Dated JSON · skills · questions"],
-      "pos": [400, 480],
-      "size": [336, 96],
+      "sublabel": "Dated JSON · skills · questions",
+      "pos": [310, 340],
+      "size": [180, 64],
       "sources": [
         {
-          "path": "scripts/build-data.ts"
+          "path": "scripts/build-data.ts",
+          "line": 297,
+          "end_line": 317
         }
       ]
     },
@@ -132,21 +163,19 @@
       "id": "sources",
       "type": "external",
       "label": "Public Data",
-      "sublabel": ["O*NET · Economic Index · DOSM", "SkillsFuture Singapore"],
-      "pos": [80, 728],
-      "size": [392, 104],
+      "sublabel": "O*NET · AEI · DOSM · SGF",
+      "pos": [40, 500],
+      "size": [180, 72],
       "sources": [
         {
-          "path": "scripts/ingest/onet.ts"
+          "path": "scripts/build-data.ts",
+          "line": 61,
+          "end_line": 68
         },
         {
-          "path": "scripts/ingest/aei.ts"
-        },
-        {
-          "path": "scripts/ingest/dosm-jmi.ts"
-        },
-        {
-          "path": "scripts/ingest/sgf.ts"
+          "path": "scripts/build-data/sgf.ts",
+          "line": 13,
+          "end_line": 22
         }
       ]
     },
@@ -154,15 +183,19 @@
       "id": "scripts",
       "type": "backend",
       "label": "Bun Data Scripts",
-      "sublabel": ["ingest:* · build:data"],
-      "pos": [600, 728],
-      "size": [360, 104],
+      "sublabel": "ingest:* · build:data",
+      "pos": [310, 500],
+      "size": [180, 72],
       "sources": [
         {
-          "path": "scripts/build-data.ts"
+          "path": "scripts/build-data.ts",
+          "line": 297,
+          "end_line": 317
         },
         {
-          "path": ".github/workflows/refresh-data.yml"
+          "path": "scripts/corners/run-batch.ts",
+          "line": 1,
+          "end_line": 11
         }
       ]
     },
@@ -170,22 +203,24 @@
       "id": "runpod",
       "type": "cloud",
       "label": "RunPod GPU Batch",
-      "sublabel": ["Qwen3.8-27B · skills drafted once"],
-      "pos": [1088, 728],
-      "size": [432, 104],
+      "sublabel": "Qwen3.8-27B · drafts skills once",
+      "pos": [580, 500],
+      "size": [180, 72],
       "sources": [
         {
-          "path": "scripts/corners/run-batch.ts"
+          "path": "scripts/corners/run-batch.ts",
+          "line": 166,
+          "end_line": 190
         }
       ]
     }
   ],
   "boundaries": [
     {
-      "label": "Before Deploy",
-      "description": "Prepare snapshots and draft skills before shipping.",
-      "pos": [48, 648],
-      "size": [1504, 216]
+      "kind": "region",
+      "label": "Build Time, Before Deploy",
+      "wraps": ["scripts", "runpod"],
+      "pad": 48
     }
   ],
   "connections": [
@@ -194,122 +229,88 @@
       "from": "worker",
       "to": "web",
       "label": "check-up",
-      "points": [
-        [312, 328],
-        [400, 328]
-      ],
-      "label_pos": [356, 312]
+      "variant": "emphasis"
     },
     {
       "id": "web-to-bundle",
       "from": "web",
       "to": "bundle",
-      "label": "fetch JSON",
-      "points": [
-        [568, 400],
-        [568, 480]
-      ],
-      "label_pos": [624, 444]
+      "label": "fetch JSON"
     },
     {
       "id": "web-to-api",
       "from": "web",
       "to": "api",
-      "label": "HTTPS /api",
-      "points": [
-        [736, 328],
-        [864, 328]
-      ],
-      "label_pos": [800, 312]
+      "label": "HTTPS /api"
     },
     {
       "id": "mcp-to-api",
       "from": "mcp-clients",
       "to": "api",
-      "label": "/api/mcp",
-      "points": [
-        [1000, 192],
-        [1000, 256]
-      ],
-      "label_pos": [1056, 228]
+      "label": "/api/mcp"
     },
     {
       "id": "api-to-claude",
       "from": "api",
       "to": "claude",
-      "label": "AI",
-      "points": [
-        [1136, 296],
-        [1184, 296],
-        [1184, 248],
-        [1240, 248]
-      ],
-      "label_pos": [1208, 232]
+      "label": "AI"
     },
     {
       "id": "api-to-elevenlabs",
       "from": "api",
       "to": "elevenlabs",
-      "label": "TTS",
-      "points": [
-        [1136, 368],
-        [1184, 368],
-        [1184, 400],
-        [1240, 400]
-      ],
-      "label_pos": [1208, 384]
+      "label": "TTS"
     },
     {
       "id": "api-to-neon",
       "from": "api",
       "to": "neon",
-      "label": "SQL",
-      "points": [
-        [1000, 400],
-        [1000, 480]
-      ],
-      "label_pos": [1032, 444]
+      "label": "SQL"
     },
     {
       "id": "sources-to-scripts",
       "from": "sources",
       "to": "scripts",
-      "label": "ingest",
-      "points": [
-        [472, 780],
-        [600, 780]
-      ],
-      "label_pos": [536, 764]
+      "label": "ingest"
     },
     {
       "id": "scripts-to-runpod",
       "from": "scripts",
       "to": "runpod",
       "label": "draft once",
-      "points": [
-        [960, 780],
-        [1088, 780]
-      ],
-      "label_pos": [1024, 764],
-      "variant": "dashed",
-      "bidirectional": true
+      "variant": "dashed"
     },
     {
       "id": "scripts-to-bundle",
       "from": "scripts",
       "to": "bundle",
-      "label": "build:data",
-      "points": [
-        [780, 728],
-        [780, 616],
-        [568, 616],
-        [568, 576]
-      ],
-      "label_pos": [676, 604]
+      "label": "build:data"
     }
   ],
-  "canvas": {
-    "width": 1600,
-    "height": 900
-  }
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Rules Decide",
+      "items": [
+        "The browser SDK sets verdicts, fit and roadmap steps from dated snapshots.",
+        "Claude handles language and completion evidence; it does not set the rule outputs."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Dated Data",
+      "items": [
+        "O*NET, the Anthropic Economic Index and DOSM provide the source data.",
+        "SkillsFuture Singapore adds regional context; the links do not change verdicts."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Deployment",
+      "items": [
+        "One Hono application serves Replit and Cloudflare Workers.",
+        "The RunPod GPU drafts skills before deployment, not during each check-up."
+      ]
+    }
+  ]
 }
