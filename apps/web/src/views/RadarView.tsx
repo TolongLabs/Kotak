@@ -3,7 +3,7 @@ import { jobMarketLevelForYears, needsQualification, yearsOfWork } from '@kotak/
 import { Info } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
-import { routes } from '../app/routes'
+import { routes, spacePath } from '../app/routes'
 import { AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
@@ -20,6 +20,7 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
+import { routeLinkClassName } from '../components/ui/TextLink'
 import { dateLocale } from '../i18n/locale'
 import { radarText } from '../i18n/messages/radar'
 import { useText } from '../i18n/text'
@@ -336,7 +337,12 @@ export function RadarView() {
           </div>
         )}
         <p className="text-body-s text-text-muted">{t.radarIntro}</p>
-        <ScenarioControl scenario={scenario} onChange={setScenario} />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+          <ScenarioControl scenario={scenario} onChange={setScenario} />
+          <Link to={spacePath()} className={routeLinkClassName}>
+            {t.seeFutureInSpace}
+          </Link>
+        </div>
       </header>
 
       <AccessNotice

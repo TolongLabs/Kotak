@@ -10,6 +10,7 @@ import {
 } from '../../engine/quadrant'
 import { Link } from '../../app/router'
 import { cn } from '../ui/cn'
+import { routeLinkClassName } from '../ui/TextLink'
 import { commonText } from '../../i18n/common'
 import { rolesText } from '../../i18n/messages/roles'
 import { textNow, useText } from '../../i18n/text'
@@ -472,11 +473,7 @@ export function QuadrantMap({ points, focusId, title, description, bare = false,
                     </p>
                     {point.gap && <p className="text-label-s">{t.quadrant.neededFirst(point.gap)}</p>}
                     {interactive && point.id !== focusId && (
-                      <Link
-                        to={`/app/jobs/${point.id}`}
-                        onClick={close}
-                        className="inline-flex min-h-6 items-center text-label-m text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-                      >
+                      <Link to={`/app/jobs/${point.id}`} onClick={close} className={routeLinkClassName}>
                         {t.quadrant.openJobPage}
                         <span className="sr-only">{t.quadrant.openJobTitle(point.label)}</span>
                       </Link>

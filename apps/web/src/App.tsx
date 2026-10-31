@@ -58,7 +58,7 @@ function Screen({ path, dataLabel }: { path: string; dataLabel: string }) {
   if (path === routes.landing) return <LandingView />
   if (path === routes.signIn) return <SignInView />
   // The space fills the viewport, outside the app shell.
-  if (path === routes.space) return <SpaceView />
+  if (path === routes.space) return <SpaceView dataLabel={dataLabel} />
 
   const jobCode = path.startsWith(`${routes.jobs}/`) ? decodeURIComponent(path.slice(routes.jobs.length + 1)) : null
   if (jobCode) return <JobScreen code={jobCode} path={path} dataLabel={dataLabel} />

@@ -1,14 +1,31 @@
-import { ArrowLeft, Box } from 'lucide-react'
-import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
+import { ArrowLeft, Box, MessageCircle } from 'lucide-react'
+import {
+  Component,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type Ref,
+  type RefObject
+} from 'react'
 import { useSearch } from '../app/router'
-import { routes } from '../app/routes'
+import { routes, spacePath } from '../app/routes'
+import { ASK_KOPI_PANEL_ID, AskKopiPanel } from '../app/shell/AskKopi'
 import { useReducedMotion } from '../components/kopi/motion'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { Banner } from '../components/ui/Banner'
 import { Button, ButtonLink } from '../components/ui/Button'
 import { Kbd } from '../components/ui/Kbd'
+import { LanguageToggle } from '../components/ui/LanguageToggle'
 import { Modal } from '../components/ui/Modal'
 import { Spinner } from '../components/ui/Spinner'
+import { commonText } from '../i18n/common'
+import { spaceText } from '../i18n/messages/space'
+import { useText } from '../i18n/text'
 import { useScenario } from '../session/scenario'
 import { useActiveSnapshot } from '../session/snapshot'
 import { readGuestSession, startGuestSession, useGuestSession } from '../session/store'
@@ -88,34 +105,79 @@ function useToggleKey(onToggle: () => void, table: RefObject<HTMLDialogElement |
 /** The way out of the space; `iconOnPhone` keeps only its arrow on a phone, as the HUD's does, where a dialog's header
  * has no room for its words. */
 function BackToDashboard({ iconOnPhone = false }: { iconOnPhone?: boolean }) {
+  const t = useText(spaceText)
   return (
     <ButtonLink
       to={routes.home}
       variant="ghost"
-      aria-label={iconOnPhone ? 'Back to Dashboard' : undefined}
+      aria-label={iconOnPhone ? t.backToDashboard : undefined}
       iconStart={<ArrowLeft className="size-5 stroke-current" aria-hidden="true" />}
       className={iconOnPhone ? 'max-sm:w-11 max-sm:!px-0' : undefined}
     >
-      {iconOnPhone ? <span className="max-sm:hidden">Back to Dashboard</span> : 'Back to Dashboard'}
+      {iconOnPhone ? <span className="max-sm:hidden">{t.backToDashboard}</span> : t.backToDashboard}
     </ButtonLink>
   )
 }
 
-// The idle, loading and error states, with the same exit as the table and the 3D view's HUD, top right. The exit sits
-// in the flow above the content, so a short landscape screen scrolls instead of overlapping the two.
-function Centered({ children }: { children: ReactNode }) {
+/** Opens and closes the app's Ask Kopi chat window, as the HUD's link does; on a phone only its icon, like the exit. */
+function AskKopiToggle({ open, onClick, ref }: { open: boolean; onClick: () => void; ref: Ref<HTMLButtonElement> }) {
+  const c = useText(commonText)
+  return (
+    <Button
+      ref={ref}
+      variant="ghost"
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-controls={ASK_KOPI_PANEL_ID}
+      aria-label={c.askKopi}
+      iconStart={<MessageCircle className="size-5 stroke-current" aria-hidden="true" />}
+      className="max-sm:w-11 max-sm:!px-0"
+      onClick={onClick}
+    >
+      <span className="max-sm:hidden" translate="no">
+        {c.askKopi}
+      </span>
+    </Button>
+  )
+}
+
+interface KopiProps {
+  open: boolean
+  onToggle: () => void
+  toggleRef: Ref<HTMLButtonElement>
+}
+
+/** The language, Ask Kopi and the way out, in one row, as the HUD's top right has them. */
+function SpaceActions({ kopi }: { kopi: KopiProps }) {
+  return (
+    <div className="flex items-center gap-2">
+      <LanguageToggle />
+      <AskKopiToggle ref={kopi.toggleRef} open={kopi.open} onClick={kopi.onToggle} />
+      <BackToDashboard iconOnPhone />
+    </div>
+  )
+}
+
+// The idle, loading and error states, with the same actions as the table and the 3D view's HUD, top right. They sit in
+// the flow above the content, so a short landscape screen scrolls instead of overlapping the two.
+function Centered({ kopi, children }: { kopi: KopiProps; children: ReactNode }) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[720px] flex-col gap-4 px-6 py-6">
       <div className="flex justify-end">
-        <BackToDashboard />
+        <SpaceActions kopi={kopi} />
       </div>
       <div className="flex flex-1 flex-col justify-center gap-4">{children}</div>
     </main>
   )
 }
 
-export function SpaceView() {
-  const lookAround = new URLSearchParams(useSearch()).get('view') === 'look-around'
+export function SpaceView({ dataLabel }: { dataLabel: string }) {
+  const t = useText(spaceText)
+  const c = useText(commonText)
+  const search = new URLSearchParams(useSearch())
+  const lookAround = search.get('view') === 'look-around'
+  // A deep link from another screen (?job=<O*NET code>) opens on that job; an unknown code is ignored.
+  const linkedJob = search.get('job')
   if (!lookAround && !readGuestSession()) startGuestSession()
 
   const session = useGuestSession()
@@ -132,6 +194,28 @@ export function SpaceView() {
   // The job pinned in the space, which the table opens on.
   const [focusCode, setFocusCode] = useState<string | null>(null)
   const tableRef = useRef<HTMLDialogElement>(null)
+  // The Ask Kopi window, opened from the actions above the table or the states, as the HUD opens its own.
+  const [kopiOpen, setKopiOpen] = useState(false)
+  const kopiToggle = useRef<HTMLButtonElement>(null)
+  const kopi: KopiProps = { open: kopiOpen, onToggle: () => setKopiOpen((open) => !open), toggleRef: kopiToggle }
+  const kopiPanel = (
+    <AskKopiPanel
+      open={kopiOpen}
+      onClose={() => setKopiOpen(false)}
+      dataLabel={dataLabel}
+      returnFocusRef={kopiToggle}
+    />
+  )
+
+  // The address follows the job in focus in the space (?job=), so a reload or a shared link opens on what was on
+  // screen; the scene reads the deep link once, on mount.
+  const onFocusChange = useCallback(
+    (code: string | null) => {
+      setFocusCode(code)
+      window.history.replaceState(null, '', spacePath(code ?? undefined, lookAround))
+    },
+    [lookAround]
+  )
 
   const canDraw3D = webgl && !failed
   const scene = canDraw3D && (!reduced || want3D)
@@ -145,51 +229,42 @@ export function SpaceView() {
   if (loaded.status === 'idle') {
     // No answers yet: Kopi asks for the check-up, or offers a look around first.
     content = (
-      <Centered>
-        <h1 className="sr-only">Space</h1>
-        <CatDialogue
-          pose="worried"
-          size="lg"
-          speech={`${again.speech}, then I can place every job by how well you fit it. Or have a look around now, with each job placed by how much preparation it needs.`}
-        />
+      <Centered kopi={kopi}>
+        <h1 className="sr-only">{c.nav.space}</h1>
+        <CatDialogue pose="worried" size="lg" speech={`${again.speech}${t.thenPlaceJobs}`} />
         <div className="flex flex-wrap gap-3">
           <ButtonLink to={again.route} variant="primary" size="lg">
             {again.label}
           </ButtonLink>
-          <ButtonLink to={`${routes.space}?view=look-around`} variant="secondary" size="lg">
-            Look Around
+          <ButtonLink to={spacePath(linkedJob ?? undefined, true)} variant="secondary" size="lg">
+            {t.lookAround}
           </ButtonLink>
         </div>
       </Centered>
     )
   } else if (loaded.status === 'error') {
     content = (
-      <Centered>
-        <h1 className="sr-only">Space</h1>
-        <Banner type="error" title="Kopi Could Not Open the Space" body="Check your connection, then try again." />
+      <Centered kopi={kopi}>
+        <h1 className="sr-only">{c.nav.space}</h1>
+        <Banner type="error" title={t.couldNotOpen.title} body={t.couldNotOpen.body} />
         <Button variant="secondary" className="self-start" onClick={loaded.retry}>
-          Try Again
+          {c.tryAgain}
         </Button>
       </Centered>
     )
   } else if (loaded.status === 'loading') {
     content = (
-      <Centered>
-        <h1 className="sr-only">Space</h1>
+      <Centered kopi={kopi}>
+        <h1 className="sr-only">{c.nav.space}</h1>
         <p className="flex items-center gap-3 text-body-m text-text-primary">
-          <Spinner label="Loading the space" />
-          {lookAround ? 'Placing every job…' : 'Placing every job for your answers…'}
+          <Spinner label={t.loadingSpace} />
+          {lookAround ? t.placingJobs : t.placingJobsForAnswers}
         </p>
       </Centered>
     )
   } else {
-    const note = !webgl
-      ? 'This browser can’t draw the 3D view, so the space shows as this table, with the same numbers.'
-      : failed
-        ? 'The 3D view stopped, so the space shows as this table, with the same numbers. Reload the page to try 3D again.'
-        : !scene
-          ? 'Reduced motion is on, so the space shows as this table, with the same numbers. Show 3D opens the 3D view.'
-          : undefined
+    const note = !webgl ? t.tableNote.noWebgl : failed ? t.tableNote.failed : !scene ? t.tableNote.reduced : undefined
+    const deepJob = loaded.data.jobs.some((job) => job.code === linkedJob) ? linkedJob : null
     const tableShown = !scene || tableOpen
     content = (
       <main className="relative h-dvh w-full overflow-hidden">
@@ -200,16 +275,17 @@ export function SpaceView() {
             <Suspense
               fallback={
                 <div className="relative flex h-full items-center justify-center">
-                  <h1 className="sr-only">The 3D Space</h1>
+                  <h1 className="sr-only">{t.heading3D}</h1>
                   <div className="absolute right-6 top-6">
                     <BackToDashboard />
                   </div>
-                  <Spinner label="Loading the 3D space" />
+                  <Spinner label={t.loading3D} />
                 </div>
               }
             >
               <SpaceScene
                 model={loaded.data}
+                initialJob={deepJob}
                 scenario={scenario}
                 snapshotId={snapshotId}
                 onScenario={setScenario}
@@ -219,12 +295,12 @@ export function SpaceView() {
                 checkUp={again}
                 paused={tableOpen}
                 focusTitle={want3D}
-                onFocusChange={setFocusCode}
+                onFocusChange={onFocusChange}
               />
             </Suspense>
           </SceneBoundary>
         ) : (
-          <h1 className="sr-only">Space</h1>
+          <h1 className="sr-only">{c.nav.space}</h1>
         )}
         {/* Over the 3D view, closing returns to it. Without it, the dialog is the page: it has no close button and Esc
             does nothing, and Back to Dashboard, in its header so a keyboard reaches it before the rows, leaves the
@@ -239,7 +315,7 @@ export function SpaceView() {
           backdrop="none"
           body="fill"
           dismissible={scene}
-          headerAction={scene ? undefined : <BackToDashboard iconOnPhone />}
+          headerAction={scene ? undefined : <SpaceActions kopi={kopi} />}
           widthClass="w-[min(72rem,calc(100vw-2rem))]"
         >
           {tableShown && (
@@ -247,7 +323,8 @@ export function SpaceView() {
               model={loaded.data}
               scenario={scenario}
               snapshotId={snapshotId}
-              focusCode={scene ? focusCode : null}
+              targetCode={scene ? focusCode : deepJob}
+              pinnedCode={scene ? focusCode : null}
               note={note}
               actions={
                 !scene && canDraw3D ? (
@@ -257,17 +334,28 @@ export function SpaceView() {
                     aria-keyshortcuts="D"
                     onClick={toggle}
                   >
-                    Show 3D
+                    {t.show3D}
                     <Kbd className="not-any-pointer-fine:hidden">D</Kbd>
                   </Button>
                 ) : undefined
               }
             />
           )}
+          {/* The table is modal here, so the chat window opens inside it to stay usable. */}
+          {!scene && kopiPanel}
         </Modal>
       </main>
     )
   }
 
-  return <div className="space-dark min-h-dvh bg-bg-default text-text-primary">{content}</div>
+  return (
+    // The chat window opens from a header row, with no floating button to clear at the foot.
+    <div
+      className="space-dark min-h-dvh bg-bg-default text-text-primary"
+      style={{ '--ask-kopi-clearance': '1rem' } as CSSProperties}
+    >
+      {content}
+      {loaded.status !== 'ready' && kopiPanel}
+    </div>
+  )
 }

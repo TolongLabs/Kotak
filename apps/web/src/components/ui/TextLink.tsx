@@ -4,6 +4,10 @@ import { uiText } from '../../i18n/messages/ui'
 import { useText } from '../../i18n/text'
 import { cn } from './cn'
 
+/** A small in-app text link, for the router's Link (which keeps Cmd-click), beside a control or under a heading. */
+export const routeLinkClassName =
+  'inline-flex min-h-6 items-center text-label-m text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring'
+
 export interface TextLinkProps extends ComponentPropsWithoutRef<'a'> {
   href: string
   external?: boolean

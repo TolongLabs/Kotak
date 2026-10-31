@@ -11,9 +11,10 @@ import { textNow } from '../../i18n/text'
 
 export type MovedRow = { label: string; effect: string }
 
-// Verdict enum words travel inside translated sentences; anything unmapped falls back to the English word.
+// Verdict words travel inside translated sentences: the short verdicts from commonText, the engine's verdict rows from
+// changesText; anything unmapped falls back to the English word.
 function verdictWord(label: string): string {
-  const words: Record<string, string> = textNow(commonText).verdicts
+  const words: Record<string, string> = { ...textNow(commonText).verdicts, ...textNow(changesText).verdictRows }
   return words[label] ?? label
 }
 

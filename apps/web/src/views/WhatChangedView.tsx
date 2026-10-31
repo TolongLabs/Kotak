@@ -5,8 +5,9 @@ import { SourceList } from '../components/kotak/SourceList'
 import { WhatChangedCard } from '../components/kotak/WhatChangedCard'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
-import { navigate } from '../app/router'
-import { routes } from '../app/routes'
+import { routeLinkClassName } from '../components/ui/TextLink'
+import { Link, navigate } from '../app/router'
+import { routes, spacePath } from '../app/routes'
 import { useCheckupBundle } from '../engine/bundle'
 import { answeredLevels, assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { sourceRefs, toCorners } from '../engine/viewModel'
@@ -61,7 +62,7 @@ export function WhatChangedView() {
     return (
       <div className="space-y-5 lg:space-y-6">
         <h1 className="text-title-m text-text-primary lg:text-title-l">{t.title}</h1>
-        <CatDialogue pose="worried" speech={`${startAgain(session).speech}, then I can compare its snapshots.`} />
+        <CatDialogue pose="worried" speech={`${startAgain(session).speech}${t.thenCompare}`} />
         <Button variant="primary" size="lg" fullWidth onClick={() => navigate(startAgain(session).route)}>
           {startAgain(session).label}
         </Button>
@@ -143,6 +144,9 @@ export function WhatChangedView() {
             <p className="text-body-s text-text-muted" aria-live="polite">
               {isMay ? t.activeMay(afterLabel) : t.activeApril(beforeLabel)}
             </p>
+            <Link to={spacePath(role.onet_code)} className={routeLinkClassName}>
+              {t.seeChangeInSpace}
+            </Link>
           </div>
         </div>
         <div

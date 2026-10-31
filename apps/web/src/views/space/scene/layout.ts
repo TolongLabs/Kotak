@@ -1,4 +1,5 @@
 import type { Scenario, SnapshotId } from '@kotak/shared'
+import type { SpaceText } from '../../../i18n/messages/space'
 import { hasNoEstimate } from '../format'
 import type { SpaceJob, SpaceModel } from '../model'
 
@@ -49,13 +50,15 @@ function groundRings(model: SpaceModel): number[] {
   return ZONES.map(zoneEdge)
 }
 
-/** Each ground ring's name, in the order World paints them on the ground. */
-export function ringLabels(model: SpaceModel): string[] {
-  return model.answers ? FIT_RINGS.map((fit) => `${fit}% fit`) : ZONES.map((zone) => `Job Zone ${zone}`)
+/** Each ground ring's name in the language on show, in the order World paints them on the ground. */
+export function ringLabels(model: SpaceModel, t: Pick<SpaceText, 'rings' | 'jobZone'>): string[] {
+  return model.answers ? FIT_RINGS.map(t.rings.fit) : ZONES.map((zone) => t.jobZone(zone))
 }
 
 /** The fan's edge angle, in radians from the horizon, where the ground rings' lines end. */
 export const FAN_EDGE = FAN / 2
+/** Where the ground shader's ring lines have faded out past the fan's edge, in radians (shaders.ts, groundFragment). */
+export const LINE_END = FAN_EDGE + 0.02
 
 /**
  * A skill's blade height for its 12-month change in AI use (a fraction, 0.42 is +42%). Rising use climbs on a log scale,
@@ -281,10 +284,232 @@ export interface Shot {
   wide?: number
 }
 
+/** Where a fly-to lands: the camera's eye and the point it looks at, which the orbit then turns around. */
+export type FocusShot = Pick<Shot, 'position' | 'target'>
+
+/**
+ * A fly-to faces between these turns from the horizon, in radians (negative is left), as the opening shot looks a little
+ * left: the ring stands right of the frame's middle, clear of the docked card top left and of the glow it trails to the
+ * left, and short of the ruler on the right. A tuft further round the fan is seen from its outer side, across bare
+ * ground. Where the turn nearest the tuft's own direction can't stand close, the others are tried too, TURN_STEPS of
+ * them across the range.
+ */
+const FOCUS_TURN: [number, number] = [(-15 * Math.PI) / 180, (-8 * Math.PI) / 180]
+const TURN_STEPS = 5
+/**
+ * It stops at least this far back from its tuft, in metres, and walks further back until clear, up to FOCUS_FAR, within
+ * the orbit's reach (CameraRig's MAX_DISTANCE).
+ */
+const FOCUS_NEAR = 6
+const FOCUS_FAR = 34
+const FOCUS_STEP = 1
+/** No tuft, and not the box, stands nearer the eye than this, in metres, so it never stands in the grass. */
+const FOCUS_ROOM = 2
+/**
+ * The eye stands above the blades' tips, as high as the first of FOCUS_HEIGHTS that lets it stand close (a lower eye
+ * sees the near ground higher in the frame, clear of a high foot, and the far field's tips nearer the horizon), and
+ * looks this little down, so the field lies in a band across the frame's middle, with dark sky above and bare ground
+ * below. The orbit's lowest view (CameraRig's MAX_POLAR) still has room under it.
+ */
+const FOCUS_HEIGHTS = [2.8, 2.2, 1.7, 1.3]
+const FOCUS_PITCH = (3 * Math.PI) / 180
+/** The orbit's target stays at least this high, in metres, on the line of sight (focusShot). */
+const TARGET_FLOOR = 0.1
+/** The focused tuft's foot stays at least this high in the frame, in normalised device coordinates (-1 is the bottom). */
+const FOCUS_LOWEST = -0.55
+/**
+ * Nothing lit may show behind the HUD's text from the landing: no blade, as tall as its tuft's tallest and reaching out
+ * from the tuft's centre as far as its tips splay and lean (BLADE_REACH metres, and BLADE_LEAN of its height); not the
+ * glow on the ground under the focused tuft and your own (FOCUS_POOL metres round); not the box with its cat and its
+ * glow; not the ring lines on the ground (tested in straight pieces LINE_PIECE metres long); and not the rings' names
+ * painted past the lines' left ends (LABEL_LENGTH metres long at most). A text box counts FOCUS_MARGIN CSS pixels wider
+ * all round, for the blades' glow.
+ */
+const BLADE_REACH = 0.14
+const BLADE_LEAN = 0.44
+const FOCUS_POOL = 1.2
+const FOCUS_MARGIN = 14
+const BOX = { height: 1.5, spread: 0.8, pool: 1.1 }
+const LINE_PIECE = 1.5
+const LABEL_LENGTH = 2.6
+
+/** What a landing keeps clear: the lens (vertical field of view in degrees) and the HUD's text, in CSS pixels. */
+export interface FocusView {
+  fov: number
+  width: number
+  height: number
+  text: { left: number; top: number; right: number; bottom: number }[]
+}
+
+/** Whether the segment from (x0, y0) to (x1, y1) meets the box from (left, top) to (right, bottom), by clipping it. */
+function meets(x0: number, y0: number, x1: number, y1: number, l: number, t: number, r: number, b: number): boolean {
+  let [lo, hi] = [0, 1]
+  const [dx, dy] = [x1 - x0, y1 - y0]
+  for (const [p, q] of [
+    [-dx, x0 - l],
+    [dx, r - x0],
+    [-dy, y0 - t],
+    [dy, b - y0]
+  ] as const) {
+    if (p === 0) {
+      if (q < 0) return false
+    } else if (p < 0) lo = Math.max(lo, q / p)
+    else hi = Math.min(hi, q / p)
+    if (lo > hi) return false
+  }
+  return true
+}
+
+/**
+ * The fly-to's landing for job `i`, for blend weights future and month, on a screen as `view` shows it: back from its
+ * tuft toward the box, turned within FOCUS_TURN, at the nearest distance from FOCUS_NEAR from which nothing lit shows
+ * behind the HUD's text, so it stands as close as the screen's own HUD allows; the tuft stays in the frame's middle. If
+ * no pose up to FOCUS_FAR is clear, it takes the one with the fewest things in the way.
+ */
+export function focusShot(layout: FieldLayout, i: number, future: number, month: number, view: FocusView): FocusShot {
+  const [x, z] = tuftPosition(layout, i, future, month)
+  const ty = Math.tan((view.fov * Math.PI) / 360)
+  const tx = (ty * view.width) / view.height
+  const [sinP, cosP] = [Math.sin(FOCUS_PITCH), Math.cos(FOCUS_PITCH)]
+
+  // Every tuft's tallest blade now (a skill with no projection stands at BLADE_H0, as the shader draws it), and the lit
+  // things to keep clear: a vertical span at a ground point, reaching `spread` metres either side.
+  const tallest = new Float32Array(layout.angles.length)
+  const h = layout.aHeight
+  for (let b = 0; b < layout.bladeCount; b++) {
+    const at = (state: number) => (h[b * 4 + state]! < 0 ? BLADE_H0 : h[b * 4 + state]!)
+    const older = at(0) + (at(1) - at(0)) * future
+    const height = older + (at(2) + (at(3) - at(2)) * future - older) * month
+    const job = layout.aShape[b * 4 + 3]!
+    tallest[job] = Math.max(tallest[job]!, height)
+  }
+  const yours = new Uint8Array(layout.angles.length)
+  for (let b = 0; b < layout.bladeCount; b++) {
+    if (layout.aMeta[b * 2] === KIND_CODE.yours) yours[layout.aShape[b * 4 + 3]!] = 1
+  }
+  // Each a span from a ground point up to `height`, `spread` metres either side, over a glow `pool` metres round.
+  const lit: { x: number; z: number; height: number; spread: number; pool: number }[] = [{ x: 0, z: 0, ...BOX }]
+  for (let j = 0; j < layout.angles.length; j++) {
+    const [tx0, tz0] = tuftPosition(layout, j, future, month)
+    const spread = BLADE_REACH + BLADE_LEAN * tallest[j]!
+    lit.push({ x: tx0, z: tz0, height: tallest[j]!, spread, pool: j === i || yours[j] ? FOCUS_POOL : spread })
+  }
+  // The ring lines on the ground, as short straight pieces, and their names painted past the lines' left ends.
+  const lines: [number, number, number, number][] = []
+  for (const radius of layout.rings) {
+    const angle = -LINE_END - LABEL_LENGTH / 2 / radius
+    const [lx, lz] = [Math.sin(angle) * radius, -Math.cos(angle) * radius]
+    lit.push({ x: lx, z: lz, height: 0, spread: LABEL_LENGTH / 2, pool: LABEL_LENGTH / 2 })
+    const end = LINE_END
+    const pieces = Math.ceil((2 * end * radius) / LINE_PIECE)
+    for (let k = 0; k < pieces; k++) {
+      const [a, b] = [-end + (2 * end * k) / pieces, -end + (2 * end * (k + 1)) / pieces]
+      lines.push([Math.sin(a) * radius, -Math.cos(a) * radius, Math.sin(b) * radius, -Math.cos(b) * radius])
+    }
+  }
+  // The text boxes, FOCUS_MARGIN wider; one inside another (a link inside its line) is left out, as its line covers it.
+  const inside = (p: FocusView['text'][number], q: FocusView['text'][number]) =>
+    p !== q && p.left >= q.left && p.right <= q.right && p.top >= q.top && p.bottom <= q.bottom
+  const boxes = view.text
+    .filter((p, k) => !view.text.some((q, n) => inside(p, q) && !(inside(q, p) && n > k)))
+    .map((b) => ({
+      l: b.left - FOCUS_MARGIN,
+      t: b.top - FOCUS_MARGIN,
+      r: b.right + FOCUS_MARGIN,
+      b: b.bottom + FOCUS_MARGIN
+    }))
+
+  // How many lit things the eye `back` metres from the tuft and `eye` metres up, facing it at `turn`, sees behind the
+  // text, counting up to `most` (a tuft's foot sunk low in the frame counts as one). What blocked the last try is tried
+  // first, as it most likely blocks the next one too.
+  let last = 0
+  const inWay = (back: number, turn: number, eye: number, most: number) => {
+    // The way back from the tuft; the eye looks the other way, level but for FOCUS_PITCH.
+    const [dx, dz] = [-Math.sin(turn), Math.cos(turn)]
+    const [cx, cz] = [x + dx * back, z + dz * back]
+    // A point's place on screen, in CSS pixels, and its depth.
+    const project = (px: number, py: number, pz: number) => {
+      const [vx, vy, vz] = [px - cx, py - eye, pz - cz]
+      const depth = -(vx * dx + vz * dz) * cosP - vy * sinP
+      const sx = (vx * dz - vz * dx) / (depth * tx)
+      const sy = (-(vx * dx + vz * dz) * sinP + vy * cosP) / (depth * ty)
+      return [((sx + 1) / 2) * view.width, ((1 - sy) / 2) * view.height, depth] as const
+    }
+    // The focused tuft's foot stays in the frame's middle rows.
+    let count = 1 - (2 * project(x, 0, z)[1]) / view.height >= FOCUS_LOWEST ? 0 : 1
+    if (count >= most) return count
+    const blocks = (thing: (typeof lit)[number]) => {
+      const [vx, vz] = [thing.x - cx, thing.z - cz]
+      if (vx * vx + vz * vz < FOCUS_ROOM ** 2) return true
+      // Things behind the eye, or beside it out of view, don't show; ones at the frame's edge too near to project
+      // reliably count as in the way.
+      const reach = Math.max(thing.spread, thing.pool)
+      const ahead = -(vx * dx + vz * dz)
+      if (ahead < -reach || Math.abs(vx * dz - vz * dx) - reach > Math.max(0, ahead) * tx) return false
+      if (ahead < reach + 0.5) return true
+      // The glow's nearest edge, toward the eye, sits lowest on screen.
+      const [x0, y0, d0] = project(thing.x + thing.pool * dx, 0, thing.z + thing.pool * dz)
+      const [x1, y1, d1] = project(thing.x, thing.height, thing.z)
+      const wide = (thing.spread / (Math.min(d0, d1) * tx)) * (view.width / 2)
+      return boxes.some((box) => meets(x0, y0, x1, y1, box.l - wide, box.t, box.r + wide, box.b))
+    }
+    if (most === 1 && blocks(lit[last]!)) return 1
+    for (let k = 0; k < lit.length; k++) {
+      if (!blocks(lit[k]!)) continue
+      last = k
+      if (++count >= most) return count
+    }
+    for (const [ax, az, bx, bz] of lines) {
+      let [a, b] = [project(ax, 0, az), project(bx, 0, bz)]
+      if (a[2] < 0.5 && b[2] < 0.5) continue
+      // A piece reaching behind the eye is cut where it passes half a metre in front of it.
+      if (a[2] < 0.5 || b[2] < 0.5) {
+        const s = (0.5 - a[2]) / (b[2] - a[2])
+        const cut = project(ax + (bx - ax) * s, 0, az + (bz - az) * s)
+        if (a[2] < 0.5) a = cut
+        else b = cut
+      }
+      if (boxes.some((box) => meets(a[0], a[1], b[0], b[1], box.l, box.t, box.r, box.b)) && ++count >= most)
+        return count
+    }
+    return count
+  }
+
+  // Facing the tuft as squarely as FOCUS_TURN allows first, then the other turns it allows, nearest first.
+  const own = Math.min(FOCUS_TURN[1], Math.max(FOCUS_TURN[0], Math.atan2(x, -z)))
+  const steps = Array.from(
+    { length: TURN_STEPS },
+    (_, k) => FOCUS_TURN[0] + ((FOCUS_TURN[1] - FOCUS_TURN[0]) * k) / (TURN_STEPS - 1)
+  )
+  const turns = [own, ...steps.filter((t) => Math.abs(t - own) > 1e-6)].sort(
+    (a, b) => Math.abs(a - own) - Math.abs(b - own)
+  )
+  const poses: [number, number, number][] = []
+  for (let b = FOCUS_NEAR; b <= FOCUS_FAR; b += FOCUS_STEP) {
+    for (const t of turns) for (const e of FOCUS_HEIGHTS) poses.push([b, t, e])
+  }
+  let pose = poses.find(([b, t, e]) => inWay(b, t, e, 1) === 0)
+  if (!pose) {
+    let fewest = Infinity
+    for (const [b, t, e] of poses) {
+      const count = inWay(b, t, e, fewest)
+      if (count < fewest) [fewest, pose] = [count, [b, t, e]]
+    }
+  }
+  const [back, turn, eye] = pose!
+  const [dx, dz] = [-Math.sin(turn), Math.cos(turn)]
+  // The orbit turns round a point on the line of sight, no lower than TARGET_FLOOR, so it never orbits under the ground.
+  const ahead = Math.min(back, (eye - TARGET_FLOOR) / Math.tan(FOCUS_PITCH))
+  return {
+    position: [x + dx * back, eye, z + dz * back],
+    target: [x + dx * (back - ahead), eye - ahead * Math.tan(FOCUS_PITCH), z + dz * (back - ahead)]
+  }
+}
+
 /**
  * The opening shot on a phone (usePhoneLayout), whose HUD stacks the switches, the numbers and the ruler below the scene:
- * as close behind the box as the wide shot and lower, as turned to the left, tilted down so the ring clears the title
- * even in the fast future and the box stands just above the stack.
+ * as close behind the box as the wide shot and lower, turned a little to the left (6.3 degrees, to the wide shot's 8.3),
+ * tilted down so the ring clears the title even in the fast future and the box stands just above the stack.
  */
 export function phoneShot(): Shot {
   return { position: [0.42, 1.08, 4.9], target: [-4.95, -8.89, -43.8], fov: 56, wide: 44 }
@@ -302,14 +527,16 @@ export function shortShot(): Shot {
 /**
  * The four locked camera shots; `tuft` frames the assessed job's tuft from the box's side. The opening `wide` shot stands
  * low and close behind the box, which fills the foot's middle, and looks a little left of it, so every ground ring's
- * left end, with its name, stays in frame; on a narrow screen the view widens to keep 80 degrees across.
+ * left end, with its name, stays in frame, and the ring's glow, which brightens the fast future's sky around it, stands
+ * clear of a card docked top left, even a compact one wrapped to three lines; on a narrow screen the view widens to keep
+ * 80 degrees across.
  */
 export function shots(tuft: [number, number]): Record<ShotName, Shot> {
   const [x, z] = tuft
   const len = Math.hypot(x, z) || 1
   const [ux, uz] = [x / len, z / len]
   return {
-    wide: { position: [0.42, 2.72, 4.25], target: [-5.4, -3.6, -50], fov: 56, wide: 80 },
+    wide: { position: [0.42, 2.72, 4.25], target: [-7.5, -3.6, -50], fov: 56, wide: 80 },
     field: { position: [0, 8.5, 5.5], target: [0, -1.6, -32], fov: 46 },
     tuft: {
       position: [x - ux * 4.2 + uz * 0.4, 2, z - uz * 4.2 - ux * 0.4],

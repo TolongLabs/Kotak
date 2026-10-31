@@ -15,8 +15,9 @@ import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Citation } from '../components/ui/Citation'
 import { Stepper } from '../components/ui/Stepper'
-import { navigate } from '../app/router'
-import { routes } from '../app/routes'
+import { routeLinkClassName } from '../components/ui/TextLink'
+import { Link, navigate } from '../app/router'
+import { routes, spacePath } from '../app/routes'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useJobMarkets } from '../engine/useJobMarkets'
@@ -327,7 +328,13 @@ export function RolesView() {
             </>
           )}
         </p>
-        <ScenarioControl scenario={scenario} onChange={setScenario} />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+          <ScenarioControl scenario={scenario} onChange={setScenario} />
+          {/* The highlighted card's role opens pinned; the other cards' roles are the space's related tufts. */}
+          <Link to={spacePath(selected?.id)} className={routeLinkClassName}>
+            {t.rolesView.seeInSpace}
+          </Link>
+        </div>
       </header>
 
       <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 xl:grid-cols-3">

@@ -394,7 +394,7 @@ void main() {
   vec4 view = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * view;
   gl_PointSize = uPixel * (0.6 + aSeed) * 24.0 / max(-view.z, 0.5);
-  vAlpha = (0.35 + 0.65 * fract(aSeed * 13.7)) * smoothstep(80.0, 10.0, -view.z) * smoothstep(0.4, 2.0, -view.z);
+  vAlpha = (0.35 + 0.65 * fract(aSeed * 13.7)) * smoothstep(80.0, 10.0, -view.z) * smoothstep(5.0, 7.5, -view.z);
 }
 `
 

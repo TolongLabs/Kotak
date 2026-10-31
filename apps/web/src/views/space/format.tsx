@@ -2,26 +2,55 @@ import { VerdictSchema, type Verdict } from '@kotak/shared'
 import type { LucideIcon } from 'lucide-react'
 import { verdictConfig, type VerdictType } from '../../components/ui/VerdictChip'
 import type { SourceRef } from '../../demo/types'
-import type { SpaceJob, SpaceModel, SpaceSnapshot } from './model'
+import { contentFor } from '../../i18n/content/overlay'
+import { dateLocale, getLocale, useLocale, type Locale } from '../../i18n/locale'
+import { spaceText, type SpaceText } from '../../i18n/messages/space'
+import { textNow, useText } from '../../i18n/text'
+import type { SpaceJob, SpaceModel, SpaceSkill, SpaceSnapshot } from './model'
 
-// The space's shared wording and marks, so its table and its 3D view say every number the same way.
+// The space's shared wording and marks, so its table and its 3D view say every number the same way, in the language
+// on show. Each formatter reads the language when called, so call them while rendering.
 
-const percent = new Intl.NumberFormat('en-GB', {
-  style: 'percent',
-  maximumFractionDigits: 0,
-  signDisplay: 'exceptZero'
-})
+const formats = new Map<Locale, { percent: Intl.NumberFormat; index: Intl.NumberFormat; month: Intl.DateTimeFormat }>()
+function formatsFor(locale: Locale) {
+  let found = formats.get(locale)
+  if (!found) {
+    const tag = dateLocale(locale)
+    found = {
+      percent: new Intl.NumberFormat(tag, { style: 'percent', maximumFractionDigits: 0, signDisplay: 'exceptZero' }),
+      index: new Intl.NumberFormat(tag, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      month: new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric', timeZone: 'UTC' })
+    }
+    formats.set(locale, found)
+  }
+  return found
+}
 
 /** A 12-month change in AI use, signed and whole: 0.42 is "+42%". */
-export const formatChange = (change: number) => percent.format(change)
-
-const index = new Intl.NumberFormat('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+export const formatChange = (change: number) => formatsFor(getLocale()).percent.format(change)
 
 /** An AI usage index to 2 decimals, the data's own precision: 0.8 is "0.80". */
-export const formatIndex = (value: number) => index.format(value)
+export const formatIndex = (value: number) => formatsFor(getLocale()).index.format(value)
 
-/** What a job's fit says when no answer reaches its skills (hasNoEstimate), as the job card says it. */
-export const NO_ESTIMATE = 'No estimate yet'
+/** A snapshot's data month, such as "May 2026", "Mei 2026" or "2026年5月". */
+export const monthLabel = (snapshot: Pick<SpaceSnapshot, 'date'>) =>
+  formatsFor(getLocale()).month.format(new Date(`${snapshot.date}T00:00:00Z`))
+
+/** A job's SOC major group, named in the language on show. */
+export const groupName = (t: SpaceText, job: Pick<SpaceJob, 'group'>) => t.groups[job.group] ?? job.group
+
+/** A Job Zone's word as it sits inside a sentence ("some preparation"). */
+export const zoneWord = (t: SpaceText, zone: SpaceJob['zone']) => t.zones[zone].toLowerCase()
+
+/** The space's text, and the skill names in the same content overlay Radar and Roles read, so a skill reads the same
+ * everywhere; a skill without an entry keeps its English name. */
+export function useSpaceText() {
+  const t = useText(spaceText)
+  const overlay = contentFor(useLocale())
+  const skillName = (job: Pick<SpaceJob, 'code'>, skill: Pick<SpaceSkill, 'corner_id' | 'name'>) =>
+    overlay?.roles[job.code]?.corners[skill.corner_id]?.name ?? skill.name
+  return { t, skillName }
+}
 
 /**
  * A job other than the user's that no answer reaches: every level "not asked yet", so its fit of 0 is no estimate.
@@ -29,19 +58,6 @@ export const NO_ESTIMATE = 'No estimate yet'
  */
 export const hasNoEstimate = (job: Pick<SpaceJob, 'kind' | 'fit' | 'fitEstimated'>) =>
   job.fit !== null && job.kind !== 'yours' && !job.fitEstimated
-
-/**
- * Each O*NET Job Zone's preparation, shortened from O*NET's own names ("Job Zone One: Little or No Preparation
- * Needed"), in sentence case. Source: O*NET 30.1 Job Zone Reference,
- * https://www.onetcenter.org/dictionary/30.1/excel/job_zone_reference.html (read 30 October 2026).
- */
-export const ZONE_LABEL: Record<SpaceJob['zone'], string> = {
-  1: 'Little or no preparation',
-  2: 'Some preparation',
-  3: 'Medium preparation',
-  4: 'Considerable preparation',
-  5: 'Extensive preparation'
-}
 
 /** The O*NET release behind the Job Zones as the Source Reference numbered `n`. */
 const zoneSourceRef = (model: Pick<SpaceModel, 'zoneSource'>, n: number): SourceRef => ({
@@ -53,18 +69,19 @@ const zoneSourceRef = (model: Pick<SpaceModel, 'zoneSource'>, n: number): Source
 
 /** The "est." after an estimate; `hidden` keeps the space without the mark, so a self-reported fit lines up. */
 export function Est({ hidden = false }: { hidden?: boolean }) {
+  const t = useText(spaceText)
   if (hidden)
     return (
       <span aria-hidden="true" className="invisible font-mono text-mono-s">
         {' '}
-        est.
+        {t.est}
       </span>
     )
   return (
     <span className="font-mono text-mono-s text-text-muted">
       {' '}
-      <span aria-hidden="true">est.</span>
-      <span className="sr-only">estimated</span>
+      <span aria-hidden="true">{t.est}</span>
+      <span className="sr-only">{t.estimated}</span>
     </span>
   )
 }
@@ -108,7 +125,7 @@ export function snapshotSources(
       sources.push({
         n: anchorN,
         name: anchors.source,
-        detail: `MYS and SGP · ${anchors.date}`,
+        detail: textNow(spaceText).anchorDetail(anchors.date),
         href: anchors.sourceUrl
       })
     }

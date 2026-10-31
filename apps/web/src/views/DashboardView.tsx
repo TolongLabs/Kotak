@@ -2,7 +2,7 @@ import { ArrowRight } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { diffSnapshots, engineInputs, transferAnswers, type SnapshotId } from '@kotak/shared'
 import { Link, navigate } from '../app/router'
-import { routes } from '../app/routes'
+import { routes, spacePath } from '../app/routes'
 import { CatDialogue } from '../components/kotak/CatDialogue'
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
@@ -376,9 +376,20 @@ export function DashboardView() {
           <StatCard
             label={t.fitFor(fitBundleRole.title)}
             value={fitRole ? `${Math.round(fitRole.fit.score)}%` : t.fitUnavailable}
-            caption={readinessCaption}
+            caption={
+              <>
+                <Link
+                  to={spacePath()}
+                  className="font-medium text-text-primary underline decoration-current underline-offset-2 transition-colors hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                >
+                  {t.seeYourSpace.link}
+                </Link>
+                {t.seeYourSpace.after}
+              </>
+            }
           >
             <ReadinessSparkline points={readinessSeries} />
+            <p className="text-body-s text-text-muted">{readinessCaption}</p>
           </StatCard>
         </div>
         <div className="flex h-full flex-col [&>section]:flex-1">
@@ -428,7 +439,7 @@ export function DashboardView() {
                 className="font-medium text-text-primary underline decoration-current underline-offset-2 transition-colors hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
               >
                 {t.openWhatChanged.link}
-              </Link>{' '}
+              </Link>
               {t.openWhatChanged.after}
             </p>
           </StatCard>

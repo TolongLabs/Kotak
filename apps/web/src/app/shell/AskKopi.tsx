@@ -55,7 +55,8 @@ function checkupOf(session: GuestSession): AgentChatCheckup | null {
   }
 }
 
-const ASK_KOPI_PANEL_ID = 'ask-kopi-panel'
+/** The chat window's id, for every toggle's aria-controls. */
+export const ASK_KOPI_PANEL_ID = 'ask-kopi-panel'
 
 // Floats in the bottom-right corner of every /app page and toggles the chat window above it. The label stays "Ask Kopi";
 // aria-expanded says whether the window is open.
