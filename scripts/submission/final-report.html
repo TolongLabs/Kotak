@@ -442,49 +442,52 @@
           any specific problem-solving steps your team took to pivot or improve the project from the Phase 1 preliminary
           design.
         </p>
-        <p class="prompt" style="font-style: normal; font-size: 8.4pt">
-          Numbers such as #460 name pull requests and issues in the team's development repository, TolongLabs/Kotak-dev,
-          which is private. Each commit replayed into the public repository carries a <code>Dev-Commit:</code> trailer
-          with the matching development commit's SHA.
-        </p>
         <div class="ans" data-wc="3.2">
-          <span class="wc">274 of 300 words</span>
-          <h4>Built in the sprint, from 9:30 AM on 31 October; each pull request is merged and live</h4>
+          <span class="wc">259 of 300 words</span>
+          <h4>Built in the sprint, from 9:30 AM on 31 October; each item is merged and live</h4>
           <ul>
             <li>
-              <strong>Proof of each roadmap step</strong> (#460 to #462): the user uploads a certificate, and Claude
-              Haiku 5.5 rules pass, fail or unclear. Only a pass marks the step done, and the file is never stored.
+              <strong>Proof of each roadmap step</strong> (<code>apps/api/src/routes/evidence.ts</code>): the user
+              uploads a certificate, and Claude Haiku 5.5 rules pass, fail or unclear. Only a pass marks the step done,
+              and the file is never stored.
             </li>
             <li>
-              <strong>SkillsFuture Singapore</strong> (#464, #465): each skill's regional name and expected level,
-              beside the verdicts and never read by them.
+              <strong>SkillsFuture Singapore</strong>: each skill's regional name and expected level, beside the
+              verdicts and never read by them.
             </li>
             <li>
-              <strong>Interpret</strong> (#466): each radar gap card asks Ask Kopi what the gap is, why it matters and
-              how to start. Live replies took 8.6 s and 9.3 s.
+              <strong>Interpret</strong>: each radar gap card asks Ask Kopi what the gap is, why it matters and how to
+              start. Live replies took 8.6 s and 9.3 s.
             </li>
             <li>
-              <strong>Verdict tooltips</strong> (#466): a first-time user had no way to learn what Rising, Steady,
-              Declining, Split or Unknown means. Hovering a chip now says it.
+              <strong>Verdict tooltips</strong>: a first-time user had no way to learn what Rising, Steady, Declining,
+              Split or Unknown means. Hovering a chip now says it.
             </li>
-            <li>
-              Ask Kopi as a centred modal, a plan bar that fades before Step Details, and a date-picker fix (#466,
-              #467).
-            </li>
-            <li>
-              Malay and Chinese content per job (#454), a translated 3D space (#447) and a sortable jobs table (#450).
-            </li>
+            <li>Ask Kopi as a centred modal, a plan bar that fades before Step Details, and a date-picker fix.</li>
+            <li>Malay and Chinese content per job, a translated 3D space and a sortable jobs table.</li>
           </ul>
           <h4>Improved from the Phase 1 design, from feedback (Updated PRD)</h4>
           <ul>
             <li>
-              Every SDG chip names its target, gives a reason and the UN text, and the roadmap totals them (#405, #413).
-              We rejudged 1,838 of 5,520 skill tags against the UN text (#414).
+              Every SDG chip names its target, gives a reason and the UN text, and the roadmap totals them
+              (<code>data/sdg-reasons.json</code>). We rejudged 1,838 of 5,520 skill tags against the UN text (<code
+                style="white-space: nowrap"
+                >docs/sdg-retag-review.md</code
+              >).
             </li>
-            <li>The roadmap scales each step's hours by situation, experience and qualification (#363, #364).</li>
-            <li>902 jobs ask what-would-you-do questions instead of self-ratings (#415).</li>
-            <li>A published cost answers "how will Kotak keep running?" (#393, #380).</li>
-            <li>A paired-profile test checks that profile fields don't move verdicts or fit (#379).</li>
+            <li>
+              The roadmap scales each step's hours by situation, experience and qualification
+              (<code>packages/shared/src/rules/pace.ts</code>).
+            </li>
+            <li>
+              902 jobs ask what-would-you-do questions instead of self-ratings
+              (<code>data/generated/scenarios.json</code>).
+            </li>
+            <li>A published cost answers "how will Kotak keep running?" (<code>docs/cost-card.md</code>).</li>
+            <li>
+              A paired-profile test checks that profile fields don't move verdicts or fit
+              (<code>packages/sdk/src/fairness.test.ts</code>).
+            </li>
           </ul>
           <p>
             <strong>Pivot:</strong> the employer team view stays unbuilt. We present it as the next step, not as a
@@ -543,8 +546,8 @@
                 verdicts and fit.
               </li>
               <li>
-                <strong>20 seeded profiles</strong>, a team measurement that the submitted repository cannot verify: 20
-                of 20 reached a sourced roadmap, with 0 uncited. Its counter script lands only after the hackathon.
+                <strong>20 seeded profiles</strong>, a team measurement with a counter script that is not in the
+                submitted repository: 20 of 20 reached a sourced roadmap, with 0 uncited.
               </li>
             </ul>
             <p>
@@ -809,10 +812,9 @@ Roadmap reordered: 861; fit-score ranking reordered: 684</pre>
 Fairness: 30 paired profiles on 3 demo roles: verdicts and each role's fit identical in 30 of 30; ranking differs by design (seniority and qualification rules) in 6; pace differs by design in 30; name, gender, race, religion and age are rejected as inputs.</pre>
           <h4>C. Team measurement, not verifiable in the submitted repository</h4>
           <p style="font-size: 8.4pt">
-            A KPI counter script reviewed in the team's development repository, and not merged before the deadline, ran
-            the 20 seeded profiles on 1 November 2026. It counts a verdict as sourced only when a dated source of its
-            own stands behind it, besides the two Economic Index rows every job shares. Its summary lines, on May and
-            then April 2026 data:
+            A team KPI counter script, which is not in the submitted repository, ran the 20 seeded profiles on 1
+            November 2026. It counts a verdict as sourced only when a dated source of its own stands behind it, besides
+            the two Economic Index rows every job shares. Its summary lines, on May and then April 2026 data:
           </p>
           <pre class="code">
 20/20 profiles reached a sourced roadmap. Engine time: slowest 107 ms, median 49 ms, every one inside the 3-minute budget.
@@ -927,7 +929,7 @@ Recommendations: 0 verdicts, 0 ranked-role fit scores and 0 milestones, each wit
             <li>
               <i class="cb on"></i>All fields in this template have been completed and word limits respected.
               <span class="where"
-                >Section 2: 246 of 250 words; 3.2: 274 of 300; 5: 225 of 250. Also in <code>submission/</code>: the
+                >Section 2: 246 of 250 words; 3.2: 259 of 300; 5: 225 of 250. Also in <code>submission/</code>: the
                 Preliminary proposal, the Updated PRD, the Technical &amp; Tools Declaration and the Replit and RunPod
                 proofs of use.</span
               >

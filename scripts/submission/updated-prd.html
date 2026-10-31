@@ -27,11 +27,10 @@
       <div class="subhead" style="top: 169.4pt"><b>8.</b>Changes for the final</div>
       <div class="box" style="left: 51.2pt; top: 200pt; width: 495.1pt; height: 539pt">
         <p>What changed after the preliminary round, and which feedback asked for each change.</p>
-        <div class="tbl" style="grid-template-columns: 112pt 142pt 118pt 88pt; column-gap: 3pt; margin-top: 8pt">
+        <div class="tbl" style="grid-template-columns: 178pt 160pt 124pt; column-gap: 3pt; margin-top: 8pt">
           <div class="h">Change</div>
           <div class="h">Why</div>
           <div class="h">Feedback behind it</div>
-          <div class="h">Pull request</div>
           <div>
             Every SDG chip names its target, gives a one-line reason and the UN text, and the roadmap totals the plan's
             targets
@@ -40,25 +39,25 @@
             A bare "SDG 4" told the user nothing, and a badge that changes no choice is the guide's "not enough"
           </div>
           <div>Finalist guide must-have 5</div>
-          <div>#405, #413</div>
-          <div>1,838 of 5,520 skill corners were judged against each target's UN text, then retagged or kept</div>
+          <div>
+            1,838 of 5,520 skill corners were judged against each target's UN text, then retagged or kept (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/sdg-retag-review.md"
+              >docs/sdg-retag-review.md</a
+            >)
+          </div>
           <div>Some reasons shown were not true of the skill under them</div>
           <div>Team review</div>
-          <div>#414</div>
           <div>The roadmap scales each step's hours by the user's situation, experience and qualification</div>
           <div>Two people with the same answers got the same plan</div>
           <div>Team review</div>
-          <div>#363, #364</div>
           <div>The Where You Stand card shows four named boxes, dots that open on tap, and a table version</div>
           <div>The dots crowded one box and needed the list below to decode</div>
           <div>Team review</div>
-          <div>#365</div>
           <div>
             The questions page holds still: one speech box size, a pink chosen answer, no jump while a font loads
           </div>
           <div>The answers moved between questions and on a cold first visit</div>
           <div>Team review</div>
-          <div>#371, #402, #404</div>
         </div>
       </div>
     </section>
@@ -67,48 +66,85 @@
       <div class="pagehead">8. Changes for<br />the final</div>
       <div class="subhead" style="top: 169.4pt"><b>8.</b>Changes for the final (continued)</div>
       <div class="box" style="left: 51.2pt; top: 200pt; width: 495.1pt; height: 539pt">
-        <div class="tbl" style="grid-template-columns: 112pt 142pt 118pt 88pt; column-gap: 3pt">
+        <div class="tbl" style="grid-template-columns: 178pt 160pt 124pt; column-gap: 3pt">
           <div class="h">Change</div>
           <div class="h">Why</div>
           <div class="h">Feedback behind it</div>
-          <div class="h">Pull request</div>
           <div>Arrow keys move through the job, target-role and top-bar search suggestions</div>
           <div>Each suggestion was its own Tab stop, so leaving took up to 13 presses</div>
           <div>Team review</div>
-          <div>#370, #388</div>
           <div>Kopi keeps Claude's cited summary when no verdict changed, not the fixed template</div>
           <div>The guardrail rejected drafts the prompt allowed</div>
           <div>Team review</div>
-          <div>#399</div>
           <div>
-            A published cost: about 7 US cents per check-up, about US$1,900 to US$7,000 a month at 100,000 users
+            A published cost: about 7 US cents per check-up, about US$1,900 to US$7,000 a month at 100,000 users (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/cost-card.md"
+              >docs/cost-card.md</a
+            >)
           </div>
           <div>"How will Kotak keep running?" had no figure behind it</div>
           <div>Mentor point 1: explain the business model</div>
-          <div>#393</div>
           <div>
             Smaller fixes: sign in before the check-up, readable verdict chips on the yellow card, an (i) popover off
             the answers
           </div>
           <div>Each was a break a user could see</div>
           <div>Team review</div>
-          <div>#362, #367, #374</div>
         </div>
         <p style="margin-top: 12pt"><strong>Not changed, and why</strong></p>
         <ul>
           <li>
             <strong>The employer team view.</strong> Not built. The team presents it as the next step, never as a
-            working feature (#279, decision 2).
+            working feature.
           </li>
           <li>
-            <strong>Testing Kotak on 3 to 5 real people.</strong> Not done. It needs people outside the team, not code
-            (#279, package B).
+            <strong>Testing Kotak on 3 to 5 real people.</strong> Not done. It needs people outside the team, not code.
           </li>
           <li>
-            <strong>"What suits the company you want to join."</strong> Out of scope. It stays with the paste-a-job-ad
-            issue, closed as not planned (#279; #105).
+            <strong>"What suits the company you want to join."</strong> Out of scope. It stays with pasting a job ad,
+            which the team chose not to build (<a
+              href="https://github.com/TolongLabs/Kotak/blob/main/docs/decision-log.md"
+              >docs/decision-log.md</a
+            >).
           </li>
         </ul>
+      </div>
+    </section>
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">8. Changes for<br />the final</div>
+      <div class="subhead" style="top: 169.4pt"><b>8.</b>Changes in the final sprint, 31 October to 1 November</div>
+      <div class="box" style="left: 51.2pt; top: 200pt; width: 495.1pt; height: 539pt">
+        <div class="tbl" style="grid-template-columns: 178pt 160pt 124pt; column-gap: 3pt">
+          <div class="h">Change</div>
+          <div class="h">Why</div>
+          <div class="h">Feedback behind it</div>
+          <div>
+            A roadmap step counts as done only once the user proves it: an uploaded certificate that Claude judges pass,
+            fail or unclear
+          </div>
+          <div>A ticked box proved nothing</div>
+          <div>Mentor session, 31 October</div>
+          <div>Every job title, and the demo jobs in full, in Malay and Chinese</div>
+          <div>Picking Malay left a job's own text in English</div>
+          <div>Team review</div>
+          <div>
+            SkillsFuture Singapore's name and level (1 to 6) beside each skill, and each job's Singapore equivalent;
+            Claude Haiku 5.5 matched 2,030 Singapore roles to 304 O*NET jobs
+          </div>
+          <div>O*NET is a US list, and the skills were drafted from US tasks</div>
+          <div>A SkillsFuture ambassador at the venue, 31 October</div>
+          <div>
+            Verdict chips explain themselves on hover; Interpret asks Kopi what a gap is, why it matters and how to
+            close it
+          </div>
+          <div>First-time users didn't know what the chips meant</div>
+          <div>First-time users the team asked</div>
+          <div>
+            Ask Kopi opens mid-screen, the plan bar fades before the steps, and the date picker opens under its field
+          </div>
+          <div>The chat was cramped, the bar covered the steps and the picker broke the page</div>
+          <div>Team review</div>
+        </div>
       </div>
     </section>
   </body>
