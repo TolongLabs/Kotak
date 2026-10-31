@@ -57,7 +57,8 @@
         </p>
         <p>
           The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations
-          with Claude Haiku 5.5, then checks each against the rules, falling back to a template. Kopi's lines go to
+          with Claude Haiku 5.5, then checks each against the rules, falling back to a template. It also judges uploaded
+          proof of a finished roadmap step with Claude's vision, and keeps only the verdict. Kopi's lines go to
           ElevenLabs for speech; both are cached by request hash. Ask Kopi and the MCP endpoint call 8 read-only tools
           over the same rules; two read Neon Postgres totals for skill gaps and job ads.
         </p>
@@ -170,7 +171,7 @@
       <div class="stack" style="left: 51.2pt; top: 290.1pt; width: 495.1pt; --indent: 33.5pt">
         <div class="tbl" style="grid-template-columns: 131.5pt 209.2pt 146.8pt; column-gap: 3.8pt">
           <div>Claude API, Anthropic</div>
-          <div>Matches job titles, explains verdicts and runs Ask Kopi</div>
+          <div>Matches job titles, explains verdicts, runs Ask Kopi and judges step proof</div>
           <div>Paid</div>
           <div>Text to Speech API, ElevenLabs</div>
           <div>Kopi's voice</div>
@@ -331,11 +332,6 @@
           <div>Self-collected</div>
           <div>The team's own work; sources cited</div>
           <div>N</div>
-          <div>Malay and Chinese translations</div>
-          <div>App text, SDG text and 3 demo jobs with Claude; 10 more jobs by Qwen3.8-27B on RunPod, validated</div>
-          <div>Synthetic, from public data</div>
-          <div>The team's own work</div>
-          <div>N</div>
         </div>
       </div>
     </section>
@@ -350,6 +346,11 @@
           <div class="h" style="min-height: 28.2pt">Type (public / private / self-collected / synthetic)</div>
           <div class="h" style="min-height: 28.2pt">License</div>
           <div class="h" style="min-height: 28.2pt">Personal Data? (Y/N)</div>
+          <div>Malay and Chinese translations</div>
+          <div>App text, SDG text and 3 demo jobs with Claude; 10 more jobs by Qwen3.8-27B on RunPod, validated</div>
+          <div>Synthetic, from public data</div>
+          <div>The team's own work</div>
+          <div>N</div>
           <div>What-would-you-do questions for 902 jobs</div>
           <div>
             Written from the Kotak skills and O*NET tasks by Claude Sonnet and GPT fast, script-checked, samples
@@ -461,8 +462,9 @@
         <p>
           The app sends a typed job title to the Claude API for matching, and a role's skill data for explanations. Ask
           Kopi sends the user's message, and the results of tools run on their check-up, to Claude. Kopi's lines go to
-          ElevenLabs for speech. Neither request carries a name, email or ID. The API caches answers and audio by a hash
-          of the request.
+          ElevenLabs for speech. An uploaded proof file goes to Claude once to be judged and is never stored or logged;
+          only the verdict stays in the browser. Neither request carries a name, email or ID. The API caches answers and
+          audio by a hash of the request.
         </p>
         <p>
           Postgres holds the national view as a role code, 6 skill levels, a sample flag and a date, with totals only
@@ -494,6 +496,10 @@
           <li>
             <strong>Single providers and rate limits</strong>: cached answers, templates and text cover Claude or
             ElevenLabs outages and HTTP 429 or 529 errors. A limit of 30 Claude calls a minute protects the key.
+          </li>
+          <li>
+            <strong>Proof judge</strong>: it fails closed on any error and cannot confirm the certificate is the user's
+            own, so the team says so in the Q&amp;A.
           </li>
         </ul>
       </div>

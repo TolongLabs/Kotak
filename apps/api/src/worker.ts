@@ -3,6 +3,7 @@ import { app } from './app'
 import { serveAdminDocument, type ScraperAdminBindings } from './admin-auth'
 import type { AiBindings } from './ai/env'
 import { refreshAllListingSkills } from './market/stats'
+import { EVIDENCE_BODY_LIMIT } from './routes/evidence'
 import { jobstreetDatabase } from './scrapers/jobstreet/database'
 import { queueDailyRefresh, syncAllApprovedAt } from './scrapers/jobstreet/schedule'
 import type { KotakBindings } from './tool-deps'
@@ -14,8 +15,9 @@ type AgentNamespace = {
 
 // The free plan gives a Worker request 10 ms of CPU, but an MCP call or one of Kopi's chat turns takes 15 to 130 ms on
 // the live Worker, and the MCP layer alone takes about 14 (#202). A Durable Object request gets 30 s of CPU, so the
-// Worker hands these routes to one object that runs the same Hono app. It also keeps the role files it parsed warm.
-const AGENT_PATHS = new Set(['/api/mcp', '/api/agent/chat'])
+// Worker hands these routes to one object that runs the same Hono app, and the evidence judge joins them since reading
+// a 5 MB upload needs more than 10 ms. It also keeps the role files it parsed warm.
+const AGENT_PATHS = new Set(['/api/mcp', '/api/agent/chat', '/api/evidence'])
 
 export class KotakAgent {
   readonly #env: unknown
@@ -29,7 +31,8 @@ export class KotakAgent {
   }
 }
 
-// The largest body a forwarded route accepts: Kopi's chat takes 64 KiB, /api/mcp 16 KiB.
+// The largest body a forwarded route accepts: Kopi's chat takes 64 KiB and /api/mcp 16 KiB, while the evidence judge
+// takes a 5 MB file in base64, its own limit.
 const AGENT_BODY_LIMIT = 64 * 1024
 
 // The Worker streams the request body to the object, and throws if that stream is still open after its response is
@@ -38,10 +41,11 @@ const AGENT_BODY_LIMIT = 64 * 1024
 // past the largest limit, which still trips each route's own 413.
 async function readBody(request: Request): Promise<Request> {
   if (!request.body) return request
+  const cap = new URL(request.url).pathname === '/api/evidence' ? EVIDENCE_BODY_LIMIT : AGENT_BODY_LIMIT
   const kept: Uint8Array<ArrayBuffer>[] = []
   let size = 0
   for await (const chunk of request.body) {
-    if (size <= AGENT_BODY_LIMIT) kept.push(chunk.slice(0, AGENT_BODY_LIMIT + 1 - size))
+    if (size <= cap) kept.push(chunk.slice(0, cap + 1 - size))
     size += chunk.byteLength
   }
   // The body's length now comes from the buffer, so a Content-Length for a longer body must not travel with it.

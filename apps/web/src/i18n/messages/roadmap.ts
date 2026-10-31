@@ -810,7 +810,6 @@ export const roadmapText = defineText(
     stepCard: {
       refresher: 'Refresher',
       later: 'Later',
-      done: 'Done',
       showLess: 'Show Less',
       showMore: 'Show More',
       time: 'Time',
@@ -819,7 +818,6 @@ export const roadmapText = defineText(
       weekName: (first: number, last: number) => (first === last ? `week ${first}` : `weeks ${first} to ${last}`),
       weekRange: (first: number, last: number) => (first === last ? `Week ${first}` : `Weeks ${first}–${last}`),
       weekSpan: (first: number, last: number) => `Weeks ${first}–${last}`,
-      doneLabel: (skill: string, weeks: string) => `Done: ${skill}, ${weeks}`,
       aboutTotal: (hours: string) => `About ${hours} h total`,
       perWeek: (hours: string) => `${hours} h a week`,
       opensInNewTab: '(opens in a new tab)',
@@ -1078,7 +1076,6 @@ export const roadmapText = defineText(
     stepCard: {
       refresher: 'Ulang Kaji',
       later: 'Kemudian',
-      done: 'Selesai',
       showLess: 'Tunjukkan Kurang',
       showMore: 'Tunjukkan Lagi',
       time: 'Masa',
@@ -1087,7 +1084,6 @@ export const roadmapText = defineText(
       weekName: (first, last) => (first === last ? `minggu ${first}` : `minggu ${first} hingga ${last}`),
       weekRange: (first, last) => (first === last ? `Minggu ${first}` : `Minggu ${first}–${last}`),
       weekSpan: (first, last) => `Minggu ${first}–${last}`,
-      doneLabel: (skill, weeks) => `Selesai: ${skill}, ${weeks}`,
       aboutTotal: (hours) => `Kira-kira ${hours} jam keseluruhan`,
       perWeek: (hours) => `${hours} jam seminggu`,
       opensInNewTab: '(dibuka dalam tab baharu)',
@@ -1344,7 +1340,6 @@ export const roadmapText = defineText(
     stepCard: {
       refresher: '复习步骤',
       later: '稍后',
-      done: '完成',
       showLess: '收起',
       showMore: '展开',
       time: '时间',
@@ -1353,7 +1348,6 @@ export const roadmapText = defineText(
       weekName: (first, last) => (first === last ? `第 ${first} 周` : `第 ${first} 至 ${last} 周`),
       weekRange: (first, last) => (first === last ? `第 ${first} 周` : `第 ${first}–${last} 周`),
       weekSpan: (first, last) => `第 ${first}–${last} 周`,
-      doneLabel: (skill, weeks) => `完成：${skill}，${weeks}`,
       aboutTotal: (hours) => `总计约 ${hours} 小时`,
       perWeek: (hours) => `每周 ${hours} 小时`,
       opensInNewTab: '（在新标签页中打开）',

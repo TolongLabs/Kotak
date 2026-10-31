@@ -19,6 +19,7 @@ const cleanSession: GuestSession = {
   answers: Array<Rating | null>(12).fill(null),
   follow_up_answers: {},
   ticked_milestones: [],
+  milestone_evidence: {},
   custom_weekly_hours: 4,
   pasted_job_ad_quotes: [],
   // Kopi starts muted, as every view did before this store (#133); one tap on the speech box unmutes.
@@ -52,7 +53,8 @@ function withoutOldAnswers(saved: unknown): unknown {
     role_code: null,
     target_role_code: null,
     plan_role_code: null,
-    ticked_milestones: []
+    ticked_milestones: [],
+    milestone_evidence: {}
   }
 }
 

@@ -219,6 +219,7 @@ export function CheckUpView() {
       answers: Array<Rating | null>(12).fill(null),
       plan_role_code: null,
       ticked_milestones: [],
+      milestone_evidence: {},
       profile: profileNow()
     }
     if (suggestsFirst) {

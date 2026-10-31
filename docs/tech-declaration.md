@@ -39,7 +39,7 @@ Contents:
 
 A user opens Kotak in English, Malay or Chinese. The React app loads dated JSON snapshots built from O\*NET, the Anthropic Economic Index and DOSM Job Market Insights, and computes every verdict, fit score and roadmap in the browser with fixed rules. A three.js scene stands all 923 jobs by fit. Answers stay in the browser's `localStorage`.
 
-The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations with Claude Haiku 5.5, then checks each against the rules, falling back to a template. Kopi's lines go to ElevenLabs for speech; both are cached by request hash. Ask Kopi and the MCP endpoint call 8 read-only tools over the same rules; two read Neon Postgres totals for skill gaps and job ads.
+The app calls a Hono API on the same origin. The API matches typed job titles and writes cited explanations with Claude Haiku 5.5, then checks each against the rules, falling back to a template. It also judges uploaded proof of a finished roadmap step with Claude's vision, and keeps only the verdict. Kopi's lines go to ElevenLabs for speech; both are cached by request hash. Ask Kopi and the MCP endpoint call 8 read-only tools over the same rules; two read Neon Postgres totals for skill gaps and job ads.
 
 A RunPod GPU built each job's 6 skills and 18 questions with Qwen3.8-27B, and translated ten jobs into Malay and Chinese. Meta's Muse Spark 1.3 then translated every job title and part of the rest. All of it ships inside the snapshots.
 
@@ -83,7 +83,7 @@ The system block diagram is in the [PRD, section 3.1][prd-31].
 
 | API and Provider               | Purpose in Project                                                                | Access Tier                                                     |
 | ------------------------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Claude API, Anthropic          | Matches job titles, explains verdicts and runs Ask Kopi                           | Paid                                                            |
+| Claude API, Anthropic          | Matches job titles, explains verdicts, runs Ask Kopi and judges step proof        | Paid                                                            |
 | Text to Speech API, ElevenLabs | Kopi's voice                                                                      | Paid                                                            |
 | RunPod Serverless API, RunPod  | The two GPU batches: each job's skills and questions, then ten jobs' translations | Sponsor-provided credit                                         |
 | Meta Model API, Meta           | The build-time batch that translated job titles, resource titles and explainers   | Paid credit; contributor tier, so Meta may train on the prompts |
@@ -173,7 +173,7 @@ RunPod was essential to build Kotak's data: it turned O\*NET's tasks into 6 skil
 
 ### 6.1. Data handling & privacy (150 words max)
 
-Kotak follows the seven principles of Malaysia's Personal Data Protection Act 2010 (Act 709, sections 5 to 12) and holds no data that names a user (General, Data Integrity). There are no user accounts; the sign-in page says guest mode keeps the check-up on this device. The job, goals, profile and answers stay in the browser's `localStorage`, and Settings > Reset All deletes them (Notice and Choice, Retention, Access). The app sends a typed job title and a role's skill data to the Claude API, Ask Kopi's messages and check-up tool results to Claude, and Kopi's lines to ElevenLabs; the app adds no name, email or ID, and chats are never cached or logged (Disclosure). Keys stay in host secrets (Security). Postgres holds the national view as a role code, skill levels and a date, with real totals only for 10 or more check-ups; no screen sends them yet.
+Kotak follows the seven principles of Malaysia's Personal Data Protection Act 2010 (Act 709, sections 5 to 12) and holds no data that names a user (General, Data Integrity). There are no user accounts; the sign-in page says guest mode keeps the check-up on this device. The job, goals, profile and answers stay in the browser's `localStorage`, and Settings > Reset All deletes them (Notice and Choice, Retention, Access). The app sends a typed job title and a role's skill data to the Claude API, Ask Kopi's messages and check-up tool results to Claude, and Kopi's lines to ElevenLabs; the app adds no name, email or ID, and chats are never cached or logged (Disclosure). An uploaded proof file goes to Claude once to be judged and is never stored or logged; only the verdict stays in the browser. Keys stay in host secrets (Security). Postgres holds the national view as a role code, skill levels and a date, with real totals only for 10 or more check-ups; no screen sends them yet.
 
 ### 6.2. Known limitations & risks (150 words max)
 
@@ -183,6 +183,7 @@ Kotak follows the seven principles of Malaysia's Personal Data Protection Act 20
 - **Thin trend data**: the Economic Index has two monthly points, so 12-month projections are rough. Every target is labelled an estimate, and thin data shows Unknown.
 - **Data bias**: O\*NET describes US jobs, and DOSM counts only online job ads.
 - **Single providers and rate limits**: cached answers, templates and text cover Claude or ElevenLabs outages and HTTP 429 or 529 errors. A limit of 30 Claude calls a minute protects the key.
+- **Proof judge**: it fails closed on any error and cannot confirm the certificate is the user's own, so the team says so in the Q&A.
 
 ## 7. Compliance & readiness
 

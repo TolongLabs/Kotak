@@ -6,6 +6,7 @@ import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { AccessNotice } from '../components/kotak/AccessNotice'
 import { CatDialogue } from '../components/kotak/CatDialogue'
+import { ProofSheet } from '../components/kotak/ProofSheet'
 import { Reasoning } from '../components/kotak/Reasoning'
 import { RoadmapStepCard } from '../components/kotak/RoadmapStepCard'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
@@ -23,6 +24,7 @@ import { VerdictChip, type VerdictType } from '../components/ui/VerdictChip'
 import { useCheckupBundle } from '../engine/bundle'
 import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
 import { toIsoDate } from '../engine/dates'
+import { judgeEvidence, type EvidenceFile, type StepProof } from '../engine/evidence'
 import {
   planWeeksFor,
   toReadinessPoints,
@@ -33,7 +35,7 @@ import {
 import { isEstimatedLevel } from '../engine/viewModel'
 import type { RoadmapStep } from '../demo/types'
 import { useScenario } from '../session/scenario'
-import { hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
+import { getGuestSession, hasAnswers, updateGuestSession, useGuestSession } from '../session/store'
 import { EmployerFundingCard } from './roadmap/EmployerFundingCard'
 import { PathContributionCard } from './roadmap/PathContributionCard'
 import { ReadinessChart } from './roadmap/ReadinessChart'
@@ -44,6 +46,7 @@ import { startAgain } from './checkup/startAgain'
 import { commonText } from '../i18n/common'
 import { dateLocale, useLocale } from '../i18n/locale'
 import { changesText } from '../i18n/messages/changes'
+import { evidenceText } from '../i18n/messages/evidence'
 import { roadmapText } from '../i18n/messages/roadmap'
 import { useText } from '../i18n/text'
 
@@ -135,6 +138,7 @@ export function RoadmapView() {
   const locale = useLocale()
   const t = useText(roadmapText)
   const common = useText(commonText)
+  const proofText = useText(evidenceText).card
   const session = useGuestSession()
   const bundle = useCheckupBundle(session)
   const [scenario, setScenario] = useScenario()
@@ -145,6 +149,12 @@ export function RoadmapView() {
   const [selectionCount, setSelectionCount] = useState(0)
   // Steps the user opened or folded; any other step is open only when it is the next one.
   const [openSteps, setOpenSteps] = useState<Record<string, boolean>>({})
+  // This session's proof attempts, by step id: a verdict that is not saved to the session, such as a fail. The sheet
+  // reads and writes the step it was opened for.
+  const [proofs, setProofs] = useState<Record<string, StepProof>>({})
+  const [provingStepId, setProvingStepId] = useState<string | null>(null)
+  // Read out on the live region below, so a screen reader hears the verdict.
+  const [announcement, setAnnouncement] = useState('')
   const [paceOpen, setPaceOpen] = useState(false)
   // The plan island's controls on phones and narrow desktops, where it folds to one line.
   const [controlsOpen, setControlsOpen] = useState(false)
@@ -375,6 +385,7 @@ export function RoadmapView() {
             : { slow: futures.planSame, fast: futures.planSame }
       : null
   const nextStepId = listSteps.find((step) => step.state === 'next')?.id
+  const provingStep = listSteps.find((step) => step.id === provingStepId)
   const stepOpen = (stepId: string) => openSteps[stepId] ?? stepId === nextStepId
   const weeklyHours = session.custom_weekly_hours ?? checkup.roadmap.weekly_hours
 
@@ -403,11 +414,106 @@ export function RoadmapView() {
     }
   }
 
-  function toggleMilestone(id: string, checked: boolean) {
-    const ticked = new Set(session.ticked_milestones)
-    if (checked) ticked.add(id)
-    else ticked.delete(id)
-    updateGuestSession({ ticked_milestones: [...ticked] })
+  /** How a step stands on proof (#457): a saved pass, this session's latest attempt, a pre-proof tick, else open. */
+  function proofFor(step: RoadmapStep): StepProof {
+    const evidence = session.milestone_evidence[step.id]
+    if (evidence) return { status: 'proven', evidence }
+    if (proofs[step.id]) return proofs[step.id]!
+    // A tick saved before proof existed has no evidence: it shows as not proven yet.
+    if (step.state === 'done') return { status: 'unproven' }
+    return { status: 'open' }
+  }
+
+  /** Reads one uploaded file, judges it, and marks the step done only on a pass. Every other verdict leaves it open. */
+  async function submitProof(step: RoadmapStep, file: EvidenceFile) {
+    setProvingStepId(null)
+    setProofs((current) => ({ ...current, [step.id]: { status: 'judging' } }))
+
+    const href = step.resource.href
+    let host: string | null = null
+    try {
+      host = new URL(href).hostname.replace(/^www\./, '')
+    } catch {
+      host = null
+    }
+    const result = await judgeEvidence({
+      step_id: step.id,
+      step_title: step.title || step.skill,
+      skill: step.skill,
+      target_level: step.gain,
+      resource:
+        href && step.resource.label
+          ? {
+              title: step.resource.label,
+              provider: host,
+              url: href,
+              checked: step.resource.verified === true && step.resource.kind !== 'search'
+            }
+          : null,
+      today: toIsoDate(new Date()),
+      file: { media_type: file.media_type, data: file.data }
+    })
+    // The file was read once: its preview is no longer needed, whatever the verdict.
+    if (file.previewUrl) URL.revokeObjectURL(file.previewUrl)
+
+    if (result.status === 'judged' && result.data.verdict === 'pass') {
+      const { course, provider, completion_date } = result.data
+      // The session may have changed while the judge was running, so read it again before writing.
+      const current = getGuestSession()
+      updateGuestSession({
+        ticked_milestones: [...new Set([...current.ticked_milestones, step.id])],
+        milestone_evidence: {
+          ...current.milestone_evidence,
+          [step.id]: {
+            verdict: 'pass',
+            course,
+            provider,
+            completion_date,
+            judged_at: new Date().toISOString()
+          }
+        }
+      })
+      setProofs((current) => {
+        const next = { ...current }
+        delete next[step.id]
+        return next
+      })
+      // Fold the proven step so the next one, open by default through stepOpen, is the one showing.
+      setOpenSteps((open) => ({ ...open, [step.id]: false }))
+      setAnnouncement(proofText.announcePass(step.skill))
+      return
+    }
+
+    if (result.status === 'error') {
+      setProofs((current) => ({ ...current, [step.id]: { status: 'error' } }))
+      setAnnouncement(proofText.announceError)
+      return
+    }
+
+    const { verdict, reason, fix_hint } = result.data
+    if (verdict === 'fail') {
+      setProofs((current) => ({ ...current, [step.id]: { status: 'fail', reason } }))
+      setAnnouncement(proofText.announceFail(reason))
+    } else {
+      setProofs((current) => ({ ...current, [step.id]: { status: 'unclear', hint: fix_hint } }))
+      setAnnouncement(proofText.announceUnclear(fix_hint ?? proofText.unclearHint))
+    }
+  }
+
+  /** Removes a proven step's proof and its tick in one write. */
+  function undoProof(stepId: string) {
+    const current = getGuestSession()
+    const evidence = { ...current.milestone_evidence }
+    delete evidence[stepId]
+    updateGuestSession({
+      ticked_milestones: current.ticked_milestones.filter((id) => id !== stepId),
+      milestone_evidence: evidence
+    })
+    setProofs((current) => {
+      const next = { ...current }
+      delete next[stepId]
+      return next
+    })
   }
 
   function selectImpactArea(goal: number | null) {
@@ -586,6 +692,13 @@ export function RoadmapView() {
             aria-labelledby="step-details-title"
             className="space-y-4 rounded-md border border-border-subtle bg-bg-default p-5 max-[479px]:border-0 max-[479px]:bg-transparent max-[479px]:p-0"
           >
+            {/* One proof sheet for the page: it judges the file for the step the user opened it from. */}
+            <ProofSheet
+              open={provingStep !== undefined}
+              skill={provingStep?.skill ?? ''}
+              onClose={() => setProvingStepId(null)}
+              onSubmit={(file) => provingStep && void submitProof(provingStep, file)}
+            />
             <h2 id="step-details-title" className="text-title-s text-text-primary">
               {t.controls.stepDetails}
             </h2>
@@ -618,7 +731,9 @@ export function RoadmapView() {
                     selected={selectedStepId === step.id}
                     onSelect={() => selectStep(step.id)}
                     stepRef={recordRef(step.id)}
-                    onToggle={(checked) => toggleMilestone(step.id, checked)}
+                    proof={proofFor(step)}
+                    onProve={() => setProvingStepId(step.id)}
+                    onUndo={() => undoProof(step.id)}
                     toggleDisabled={partialIds.has(step.id)}
                     open={stepOpen(step.id)}
                     onToggleOpen={() => setOpenSteps((current) => ({ ...current, [step.id]: !stepOpen(step.id) }))}
@@ -630,6 +745,10 @@ export function RoadmapView() {
                 {t.stepDetails.noLearningSteps}
               </p>
             )}
+            {/* Screen readers hear the verdict even though the card's own wording changes silently. */}
+            <p className="sr-only" aria-live="polite" role="status">
+              {announcement}
+            </p>
             {later.length > 0 && (
               <div className="space-y-2 rounded-md border border-dashed border-border-control bg-bg-panel p-4 text-body-s text-text-muted">
                 <h3 className="text-label-l text-text-primary">{t.stepDetails.afterWeek(planWeeks)}</h3>

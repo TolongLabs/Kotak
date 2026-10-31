@@ -15,6 +15,18 @@ export interface StructuredRequest {
   max_tokens: number
   // Marks the system prompt for prompt caching when it is long and stable.
   cache_system?: boolean
+  // A file Claude reads before the user text, as base64: an image, or a PDF as a document (#457).
+  attachment?: { media_type: 'image/png' | 'image/jpeg' | 'image/webp' | 'application/pdf'; data: string }
+}
+
+function userContent({ user, attachment }: StructuredRequest) {
+  if (!attachment) return user
+  const { media_type, data } = attachment
+  const file =
+    media_type === 'application/pdf'
+      ? { type: 'document' as const, source: { type: 'base64' as const, media_type, data } }
+      : { type: 'image' as const, source: { type: 'base64' as const, media_type, data } }
+  return [file, { type: 'text' as const, text: user }]
 }
 
 export interface StructuredModel {
@@ -39,7 +51,7 @@ export function createClaudeModel(client: Anthropic): StructuredModel {
             ...(request.cache_system ? { cache_control: { type: 'ephemeral' as const } } : {})
           }
         ],
-        messages: [{ role: 'user', content: request.user }],
+        messages: [{ role: 'user', content: userContent(request) }],
         output_config: { effort: request.effort, format: zodOutputFormat(schema) }
       })
       // A refusal or a max_tokens stop can leave output that does not match the schema.

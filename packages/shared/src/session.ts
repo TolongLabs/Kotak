@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { SnapshotIdSchema } from './engine'
+import { MilestoneEvidenceSchema } from './evidence'
 import { ProfileSchema } from './pathways/schemas'
 import { DEFAULT_SCENARIO, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS } from './rules/constants'
 import { ScenarioSchema } from './rules/schemas'
@@ -20,6 +21,9 @@ export const GuestSessionSchema = z
     answers: z.array(RatingSchema.nullable()).length(12),
     follow_up_answers: z.record(z.string(), z.boolean().nullable()),
     ticked_milestones: z.array(z.string()),
+    // What proved each step (#457), keyed by step id: a step id enters ticked_milestones only on a pass. Ticks saved
+    // before proof existed have no entry here and show as not proven yet.
+    milestone_evidence: z.record(z.string(), MilestoneEvidenceSchema).default({}),
     custom_weekly_hours: z.number().positive().nullable(),
     pasted_job_ad_quotes: z.array(z.string()),
     tts_muted: z.boolean(),

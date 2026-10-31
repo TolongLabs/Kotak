@@ -211,7 +211,8 @@ export function ChooseRoleView() {
       profile: { ...profile, target_role_codes: [selected.onet_code] },
       answers: Array<Rating | null>(12).fill(null),
       plan_role_code: null,
-      ticked_milestones: []
+      ticked_milestones: [],
+      milestone_evidence: {}
     })
     navigate(routes.questions)
   }
