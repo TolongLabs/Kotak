@@ -222,7 +222,7 @@ A check-up for a web developer with a computer science degree who wants to see w
 
 6.  **See every job in the space.** At `/app/space`, all 923 jobs stand as tufts of grass around Kopi's box, one blade per skill: the nearer a tuft, the better your fit, and the taller a blade, the faster that skill's AI use is rising (est.). Switch the AI future or the data month and every tuft moves at once; the same numbers sit in a table one key away. Home, Radar, Roles, What Changed and each job page link in, and `/app/space?job=<O*NET code>` opens on one job with its card pinned.
 
-    <img src="/docs/readme/steps/6-space.png" alt="Space" width="100%">
+    <img src="/docs/readme/steps/6-space.png" alt="Kopi on the box overlooking the job field in Space" width="100%">
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -269,7 +269,7 @@ The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, m
 
 The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
 
-Drawn with the [Kotak design system](/docs/DESIGN.md) from [`architecture.json`](/docs/readme/architecture.json). Regenerate both themes with `bun scripts/readme-architecture.ts`.
+Generated with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json). Both SVG exports use transparent canvases and the [Kotak design system](/docs/DESIGN.md). Regenerate with `bun scripts/readme-architecture.ts`; install the Archify skill or set `ARCHIFY_BIN` to its CLI path. The standalone HTML and validation receipts are saved under `../.orchestration/`.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
