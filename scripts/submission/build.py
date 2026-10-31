@@ -3,7 +3,8 @@
 # dependencies = ["pikepdf>=9"]
 # ///
 """Builds submission/SDC2026_T010NG_Preliminary.pdf and SDC2026_T010NG_TechDeclaration.pdf on the organisers' PDF
-templates.
+templates, and SDC2026_T010NG_UpdatedPRD.pdf and SDC2026_T010NG_Final.pdf on pages of the proposal template, since
+neither has a PDF template of its own.
 
 Each <section class="page"> in proposal.html and declaration.html is one output page: Chrome prints the answers as a
 transparent overlay, and this script lays it over a page of the organisers' Canva template. data-base names the
@@ -40,6 +41,7 @@ OUTPUTS = {
     "proposal": "SDC2026_T010NG_Preliminary.pdf",
     "declaration": "SDC2026_T010NG_TechDeclaration.pdf",
     "updated-prd": "SDC2026_T010NG_UpdatedPRD.pdf",
+    "final-report": "SDC2026_T010NG_Final.pdf",
 }
 PAINT = {"f", "F", "f*", "S", "s", "B", "B*", "b", "b*"}
 SHOW = {"Tj", "TJ", "'", '"'}
@@ -316,16 +318,29 @@ def build_updated_prd():
     print(f"wrote submission/{OUTPUTS['updated-prd']} ({len(pdf.pages)} pages, {out.stat().st_size // 1024} KB)")
 
 
+def build_final_report():
+    pdf = pikepdf.new()
+    append_pages(pdf, "final-report", "proposal")
+    dedupe(pdf)
+    pdf.docinfo.Title = "Phase 2: Final Project & Prototype Report, Kotak (Team T010NG)"
+    out = ROOT / "submission" / OUTPUTS["final-report"]
+    pdf.save(out, compress_streams=True, object_stream_mode=pikepdf.ObjectStreamMode.generate)
+    print(f"wrote submission/{OUTPUTS['final-report']} ({len(pdf.pages)} pages, {out.stat().st_size // 1024} KB)")
+
+
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("target", choices=("all", "proposal", "declaration", "updated-prd"), default="all", nargs="?")
+    parser.add_argument("target", choices=("all", "proposal", "declaration", "updated-prd", "final-report"), default="all", nargs="?")
     target = parser.parse_args().target
     if target == "updated-prd":
         build_updated_prd()
+    elif target == "final-report":
+        build_final_report()
     elif target == "all":
         for name in TEMPLATES:
             build(name)
+        build_final_report()
     else:
         build(target)

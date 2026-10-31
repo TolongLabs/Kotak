@@ -94,7 +94,7 @@ Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
-Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/final/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/final/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
+Submission documents: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
 
 ### Team Information
 
@@ -473,6 +473,8 @@ Made with [contrib.rocks](https://contrib.rocks).
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod used, with proof of use in `submission/`
 - [x] Submission template completed in `submission/`
+- [x] Phase 2 final report completed in `submission/`
+- [x] Pitch deck in `submission/`, as `.pptx` and PDF
 - [x] Technical and tools declaration completed in `submission/`
 - [x] "How to Run" steps verified
 - [x] No API keys or secrets committed to the repository

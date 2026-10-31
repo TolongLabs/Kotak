@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>Phase 2: Final Project &amp; Prototype Report, Kotak (Team T010NG)</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=JetBrains+Mono:wght@400;600&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=block"
+    />
+    <link rel="stylesheet" href="submission.css" />
+    <style>
+      /* The final report has no organiser PDF template (it is shared only as a .docx), so its pages are drawn over
+         the Phase 1 template's cover and a stripped content page, as in updated-prd.html. These classes are local to
+         this report. */
+      .final-report .flow {
+        left: 51.2pt;
+        top: 158pt;
+        width: 495.1pt;
+        height: 588pt;
+        padding: 0;
+      }
+      .sec {
+        display: flex;
+        align-items: center;
+        gap: 4pt;
+        margin: 0 0 5pt;
+        font:
+          600 14pt/17pt 'Montserrat',
+          sans-serif;
+      }
+      * + .sec {
+        margin-top: 11pt;
+      }
+      .sec b {
+        padding: 0 2pt;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+      }
+      .sec small {
+        font-size: 9pt;
+        font-weight: 500;
+        font-style: italic;
+      }
+      .prompt {
+        font-style: italic;
+        font-size: 9.5pt;
+        line-height: 1.38;
+        text-align: justify;
+        margin-bottom: 5pt;
+      }
+      .prompt + .prompt {
+        margin-top: -1pt;
+      }
+      .ans {
+        border: 1.5pt solid #444;
+        padding: 8pt 10pt;
+        font-size: 9.4pt;
+        line-height: 1.4;
+      }
+      .ans p + p,
+      .ans p + ul,
+      .ans ul + p,
+      .ans p + pre,
+      .ans pre + p,
+      .ans p + .tbl,
+      .ans .tbl + p,
+      .ans pre + pre,
+      .ans p + figure,
+      .ans figure + p {
+        margin-top: 5pt;
+      }
+      .ans h4 {
+        font-size: 9.6pt;
+        font-weight: 700;
+        margin: 7pt 0 3pt;
+      }
+      .ans h4:first-child {
+        margin-top: 0;
+      }
+      .wc {
+        float: right;
+        font-size: 8pt;
+        font-style: italic;
+        color: #666;
+      }
+      .kv {
+        display: grid;
+        grid-template-columns: 150pt 1fr;
+        row-gap: 4pt;
+        column-gap: 8pt;
+        font-size: 10pt;
+      }
+      .kv > div:nth-child(odd) {
+        font-weight: 700;
+      }
+      .kv > div {
+        padding-bottom: 3pt;
+        border-bottom: 0.75pt solid #999;
+      }
+      pre.code {
+        font:
+          400 6.8pt/1.3 'JetBrains Mono',
+          monospace;
+        background: #f4f4f1;
+        border-left: 2.5pt solid var(--accent);
+        padding: 5pt 7pt;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      pre.code b {
+        font-weight: 600;
+      }
+      .tbl.log {
+        font:
+          400 7pt/1.25 'JetBrains Mono',
+          monospace;
+        row-gap: 0;
+      }
+      .tbl.log > div {
+        border: none;
+        border-bottom: 0.5pt solid #ccc;
+        padding: 1.6pt 3pt;
+      }
+      .tbl.log > .h {
+        min-height: 0;
+        margin-bottom: 0;
+        font:
+          600 7pt/1.25 'JetBrains Mono',
+          monospace;
+        padding: 3pt;
+      }
+      .tbl.metrics > div {
+        font-size: 8.6pt;
+      }
+      .tbl.metrics > div:nth-child(odd):not(.h) i {
+        display: block;
+        margin-top: 3pt;
+        font-size: 8pt;
+      }
+      .tbl.metrics ul {
+        padding-left: 10pt;
+      }
+      .tbl.metrics li + li {
+        margin-top: 2pt;
+      }
+      .checks {
+        list-style: none;
+        padding: 0;
+      }
+      .checks li {
+        position: relative;
+        padding-left: 20pt;
+      }
+      .checks li + li {
+        margin-top: 6pt;
+      }
+      .cb {
+        position: absolute;
+        left: 0;
+        top: 1pt;
+        width: 11pt;
+        height: 11pt;
+        border: 1.2pt solid #444;
+      }
+      .cb.on::before {
+        content: '';
+        position: absolute;
+        left: 3pt;
+        top: -1pt;
+        width: 3.6pt;
+        height: 7pt;
+        border: solid #444;
+        border-width: 0 2pt 2pt 0;
+        transform: rotate(40deg);
+      }
+      .opts {
+        display: flex;
+        gap: 22pt;
+        margin: 4pt 0 5pt;
+        font-size: 9.6pt;
+      }
+      .opts span {
+        position: relative;
+        padding-left: 17pt;
+      }
+      .opts .cb {
+        top: 0.5pt;
+      }
+      .where {
+        display: block;
+        font-size: 8.4pt;
+        color: #555;
+        margin-top: 1.5pt;
+      }
+      figure img {
+        display: block;
+        width: 100%;
+      }
+      figcaption {
+        font-size: 8pt;
+        font-style: italic;
+        margin-top: 3pt;
+      }
+      .covertitle {
+        position: absolute;
+        left: 0;
+        width: 595.5pt;
+        text-align: center;
+        font:
+          700 44pt/39.6pt 'Barlow Condensed',
+          sans-serif;
+        color: #3a3a3a;
+        text-shadow: 0.6pt 1pt 1.6pt rgb(0 0 0 / 0.28);
+      }
+      .coverinst {
+        position: absolute;
+        font:
+          400 12pt/16.2pt 'Montserrat',
+          sans-serif;
+        color: #3a3a3a;
+        text-align: justify;
+      }
+      .signblock {
+        margin-top: 10pt;
+      }
+      .signblock img {
+        display: block;
+        height: 62pt;
+      }
+      .signblock .line {
+        width: 220pt;
+        border-top: 1pt solid #444;
+        padding-top: 3pt;
+        font-size: 9.6pt;
+      }
+    </style>
+    <script>
+      // Marks text that overflows its box, or runs into the page-number band; build.py fails on any mark.
+      addEventListener('load', () =>
+        document.fonts.ready.then(() => {
+          for (const el of document.querySelectorAll('.fill, .box, .stack, .note')) {
+            const page = el.closest('.page')
+            const low = el.getBoundingClientRect().bottom - page.getBoundingClientRect().top > (752 * 4) / 3
+            if (el.scrollHeight > el.clientHeight + 1 || low) el.dataset.overflow = page.dataset.base
+          }
+        })
+      )
+    </script>
+  </head>
+  <body class="final-report" style="counter-reset: sheet 0">
+    <!-- Cover: the Phase 1 cover with the Phase 2 title, deadline and instructions from the final report template
+    (docs/sources/drive.google.com/final-report-template.md, "Cover and submission rules"). -->
+    <section
+      class="page green"
+      data-base="1"
+      data-strip="text 140 490 470 562;erase 140 452 470 562;text 318 584 472 609;erase 318 582 474 611;text 60 636 535 745"
+    >
+      <h1 class="covertitle" style="top: 466pt">Phase 2: Final Project<br />&amp; Prototype Report</h1>
+      <div class="deadline" style="left: 322.6pt; top: 583.2pt">1 November 2026</div>
+      <div class="coverinst" style="left: 64.6pt; top: 638pt; width: 464.4pt">
+        Instructions: Complete every field below and submit as a single PDF document named “SDC2026_TeamName_Final.pdf”
+        together with your pitch deck and a working deployment link. Answers must comply with the word limits stated for
+        each open-ended question. Section 3 requires concrete, verifiable evidence. Unsupported claims will not be
+        credited by judges.
+      </div>
+    </section>
+
+    <!-- 1 and 2 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">1. Team &amp; Project<br />Overview</div>
+      <div class="fill flow">
+        <h2 class="sec"><b>1.</b>Team &amp; Project Overview</h2>
+        <div class="ans">
+          <div class="kv">
+            <div>Team Name</div>
+            <div>T010NG</div>
+            <div>Project / Product Name</div>
+            <div>Kotak</div>
+            <div>Final Live Deployment URL</div>
+            <div>
+              <a href="https://kotak-alaskxntxna.replit.app">https://kotak-alaskxntxna.replit.app</a> (Replit, the
+              required sponsor platform) and
+              <a href="https://kotak.tp073654.workers.dev">https://kotak.tp073654.workers.dev</a> (Cloudflare Workers,
+              the live demo, with Kopi's voice)
+            </div>
+            <div>Codebase Repository URL</div>
+            <div><a href="https://github.com/TolongLabs/Kotak">https://github.com/TolongLabs/Kotak</a></div>
+            <div>Name (Leader)</div>
+            <div>Hee Zi Jie</div>
+            <div>Email &amp; phone (Leader)</div>
+            <div>heezijie2004@gmail.com, +60125118986</div>
+          </div>
+          <p style="margin-top: 6pt; font-size: 8.6pt">
+            Submitted with this report: the pitch deck, <code>submission/SDC2026_T010NG_PitchDeck.pdf</code> (also
+            <code>.pptx</code>), and the backup pitch video,
+            <a href="https://youtu.be/HQgdbantbN0">https://youtu.be/HQgdbantbN0</a> (README, Links). Both URLs above
+            returned HTTP 200 at 1:45 AM MYT on 1 November 2026.
+          </p>
+        </div>
+
+        <h2 class="sec"><b>2.</b>Project Description <small>[Maximum 250 words]</small></h2>
+        <div class="ans" data-wc="2">
+          <span class="wc">246 of 250 words</span>
+          <p>
+            Kotak shows a Malaysian worker which of their skills are rising or declining with AI, and gives them a
+            dated, cited plan for what to learn next. It serves SDG 4, target 4.4: more youth and adults with relevant
+            skills for decent jobs.
+          </p>
+          <p>
+            In 2024, 39.8% of Malaysians aged 15 and over had above-basic digital skills in all five areas (<a
+              href="https://unstats.un.org/sdgapi/v1/sdg/Indicator/Data?indicator=4.4.1&amp;areaCode=458"
+              >UN SDG indicator 4.4.1</a
+            >). 56% of Malaysian professionals use AI tools at work, but only 26% have had formal training (Hays Asia
+            Salary Guide 2025). Workers get static skills lists with no dates, no scores and no plan.
+          </p>
+          <p>
+            Kopi, a cat counsellor, asks where the user is now, what they studied and what they want, then 12 questions
+            about their job or target role. Kotak draws a Future Skills Radar of the job's 6 core skills, each with a
+            verdict (Rising, Steady, Declining, Split or Unknown) and its dated sources. It ranks up to 6 roles by a fit
+            score that shows its sum. It builds an ordered roadmap with each step's hours, one free resource and its SDG
+            targets. It covers 923 jobs, in English, Malay and Chinese.
+          </p>
+          <p>
+            Fixed rules over dated public data set every verdict, score and step: the Anthropic Economic Index for
+            Malaysia (April and May 2026), DOSM Job Market Insights and O*NET 30.1. AI only does language work, and a
+            verifier rejects any explanation that changes a verdict. When May's data replaces April's, verdicts change
+            and What Changed lists each one.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.1 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <h2 class="pagehead">3. Upgraded Product &amp;<br />Technical Execution</h2>
+      <div class="fill flow">
+        <h3 class="sec"><b>3.1.</b>Final System Architecture</h3>
+        <p class="prompt">
+          Provide a detailed description (and, if possible, an attached technical diagram) of your fully built system.
+          Explain how your application integrates GenAI APIs, database structures, and backend/frontend frameworks into
+          one unified solution.
+        </p>
+        <div class="ans">
+          <figure>
+            <img src="../../docs/readme/architecture-light.svg" alt="Kotak architecture" />
+            <figcaption>
+              Kotak's architecture, from <code>docs/readme/architecture.json</code> (README, Architecture). Build time
+              runs once before deploy; the check-up runs in the browser.
+            </figcaption>
+          </figure>
+          <p>
+            Kotak is one TypeScript monorepo on Bun. The core rule: <strong>the data decides; the AI explains</strong>.
+            No engine function calls a model, and no model output can change a number
+            (<code>docs/algorithm-card.md</code>).
+          </p>
+          <ul>
+            <li>
+              <strong>Frontend</strong>: React 19, Vite and Tailwind CSS, with Recharts for the radar, three.js for the
+              3D space of all 923 jobs and Live2D for Kopi. The rule engine, <code>@kotak/sdk</code>, runs in the
+              browser over a static bundle of dated JSON snapshots, one file per job, each Zod-checked at build time. A
+              check-up needs no server, so it still works when every API is down.
+            </li>
+            <li>
+              <strong>Backend</strong>: a Hono API, the same build on Bun (Replit) and on Cloudflare Workers, with a KV
+              response cache and one Durable Object for chat and MCP. Every route validates its request and response
+              with Zod.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.1 continued -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">3. Upgraded Product &amp;<br />Technical Execution</div>
+      <div class="fill flow">
+        <h3 class="sec"><b>3.1.</b>Final System Architecture (continued)</h3>
+        <div class="ans">
+          <ul>
+            <li>
+              <strong>GenAI APIs</strong>: Claude Haiku 5.5 matches a job title typed in any language to an O*NET job,
+              which the user confirms; explains verdicts and the What Changed summary; runs Ask Kopi, an agent with 8
+              read-only tools that compute every number with the engine; and judges a certificate uploaded as proof of a
+              roadmap step. A verifier (<code>apps/api/src/ai/verifier.ts</code>) rejects text that changes a verdict or
+              drops a dated citation, and a fixed template answers instead. Other assistants reach the same tools at
+              <code>/api/mcp</code>. ElevenLabs gives Kopi a voice; failed speech falls back to text.
+            </li>
+            <li>
+              <strong>Database</strong>: Neon Postgres 18 (<code>aws-ap-southeast-1</code>) holds the national view (a
+              role code, 6 skill levels and a date, with real totals only for 10 or more check-ups), the JobStreet
+              scraper's runs, the job ads that admins reviewed, and admin accounts (technical declaration 3.2). Job ads
+              sit beside the verdicts and set none of them.
+            </li>
+            <li>
+              <strong>Build-time data</strong>: Bun scripts turn O*NET 30.1, the Economic Index and DOSM Job Market
+              Insights into dated snapshots. Each skill's AI trend resolves Malaysia first, at the finest level
+              published, before any global figure. A RunPod serverless GPU ran Qwen3.8-27B on vLLM once to group each
+              job's own O*NET tasks into 6 skills and draft its can-do statements, for 923 jobs with none failed; a
+              validator rejects any task from another job (README, How We Use RunPod). A weekly GitHub Actions job
+              rebuilds the snapshots and opens a pull request that a person approves.
+            </li>
+            <li>
+              <strong>Deployment</strong>: GitHub Actions deploys to Cloudflare Workers on a merge to <code>main</code>,
+              and Replit publishes the same build from <code>main</code>. Keys live in host secrets, never in the
+              repository.
+            </li>
+          </ul>
+          <p>
+            <strong>SkillsFuture Singapore Skills Framework</strong> (<code>data/sgf/</code>,
+            <code>scripts/sgf/link.ts</code>). O*NET is a US list, so Kotak adds the region's employer-validated names
+            and levels as context. Claude Haiku 5.5 mapped the 2,030<!-- sgf-number -->
+            Singapore job roles to 304<!-- sgf-number -->
+            O*NET jobs (510<!-- sgf-number -->
+            high, 1,197<!-- sgf-number -->
+            medium and 323<!-- sgf-number -->
+            low confidence; low matches are not shown). It then linked up to 3<!-- sgf-number -->
+            SkillsFuture skills, with proficiency levels 1 to 6, to 1,328<!-- sgf-number -->
+            of the 1,612<!-- sgf-number -->
+            skill corners in 269<!-- sgf-number -->
+            jobs; 125<!-- sgf-number -->
+            carry an "emerging" skill. The run took 592<!-- sgf-number -->
+            requests, about US$0.56<!-- sgf-number -->. A validator rejects any code outside O*NET and drops any skill
+            outside the job's own matched roles. Every match is labelled auto-generated, and no rule reads it, so no
+            verdict changes. For the demo job, Web Developers, the Singapore equivalent is Front End Developer, and
+            "Technical documentation" links Test Planning at level 3<!-- sgf-number -->
+            of 6. The team uses the framework on verbal approval from a SkillsFuture ambassador on 31 October 2026.
+            SWDA's terms of use ask for prior written permission, which the team does not have yet
+            (<code>docs/TRD.md</code>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.2 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">3. Upgraded Product &amp;<br />Technical Execution</div>
+      <div class="fill flow">
+        <h3 class="sec"><b>3.2.</b>Implementation &amp; Hackathon Deliverables <small>[Maximum 300 words]</small></h3>
+        <p class="prompt">
+          Describe what was successfully built, integrated, and deployed during the 48-hour physical sprint. Highlight
+          any specific problem-solving steps your team took to pivot or improve the project from the Phase 1 preliminary
+          design.
+        </p>
+        <p class="prompt" style="font-style: normal; font-size: 8.4pt">
+          Numbers such as #460 name pull requests and issues in the team's development repository, TolongLabs/Kotak-dev,
+          which is private. Each commit replayed into the public repository carries a <code>Dev-Commit:</code> trailer
+          with the matching development commit's SHA.
+        </p>
+        <div class="ans" data-wc="3.2">
+          <span class="wc">274 of 300 words</span>
+          <h4>Built in the sprint, from 9:30 AM on 31 October; each pull request is merged and live</h4>
+          <ul>
+            <li>
+              <strong>Proof of each roadmap step</strong> (#460 to #462): the user uploads a certificate, and Claude
+              Haiku 5.5 rules pass, fail or unclear. Only a pass marks the step done, and the file is never stored.
+            </li>
+            <li>
+              <strong>SkillsFuture Singapore</strong> (#464, #465): each skill's regional name and expected level,
+              beside the verdicts and never read by them.
+            </li>
+            <li>
+              <strong>Interpret</strong> (#466): each radar gap card asks Ask Kopi what the gap is, why it matters and
+              how to start. Live replies took 8.6 s and 9.3 s.
+            </li>
+            <li>
+              <strong>Verdict tooltips</strong> (#466): a first-time user had no way to learn what Rising, Steady,
+              Declining, Split or Unknown means. Hovering a chip now says it.
+            </li>
+            <li>
+              Ask Kopi as a centred modal, a plan bar that fades before Step Details, and a date-picker fix (#466,
+              #467).
+            </li>
+            <li>
+              Malay and Chinese content per job (#454), a translated 3D space (#447) and a sortable jobs table (#450).
+            </li>
+          </ul>
+          <h4>Improved from the Phase 1 design, from feedback (Updated PRD)</h4>
+          <ul>
+            <li>
+              Every SDG chip names its target, gives a reason and the UN text, and the roadmap totals them (#405, #413).
+              We rejudged 1,838 of 5,520 skill tags against the UN text (#414).
+            </li>
+            <li>The roadmap scales each step's hours by situation, experience and qualification (#363, #364).</li>
+            <li>902 jobs ask what-would-you-do questions instead of self-ratings (#415).</li>
+            <li>A published cost answers "how will Kotak keep running?" (#393, #380).</li>
+            <li>A paired-profile test checks that profile fields don't move verdicts or fit (#379).</li>
+          </ul>
+          <p>
+            <strong>Pivot:</strong> the employer team view stays unbuilt. We present it as the next step, not as a
+            feature (Updated PRD, "Not changed, and why").
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <h2 class="pagehead">4. Environmental &amp;<br />SDG Impact Verification</h2>
+      <div class="fill flow">
+        <p class="prompt">
+          Validate the real-world impact of your built solution. Show concrete data that validate your environmental or
+          social value proposition, compared against the baseline and KPI defined in previous phase submission.
+        </p>
+        <p class="prompt">
+          The data and evidence you provide in this section will be used to assess
+          <strong>SDG Impact, Technical Execution and Innovation scores.</strong> Vague claims or missing verification
+          will weaken your score across all three categories.
+        </p>
+        <div class="tbl metrics" style="grid-template-columns: 128pt 1fr; column-gap: 4pt">
+          <div class="h">Metric Category</div>
+          <div class="h">Your Response</div>
+          <div>
+            <strong>Target SDG Metric Achievement</strong>
+            <i
+              >Direct comparison between your Phase 1 baseline and your Phase 2 finalized prototype numbers. e.g.,
+              “Achieved a 24.5% reduction in computational execution overhead against the 20% initial target.”</i
+            >
+          </div>
+          <div>
+            <p>
+              <strong>Phase 1 KPI</strong>, the sourced-roadmap rate: the share of check-ups that reach a roadmap in
+              under 3 minutes where every verdict, fit score and milestone shows its source and date, with 0 uncited
+              recommendations (Preliminary, section 4).
+            </p>
+            <ul>
+              <li>
+                <strong>Demo-role target</strong>: the April-to-May 2026 swap changes at least one verdict on 100% of
+                the hand-checked demo roles. <strong>Achieved: 3 of 3</strong>, each with 6 of 6 verdicts changed and
+                its roadmap reordered.
+              </li>
+              <li>
+                <strong>Baseline against now</strong>: on April 2026 data alone, 0 of the 5,520 skills of 923 jobs had a
+                verdict. On May 2026 data, 5,519 of 5,520 have one, and all 923 jobs changed at least one verdict.
+              </li>
+              <li>
+                <strong>Sourced and fast</strong>: each demo check-up lists its dated sources (16, 14 and 15) and a free
+                https link for each of its 23 roadmap steps. The engine ran all three check-ups, with What Changed, in
+                0.44 s.
+              </li>
+              <li>
+                <strong>Fairness</strong>: 30 of 30 paired profiles that differ only in profile fields get identical
+                verdicts and fit.
+              </li>
+              <li>
+                <strong>20 seeded profiles</strong>, a team measurement that the submitted repository cannot verify: 20
+                of 20 reached a sourced roadmap, with 0 uncited. Its counter script lands only after the hackathon.
+              </li>
+            </ul>
+            <p>
+              Indicator 4.4.1 (39.8% in 2024) cannot move within a hackathon, and we claim no change to it. A pilot
+              (section 5) would measure steps done and fit gained.
+            </p>
+          </div>
+          <div>
+            <strong>Verification Evidence Method</strong>
+            <i
+              >How was this data verified? e.g., codebase algorithmic profiling logs, hardware power-meter simulation
+              readings, or database transaction counters.</i
+            >
+          </div>
+          <div>
+            <ul>
+              <li>
+                <strong>Rerun on the submitted repository</strong>, after <code>bun install</code>:
+                <code>bun run build:data</code> builds the bundle and checks each demo role's April-to-May change;
+                <code>bun scripts/sdk-checkup.ts</code> runs a whole check-up per demo role through the SDK, checks it
+                against the SDK's Zod schemas and prints its sources and What Changed;
+                <code>bun scripts/scan-verdict-flips.ts</code> scans all 923 jobs;
+                <code>bun test packages/sdk/src/fairness.test.ts</code> checks the 30 pairs. We ran all four on 1
+                November 2026. Output in 4.1.
+              </li>
+              <li>
+                <strong>By hand</strong>: <code>docs/algorithm-card.md</code> states every formula and
+                <code>docs/data-card.md</code> every source and date, so any number can be recomputed.
+              </li>
+              <li>
+                <strong>Cost</strong>: token counts measured on the running API, and one browser walk, on 29 October
+                2026 (<code>docs/cost-card.md</code>).
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 continued -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">4. Environmental &amp;<br />SDG Impact Verification</div>
+      <div class="fill flow">
+        <div class="tbl metrics" style="grid-template-columns: 128pt 1fr; column-gap: 4pt">
+          <div class="h">Metric Category</div>
+          <div class="h">Your Response</div>
+          <div>
+            <strong>Socio-Economic / Civic Value</strong>
+            <i
+              >How does your deployed application translate into a scalable, real-world solution capable of being
+              supported by civic or corporate partners?</i
+            >
+          </div>
+          <div>
+            <ul>
+              <li>
+                <strong>Free, with no account</strong>: the check-up runs in the browser, so one more user adds no
+                server maths.
+              </li>
+              <li>
+                <strong>Checkable by a partner</strong>: every number cites a dated public source, so a career centre,
+                TVET provider or HR team can check a recommendation by hand before advising on it.
+              </li>
+              <li>
+                <strong>People decide</strong>: no role is hidden for a missing qualification; a profession Malaysian
+                law regulates shows its route in and its regulator beside the fit.
+              </li>
+              <li><strong>Fair by design</strong>: the rules have no field for name, gender, race, religion or age.</li>
+              <li>
+                <strong>Open to partners' systems</strong>: Ask Kopi's 8 tools serve any assistant at
+                <code>/api/mcp</code>, and the national view gives agencies totals only for groups of 10 or more.
+              </li>
+              <li><strong>Three languages</strong>: English, Bahasa Malaysia and Chinese behind one switch.</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Deployment &amp; Commercial Feasibility</strong>
+            <i
+              >e.g., modeled as an API service plugin designed for easy integration into existing corporate or
+              institutional systems.</i
+            >
+          </div>
+          <div>
+            <ul>
+              <li>
+                <strong>Deployed</strong> on Cloudflare Workers and Replit from one build; a local build runs offline.
+              </li>
+              <li>
+                <strong>As a plugin</strong>: the MCP endpoint <code>/api/mcp</code> and the
+                <code>@kotak/sdk</code> engine let a career portal or HR system run the same check-up inside its own
+                product, and <code>plugins/kotak/</code> ships the check-up as a Claude Code skill.
+              </li>
+              <li>
+                <strong>Cost per check-up</strong>: US$0.072 with Kopi's voice, US$0.021 muted. A month costs US$71.80
+                for 1,000 users and US$6,972.51 for 100,000 (US$1,876.51 muted). The voice is about 70% of it
+                (<code>docs/cost-card.md</code>).
+              </li>
+              <li>
+                <strong>Revenue, not yet tested</strong>: free for workers; employers pay per seat for a team view that
+                is not built yet; agencies pay yearly for anonymous totals
+                (<code>docs/demo/final/qa-cheat-sheet.md</code>).
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top: 9pt; font-size: 8.8pt; line-height: 1.38; text-align: justify">
+          <strong>Personal data under the PDPA 2010</strong> (Technical &amp; Tools Declaration, 6.1). Kotak follows the
+          seven principles of Malaysia's Personal Data Protection Act 2010 (Act 709, sections 5 to 12) and holds no data
+          that names a user (General, Data Integrity). There are no user accounts; the sign-in page says guest mode
+          keeps the check-up on this device. The job, goals, profile and answers stay in the browser's
+          <code>localStorage</code>, and Settings &gt; Reset All deletes them (Notice and Choice, Retention, Access).
+          The app sends a typed job title and a role's skill data to the Claude API, Ask Kopi's messages and check-up
+          tool results to Claude, and Kopi's lines to ElevenLabs; the app adds no name, email or ID, and chats are never
+          cached or logged (Disclosure). An uploaded proof file goes to Claude once to be judged and is never stored or
+          logged; only the verdict stays in the browser. Keys stay in host secrets (Security). Postgres holds the
+          national view as a role code, skill levels and a date, with real totals only for 10 or more check-ups; no
+          screen sends them yet.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4.1 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">4.1. Mathematical Proof /<br />Code Logic Snippet</div>
+      <div class="fill flow">
+        <h3 class="sec">
+          <b>4.1.</b>Mathematical Proof / Code Logic Snippet <small>(Optional, but holds bonus marks)</small>
+        </h3>
+        <p class="prompt">
+          Paste the specific code section, mathematical formula, simulation log output, or calculation logic that proves
+          the impact claims made above.
+        </p>
+        <p class="prompt">
+          This proof is graded across three categories at once: <strong>Impact and Feasibility</strong> (does the math
+          support your claim), <strong>Technical Execution</strong> (does it reflect what you actually built), as well
+          as <strong>Innovation and Creativity</strong> (is the approach original).] Do not leave this section generic
+          or copied from Phase 1.
+        </p>
+        <div class="ans">
+          <h4>A. The rules that set every number (<code>packages/shared/src/rules/</code>, excerpts)</h4>
+          <pre class="code">
+<b>// scoring.ts</b>: level 0 to 3 from the basic and advanced answers (1 to 4)
+export function cornerLevel(basic: Rating, advanced: Rating): number {
+  return (1.5 * (basic - 1)) / 3 + (1.5 * (advanced - 1)) / 3
+}
+/** fit_score = sum(min(user_level, target_level)) / sum(target_level) * 100, with the maths exposed. */
+export function fitScore(corners: { corner_id: string; user_level: number; target_level: number }[]): FitScore {
+  const terms = corners.map((c) =&gt; ({ ...c, term: Math.min(c.user_level, c.target_level) }))
+  const numerator = terms.reduce((sum, t) =&gt; sum + t.term, 0)
+  const denominator = terms.reduce((sum, t) =&gt; sum + t.target_level, 0)
+  return { score: (numerator / denominator) * 100, numerator, denominator, terms, is_estimate: true }
+}
+<b>// verdicts.ts</b>: the 5-row verdict table. Null (shown as Unknown) when an input is missing.
+export function verdictRow(trend: AiTrend, mode: CollaborationMode, demand: DemandState): VerdictRow | null {
+  if (trend === 'unknown') return null
+  if (trend === 'rising') {
+    if (mode === 'unknown') return null
+    return mode === 'augmentation' ? 'Rising: AI helps it scale' : 'Declining because of AI'
+  }
+  if (demand === 'up') return "Rising: AI can't do it yet"
+  if (demand === 'flat') return 'Steady'
+  if (demand === 'down') return 'Declining for other reasons'
+  return null
+}
+// trend is 'rising' when the projected 12-month change is above RISING_THRESHOLD = 0.05; the projection is a
+// least-squares line through the dated points, and is null (Unknown) with fewer than 2 dated points.
+/** target = clamp(2.0 + ai_effect + demand_effect, 1.0, 3.0). Shrinking or unknown AI use adds no AI effect. */
+const growth = Math.max(0, projection?.change ?? 0)
+const size = growth / (growth + AI_EFFECT_HALF_GROWTH)          // AI_EFFECT_HALF_GROWTH = 0.5
+const ai_effect = mode === 'unknown' || size === 0 ? 0 : mode === 'augmentation' ? size : -size</pre>
+          <p>
+            In formulas: level = (basic + advanced − 2) ÷ 2; fit = Σ min(level, target) ÷ Σ target × 100; target =
+            clamp(2 + ai_effect + demand_effect, 1, 3), with demand_effect +0.5 up, 0 flat, −0.5 down. The fast future
+            moves Malaysia halfway to Singapore's AI use index: (0.87 + ½ × (5.81 − 0.87)) ÷ 0.87 = 3.84 times the
+            growth on May 2026 data (<code>docs/algorithm-card.md</code>). This is why April data gives Unknown: one
+            dated point fits no line, so <code>verdictRow</code> gets <code>'unknown'</code> and returns null.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.1 continued: rerunnable on the submitted repository -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">4.1. Mathematical Proof /<br />Code Logic Snippet</div>
+      <div class="fill flow">
+        <h3 class="sec"><b>4.1.</b>Mathematical Proof / Code Logic Snippet (continued)</h3>
+        <div class="ans">
+          <h4>
+            B. Rerunnable on the submitted repository (run 1 November 2026 on dev commit <code>70381d1</code>; output
+            verbatim)
+          </h4>
+          <p style="font-size: 8.4pt"><code>bun run build:data</code>: the demo roles' check (exit 0)</p>
+          <pre class="code">
+Demo 15-1254.00 Web Developers: 6 verdict flips, roadmap reordered, ranking same, Malaysian detailed corners 6/6, May Declining, Steady, Rising, Steady, Rising, Steady
+Demo 15-1255.00 Web and Digital Interface Designers: 6 verdict flips, roadmap reordered, ranking moved, Malaysian detailed corners 6/6, May Steady, Steady, Rising, Steady, Rising, Declining
+Demo 43-3031.00 Bookkeeping, Accounting, and Auditing Clerks: 6 verdict flips, roadmap reordered, ranking same, Malaysian detailed corners 6/6, May Declining, Declining, Declining, Rising, Declining, Declining</pre>
+          <p style="font-size: 8.4pt">
+            <code>bun scripts/sdk-checkup.ts</code>: a whole check-up through <code>@kotak/sdk</code> for each demo
+            role, answers "basic 3, advanced 1" on every skill (exit 0; 0.44 s of wall time for all three roles under
+            <code>time</code>). The Web Developers block, with the roadmap after step 3 and the source list cut at "…":
+          </p>
+          <pre class="code">
+Web Developers (15-1254.00), snapshot 2026-05, slow scenario
+Asked first: Technical documentation: "I can record simple test results with guidance."
+  Web site building: level 1 (self-reported), target 1.2, Declining because of AI. AI use for this work is rising and AI mostly does it alone. Job-ad demand is flat.
+  Web testing and updates: level 1 (self-reported), target 2.0, Steady. AI use for this work is not rising and AI mostly does it alone. Job-ad demand is flat.
+  Technical documentation: level 1 (self-reported), target 2.9, Rising: AI helps it scale. AI use for this work is rising and AI mostly helps people do it. Job-ad demand is flat.
+  Web design and databases: level 1 (self-reported), target 2.0, Steady. AI use for this work is not rising and AI mostly helps people do it. Job-ad demand is flat.
+  Web specifications and standards: level 1 (self-reported), target 2.8, Rising: AI helps it scale. AI use for this work is rising and AI mostly helps people do it. Job-ad demand is flat.
+  Web performance and support: level 1 (self-reported), target 2.0, Steady. AI use for this work is not rising and AI mostly helps people do it. Job-ad demand is flat.
+Best fits of 21 roles:
+  1. Document Management Specialists 51% (estimated), declining; gaps: Compliance Monitoring, Policy Standards
+  2. Computer Network Architects 50% (estimated), steady; gaps: Network design and specs, Network maintenance and upgrades
+  3. Blockchain Engineers 50% (estimated), steady; gaps: Blockchain architecture, Data integration
+Roadmap for Web Developers: 670 h at 4 h a week (user), finish 2030-01-10; the AI dividend frees 5.9 h a week
+  Weeks 1–13 (2026-10-25 to 2027-01-23): Level 2 in Technical documentation: "I can write detailed test plans and procedures independently." https://developers.google.com/tech-writing
+  Weeks 13–28 (2027-01-17 to 2027-05-08): Level 2 in Web testing and updates: "I can evaluate code for browser and device compatibility." https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Testing
+  Weeks 28–45 (2027-05-02 to 2027-09-04): Level 2 in Web specifications and standards: "I can write detailed descriptions of web site specifications." https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards
+  …
+Sources: (16 dated sources, cut here)
+What changed 2026-04 to 2026-05: 6 verdict flips, roadmap reordered, ranking reordered
+  Web site building: Unknown to Declining because of AI (verdict, target, ai_use, roadmap)
+  Web testing and updates: Unknown to Steady (verdict, ai_use)
+  Technical documentation: Unknown to Rising: AI helps it scale (verdict, target, ai_use)
+  Web design and databases: Unknown to Steady (verdict, ai_use, roadmap)
+  Web specifications and standards: Unknown to Rising: AI helps it scale (verdict, target, ai_use)
+  Web performance and support: Unknown to Steady (verdict, ai_use, roadmap)</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.1 continued: every job, fairness, and the team measurement -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">4.1. Mathematical Proof /<br />Code Logic Snippet</div>
+      <div class="fill flow">
+        <h3 class="sec"><b>4.1.</b>Mathematical Proof / Code Logic Snippet (continued)</h3>
+        <div class="ans">
+          <p style="font-size: 8.4pt">
+            <code>bun scripts/scan-verdict-flips.ts</code>: every job, April to May (exit 0; the AI-use resolution
+            counts and the top-15 list are cut at "…")
+          </p>
+          <pre class="code">
+923 occupations scanned with batch corners (923 in O*NET).
+Occupations with at least one April -&gt; May verdict flip: 923
+Flips by type: {
+  "Unknown -&gt; Rising": 2064,
+  "Unknown -&gt; Steady": 2063,
+  "Unknown -&gt; Declining": 1383,
+  "Unknown -&gt; Split": 9,
+}
+May verdicts: {
+  Rising: 2064,
+  Steady: 2063,
+  Declining: 1383,
+  Split: 9,
+  Unknown: 1,
+}
+…
+Roadmap reordered: 861; fit-score ranking reordered: 684</pre>
+          <p style="font-size: 8.4pt"><code>bun test packages/sdk/src/fairness.test.ts</code>: 33 pass, 0 fail</p>
+          <pre class="code">
+Fairness: 30 paired profiles on 3 demo roles: verdicts and each role's fit identical in 30 of 30; ranking differs by design (seniority and qualification rules) in 6; pace differs by design in 30; name, gender, race, religion and age are rejected as inputs.</pre>
+          <h4>C. Team measurement, not verifiable in the submitted repository</h4>
+          <p style="font-size: 8.4pt">
+            A KPI counter script reviewed in the team's development repository, and not merged before the deadline, ran
+            the 20 seeded profiles on 1 November 2026. It counts a verdict as sourced only when a dated source of its
+            own stands behind it, besides the two Economic Index rows every job shares. Its summary lines, on May and
+            then April 2026 data:
+          </p>
+          <pre class="code">
+20/20 profiles reached a sourced roadmap. Engine time: slowest 107 ms, median 49 ms, every one inside the 3-minute budget.
+Recommendations: 120 verdicts, 636 ranked-role fit scores and 161 milestones, each with a dated reading of its own. Uncited: 0. Counted apart, as Unknown: 0.
+
+0/20 profiles reached a sourced roadmap. Engine time: slowest 202 ms, median 63 ms, every one inside the 3-minute budget.
+Recommendations: 0 verdicts, 0 ranked-role fit scores and 0 milestones, each with a dated reading of its own. Uncited: 0. Counted apart, as Unknown: 882.</pre>
+          <h4>What the proof shows</h4>
+          <ul>
+            <li>
+              <strong>Impact and feasibility</strong>: the verdicts follow the data. With one dated month, every skill
+              reads Unknown; with May's second month, 5,519 of 5,520 skills get a verdict from dated rows that each
+              check-up lists.
+            </li>
+            <li>
+              <strong>Technical execution</strong>: every line above is the shipped engine on the shipped data, rerun
+              with one command each, and the fairness test shows profile fields leave verdicts and fit unchanged.
+            </li>
+            <li>
+              <strong>Innovation</strong>: a 5-row table over dated rows sets each verdict, not a model, so anyone can
+              recompute any number by hand from the cited source.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <h2 class="pagehead">5. Market Viability &amp;<br />Future Scalability Plan</h2>
+      <div class="fill flow">
+        <p class="prompt">
+          SDC aims to encourage solutions that transition from innovations into market-ready applications. If given
+          access to corporate funding, industry grants, or partnership opportunities (e.g., through SDC's Rotary network
+          or joint research initiatives at XMUM), how would your team scale this prototype to process real-world data at
+          volume? <strong>[Maximum 250 words]</strong>
+        </p>
+        <div class="ans" data-wc="5">
+          <span class="wc">225 of 250 words</span>
+          <p>
+            Kotak already scales on cost. The rules run in each user's browser over one shared monthly snapshot, so more
+            users add no server maths. A check-up costs about US$0.072, and 100,000 users cost about US$6,973 a month
+            (<code>docs/cost-card.md</code>). With funding or partners, we would scale in four steps.
+          </p>
+          <ol>
+            <li>
+              <strong>Pilot.</strong> Through the Rotary network, run Kotak with HR teams at levy-paying employers, and
+              with university career centres and TVET providers. Measure steps done and fit gained per learner: the
+              evidence indicator 4.4.1 needs.
+            </li>
+            <li>
+              <strong>Data at volume.</strong> Get SWDA's written permission for the SkillsFuture data. Load TalentCorp
+              MyCOL and live job-ad counts. Have people review the AI-drafted skills, starting with the most-checked
+              jobs. Translate all 923 jobs. Attach checked, HRD Corp-claimable courses to each step.
+            </li>
+            <li>
+              <strong>Infrastructure.</strong> Raise the 30-calls-a-minute Claude limit and load-test it. Give each user
+              their own Durable Object. Pre-generate each job's question audio, which cuts the voice cost from US$0.051
+              to US$0.018 a check-up. Move to paid Workers and Neon Launch.
+            </li>
+            <li>
+              <strong>Revenue.</strong> Workers stay free. Employers pay per seat for Kotak Team, a skills-gap view of a
+              whole team, which is not built yet. Agencies pay yearly for anonymous regional totals. These prices are a
+              test, not a contract.
+            </li>
+          </ol>
+          <p>
+            Joint research at XMUM could test the verdict rules against hiring: do skills Kotak calls Rising appear in
+            more Malaysian job ads a year later?
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 and 7.1 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <h2 class="pagehead">6. Final Submission<br />Checklist</h2>
+      <div class="fill flow">
+        <p class="prompt">Tick all boxes that apply before submitting.</p>
+        <div class="ans">
+          <ul class="checks">
+            <li>
+              <i class="cb on"></i>The application is fully compiled, live, and accessible via the deployment link
+              provided in Section 1.
+              <span class="where"
+                >Both links returned HTTP 200 at 1:45 AM MYT on 1 November 2026. Every key is optional, so the app also
+                builds and runs locally (README, Getting Started).</span
+              >
+            </li>
+            <li>
+              <i class="cb on"></i>The GitHub (or equivalent) repository contains a clean, well-documented README with
+              installation instructions.
+              <span class="where"
+                >README.md: Getting Started, Prerequisites, Installation (Replit or local) and Run Tests.</span
+              >
+            </li>
+            <li>
+              <i class="cb on"></i>The GitHub (or equivalent) repository shows the history of incremental code updates
+              made throughout the official live hacking window.
+              <span class="where"
+                >TolongLabs/Kotak held 246 commits on 1 November, 75 of them since 28 October; the team's work is
+                replayed into it commit by commit with the original authors and dates
+                (<code>scripts/submission/port-commits.ts</code>).</span
+              >
+            </li>
+            <li>
+              <i class="cb on"></i>The final pitch deck has been exported and saved as a flattened PDF file.
+              <span class="where"
+                ><code>submission/SDC2026_T010NG_PitchDeck.pdf</code>, with the <code>.pptx</code> beside it.</span
+              >
+            </li>
+            <li>
+              <i class="cb on"></i>All fields in this template have been completed and word limits respected.
+              <span class="where"
+                >Section 2: 246 of 250 words; 3.2: 274 of 300; 5: 225 of 250. Also in <code>submission/</code>: the
+                Preliminary proposal, the Updated PRD, the Technical &amp; Tools Declaration and the Replit and RunPod
+                proofs of use.</span
+              >
+            </li>
+          </ul>
+        </div>
+
+        <h2 class="sec"><b>7.</b>IP &amp; Originality Declaration</h2>
+        <div class="ans">
+          <p>
+            <strong>7.1. Pre-existing / prior-owned work.</strong> Does this submission include any code, design,
+            research, or other work that any team member created or owned before the start of this hackathon?
+          </p>
+          <div class="opts">
+            <span><i class="cb"></i>Yes</span>
+            <span><i class="cb"></i>No</span>
+            <span><i class="cb on"></i>No change from Phase 1 declaration</span>
+          </div>
+          <p>
+            If yes, briefly describe what was pre-existing and which team member(s) owned it: not applicable. The Phase
+            1 answer was No: Kotak's code, design and research are new work by the team during the hackathon.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7.2 and 7.3 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">7. IP &amp; Originality<br />Declaration</div>
+      <div class="fill flow">
+        <div class="ans">
+          <p>
+            <strong>7.2. Third-party code, datasets, or models.</strong> Does your project use any third-party code
+            libraries, open-source frameworks, public/private datasets, or pre-trained AI models that your team did not
+            create?
+          </p>
+          <div class="opts">
+            <span><i class="cb on"></i>Yes</span>
+            <span><i class="cb"></i>No</span>
+            <span><i class="cb"></i>No change from Phase 1 declaration</span>
+          </div>
+          <p>
+            If yes, list them below (open-source use is permitted provided it is declared and properly
+            licensed/attributed). New since Phase 1: SkillsFuture, the ESCO and CIP crosswalks, the JobStreet ads,
+            Claude Sonnet 5.5 and three.js.
+          </p>
+          <div
+            class="tbl"
+            style="grid-template-columns: 165pt 86pt 1fr; column-gap: 3pt; margin-top: 5pt; font-size: 7.9pt"
+          >
+            <div class="h" style="min-height: 22pt; font-size: 9pt">Name</div>
+            <div class="h" style="min-height: 22pt; font-size: 9pt">Type (code/<wbr />dataset/<wbr />model)</div>
+            <div class="h" style="min-height: 22pt; font-size: 9pt">License</div>
+            <div>O*NET 30.1 Database</div>
+            <div>dataset</div>
+            <div>CC BY 4.0, with O*NET's credit line</div>
+            <div>Anthropic Economic Index, April and May 2026</div>
+            <div>dataset</div>
+            <div>Data CC BY; code MIT</div>
+            <div>DOSM Job Market Insights; OpenDOSM underemployment</div>
+            <div>dataset</div>
+            <div>DOSM terms, with source credit; CC BY 4.0</div>
+            <div>UN SDG indicator 4.4.1, Malaysia</div>
+            <div>dataset</div>
+            <div>UN terms of use; one baseline cited</div>
+            <div>CIP 2020 to SOC 2018 Crosswalk; ESCO to O*NET-SOC Crosswalk</div>
+            <div>dataset</div>
+            <div>Public domain (US government); CC BY 4.0</div>
+            <div>SkillsFuture Singapore Skills Framework 2.0</div>
+            <div>dataset</div>
+            <div>
+              SWDA terms of use, which ask for prior written permission; verbal approval from a SkillsFuture ambassador
+              on 31 October 2026, nothing in writing yet
+            </div>
+            <div>JobStreet job listings, collected by the team's scraper</div>
+            <div>dataset</div>
+            <div>JobStreet's terms apply; Kotak publishes totals only</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7.2 continued and 7.3 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <div class="pagehead">7. IP &amp; Originality<br />Declaration</div>
+      <div class="fill flow">
+        <div class="ans">
+          <p><strong>7.2. Third-party code, datasets, or models</strong> (continued)</p>
+          <div
+            class="tbl"
+            style="grid-template-columns: 165pt 86pt 1fr; column-gap: 3pt; margin-top: 5pt; font-size: 7.9pt"
+          >
+            <div class="h" style="min-height: 22pt; font-size: 9pt">Name</div>
+            <div class="h" style="min-height: 22pt; font-size: 9pt">Type (code/<wbr />dataset/<wbr />model)</div>
+            <div class="h" style="min-height: 22pt; font-size: 9pt">License</div>
+            <div>Claude Haiku 5.5, through the Claude API</div>
+            <div>model</div>
+            <div>Anthropic Commercial Terms of Service</div>
+            <div>ElevenLabs <code>eleven_v4</code> and <code>eleven_v4_turbo</code></div>
+            <div>model</div>
+            <div>ElevenLabs Terms of Service</div>
+            <div>Qwen3.8-27B-FP8, run on RunPod with vLLM</div>
+            <div>model</div>
+            <div>Apache 2.0</div>
+            <div>Claude Sonnet 5.5, through the Claude API (rechecked the SDG tags)</div>
+            <div>model</div>
+            <div>Anthropic Commercial Terms of Service</div>
+            <div>Live2D Hijiki sample model and Cubism Core</div>
+            <div>model (2D art)</div>
+            <div>Live2D Free Material License Agreement; Cubism Core under Live2D's own licence</div>
+            <div>
+              Bun, TypeScript, React, Vite, Tailwind CSS, Recharts, three.js, Hono, Zod, the Anthropic SDK, the MCP SDK,
+              the Neon driver, Wrangler, Playwright, Clearcote, Lucide
+            </div>
+            <div>code</div>
+            <div>Open-source licences (MIT, Apache 2.0, ISC and others), each listed in <code>NOTICE.md</code></div>
+          </div>
+          <p style="margin-top: 5pt; font-size: 8.4pt">
+            Build-time drafts (the what-would-you-do questions, explainers and reversed wording) were also written with
+            Claude Sonnet, GPT, Gemini and DeepSeek models, checked by scripts and labelled auto-generated. The team
+            wrote code with AI coding tools: Claude Code, and Codex CLI, OpenCode and Antigravity CLI with GPT,
+            DeepSeek, GLM and Gemini models; a team member reviewed every change. The full list, with versions, is in
+            the Technical &amp; Tools Declaration, sections 2 to 5.
+          </p>
+        </div>
+
+        <div class="ans" style="margin-top: 8pt">
+          <p>
+            <strong>7.3. Employment-related IP conflicts.</strong> Is any team member currently bound by an employment,
+            internship, or consulting agreement under which their employer could claim ownership of work they create
+            during this hackathon?
+          </p>
+          <div class="opts">
+            <span><i class="cb"></i>Yes</span>
+            <span><i class="cb"></i>No</span>
+            <span><i class="cb on"></i>No change from Phase 1 declaration</span>
+          </div>
+          <p>
+            If yes, please describe the nature of the agreement and which member it concerns: not applicable. The Phase
+            1 answer was No.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="page green" data-base="5" data-strip="text 279 752 317 788;text 40 40 560 138;all 45 160 555 745">
+      <h2 class="pagehead">8. Declaration</h2>
+      <div class="fill flow">
+        <div class="ans" style="padding: 14pt 16pt">
+          <p style="font-size: 10.5pt">
+            By submitting this report, the team leader confirms that the deployed application and data presented above
+            are the original work of the team, completed within the official SDC 2026 hackathon period.
+          </p>
+          <div class="signblock">
+            <img src="assets/signature.png" alt="Signature of Hee Zi Jie" />
+            <div class="line">Signature: Hee Zi Jie, team leader, T010NG</div>
+          </div>
+          <div class="signblock" style="margin-top: 18pt">
+            <div style="font-size: 12pt; margin-bottom: 4pt">1 November 2026</div>
+            <div class="line">Date</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
