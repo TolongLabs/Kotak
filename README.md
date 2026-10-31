@@ -21,7 +21,7 @@
     &middot;
     <a href="https://youtu.be/HQgdbantbN0">Demo Video</a>
     &middot;
-    <a href="/docs/demo/deck/kotak-pitch-deck.pptx">Slide Deck</a>
+    <a href="/docs/demo/final/kotak-pitch-deck.pptx">Slide Deck</a>
     &middot;
     <a href="https://github.com/TolongLabs/Kotak/issues/new?labels=bug">Report a Bug</a>
     <br />
@@ -94,7 +94,7 @@ Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
-Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
+Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [slide deck](/docs/demo/final/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/final/kotak-pitch-deck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
 
 ### Team Information
 
@@ -115,7 +115,7 @@ Submission documents: the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf)
 | Live Demo         | <https://kotak-alaskxntxna.replit.app>, published on Replit; mirror at <https://kotak.tp073654.workers.dev>                |
 | Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started) |
 | RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                           |
-| Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/deck/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/deck/kotak-pitch-deck.pdf)    |
+| Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/final/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/final/kotak-pitch-deck.pdf)  |
 | Demo Video        | <https://youtu.be/HQgdbantbN0>, public on YouTube (5:34)                                                                   |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>

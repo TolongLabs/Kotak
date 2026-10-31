@@ -1,7 +1,8 @@
 .agents/
 .claude/
 # Hand-set slide decks, exported to PDF and PPTX as they are
-docs/demo/deck/*.html
+docs/demo/final/*.html
+docs/demo/prelim/*.html
 # Generated O*NET data, one record per line
 data/onet/
 data/pathways/onet-preparation.json
