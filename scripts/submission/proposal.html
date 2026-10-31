@@ -487,13 +487,13 @@
       <div class="subhead" style="top: 169.4pt"><b>A.</b>Appendix A: System Block Diagram</div>
       <div class="figure" style="left: 84.7pt; top: 200pt; width: 451.2pt">
         <img
-          src="assets/system-diagram.svg"
-          alt="Kotak system architecture: browser check-up, API services and data preparation"
+          src="assets/appendix-system-diagram.svg"
+          alt="System block diagram: public data, RunPod, browser rules, deployment and API services"
         />
       </div>
-      <p class="note" style="left: 84.7pt; top: 500pt; width: 451.2pt">
-        Dated public data and RunPod skill drafts feed the static bundle before deployment. The browser computes every
-        verdict; the Hono API connects Claude, ElevenLabs, Neon Postgres and MCP clients. Generated with Archify.
+      <p class="note" style="left: 84.7pt; top: 662pt; width: 451.2pt">
+        Public data, weekly refresh and RunPod feed dated snapshots for the browser rules. Deployment serves React and
+        Hono. Hono connects Claude, ElevenLabs and agent tools; the tools connect Neon Postgres.
       </p>
     </section>
   </body>

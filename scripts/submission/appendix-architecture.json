@@ -1,0 +1,405 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Appendix A: System Block Diagram (7c09267)",
+    "output": "appendix-system-diagram.html",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/TolongLabs/Kotak",
+      "revision": "7c09267826ad17f45f5424b34bf2a7e010e1175a",
+      "provider": "github",
+      "link_mode": "web"
+    },
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "components": [
+    {
+      "id": "aei",
+      "type": "external",
+      "label": "Anthropic Economic Index",
+      "pos": [40, 40],
+      "size": [200, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 109,
+          "end_line": 109
+        }
+      ]
+    },
+    {
+      "id": "onet",
+      "type": "external",
+      "label": "O*NET 30.1",
+      "pos": [730, 40],
+      "size": [200, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 108,
+          "end_line": 108
+        }
+      ]
+    },
+    {
+      "id": "dosm",
+      "type": "external",
+      "label": "DOSM Job Market Insights",
+      "pos": [270, 40],
+      "size": [200, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 110,
+          "end_line": 110
+        }
+      ]
+    },
+    {
+      "id": "refresh",
+      "type": "cloud",
+      "label": "GitHub Actions",
+      "sublabel": "weekly refresh",
+      "pos": [500, 40],
+      "size": [200, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 111,
+          "end_line": 111
+        }
+      ]
+    },
+    {
+      "id": "ingest",
+      "type": "backend",
+      "label": "Bun ingestion scripts",
+      "sublabel": "Zod checks",
+      "pos": [270, 190],
+      "size": [260, 80],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 108,
+          "end_line": 108
+        }
+      ]
+    },
+    {
+      "id": "gpu",
+      "type": "cloud",
+      "label": "RunPod GPU batch",
+      "sublabel": "6 skills, 18 questions per job",
+      "pos": [700, 190],
+      "size": [230, 80],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 112,
+          "end_line": 112
+        }
+      ]
+    },
+    {
+      "id": "deploy",
+      "type": "cloud",
+      "label": "GitHub Actions",
+      "sublabel": "deploy",
+      "pos": [730, 330],
+      "size": [200, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 124,
+          "end_line": 124
+        }
+      ]
+    },
+    {
+      "id": "snapshots",
+      "type": "database",
+      "label": "Dated JSON snapshots",
+      "pos": [275, 330],
+      "size": [250, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 113,
+          "end_line": 113
+        }
+      ]
+    },
+    {
+      "id": "host",
+      "type": "cloud",
+      "label": "Cloudflare Workers",
+      "sublabel": "and Replit",
+      "pos": [700, 455],
+      "size": [230, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 124,
+          "end_line": 124
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "React app",
+      "sublabel": "rule engine in the browser",
+      "pos": [265, 455],
+      "size": [270, 80],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 115,
+          "end_line": 115
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Hono API",
+      "pos": [490, 580],
+      "size": [180, 80],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 116,
+          "end_line": 116
+        }
+      ]
+    },
+    {
+      "id": "claude",
+      "type": "external",
+      "label": "Claude Haiku 5.5",
+      "pos": [190, 700],
+      "size": [210, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 117,
+          "end_line": 117
+        }
+      ]
+    },
+    {
+      "id": "tts",
+      "type": "external",
+      "label": "ElevenLabs TTS",
+      "pos": [460, 700],
+      "size": [210, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 118,
+          "end_line": 118
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent tools",
+      "sublabel": "Ask Kopi and MCP",
+      "pos": [730, 700],
+      "size": [200, 80],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 119,
+          "end_line": 119
+        }
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "Neon Postgres",
+      "pos": [740, 825],
+      "size": [190, 64],
+      "sources": [
+        {
+          "path": "scripts/submission/assets/system-diagram.png",
+          "label": "Appendix A at 7c09267"
+        },
+        {
+          "path": "docs/PRD.md",
+          "line": 120,
+          "end_line": 120
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "onet-to-ingest",
+      "from": "onet",
+      "to": "ingest"
+    },
+    {
+      "id": "aei-to-ingest",
+      "from": "aei",
+      "to": "ingest"
+    },
+    {
+      "id": "dosm-to-ingest",
+      "from": "dosm",
+      "to": "ingest"
+    },
+    {
+      "id": "refresh-to-ingest",
+      "from": "refresh",
+      "to": "ingest"
+    },
+    {
+      "id": "onet-to-gpu",
+      "from": "onet",
+      "to": "gpu"
+    },
+    {
+      "id": "ingest-to-snapshots",
+      "from": "ingest",
+      "to": "snapshots"
+    },
+    {
+      "id": "gpu-to-snapshots",
+      "from": "gpu",
+      "to": "snapshots"
+    },
+    {
+      "id": "snapshots-to-web",
+      "from": "snapshots",
+      "to": "web"
+    },
+    {
+      "id": "web-to-api",
+      "from": "web",
+      "to": "api"
+    },
+    {
+      "id": "api-to-web",
+      "from": "api",
+      "to": "web"
+    },
+    {
+      "id": "api-to-claude",
+      "from": "api",
+      "to": "claude"
+    },
+    {
+      "id": "claude-to-api",
+      "from": "claude",
+      "to": "api"
+    },
+    {
+      "id": "api-to-tts",
+      "from": "api",
+      "to": "tts"
+    },
+    {
+      "id": "tts-to-api",
+      "from": "tts",
+      "to": "api"
+    },
+    {
+      "id": "api-to-agent",
+      "from": "api",
+      "to": "agent"
+    },
+    {
+      "id": "agent-to-api",
+      "from": "agent",
+      "to": "api"
+    },
+    {
+      "id": "agent-to-postgres",
+      "from": "agent",
+      "to": "postgres"
+    },
+    {
+      "id": "postgres-to-agent",
+      "from": "postgres",
+      "to": "agent"
+    },
+    {
+      "id": "deploy-to-host",
+      "from": "deploy",
+      "to": "host"
+    },
+    {
+      "id": "host-to-web",
+      "from": "host",
+      "to": "web"
+    },
+    {
+      "id": "host-to-api",
+      "from": "host",
+      "to": "api"
+    }
+  ]
+}

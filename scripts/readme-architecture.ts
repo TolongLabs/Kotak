@@ -1,10 +1,13 @@
 // Archify owns the topology, routing and canonical HTML; Kotak and SDC style its SVG exports.
 // bun scripts/readme-architecture.ts (ARCHIFY_BIN can point to an installed Archify CLI.)
+// Add --appendix to export the submission diagram preserved from commit 7c09267.
 import { createRequire } from 'node:module'
 import { dirname, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const root = join(import.meta.dir, '..')
+const appendix = Bun.argv.includes('--appendix')
+const source = appendix ? 'scripts/submission/appendix-architecture.json' : 'docs/readme/architecture.json'
 const common = Bun.spawnSync(['git', 'rev-parse', '--git-common-dir'], { cwd: root })
 if (common.exitCode !== 0) throw new Error('Run this generator inside the Kotak repository.')
 const repository = dirname(resolve(root, common.stdout.toString().trim()))
@@ -16,14 +19,14 @@ const artifacts = resolve(
 )
 const { mkdir } = await import('node:fs/promises')
 await mkdir(artifacts, { recursive: true })
-const html = join(artifacts, 'architecture.html')
+const html = join(artifacts, appendix ? 'appendix-system-diagram.html' : 'architecture.html')
 const finalized = Bun.spawnSync(
   [
     process.execPath,
     archify,
     'finalize',
     'architecture',
-    'docs/readme/architecture.json',
+    source,
     html,
     '--repo-root',
     root,
@@ -46,7 +49,7 @@ const fonts = await Bun.file(join(root, 'docs/demo/final/assets/fonts.css')).tex
 const submissionFont = Buffer.from(
   await Bun.file(join(root, 'scripts/submission/assets/montserrat-latin.woff2')).arrayBuffer()
 ).toString('base64')
-const specification = await Bun.file(join(root, 'docs/readme/architecture.json')).json()
+const specification = await Bun.file(join(root, source)).json()
 const vertical = specification.connections
   .filter((edge: { from: string; to: string }) => {
     const from = specification.components.find((node: { id: string }) => node.id === edge.from)
@@ -56,7 +59,7 @@ const vertical = specification.connections
   .map((edge: { from: string; to: string }) => `${edge.from}:${edge.to}`)
 try {
   await page.goto(pathToFileURL(html).href)
-  for (const theme of ['light', 'dark', 'sdc'] as const) {
+  for (const theme of appendix ? (['sdc'] as const) : (['light', 'dark', 'sdc'] as const)) {
     await page
       .getByRole('button', { name: /Export/ })
       .first()
@@ -80,9 +83,9 @@ try {
         ? `
       @font-face { font-family: Montserrat; font-style: normal; font-weight: 400 700; src: url(data:font/woff2;base64,${submissionFont}) format('woff2'); }
       svg { background: transparent; }
-      text { font-family: Montserrat, sans-serif; fill: #444; }
-      .t-primary { font-size: 14px; font-weight: 700; }
-      .t-muted { font-size: 11px; font-weight: 500; }
+      text { font-family: Montserrat, sans-serif; fill: #444;${appendix ? ' font-variant-ligatures: none;' : ''} }
+      .t-primary { font-size: ${appendix ? 18 : 14}px; font-weight: 700; }
+      .t-muted { font-size: ${appendix ? 16 : 11}px; font-weight: 500; }
       [class^='t-edge-'] { font-size: 11px; font-weight: 600; }
       [class^='c-']:not(.c-mask):not(.c-region) { fill: #fff; stroke: #444; }
       .c-frontend { fill: #fbc20a !important; }
@@ -121,7 +124,19 @@ try {
       .t-cloud { font-size: 12px; fill: var(--text-muted); }
     `
     const svg = await page.evaluate(
-      ({ native, style, theme, vertical }: { native: string; style: string; theme: string; vertical: string[] }) => {
+      ({
+        native,
+        style,
+        theme,
+        vertical,
+        appendix
+      }: {
+        native: string
+        style: string
+        theme: string
+        vertical: string[]
+        appendix: boolean
+      }) => {
         const document = new DOMParser().parseFromString(native, 'image/svg+xml')
         if (document.querySelector('parsererror')) throw new Error('Archify exported invalid SVG.')
         const svg = document.documentElement
@@ -141,13 +156,32 @@ try {
           element.setAttribute('rx', '12')
           element.setAttribute('stroke-width', '1')
         })
-        const frame = svg.querySelector('[data-composition-frame-kind="region"]')!
-        const heading = svg.querySelector('[data-boundary-label]')!
-        heading.setAttribute('x', String(Number(frame.getAttribute('x')) + Number(frame.getAttribute('width')) - 18))
-        heading.setAttribute('y', String(Number(frame.getAttribute('y')) + 23))
-        heading.setAttribute('text-anchor', 'end')
-        // Native boundary labels have a canvas-coloured mask; the heading sits inside its frame now.
-        if (heading.previousElementSibling?.matches('rect.c-mask')) heading.previousElementSibling.remove()
+        if (appendix) {
+          // Wrap the original long source names without changing their wording.
+          for (const [id, lines] of [
+            ['aei', ['Anthropic', 'Economic Index']],
+            ['dosm', ['DOSM', 'Job Market Insights']]
+          ] as const) {
+            const text = svg.querySelector(`[data-node-id='${id}'] .t-primary`)!
+            text.textContent = ''
+            lines.forEach((line, index) => {
+              const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
+              span.setAttribute('x', text.getAttribute('x')!)
+              span.setAttribute('dy', index === 0 ? '-10' : '22')
+              span.textContent = line + (index === 0 ? ' ' : '')
+              text.append(span)
+            })
+          }
+        }
+        const frame = svg.querySelector('[data-composition-frame-kind="region"]')
+        const heading = svg.querySelector('[data-boundary-label]')
+        if (frame && heading) {
+          heading.setAttribute('x', String(Number(frame.getAttribute('x')) + Number(frame.getAttribute('width')) - 18))
+          heading.setAttribute('y', String(Number(frame.getAttribute('y')) + 23))
+          heading.setAttribute('text-anchor', 'end')
+          // Native boundary labels have a canvas-coloured mask; the heading sits inside its frame now.
+          if (heading.previousElementSibling?.matches('rect.c-mask')) heading.previousElementSibling.remove()
+        }
         // Kotak's larger source labels sit beside vertical paths, without canvas-coloured masks.
         svg.querySelectorAll('g[data-edge-from]').forEach((group) => {
           group.querySelectorAll('rect.c-mask').forEach((mask) => mask.remove())
@@ -165,10 +199,13 @@ try {
         svg.setAttribute('data-kotak-export', 'archify-canonical-svg; transparent-canvas')
         return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(svg) + '\n'
       },
-      { native, style, theme, vertical }
+      { native, style, theme, vertical, appendix }
     )
-    const output =
-      theme === 'sdc' ? 'scripts/submission/assets/system-diagram.svg' : `docs/readme/architecture-${theme}.svg`
+    const output = appendix
+      ? 'scripts/submission/assets/appendix-system-diagram.svg'
+      : theme === 'sdc'
+        ? 'scripts/submission/assets/system-diagram.svg'
+        : `docs/readme/architecture-${theme}.svg`
     await Bun.write(join(root, output), svg.replace(/[ \t]+$/gm, ''))
   }
 } finally {
