@@ -45914,13 +45914,22 @@
       "source_location": "L7"
     },
     {
+      "id": "scripts_readme_architecture_submissionfont",
+      "label": "submissionFont",
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "submissionfont",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L46"
+    },
+    {
       "id": "scripts_readme_architecture_vertical",
       "label": "vertical",
       "_origin": "ast",
       "file_type": "code",
       "norm_label": "vertical",
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L47"
+      "source_location": "L50"
     },
     {
       "id": "node_fs",
@@ -134256,13 +134265,24 @@
     },
     {
       "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_submissionfont",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
       "target": "scripts_readme_architecture_vertical",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/readme-architecture.ts",
-      "source_location": "L47",
+      "source_location": "L50",
       "weight": 1.0
     },
     {

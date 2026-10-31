@@ -533,11 +533,14 @@
     <section class="page yellow" data-base="3" data-strip="text 279 752 317 788;all 45 195 555 750">
       <div class="subhead" style="top: 203.7pt"><b>A.</b>Appendix A: System Block Diagram</div>
       <div class="figure" style="left: 84.7pt; top: 236pt; width: 451.2pt">
-        <img src="assets/system-diagram.png" alt="System block diagram" />
+        <img
+          src="assets/system-diagram.svg"
+          alt="Kotak system architecture: browser check-up, API services and data preparation"
+        />
       </div>
-      <p class="note" style="left: 84.7pt; top: 581pt; width: 451.2pt">
-        Data flows top to bottom: dated public data and the RunPod batch build the snapshots, the browser computes every
-        verdict, and the API adds Claude, ElevenLabs and the agent tools.
+      <p class="note" style="left: 84.7pt; top: 536pt; width: 451.2pt">
+        Dated public data and RunPod skill drafts feed the static bundle before deployment. The browser computes every
+        verdict; the Hono API connects Claude, ElevenLabs, Neon Postgres and MCP clients. Generated with Archify.
       </p>
     </section>
 

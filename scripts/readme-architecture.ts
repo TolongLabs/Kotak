@@ -1,4 +1,4 @@
-// Archify owns the topology, routing and canonical HTML; Kotak styles its SVG exports.
+// Archify owns the topology, routing and canonical HTML; Kotak and SDC style its SVG exports.
 // bun scripts/readme-architecture.ts (ARCHIFY_BIN can point to an installed Archify CLI.)
 import { createRequire } from 'node:module'
 import { dirname, join, resolve } from 'node:path'
@@ -43,6 +43,9 @@ const browser = await chromium.launch({ channel: 'chrome', downloadsPath: artifa
 const page = await browser.newPage({ viewport: { width: 1600, height: 1000 }, acceptDownloads: true })
 const tokens = await Bun.file(join(root, 'apps/web/src/styles/tokens.css')).text()
 const fonts = await Bun.file(join(root, 'docs/demo/final/assets/fonts.css')).text()
+const submissionFont = Buffer.from(
+  await Bun.file(join(root, 'scripts/submission/assets/montserrat-latin.woff2')).arrayBuffer()
+).toString('base64')
 const specification = await Bun.file(join(root, 'docs/readme/architecture.json')).json()
 const vertical = specification.connections
   .filter((edge: { from: string; to: string }) => {
@@ -53,26 +56,50 @@ const vertical = specification.connections
   .map((edge: { from: string; to: string }) => `${edge.from}:${edge.to}`)
 try {
   await page.goto(pathToFileURL(html).href)
-  for (const theme of ['light', 'dark'] as const) {
+  for (const theme of ['light', 'dark', 'sdc'] as const) {
     await page
       .getByRole('button', { name: /Export/ })
       .first()
       .click()
     const pending = page.waitForEvent('download')
-    await page.getByText(`SVG · ${theme === 'light' ? 'Light' : 'Dark'}`, { exact: true }).click()
+    await page.getByText(`SVG · ${theme === 'dark' ? 'Dark' : 'Light'}`, { exact: true }).click()
     const download = await pending
     const nativeFile = join(artifacts, `${theme}.native.svg`)
     await download.saveAs(nativeFile)
     const native = await Bun.file(nativeFile).text()
     const colours = new Map<string, string>()
-    const declarations = theme === 'light' ? tokens.split(":root[data-theme='dark']")[0]! : tokens
+    const declarations = theme === 'dark' ? tokens : tokens.split(":root[data-theme='dark']")[0]!
     for (const match of declarations.matchAll(/--k-color-([\w-]+):\s*(#[\da-f]+);/gi)) colours.set(match[1]!, match[2]!)
     const colour = (name: string) => {
       const value = colours.get(name)
       if (!value) throw new Error(`Missing Kotak colour token: ${name}`)
       return value
     }
-    const style = `${fonts}
+    const style =
+      theme === 'sdc'
+        ? `
+      @font-face { font-family: Montserrat; font-style: normal; font-weight: 400 700; src: url(data:font/woff2;base64,${submissionFont}) format('woff2'); }
+      svg { background: transparent; }
+      text { font-family: Montserrat, sans-serif; fill: #444; }
+      .t-primary { font-size: 14px; font-weight: 700; }
+      .t-muted { font-size: 11px; font-weight: 500; }
+      [class^='t-edge-'] { font-size: 11px; font-weight: 600; }
+      [class^='c-']:not(.c-mask):not(.c-region) { fill: #fff; stroke: #444; }
+      .c-frontend { fill: #fbc20a !important; }
+      .c-backend { stroke: #0078a8 !important; }
+      .c-database { stroke: #4b9d37 !important; }
+      .c-cloud { stroke: #c44a4f !important; }
+      .c-mask { fill: #fff; }
+      [data-node-id='web'] .c-mask { fill: #fbc20a; }
+      .c-region { fill: #f5f5f5; stroke: #999; }
+      [class^='a-'] { fill: none; stroke: #444; stroke-width: 1.5px; }
+      .a-dashed { stroke-dasharray: 6 5; }
+      [class^='m-'] { fill: #444; }
+      .semantic-sigil { fill: none; stroke: #444; stroke-width: 1.2px; }
+      .sigil-fill { fill: #444; stroke: none; }
+      .t-cloud { font-size: 12px; font-weight: 600; }
+    `
+        : `${fonts}
       svg { background: transparent; ${['bg-default', 'bg-panel', 'text-primary', 'text-muted', 'border-subtle', 'accent-box', 'accent-on-box', 'accent-on-box-muted'].map((name) => `--${name}: ${colour(name)};`).join(' ')} }
       text { font-family: 'Atkinson Hyperlegible Next', sans-serif; fill: var(--text-primary); }
       .t-primary { font-size: 14px; font-weight: 700; }
@@ -109,10 +136,18 @@ try {
           )
             child.remove()
         }
-        svg.querySelectorAll('[data-node-id] > rect:not(.c-mask)').forEach((element) => {
+        // The opaque underlay and visible outline must share the same corner geometry.
+        svg.querySelectorAll('[data-node-id] > rect').forEach((element) => {
           element.setAttribute('rx', '12')
           element.setAttribute('stroke-width', '1')
         })
+        const frame = svg.querySelector('[data-composition-frame-kind="region"]')!
+        const heading = svg.querySelector('[data-boundary-label]')!
+        heading.setAttribute('x', String(Number(frame.getAttribute('x')) + Number(frame.getAttribute('width')) - 18))
+        heading.setAttribute('y', String(Number(frame.getAttribute('y')) + 23))
+        heading.setAttribute('text-anchor', 'end')
+        // Native boundary labels have a canvas-coloured mask; the heading sits inside its frame now.
+        if (heading.previousElementSibling?.matches('rect.c-mask')) heading.previousElementSibling.remove()
         // Kotak's larger source labels sit beside vertical paths, without canvas-coloured masks.
         svg.querySelectorAll('g[data-edge-from]').forEach((group) => {
           group.querySelectorAll('rect.c-mask').forEach((mask) => mask.remove())
@@ -132,7 +167,9 @@ try {
       },
       { native, style, theme, vertical }
     )
-    await Bun.write(join(root, `docs/readme/architecture-${theme}.svg`), svg.replace(/[ \t]+$/gm, ''))
+    const output =
+      theme === 'sdc' ? 'scripts/submission/assets/system-diagram.svg' : `docs/readme/architecture-${theme}.svg`
+    await Bun.write(join(root, output), svg.replace(/[ \t]+$/gm, ''))
   }
 } finally {
   await browser.close()
