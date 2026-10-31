@@ -3,6 +3,8 @@ import {
   forwardRef,
   isValidElement,
   useId,
+  useLayoutEffect,
+  useRef,
   useState,
   type KeyboardEvent,
   type ReactElement,
@@ -17,16 +19,61 @@ export interface TooltipProps {
   className?: string
 }
 
+// The space between the trigger and the tooltip, in px.
+const GAP = 8
+
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(
   { content, placement = 'top', children, className },
   ref
 ) {
   const [open, setOpen] = useState(false)
+  const [position, setPosition] = useState<{ left: number; top: number } | null>(null)
+  const anchorRef = useRef<HTMLSpanElement | null>(null)
   const id = useId()
+
+  // The tooltip sits in the browser's top layer as a manual popover, placed from its trigger, so a modal dialog, a
+  // scrolling box that clips or a sticky island can't cover or cut it. It follows the trigger while anything scrolls.
+  useLayoutEffect(() => {
+    if (!open) {
+      setPosition(null)
+      return
+    }
+    const place = () => {
+      const rect = anchorRef.current?.getBoundingClientRect()
+      if (!rect) return
+      setPosition(
+        placement === 'right'
+          ? { left: rect.right + GAP, top: rect.top + rect.height / 2 }
+          : placement === 'bottom'
+            ? { left: rect.left + rect.width / 2, top: rect.bottom + GAP }
+            : { left: rect.left + rect.width / 2, top: rect.top - GAP }
+      )
+    }
+    place()
+    window.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => {
+      window.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', place)
+    }
+  }, [open, placement])
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       setOpen(false)
+    }
+  }
+
+  const setRef = (element: HTMLSpanElement | null) => {
+    anchorRef.current = element
+    if (typeof ref === 'function') ref(element)
+    else if (ref) ref.current = element
+  }
+
+  // A browser without the popover API keeps it in place, still fixed to the screen.
+  const showInTopLayer = (element: HTMLSpanElement | null) => {
+    if (element && typeof element.showPopover === 'function' && !element.matches(':popover-open')) {
+      element.showPopover()
     }
   }
 
@@ -46,7 +93,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
 
   return (
     <span
-      ref={ref}
+      ref={setRef}
       className={cn('relative inline-flex', className)}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -57,13 +104,18 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
       {trigger}
       {open && (
         <span
+          ref={showInTopLayer}
+          popover="manual"
           role="tooltip"
           id={id}
+          style={position ?? { visibility: 'hidden' }}
           className={cn(
-            'pointer-events-none absolute z-50 whitespace-nowrap rounded-sm bg-text-primary px-2.5 py-1 text-label-s text-bg-default shadow-[var(--shadow-popover)]',
+            'pointer-events-none fixed inset-auto m-0 overflow-visible whitespace-nowrap rounded-sm border-0 bg-text-primary px-2.5 py-1 text-label-s text-bg-default shadow-[var(--shadow-popover)]',
             placement === 'right'
-              ? 'left-full top-1/2 ml-2 -translate-y-1/2'
-              : cn('left-1/2 -translate-x-1/2', placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2')
+              ? '-translate-y-1/2'
+              : placement === 'bottom'
+                ? '-translate-x-1/2'
+                : '-translate-x-1/2 -translate-y-full'
           )}
         >
           {content}

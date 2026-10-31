@@ -53,9 +53,15 @@ export interface RoadmapStepCardProps {
 const NEXT_DONE_COLOURS =
   '[--color-focus-ring:var(--k-color-accent-on-box)] max-[479px]:[--color-text-primary:var(--k-color-text-primary)] max-[479px]:[--color-text-muted:var(--k-color-text-muted)] max-[479px]:[--color-bg-default:var(--k-color-bg-default)] max-[479px]:[--color-focus-ring:var(--k-color-focus-ring)]'
 
-// Below 480 px the proof action becomes a plain bar along the card's foot, as the Done tick was.
+// Below 480 px the proof action becomes a bar along the card's foot, as the Done tick was.
 const PHONE_BAR =
-  'max-[479px]:absolute max-[479px]:inset-x-0 max-[479px]:bottom-0 max-[479px]:min-h-11 max-[479px]:rounded-none max-[479px]:border-0 max-[479px]:border-t max-[479px]:border-border-subtle max-[479px]:bg-bg-default max-[479px]:px-4'
+  'max-[479px]:absolute max-[479px]:inset-x-0 max-[479px]:bottom-0 max-[479px]:min-h-11 max-[479px]:rounded-none max-[479px]:border-0 max-[479px]:border-t max-[479px]:border-border-subtle max-[479px]:px-4'
+
+// Prove This Step is always a solid button: ink on the next step's yellow strip, the panel fill on the others.
+const PROVE_NEXT =
+  'border-[1.5px] border-text-primary bg-text-primary text-bg-default hover:border-text-muted hover:bg-text-muted'
+const PROVE_LATER =
+  'border-[1.5px] border-border-subtle bg-bg-panel text-text-primary hover:border-border-control hover:bg-bg-default'
 
 // The style of the card's own text buttons, such as Undo; the article's onClick selects the step, so
 // these stop the click.
@@ -244,7 +250,7 @@ export function RoadmapStepCard({
           </div>
           {proof?.status === 'proven' && (
             <div
-              className={`flex shrink-0 items-center gap-3 text-label-s text-text-primary ${next ? NEXT_DONE_COLOURS : ''} ${PHONE_BAR}`}
+              className={`flex shrink-0 items-center gap-3 text-label-s text-text-primary ${next ? NEXT_DONE_COLOURS : ''} ${PHONE_BAR} max-[479px]:bg-bg-default`}
             >
               <span className="inline-flex items-center gap-1.5">
                 <BadgeCheck className="h-4 w-4 shrink-0 stroke-current text-state-success" aria-hidden="true" />
@@ -265,7 +271,7 @@ export function RoadmapStepCard({
           )}
           {proof?.status === 'judging' && (
             <div
-              className={`flex shrink-0 items-center gap-2 text-label-s text-text-primary ${next ? NEXT_DONE_COLOURS : ''} ${PHONE_BAR}`}
+              className={`flex shrink-0 items-center gap-2 text-label-s text-text-primary ${next ? NEXT_DONE_COLOURS : ''} ${PHONE_BAR} max-[479px]:bg-bg-default`}
             >
               <Spinner size="sm" label={proofText.judging} />
               {proofText.judging}
@@ -280,10 +286,8 @@ export function RoadmapStepCard({
                 stop(event)
                 onProve?.()
               }}
-              className={`inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-sm px-2.5 text-label-s text-text-primary transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:text-text-muted ${
-                next
-                  ? `border-[1.5px] border-text-primary bg-bg-default hover:bg-bg-panel ${NEXT_DONE_COLOURS}`
-                  : 'underline-offset-2 hover:underline'
+              className={`inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-sm px-3 text-label-s transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:border-border-subtle disabled:bg-bg-panel disabled:text-text-muted ${
+                next ? `${PROVE_NEXT} ${NEXT_DONE_COLOURS}` : PROVE_LATER
               } ${PHONE_BAR}`}
             >
               {toggleDisabled ? (

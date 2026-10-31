@@ -342,11 +342,12 @@ export function RoadmapTimeline({
   const hoveredStep = hovered ? (steps.find((step) => step.id === hovered.stepId) ?? null) : null
   const showWeekGrid = pxWeek >= WEEK_GRID_PX
 
+  // z-10 keeps the sticky skill column (z-20) and the hover card (z-40) inside the timeline, under the plan island.
   return (
     <section
       ref={sectionRef}
       aria-labelledby="timeline-title"
-      className="relative space-y-3 rounded-md border border-border-subtle bg-bg-default p-5"
+      className="relative z-10 space-y-3 rounded-md border border-border-subtle bg-bg-default p-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 id="timeline-title" className="text-title-s text-text-primary">
