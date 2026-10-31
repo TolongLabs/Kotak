@@ -1,5 +1,6 @@
 import { normalizeTitle, type BundleRoleIndexEntry, type Occupation } from '@kotak/shared'
 import type { RoleAlias } from '../../engine/api'
+import { roleTitle, type LocaleIndex } from '../../i18n/content/overlay'
 
 // The job-title search helpers the check-up start uses for the user's job and their target roles.
 
@@ -32,21 +33,35 @@ export function getSuggestedRoles(roles: BundleRoleIndexEntry[]) {
   })
 }
 
-function matchesQuery(role: BundleRoleIndexEntry, query: string) {
-  return role.title.toLocaleLowerCase().includes(query) || getRoleDisplayTitle(role).toLocaleLowerCase().includes(query)
+function matchesQuery(role: BundleRoleIndexEntry, query: string, index: LocaleIndex | null) {
+  return (
+    role.title.toLocaleLowerCase().includes(query) ||
+    getRoleDisplayTitle(role).toLocaleLowerCase().includes(query) ||
+    roleTitle(index, role.onet_code, role.title).toLocaleLowerCase().includes(query)
+  )
 }
 
 // One row of the job-title suggestions: an O*NET occupation, or a market title an admin approved for one.
 export type RoleSuggestion = { key: string; role: BundleRoleIndexEntry; label: string; codeLine: string }
 
-function roleSuggestion(role: BundleRoleIndexEntry): RoleSuggestion {
-  return { key: role.onet_code, role, label: getRoleDisplayTitle(role), codeLine: getRoleCodeLine(role) }
+function roleSuggestion(role: BundleRoleIndexEntry, index: LocaleIndex | null): RoleSuggestion {
+  return {
+    key: role.onet_code,
+    role,
+    label: roleTitle(index, role.onet_code, getRoleDisplayTitle(role)),
+    codeLine: getRoleCodeLine(role)
+  }
 }
 
 // Up to three approved market titles that contain the query (normalised with normalizeJobQuery), for occupations in
 // the role index, the exact title first. A title that repeats its occupation's own title, plural or not, shows as
 // that occupation instead.
-function aliasSuggestions(aliases: RoleAlias[], roles: BundleRoleIndexEntry[], query: string): RoleSuggestion[] {
+function aliasSuggestions(
+  aliases: RoleAlias[],
+  roles: BundleRoleIndexEntry[],
+  query: string,
+  index: LocaleIndex | null
+): RoleSuggestion[] {
   if (!aliases.length) return []
   const byCode = new Map(roles.map((role) => [role.onet_code, role]))
   const matches = aliases.flatMap((alias) => {
@@ -56,7 +71,7 @@ function aliasSuggestions(aliases: RoleAlias[], roles: BundleRoleIndexEntry[], q
     const title = normalizeTitle(alias.title)
     const suggestion =
       title === normalizeTitle(role.title) || title === normalizeTitle(getRoleDisplayTitle(role))
-        ? roleSuggestion(role)
+        ? roleSuggestion(role, index)
         : { key: `alias:${alias.title}`, role, label: alias.title, codeLine: `O*NET ${role.onet_code} · ${role.title}` }
     return [{ suggestion, exact: aliasKey === query }]
   })
@@ -66,24 +81,39 @@ function aliasSuggestions(aliases: RoleAlias[], roles: BundleRoleIndexEntry[], q
     .map((match) => match.suggestion)
 }
 
-/** Market titles first, then O*NET occupations, each occupation once; nothing for an empty query. */
-export function searchRoles(roles: BundleRoleIndexEntry[], aliases: RoleAlias[], query: string): RoleSuggestion[] {
+/** Market titles first, then O*NET occupations, each occupation once; nothing for an empty query. `index` only widens
+ * the match and the label: it is the language on show's titles, null in English. */
+export function searchRoles(
+  roles: BundleRoleIndexEntry[],
+  aliases: RoleAlias[],
+  query: string,
+  index: LocaleIndex | null = null
+): RoleSuggestion[] {
   if (!query) return []
   const seen = new Set<string>()
   return [
-    ...aliasSuggestions(aliases, roles, query),
-    ...roles.filter((role) => matchesQuery(role, query)).map(roleSuggestion)
+    ...aliasSuggestions(aliases, roles, query, index),
+    ...roles.filter((role) => matchesQuery(role, query, index)).map((role) => roleSuggestion(role, index))
   ]
     .filter((suggestion) => !seen.has(suggestion.key) && seen.add(suggestion.key))
     .slice(0, maxSuggestions)
 }
 
-/** True when the query is a role's own title or an approved market title, so no remote match is needed. */
-export function hasExactMatch(roles: BundleRoleIndexEntry[], aliases: RoleAlias[], query: string) {
+/** True when the query is a role's own title, its title in the language on show, or an approved market title, so no
+ * remote match is needed. */
+export function hasExactMatch(
+  roles: BundleRoleIndexEntry[],
+  aliases: RoleAlias[],
+  query: string,
+  index: LocaleIndex | null = null
+) {
   return (
     query.length > 0 &&
     (roles.some(
-      (role) => normalizeJobQuery(role.title) === query || normalizeJobQuery(getRoleDisplayTitle(role)) === query
+      (role) =>
+        normalizeJobQuery(role.title) === query ||
+        normalizeJobQuery(getRoleDisplayTitle(role)) === query ||
+        normalizeJobQuery(roleTitle(index, role.onet_code, role.title)) === query
     ) ||
       aliases.some(
         (alias) => normalizeJobQuery(alias.title) === query && roles.some((role) => role.onet_code === alias.onet_code)
@@ -92,12 +122,13 @@ export function hasExactMatch(roles: BundleRoleIndexEntry[], aliases: RoleAlias[
 }
 
 /** Roles whose title starts with a word of the query, best fit first, for "No match yet". */
-export function closestRoles(roles: BundleRoleIndexEntry[], query: string) {
+export function closestRoles(roles: BundleRoleIndexEntry[], query: string, index: LocaleIndex | null = null) {
   const words = query.split(/\s+/).filter((word) => word.length >= 3)
 
   return roles
     .map((role) => {
-      const titleWords = `${role.title} ${getRoleDisplayTitle(role)}`.toLocaleLowerCase().split(/[^a-z0-9]+/)
+      const titles = `${role.title} ${getRoleDisplayTitle(role)} ${roleTitle(index, role.onet_code, role.title)}`
+      const titleWords = titles.toLocaleLowerCase().split(/[^a-z0-9]+/)
       const score = words.reduce(
         (total, word) => total + (titleWords.some((titleWord) => titleWord.startsWith(word)) ? 1 : 0),
         0

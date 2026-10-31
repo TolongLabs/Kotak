@@ -1,9 +1,11 @@
 import { VerdictSchema, type Verdict } from '@kotak/shared'
 import type { LucideIcon } from 'lucide-react'
+import { useCallback } from 'react'
 import { verdictConfig, type VerdictType } from '../../components/ui/VerdictChip'
 import type { SourceRef } from '../../demo/types'
-import { contentFor } from '../../i18n/content/overlay'
-import { dateLocale, getLocale, useLocale, type Locale } from '../../i18n/locale'
+import { useLocaleIndex } from '../../engine/bundle'
+import { roleTitle } from '../../i18n/content/overlay'
+import { dateLocale, getLocale, type Locale } from '../../i18n/locale'
 import { spaceText, type SpaceText } from '../../i18n/messages/space'
 import { textNow, useText } from '../../i18n/text'
 import type { SpaceJob, SpaceModel, SpaceSkill, SpaceSnapshot } from './model'
@@ -42,14 +44,19 @@ export const groupName = (t: SpaceText, job: Pick<SpaceJob, 'group'>) => t.group
 /** A Job Zone's word as it sits inside a sentence ("some preparation"). */
 export const zoneWord = (t: SpaceText, zone: SpaceJob['zone']) => t.zones[zone].toLowerCase()
 
-/** The space's text, and the skill names in the same content overlay Radar and Roles read, so a skill reads the same
- * everywhere; a skill without an entry keeps its English name. */
+/** The space's text, and the job titles and skill names from the same content overlay Radar and Roles read, so a job
+ * and a skill read the same everywhere; anything without an entry keeps its English. */
 export function useSpaceText() {
   const t = useText(spaceText)
-  const overlay = contentFor(useLocale())
+  const index = useLocaleIndex()
   const skillName = (job: Pick<SpaceJob, 'code'>, skill: Pick<SpaceSkill, 'corner_id' | 'name'>) =>
-    overlay?.roles[job.code]?.corners[skill.corner_id]?.name ?? skill.name
-  return { t, skillName }
+    index?.skill_names[job.code]?.[skill.corner_id] ?? skill.name
+  // Stable while the index is, so a sorted table keeps its rows until the titles change.
+  const jobTitle = useCallback(
+    (job: Pick<SpaceJob, 'code' | 'title'>) => roleTitle(index, job.code, job.title),
+    [index]
+  )
+  return { t, skillName, jobTitle }
 }
 
 /**

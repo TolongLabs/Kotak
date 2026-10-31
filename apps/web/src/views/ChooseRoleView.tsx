@@ -19,7 +19,8 @@ import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
-import { usePathways, useSuggestions } from '../engine/bundle'
+import { useLocaleIndex, usePathways, useSuggestions } from '../engine/bundle'
+import { roleTitle } from '../i18n/content/overlay'
 import { checkupText } from '../i18n/messages/checkup'
 import { useText } from '../i18n/text'
 import { updateGuestSession, useGuestSession } from '../session/store'
@@ -109,6 +110,7 @@ function RoleOption({
   note?: string
 }) {
   const t = useText(checkupText)
+  const index = useLocaleIndex()
   return (
     <label
       className={cn(
@@ -129,7 +131,7 @@ function RoleOption({
       {note && <span className="text-body-s font-bold text-text-primary">{note}</span>}
       <span className="flex items-start justify-between gap-3">
         <span className="min-w-0 hyphens-auto text-title-s text-text-primary [overflow-wrap:anywhere]">
-          {role.title}
+          {roleTitle(index, role.onet_code, role.title)}
         </span>
         {role.interest_match !== null && role.interest_match > 0 && (
           <span className="flex shrink-0 flex-col items-end">
@@ -153,6 +155,7 @@ function RoleOption({
 
 export function ChooseRoleView() {
   const t = useText(checkupText)
+  const localeIndex = useLocaleIndex()
   const session = useGuestSession()
   const pathways = usePathways()
   const askInterests = new URLSearchParams(window.location.search).get('step') === 'interests'
@@ -275,7 +278,9 @@ export function ChooseRoleView() {
           {t.buttons.changeAnswers}
         </Button>
         <Button variant="primary" size="lg" fullWidth disabled={!selected} onClick={check}>
-          {selected ? t.buttons.testMeOn(selected.title) : t.buttons.pickRole}
+          {selected
+            ? t.buttons.testMeOn(roleTitle(localeIndex, selected.onet_code, selected.title))
+            : t.buttons.pickRole}
         </Button>
       </div>
     </div>

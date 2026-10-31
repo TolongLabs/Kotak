@@ -1,6 +1,8 @@
 import type { Occupation, RoleMatchResponse } from '@kotak/shared'
 import { useId, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { cn } from '../../components/ui/cn'
+import { useLocaleIndex } from '../../engine/bundle'
+import { roleTitle, type LocaleIndex } from '../../i18n/content/overlay'
 import { checkupText } from '../../i18n/messages/checkup'
 import { textNow } from '../../i18n/text'
 import { getRoleCodeLine, getRoleDisplayTitle, type RoleSuggestion } from './roleSearch'
@@ -17,15 +19,17 @@ export function roleOptions(
   match: { role: Role; source: RoleMatchResponse['match_source'] } | null,
   suggestions: RoleSuggestion[],
   picks: Role[],
-  pick: (role: Role, label?: string) => void
+  pick: (role: Role, label?: string) => void,
+  index: LocaleIndex | null = null
 ): SuggestionOption[] {
   const t = textNow(checkupText)
+  const title = (role: Role) => roleTitle(index, role.onet_code, getRoleDisplayTitle(role))
   return [
     ...(match
       ? [
           {
             key: 'kopi',
-            title: t.roleSearch.match(getRoleDisplayTitle(match.role)),
+            title: t.roleSearch.match(title(match.role)),
             detail:
               getRoleCodeLine(match.role) +
               (match.source === 'claude' ? t.roleSearch.matchedByClaude : '') +
@@ -42,11 +46,21 @@ export function roleOptions(
     })),
     ...picks.map((role) => ({
       key: role.onet_code,
-      title: getRoleDisplayTitle(role),
+      title: title(role),
       detail: getRoleCodeLine(role),
       pick: () => pick(role)
     }))
   ]
+}
+
+/** `roleOptions` with the language on show's titles; a hook, so call it from a component. */
+export function useRoleOptions(
+  match: { role: Role; source: RoleMatchResponse['match_source'] } | null,
+  suggestions: RoleSuggestion[],
+  picks: Role[],
+  pick: (role: Role, label?: string) => void
+) {
+  return roleOptions(match, suggestions, picks, pick, useLocaleIndex())
 }
 
 export function useSuggestionList(options: SuggestionOption[], open: boolean, query: string, reopen: () => void) {

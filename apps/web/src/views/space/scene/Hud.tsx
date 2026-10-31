@@ -26,7 +26,16 @@ import { spaceText } from '../../../i18n/messages/space'
 import { uiText } from '../../../i18n/messages/ui'
 import { textNow, useText } from '../../../i18n/text'
 import { formatFitPercent } from '../../roles/fit'
-import { formatChange, groupName, hasNoEstimate, monthLabel, snapshotSources, VERDICT_MARKS, zoneWord } from '../format'
+import {
+  formatChange,
+  groupName,
+  hasNoEstimate,
+  monthLabel,
+  snapshotSources,
+  useSpaceText,
+  VERDICT_MARKS,
+  zoneWord
+} from '../format'
 import type { CheckUpLink, SpaceJob, SpaceModel } from '../model'
 import { ringLabels } from './layout'
 import { Ruler } from './Ruler'
@@ -164,6 +173,7 @@ export function JobCard({
 }: CardProps) {
   const t = useText(spaceText)
   const c = useText(commonText)
+  const { jobTitle } = useSpaceText()
   const compact = form === 'compact'
   const group = groupName(t, job)
   const snapshot = model.snapshots.find((s) => s.id === snapshotId)!
@@ -323,7 +333,7 @@ export function JobCard({
     const changes = futures.map((s) => job.growth[snapshotId][s])
     return (
       <section
-        aria-label={t.card.label(job.title)}
+        aria-label={t.card.label(jobTitle(job))}
         className={cn('flex w-[min(18rem,34vw)] flex-col gap-0.5 text-text-primary', className)}
         style={style}
       >
@@ -332,10 +342,10 @@ export function JobCard({
             <Link
               to={jobPath(job.code)}
               lang="en"
-              title={job.title}
+              title={jobTitle(job)}
               className="block truncate rounded-sm underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
             >
-              {job.title}
+              {jobTitle(job)}
               <span className="sr-only">{t.card.openJobPageSr}</span>
             </Link>
             <span className="sr-only">{t.card.kindSr(job.kind, group)}</span>
@@ -394,7 +404,7 @@ export function JobCard({
   if (compact)
     return (
       <section
-        aria-label={t.card.label(job.title)}
+        aria-label={t.card.label(jobTitle(job))}
         className={cn(
           'flex max-h-full w-[26rem] max-w-[calc(100vw-1.5rem)] flex-col gap-0.5 overflow-y-auto overscroll-contain text-text-primary',
           className
@@ -408,7 +418,7 @@ export function JobCard({
               lang="en"
               className="rounded-sm underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
             >
-              {job.title}
+              {jobTitle(job)}
               <span className="sr-only">{t.card.openJobPageSr}</span>
               <ArrowRight className="ml-1 inline size-4 stroke-current align-[-2px]" aria-hidden="true" />
             </Link>
@@ -436,7 +446,7 @@ export function JobCard({
 
   return (
     <section
-      aria-label={t.card.label(job.title)}
+      aria-label={t.card.label(jobTitle(job))}
       className={cn(
         'flex max-h-full w-[22rem] max-w-[calc(100vw-1.5rem)] flex-col gap-3 overflow-y-auto overscroll-contain text-text-primary',
         className
@@ -458,7 +468,7 @@ export function JobCard({
             </span>
           )}
           <h2 lang="en" className="text-balance text-title-s text-text-primary">
-            {job.title}
+            {jobTitle(job)}
           </h2>
           <p className="text-body-s text-text-muted">{group}</p>
           {job.fit === null && (
@@ -778,6 +788,7 @@ export function Hud(props: HudProps) {
   const { short, title, children, headerCard, kopiOpen, onKopi, kopiLink } = props
   const t = useText(spaceText)
   const c = useText(commonText)
+  const { jobTitle } = useSpaceText()
   const phone = usePhoneLayout()
   const snapshot = model.snapshots.find((s) => s.id === snapshotId)!
   const month = monthLabel(snapshot)
@@ -1056,11 +1067,11 @@ export function Hud(props: HudProps) {
           >
             <Metric label={t.hud.jobs}>{model.jobs.length}</Metric>
             {yours?.fit && (
-              <Metric label={t.hud.fitFor(yours.title)}>
+              <Metric label={t.hud.fitFor(jobTitle(yours))}>
                 <button
                   type="button"
                   aria-pressed={pinned}
-                  aria-label={t.hud.pinYours(formatFitPercent(yours.fit[snapshot.id][scenario]), yours.title)}
+                  aria-label={t.hud.pinYours(formatFitPercent(yours.fit[snapshot.id][scenario]), jobTitle(yours))}
                   onClick={onPin}
                   className="-my-3 inline-flex min-h-11 items-center rounded-sm underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                 >

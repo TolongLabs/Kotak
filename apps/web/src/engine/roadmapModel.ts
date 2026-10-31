@@ -9,6 +9,9 @@ import { textNow } from '../i18n/text'
 
 export const ROADMAP_WEEKS = 12
 
+/** A search resource's title already says it is a search in English, Malay or Chinese (#449); others get the prefix. */
+const SEARCH_PREFIXES = ['Search:', 'Cari:', '搜索：']
+
 const round1 = (hours: number) => Math.round(hours * 10) / 10 // scaled hours drift in floats; show and compare at 0.1
 
 type RoleFit = Checkup['roles'][number]
@@ -65,7 +68,7 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
         resource: resource
           ? {
               label:
-                resource.kind === 'search' && !resource.title.startsWith('Search:')
+                resource.kind === 'search' && !SEARCH_PREFIXES.some((prefix) => resource.title.startsWith(prefix))
                   ? t.stepCard.searchResource(resource.title)
                   : resource.title,
               href: resource.url,

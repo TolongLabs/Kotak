@@ -15,7 +15,11 @@ export const BUNDLE_PATHS = {
   pathways: '/data/pathways.json',
   sdgReasons: '/data/sdg-reasons.json',
   /** Every role, cut to what the engine reads for a ranked role, for the 3D space (see space.ts). */
-  space: '/data/space.json'
+  space: '/data/space.json',
+  /** A language's titles, skill names and SDG text for every job, and which jobs have a translated file (#449). */
+  i18nIndex: (lang: string) => `/data/i18n/${lang}/index.json`,
+  /** One job's translated content in a language, read only when that job is on screen. */
+  i18nRole: (lang: string, onetCode: string) => `/data/i18n/${lang}/roles/${onetCode}.json`
 } as const
 
 /**

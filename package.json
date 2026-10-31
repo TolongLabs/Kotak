@@ -35,6 +35,7 @@
     "ingest:pathways": "bun scripts/ingest/pathways.ts",
     "build:corner-groups": "bun scripts/corners/build-groups.ts",
     "batch:corners": "bun scripts/corners/run-batch.ts",
+    "translate": "bun scripts/i18n/translate-roles.ts",
     "translate:roles": "bun scripts/i18n/translate-roles.ts 15-1252.00 15-2051.00 13-2011.00 13-1111.00 13-1071.00 11-2021.00 11-1021.00 11-1011.00 29-1141.00 25-2031.00",
     "refresh:check": "bun scripts/refresh/check.ts",
     "refresh:validate": "bun scripts/refresh/validate.ts",

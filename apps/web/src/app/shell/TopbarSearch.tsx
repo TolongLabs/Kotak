@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { SearchField } from '../../components/ui/SearchField'
-import { useRoleIndex } from '../../engine/bundle'
+import { useLocaleIndex, useRoleIndex } from '../../engine/bundle'
 import { shellText } from '../../i18n/messages/shell'
 import { useText } from '../../i18n/text'
 import { normalizeJobQuery, searchRoles } from '../../views/checkup/roleSearch'
@@ -12,6 +12,7 @@ import { jobPath, routes } from '../routes'
 // Enter on a typed title with no match still goes to the check-up, as before.
 export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_, ref) {
   const index = useRoleIndex()
+  const localeIndex = useLocaleIndex()
   const t = useText(shellText)
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
@@ -19,7 +20,7 @@ export const TopbarSearch = forwardRef<HTMLInputElement>(function TopbarSearch(_
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const key = normalizeJobQuery(query)
-  const matches = index.status === 'ready' ? searchRoles(index.data.roles, [], key) : []
+  const matches = index.status === 'ready' ? searchRoles(index.data.roles, [], key, localeIndex) : []
   const listOpen = open && key.length > 0 && index.status === 'ready'
   const list = useSuggestionList(
     matches.map((match) => ({

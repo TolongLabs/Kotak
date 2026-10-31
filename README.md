@@ -232,7 +232,7 @@ A check-up for a web developer with a computer science degree who wants to see w
 - **SDG mapping** — every skill carries SDG targets, every job shows the goals its work serves, and the roadmap highlights steps by goal.
 - **Handling uncertainty** — every target is labelled an estimate, Split shows slow and fast AI-uptake futures, and Unknown marks thin data.
 - **Ask Kopi and MCP** — a chat agent answers through 8 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
-- **Three languages** — English, Bahasa Malaysia and Chinese behind one switch in the top bar, with Kopi answering in the language you pick and the demo roles' questions translated too.
+- **Three languages** — English, Bahasa Malaysia and Chinese behind one switch in the top bar, with Kopi answering in the language you pick. Every job title is translated, and so are the skills and questions of 18 jobs, the demo roles among them; a job still partly in English says so. Kopi's voice speaks English only.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -435,7 +435,7 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 ## Future Improvements
 
 - [ ] Kotak Team: a skill-gap view for an employer's whole team, and who to train first
-- [ ] Bahasa Malaysia and Chinese questions for every job, beyond the three demo roles
+- [ ] Bahasa Malaysia and Chinese skills and questions for every job, beyond the 18 translated so far (#449)
 - [ ] Slow and fast AI-uptake scenarios side by side on the radar (the engine already holds both)
 - [ ] Checked free and HRD Corp-claimable courses for each step, beyond today's search suggestions
 - [ ] A notice when new monthly data moves a user's plan
