@@ -72,7 +72,8 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
                   ? t.stepCard.searchResource(resource.title)
                   : resource.title,
               href: resource.url,
-              kind: resource.kind
+              kind: resource.kind,
+              verified: resource.verified
             }
           : { label: '', href: '' },
         sdgs: [

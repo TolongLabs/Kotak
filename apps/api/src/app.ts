@@ -1,9 +1,10 @@
 import { EngineSnapshotSchema, HealthResponseSchema, sampleSnapshot } from '@kotak/shared'
-import { Hono } from 'hono'
+import { Hono, type MiddlewareHandler } from 'hono'
 import { cors } from 'hono/cors'
 import { defaultAiDeps } from './ai/deps'
 import { fail } from './ai/errors'
 import { createAgentChatRoute } from './routes/agent'
+import { createEvidenceRoute } from './routes/evidence'
 import { createExplanationsRoute } from './routes/explanations'
 import { createRolesRoute } from './routes/roles'
 import { nationalView } from './routes/national-view'
@@ -23,16 +24,19 @@ const hostOf = (url: string) => {
   }
 }
 
-// Kopi's chat spends Kotak's Claude key, so it answers only Kotak's own pages: a request from another site's page
-// (its Origin names another host) is refused before CORS could allow it. A request with no Origin isn't from a page.
-// Hosts, not origins, are compared, since a proxy in front of the server may end TLS.
-app.use('/api/agent/*', async (context, next) => {
+// Kopi's chat and the evidence judge spend Kotak's Claude key, so they answer only Kotak's own pages: a request from
+// another site's page (its Origin names another host) is refused before CORS could allow it. A request with no Origin
+// isn't from a page. Hosts, not origins, are compared, since a proxy in front of the server may end TLS.
+const kotakPagesOnly: MiddlewareHandler = async (context, next) => {
   const origin = context.req.header('Origin')
   if (origin && hostOf(origin) !== hostOf(context.req.url)) {
-    return fail(context, 403, 'cross_origin', "Kopi's chat answers only Kotak's own pages.")
+    return fail(context, 403, 'cross_origin', "This route answers only Kotak's own pages.")
   }
   await next()
-})
+}
+
+app.use('/api/agent/*', kotakPagesOnly)
+app.use('/api/evidence', kotakPagesOnly)
 
 // Every other route, the MCP server included, is open to any site.
 app.use('/api/*', cors())
@@ -52,6 +56,7 @@ app.route('/api/market', market)
 app.route('/api/tts', tts)
 app.route('/api/roles', createRolesRoute(defaultAiDeps))
 app.route('/api/explanations', createExplanationsRoute(defaultAiDeps))
+app.route('/api/evidence', createEvidenceRoute(defaultAiDeps))
 app.route('/api/admin/auth', adminAuth)
 app.route('/api/admin/scraper', createJobstreetAdminRoute(defaultAiDeps))
 app.route('/api/mcp', mcp)

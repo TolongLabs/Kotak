@@ -1,11 +1,27 @@
 import { REFRESHER_ID } from '@kotak/shared'
-import { BookOpen, Check, ChevronDown, Clock3, ExternalLink, Lock, RefreshCw, Sparkles } from 'lucide-react'
+import {
+  BadgeCheck,
+  BookOpen,
+  Check,
+  ChevronDown,
+  Clock3,
+  ExternalLink,
+  Lock,
+  RefreshCw,
+  Sparkles,
+  Upload
+} from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { RoadmapStep } from '../../demo/types'
+import type { StepProof } from '../../engine/evidence'
+import { dateLocale } from '../../i18n/locale'
 import { fmt } from '../../views/roadmap/planSupport'
+import { Button } from '../ui/Button'
 import { Citation } from '../ui/Citation'
+import { Spinner } from '../ui/Spinner'
 import { SdgTargetChip } from './SdgReasonChip'
 import { commonText } from '../../i18n/common'
+import { evidenceText } from '../../i18n/messages/evidence'
 import { roadmapText } from '../../i18n/messages/roadmap'
 import { useText } from '../../i18n/text'
 
@@ -19,19 +35,38 @@ export interface RoadmapStepCardProps {
   selected?: boolean
   onSelect?: () => void
   stepRef?: (element: HTMLElement | null) => void
-  /** Shows the Done tick in the header strip; leave out for a read-only card. */
-  onToggle?: (checked: boolean) => void
-  /** A clipped step cannot be ticked. */
+  /** A clipped step cannot be proven until the plan window reaches its remaining hours. */
   toggleDisabled?: boolean
+  /** How the step stands on proof (#457); leave out for a read-only card. */
+  proof?: StepProof
+  /** Opens the proof sheet. */
+  onProve?: () => void
+  /** Removes a proven step's proof and its tick. */
+  onUndo?: () => void
   /** Folded, the card keeps its header strip and one line of its statement; printing shows every card in full. */
   open?: boolean
   onToggleOpen?: () => void
 }
 
-// On phones the Done tick drops below the Next card's yellow strip, so it takes the theme's ink back; on the strip
+// On phones the proof action drops below the Next card's yellow strip, so it takes the theme's ink back; on the strip
 // itself, a dark-mode yellow focus ring would vanish, so it takes the strip's ink.
 const NEXT_DONE_COLOURS =
   '[--color-focus-ring:var(--k-color-accent-on-box)] max-[479px]:[--color-text-primary:var(--k-color-text-primary)] max-[479px]:[--color-text-muted:var(--k-color-text-muted)] max-[479px]:[--color-bg-default:var(--k-color-bg-default)] max-[479px]:[--color-focus-ring:var(--k-color-focus-ring)]'
+
+// The style of the card's own text buttons, such as Undo and Try Again; the article's onClick selects the step, so
+// these stop the click.
+const TEXT_BUTTON_CLASSES =
+  'inline-flex min-h-6 items-center rounded-sm text-label-s text-text-primary underline underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring'
+
+/** The completion date the judge read, such as "12 Oct 2026". */
+function formatCompletionDate(value: string) {
+  return new Intl.DateTimeFormat(dateLocale(), {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  }).format(new Date(`${value}T00:00:00Z`))
+}
 
 export function RoadmapStepCard({
   step,
@@ -42,12 +77,15 @@ export function RoadmapStepCard({
   selected = false,
   onSelect,
   stepRef,
-  onToggle,
   toggleDisabled = false,
+  proof,
+  onProve,
+  onUndo,
   open = true,
   onToggleOpen
 }: RoadmapStepCardProps) {
   const t = useText(roadmapText)
+  const proofText = useText(evidenceText).card
   const common = useText(commonText)
   // The refresher carries no level, SDG or resource.
   const refresher = step.id === REFRESHER_ID
@@ -90,6 +128,71 @@ export function RoadmapStepCard({
           ? 'border border-state-success bg-bg-default'
           : 'border border-border-subtle bg-bg-default'
 
+  // The line under the header strip: what the judge read, or what the step still needs.
+  const stop = (event: { stopPropagation: () => void }) => event.stopPropagation()
+  const proofLine = (() => {
+    if (!proof) return null
+    if (proof.status === 'proven') {
+      const { course, provider, completion_date: completed } = proof.evidence
+      const parts = [course, provider].filter(Boolean).join(' · ')
+      const completedOn = completed ? proofText.completedOn(formatCompletionDate(completed)) : ''
+      return (
+        <p className="text-text-muted [overflow-wrap:anywhere]">
+          {parts}
+          {parts && completedOn ? ' · ' : ''}
+          {completedOn}
+        </p>
+      )
+    }
+    if (proof.status === 'unproven')
+      return (
+        <p className="space-y-0.5">
+          <b className="block text-label-m text-text-primary">{proofText.notProven}</b>
+          <span className="block text-text-muted">{proofText.notProvenNote}</span>
+        </p>
+      )
+    if (proof.status === 'open' && next) return <p className="text-text-muted">{proofText.whatCounts}</p>
+    if (proof.status === 'fail')
+      return (
+        <p className="space-y-0.5">
+          <b className="block text-text-primary">{proofText.failed}</b>
+          <span className="block text-text-muted [overflow-wrap:anywhere]">{proof.reason}</span>
+          <button
+            type="button"
+            onClick={(event) => {
+              stop(event)
+              onProve?.()
+            }}
+            className={TEXT_BUTTON_CLASSES}
+          >
+            {proofText.tryAnother}
+          </button>
+        </p>
+      )
+    // unclear asks for a better file; error says Kopi could not read it. Both retry through the sheet.
+    if (proof.status === 'unclear' || proof.status === 'error') {
+      const title = proof.status === 'unclear' ? proofText.unclear : proofText.errorTitle
+      const body = proof.status === 'unclear' ? (proof.hint ?? proofText.unclearHint) : proofText.errorBody
+      return (
+        <p className="space-y-0.5">
+          <b className="block text-text-primary">{title}</b>
+          <span className="block text-text-muted [overflow-wrap:anywhere]">{body}</span>
+          <button
+            type="button"
+            onClick={(event) => {
+              stop(event)
+              onProve?.()
+            }}
+            className={TEXT_BUTTON_CLASSES}
+          >
+            {proofText.tryAgain}
+          </button>
+        </p>
+      )
+    }
+    return null
+  })()
+
   const renderNode = (extra: string) => (
     <span
       className={`${extra} h-7 w-7 shrink-0 items-center justify-center rounded-full border-[1.5px] font-mono text-mono-s ${
@@ -125,7 +228,7 @@ export function RoadmapStepCard({
         aria-labelledby={`roadmap-step-${step.id}`}
         aria-current={selected ? 'true' : undefined}
         onClick={onSelect}
-        className={`relative min-w-0 flex-1 scroll-mt-56 cursor-pointer overflow-hidden rounded-md ${cardBorder} ${onToggle ? 'max-[479px]:pb-11' : ''} ${
+        className={`relative min-w-0 flex-1 scroll-mt-56 cursor-pointer overflow-hidden rounded-md ${cardBorder} ${proof ? 'max-[479px]:pb-11' : ''} ${
           highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
         } ${selected ? 'outline outline-2 outline-offset-2 outline-text-primary' : ''}`}
       >
@@ -159,28 +262,57 @@ export function RoadmapStepCard({
               </p>
             </div>
           </div>
-          {onToggle && (
-            <label
-              onClick={(event) => event.stopPropagation()}
-              className={`${toggleDisabled ? 'cursor-not-allowed text-text-muted' : 'cursor-pointer text-text-primary'} ${next ? NEXT_DONE_COLOURS : ''} relative inline-flex min-h-6 shrink-0 items-center gap-2 text-label-s max-[479px]:absolute max-[479px]:inset-x-0 max-[479px]:bottom-0 max-[479px]:min-h-11 max-[479px]:border-t max-[479px]:border-border-subtle max-[479px]:px-4`}
+          {proof?.status === 'proven' && (
+            <div
+              className={`flex shrink-0 items-center gap-3 text-label-s ${next ? NEXT_DONE_COLOURS : ''} max-[479px]:absolute max-[479px]:inset-x-0 max-[479px]:bottom-0 max-[479px]:min-h-11 max-[479px]:border-t max-[479px]:border-border-subtle max-[479px]:px-4`}
             >
-              <input
-                type="checkbox"
-                disabled={toggleDisabled}
-                checked={done}
-                aria-label={t.stepCard.doneLabel(step.skill, weeksName)}
-                onChange={(event) => onToggle(event.currentTarget.checked)}
-                className="peer absolute inset-0 h-full w-full cursor-[inherit] opacity-0"
-              />
-              <span
-                className="inline-flex h-5 w-5 items-center justify-center rounded-sm border-[1.5px] border-border-control bg-bg-default text-bg-default peer-disabled:border-text-muted peer-checked:border-state-success peer-checked:bg-state-success peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring"
-                aria-hidden="true"
-              >
-                <Check className="h-3.5 w-3.5 stroke-current" />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-state-success px-2.5 py-0.5 text-label-s text-text-primary">
+                <BadgeCheck className="h-4 w-4 shrink-0 stroke-current text-state-success" aria-hidden="true" />
+                {proofText.proven}
               </span>
-              {t.stepCard.done}
-              {toggleDisabled && <Lock className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />}
-            </label>
+              <button
+                type="button"
+                onClick={(event) => {
+                  stop(event)
+                  onUndo?.()
+                }}
+                aria-label={proofText.undoLabel(step.skill)}
+                className={`${TEXT_BUTTON_CLASSES} max-[479px]:min-h-11`}
+              >
+                {proofText.undo}
+              </button>
+            </div>
+          )}
+          {proof?.status === 'judging' && (
+            <div
+              className={`flex shrink-0 items-center gap-2 text-label-s text-text-primary ${next ? NEXT_DONE_COLOURS : ''} max-[479px]:absolute max-[479px]:inset-x-0 max-[479px]:bottom-0 max-[479px]:min-h-11 max-[479px]:border-t max-[479px]:border-border-subtle max-[479px]:px-4`}
+            >
+              <Spinner size="sm" label={proofText.judging} />
+              {proofText.judging}
+            </div>
+          )}
+          {proof && proof.status !== 'proven' && proof.status !== 'judging' && (
+            <Button
+              size="md"
+              variant={next ? 'primary' : 'secondary'}
+              disabled={toggleDisabled}
+              iconStart={
+                toggleDisabled ? (
+                  <Lock className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
+                ) : (
+                  <Upload className="h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
+                )
+              }
+              aria-label={toggleDisabled ? proofText.lockedLabel : proofText.proveLabel(step.skill, weeksName)}
+              title={toggleDisabled ? proofText.lockedLabel : undefined}
+              onClick={(event) => {
+                event.stopPropagation()
+                onProve?.()
+              }}
+              className={`${next ? NEXT_DONE_COLOURS : ''} max-[479px]:absolute max-[479px]:inset-x-0 max-[479px]:bottom-0 max-[479px]:w-full max-[479px]:rounded-none max-[479px]:border-x-0 max-[479px]:border-b-0`}
+            >
+              {proofText.prove}
+            </Button>
           )}
           {onToggleOpen && (
             <button
@@ -201,6 +333,10 @@ export function RoadmapStepCard({
             </button>
           )}
         </div>
+
+        {proofLine && (
+          <div className="border-b border-border-subtle px-4 py-2.5 text-body-s max-[479px]:px-3.5">{proofLine}</div>
+        )}
 
         {!open && (
           <p className="flex items-center justify-between gap-3 px-4 py-2.5 text-body-s text-text-muted max-[479px]:px-3.5 print:hidden">
