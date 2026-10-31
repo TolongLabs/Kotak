@@ -128,15 +128,15 @@ Step three, like the hook's second question, names Kotak's three outputs: the sk
 
 _[The driver switches windows to the browser. The presenter faces the judges.]_
 
-**Presenter**, 2:11 to 7:11. The driver runs Aina's check-up on the live site, `kotak-alaskxntxna.replit.app`, and says nothing. The presenter names each stage aloud as it appears ("Stage 3 of 6: matching"), so the judges can tick all six. Each beat gives the page, the driver's clicks in order, then the presenter's lines. The beats add up to 4:45; the other 15 seconds cover page loads.
+**Presenter**, 2:11 to 7:11. The driver runs Aina's check-up on the live site, `kotak.tp073654.workers.dev`, and says nothing. The presenter names each stage aloud as it appears ("Stage 3 of 6: matching"), so the judges can tick all six. Each beat gives the page, the driver's clicks in order, then the presenter's lines. The beats add up to 4:45; the other 15 seconds cover page loads.
 
-Every label below was read off `main` at 5c0aba2 (#452) on 31 October 2026. Until that build is deployed, the live site shows the older Radar, Roles and Roadmap pages, so deploy before the pitch. If a label on stage differs, the driver follows the screen and the presenter keeps talking.
+Every label below was read off `main` at 5c0aba2 (#452) on 31 October 2026, the build `kotak.tp073654.workers.dev` serves. The demo runs there, not on Replit: only Workers has Kopi's pre-made audio. The Replit mirror serves the same build for the QR codes on slides 5 and 10. If a label on stage differs, the driver follows the screen and the presenter keeps talking.
 
 ### Before the slot
 
 The driver sets up the browser 10 minutes before the slot:
 
-1.  Open a new private window (Ctrl+Shift+N) and go to `kotak-alaskxntxna.replit.app`. A private window starts with no saved check-up.
+1.  Open a new private window (Ctrl+Shift+N) and go to `kotak.tp073654.workers.dev`. A private window starts with no saved check-up.
 1.  Click **Start**, then **Sign In as Guest**. The check-up opens on "Step 1 of 5 · Start".
 1.  Warm up the 3D space, so it opens fast on stage: click **Space** in the left menu, click **Look Around**, wait until the grass appears, then click **Back to Dashboard**.
 1.  Click **Check-Up** in the left menu. In Kopi's speech box, click **Mute Kopi**: Kopi's voice would talk over the presenter, and the mute holds for the whole session.
@@ -362,9 +362,9 @@ The close echoes slide 1 ("Kotak, Malay for box") and the hook's second question
 1.  The 20-profile line on slide 8 waits for the KPI counter (#378). If #378 hasn't run, cut the line and say nothing in its place.
 1.  Run the 3D space's gate on the pitch laptop over HDMI: smooth, no crash on reload, and the same numbers as 2D ([final plan](/docs/analyses/final-plan.md)). If it fails, use [If the 3D space fails](#if-the-3d-space-fails).
 1.  After kymil4's last change to the space, run Aina's check-up, rerun `bun scripts/futures-sweep.ts` (after `bun run build:data` once), and read D7's numbers off the screen: Aina's fit in each future (47% and 46%) and the Fit Changed count (588 jobs). Update D7 if they differ.
-1.  Deploy `main` (5c0aba2 or later) to Replit and Workers before the pitch, then rerun the demo once on the live site: the driver steps follow #452's Radar, Roles and Roadmap.
+1.  Rerun the demo once on `kotak.tp073654.workers.dev`. It serves 5c0aba2 (#452), the build the driver steps follow; if `main` changes the Radar, Roles or Roadmap again, redeploy Workers and recheck D3 to D5.
 1.  Bring the backup the rules ask for: the demo video, and a local build that runs without Wi-Fi (`bun run build`, then `bun run start`, on port 8787). Offline, Kopi's explanations fall back to their templates.
-1.  Scan the QR codes on slides 5 and 10 with a phone. The live demo and Connect Your AI now open `kotak-alaskxntxna.replit.app`, the README's live link.
+1.  Scan the QR codes on slides 5 and 10 with a phone. They open the Replit mirror, `kotak-alaskxntxna.replit.app`, the README's live link, which stays live as the proof of use; the demo itself runs on Workers.
 
 ## Sources for the opening
 
