@@ -1,4 +1,4 @@
-import { BadgeCheck, FileText, Lock, MonitorCheck, Upload, X } from 'lucide-react'
+import { FileText, Lock, Upload, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { readEvidenceFile, type EvidenceFile, type EvidenceFileProblem } from '../../engine/evidence'
 import { evidenceText } from '../../i18n/messages/evidence'
@@ -18,12 +18,6 @@ export interface ProofSheetProps {
 
 // HEIC is accepted here on purpose: the picker shows a greyed-out .heic file, and the user gets the fix message instead.
 const FILE_ACCEPT = 'image/png,image/jpeg,image/webp,application/pdf,.heic,.heif'
-
-const EXAMPLES = [
-  { icon: FileText, key: 'certificate' },
-  { icon: MonitorCheck, key: 'completion' },
-  { icon: BadgeCheck, key: 'badge' }
-] as const
 
 function fileSize(bytes: number): string {
   const mb = bytes / (1024 * 1024)
@@ -82,27 +76,29 @@ export function ProofSheet({ open, skill, onClose, onSubmit }: ProofSheetProps) 
     return () => document.removeEventListener('paste', handlePaste)
   }, [open])
 
-  const preview = file ? (
+  // A chosen file takes the drop zone's place, so the sheet shows one box either way.
+  const preview = file && (
     <div className="flex items-start gap-3">
       {file.previewUrl ? (
         <img
           src={file.previewUrl}
           alt={t.previewLabel(file.name)}
-          className="max-h-48 w-full min-w-0 flex-1 rounded-sm border border-border-subtle object-contain"
+          className="max-h-48 min-w-0 flex-1 rounded-sm object-contain"
         />
       ) : (
-        <div className="flex min-w-0 flex-1 items-start gap-3 rounded-sm border border-border-subtle bg-bg-panel p-3">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
           <FileText className="mt-0.5 h-5 w-5 shrink-0 stroke-current" aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <p className="text-label-m [overflow-wrap:anywhere]">{file.name}</p>
-            <p className="text-body-s text-text-muted">{fileSize(file.size)}</p>
-            <p className="text-body-s text-text-muted">{t.pdfFirstPage}</p>
+            <p className="text-body-s text-text-muted">
+              {fileSize(file.size)} · {t.pdfFirstPage}
+            </p>
           </div>
         </div>
       )}
       <IconButton label={t.remove} icon={X} onClick={() => put(null)} />
     </div>
-  ) : null
+  )
 
   return (
     <Modal
@@ -126,21 +122,6 @@ export function ProofSheet({ open, skill, onClose, onSubmit }: ProofSheetProps) 
       <div className="space-y-4">
         <p className="text-body-m">{t.intro(skill)}</p>
 
-        <div className="space-y-2">
-          <h3 className="text-label-m">{t.countsHeading}</h3>
-          <ul className="grid gap-2 min-[480px]:grid-cols-3">
-            {EXAMPLES.map(({ icon: Icon, key }) => (
-              <li
-                key={key}
-                className="flex items-center gap-2 rounded-sm border border-border-subtle bg-bg-panel p-3 text-body-s"
-              >
-                <Icon className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-                <span className="min-w-0">{t.examples[key]}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
         <div
           onDragOver={(event) => {
             event.preventDefault()
@@ -153,16 +134,18 @@ export function ProofSheet({ open, skill, onClose, onSubmit }: ProofSheetProps) 
             const dropped = event.dataTransfer.files[0]
             if (dropped) void take(dropped)
           }}
-          className={`flex flex-col items-center gap-2 rounded-md border-[1.5px] border-dashed bg-bg-panel p-4 text-center ${
-            dragging ? 'border-text-primary' : 'border-border-control'
-          }`}
+          className={`rounded-md border-[1.5px] border-dashed p-4 ${dragging ? 'border-text-primary' : 'border-border-control'}`}
         >
-          <Upload className="h-6 w-6 stroke-current" aria-hidden="true" />
-          <p className="text-label-m">{t.dropTitle}</p>
-          <p className="text-body-s text-text-muted">{t.dropTypes}</p>
-          <Button variant="secondary" onClick={() => inputRef.current?.click()}>
-            {file ? t.change : t.choose}
-          </Button>
+          {preview || (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <Upload className="h-5 w-5 stroke-current" aria-hidden="true" />
+              <p className="text-label-m">{t.dropTitle}</p>
+              <p className="text-body-s text-text-muted">{t.dropTypes}</p>
+              <Button variant="secondary" onClick={() => inputRef.current?.click()}>
+                {t.choose}
+              </Button>
+            </div>
+          )}
           <input
             ref={inputRef}
             type="file"
@@ -178,8 +161,6 @@ export function ProofSheet({ open, skill, onClose, onSubmit }: ProofSheetProps) 
             }}
           />
         </div>
-
-        {preview}
 
         {problem && (
           <p role="alert" className="text-body-s text-state-error">
