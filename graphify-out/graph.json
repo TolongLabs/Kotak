@@ -45831,6 +45831,56 @@
       "norm_label": "packages_browser_src_index_route",
       "source_file": "",
       "type": "external"
+    },
+    {
+      "id": "scripts_readme_architecture_diagram",
+      "label": "Diagram",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "diagram",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "scripts_readme_architecture_point",
+      "label": "Point",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "point",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "scripts_readme_architecture_escape",
+      "label": "escape()",
+      "_callable": true,
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "escape()",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "scripts_readme_architecture",
+      "label": "readme-architecture.ts",
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "readme-architecture.ts",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "scripts_readme_architecture_root",
+      "label": "root",
+      "_origin": "ast",
+      "file_type": "code",
+      "norm_label": "root",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L5"
     }
   ],
   "links": [
@@ -134041,6 +134091,62 @@
       "context": "withProfile()",
       "source_file": "packages/browser/README.md",
       "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "ref_node_path",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_escape",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_root",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_point",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_readme_architecture",
+      "target": "scripts_readme_architecture_diagram",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/readme-architecture.ts",
+      "source_location": "L7",
       "weight": 1.0
     }
   ],
