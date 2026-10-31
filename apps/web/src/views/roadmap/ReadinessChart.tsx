@@ -49,6 +49,16 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
   const yTicks = [...new Set([minimumFit, 60, 70, 80, 90, 100].filter((tick) => tick >= minimumFit))]
   const xTicks = [...new Set(points.map((point) => point.week))]
 
+  // The smooth line (P9). Fit only rises when a step ends, so the curve stays level through each step and bends up in
+  // its last week; the 80% line is crossed at most a week before the week the plan names. The dots stay on the engine's
+  // points.
+  const curve = points.flatMap((point, index) => {
+    const previous = points[index - 1]
+    if (!previous || point.plan === previous.plan) return [point]
+    const ease = Math.min(1, (point.week - previous.week) / 2)
+    return [{ ...previous, week: point.week - ease }, point]
+  })
+
   const lastWeek = lastPoint?.week ?? 0
   const todayWeek = Math.floor(dayDiff(startIso, todayIso) / 7)
   const showToday = todayWeek >= 0 && todayWeek <= lastWeek
@@ -138,10 +148,22 @@ export function ReadinessChart({ points, roleTitle, startIso, todayIso, steps, o
               {showToday && <ReferenceLine x={todayWeek} stroke="var(--color-text-primary)" strokeWidth={2} />}
               <ReferenceLine y={80} stroke="var(--color-text-muted)" strokeDasharray="4 4" />
               <Line
-                type="stepAfter"
+                data={curve}
+                type="monotone"
+                dataKey="plan"
+                stroke="var(--color-text-primary)"
+                strokeWidth={2}
+                dot={false}
+                activeDot={false}
+                tooltipType="none"
+                legendType="none"
+                isAnimationActive={false}
+              />
+              <Line
+                type="linear"
                 dataKey="plan"
                 name={t.fit.yourPlan}
-                stroke="var(--color-text-primary)"
+                stroke="transparent"
                 strokeWidth={2}
                 dot={{ r: 4, fill: 'var(--color-accent-box)', stroke: 'var(--color-text-primary)', strokeWidth: 1.5 }}
                 activeDot={{

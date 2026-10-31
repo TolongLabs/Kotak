@@ -16,9 +16,11 @@ export interface RoleCardProps {
   footer?: ReactNode
   // Why the card is highlighted, in bold above its title.
   note?: string
+  // A short tag in the same slot when there is no note, such as Your Job.
+  tag?: string
 }
 
-export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleCardProps) {
+export function RoleCard({ role, selected, onSelect, name, footer, note, tag }: RoleCardProps) {
   const t = useText(rolesText)
   return (
     <label
@@ -30,11 +32,19 @@ export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleC
       )}
     >
       <input type="radio" name={name} value={role.id} checked={selected} onChange={onSelect} className="sr-only" />
-      {note && <span className="text-body-s font-bold text-text-primary">{note}</span>}
+      {/* Every card keeps the same rows in the same places, so bars, chips and text line up across a row. */}
+      <span className="flex min-h-6 items-center">
+        {note ? (
+          <span className="text-body-s font-bold text-text-primary">{note}</span>
+        ) : tag ? (
+          <span className="rounded-full border border-text-primary px-2 py-0.5 text-label-s font-semibold text-text-primary">
+            {tag}
+          </span>
+        ) : null}
+      </span>
       <div className="flex min-h-12 items-start justify-between gap-3">
         <span className="min-w-0 hyphens-auto text-title-s text-text-primary [overflow-wrap:anywhere]">
           {role.title}
-          {role.isCurrentJob && ` (${t.card.yourJob})`}
         </span>
         <span className="flex shrink-0 items-start gap-2">
           <span className="flex flex-col items-end">
@@ -51,15 +61,15 @@ export function RoleCard({ role, selected, onSelect, name, footer, note }: RoleC
           {selected && <CircleCheck className="mt-1 h-5 w-5 stroke-current" aria-hidden="true" />}
         </span>
       </div>
-      <span className="flex items-center gap-2">
-        <span className="font-mono text-mono-s text-text-muted">{t.card.outlook}</span>
-        <VerdictChip verdict={role.outlook} size="sm" />
-      </span>
       <span
         aria-hidden="true"
         className={cn('h-2 w-full overflow-hidden rounded-full', selected ? 'bg-bg-default' : 'bg-bg-panel')}
       >
         <span className="block h-full rounded-full bg-text-primary" style={{ width: `${role.fit}%` }} />
+      </span>
+      <span className="flex items-center gap-2">
+        <span className="font-mono text-mono-s text-text-muted">{t.card.outlook}</span>
+        <VerdictChip verdict={role.outlook} size="sm" />
       </span>
       <span className="text-body-s text-text-primary">
         {role.missing ? t.card.missing(role.missing) : t.card.noGaps}

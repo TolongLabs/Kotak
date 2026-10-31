@@ -735,24 +735,28 @@ export const roadmapText = defineText(
       planControls: 'Plan Controls',
       hoursPerWeek: 'Hours Per Week',
       planStartDate: 'Plan Start Date',
-      impactArea: 'Impact Area',
       highlightStepsBySdg: 'Highlight Steps By SDG',
       filterStepsByImpact: 'Filter Steps By SDG Impact Area',
       showAll: 'Show All',
       stepDetails: 'Step Details',
       stepDetailsAria: 'Roadmap Reasoning',
+      islandSummary: (hours: string, date: string, future: string) => `${hours} h/wk · from ${date} · ${future}`,
+      change: 'Change',
+      done: 'Done',
+      yourPlan: 'Your Plan',
       continue: 'Continue:'
     },
     qualification:
       'The steps below build the skills the role uses, so you can test whether the work suits you. To practise it, you’d still need the qualification and the admission above.',
     stepDetails: {
       paceSet: 'Pace set for you.',
+      lessImportantTitle: 'Less Important in This Plan',
+      lessImportantHint: 'Declining skills come last in the plan, so spend fewer hours here.',
       seeMaths: 'See the Maths',
       noLearningSteps: 'No learning steps are needed for this snapshot.',
       afterWeek: (week: number) => `After Week ${week}`,
       remaining: (hours: string, weeks: number) =>
-        `About ${hours} learning hours remain after this window. The full path is about ${weeks} weeks at these hours. The 80% fit threshold does not mean every skill target is met.`,
-      noLessImportant: 'No skills are marked as less important in this plan.'
+        `About ${hours} learning hours remain after this window. The full path is about ${weeks} weeks at these hours. The 80% fit threshold does not mean every skill target is met.`
     },
     funding: {
       title: 'Can Your Employer Fund This?',
@@ -764,21 +768,6 @@ export const roadmapText = defineText(
       freePremium: 'offers free and premium courses.',
       source: (date: string) => `Source: HRD Corp · accessed ${date}`,
       accessed: (date: string) => `accessed ${date}`
-    },
-    freeTime: {
-      title: 'Free Up Time With AI',
-      noEstimate: 'There is no source-backed estimate of time saved for this role yet.',
-      already: 'Already at least 80% Fit',
-      changedWeek: (after: number, before: number) => `80% Fit by Week ${after}, Was Week ${before}`,
-      newlyReady: (after: number) => `80% Fit by Week ${after} · Was Below 80%`,
-      withTheseHours: (after: number) => `80% Fit by Week ${after} With These Hours`,
-      withCurrentHours: (before: number) => `80% Fit by Week ${before} With Current Hours`,
-      belowWithin: (weeks: number) => `Below 80% Fit Within ${weeks} Weeks`,
-      aboutHours: (hours: string) => `About ${hours} h a week`,
-      savedHours: (hours: string) => `-${hours} h`,
-      goesFree: 'goes free with AI on tasks like these.',
-      apply: (hours: string) => `Use ${hours} h a Week for My Plan`,
-      source: 'Source: Anthropic Economic Index'
     },
     path: {
       title: 'What This Path Contributes To',
@@ -837,8 +826,9 @@ export const roadmapText = defineText(
       levels: { basic: 'Basic', working: 'Working', advanced: 'Advanced' },
       aboutLevel: (level: number, skill: string, _levelName: string) => `About Level ${level} · ${skill}`,
       estimated: 'Estimated',
-      useResource: 'Use the linked resource to practise this skill.',
       searchResource: (title: string) => `Search: ${title}`,
+      foldStep: (skill: string) => `Hide the details of ${skill}`,
+      openStep: (skill: string) => `Show the details of ${skill}`,
       partialDescription: (description: string, allocated: string, hours: string, week: number) =>
         `${description} First ${allocated} of ${hours} estimated hours. Continue after Week ${week}.`,
       fullTarget: (gain: string) => `Target after the full milestone: ${gain}`
@@ -1012,24 +1002,29 @@ export const roadmapText = defineText(
       planControls: 'Kawalan Pelan',
       hoursPerWeek: 'Jam Seminggu',
       planStartDate: 'Tarikh Mula Pelan',
-      impactArea: 'Bidang Impak',
       highlightStepsBySdg: 'Serlahkan Langkah Mengikut SDG',
       filterStepsByImpact: 'Tapis Langkah Mengikut Bidang Impak SDG',
       showAll: 'Tunjukkan Semua',
       stepDetails: 'Butiran Langkah',
       stepDetailsAria: 'Sebab Peta Jalan',
+      islandSummary: (hours, date, future) => `${hours} j/mgg · dari ${date} · ${future}`,
+      change: 'Ubah',
+      done: 'Selesai',
+      yourPlan: 'Pelan Anda',
       continue: 'Teruskan:'
     },
     qualification:
       'Langkah di bawah membina kemahiran yang digunakan dalam peranan ini, supaya anda boleh menilai kesesuaiannya. Untuk melakukan kerja ini, anda masih memerlukan kelayakan dan kelulusan di atas.',
     stepDetails: {
       paceSet: 'Kadar ditetapkan untuk anda.',
+      lessImportantTitle: 'Kurang Penting dalam Pelan Ini',
+      lessImportantHint:
+        'Kemahiran Menurun diletakkan paling akhir dalam pelan, jadi luangkan lebih sedikit masa di sini.',
       seeMaths: 'Lihat Pengiraan',
       noLearningSteps: 'Tiada langkah pembelajaran diperlukan untuk paparan ini.',
       afterWeek: (week) => `Selepas Minggu ${week}`,
       remaining: (hours, weeks) =>
-        `Kira-kira ${hours} jam pembelajaran berbaki selepas tempoh ini. Keseluruhan laluan mengambil kira-kira ${weeks} minggu pada kadar ini. Ambang padanan 80% tidak bermakna semua sasaran kemahiran telah dicapai.`,
-      noLessImportant: 'Tiada kemahiran ditandakan kurang penting dalam pelan ini.'
+        `Kira-kira ${hours} jam pembelajaran berbaki selepas tempoh ini. Keseluruhan laluan mengambil kira-kira ${weeks} minggu pada kadar ini. Ambang padanan 80% tidak bermakna semua sasaran kemahiran telah dicapai.`
     },
     funding: {
       title: 'Bolehkah Majikan Membiayai Ini?',
@@ -1041,21 +1036,6 @@ export const roadmapText = defineText(
       freePremium: 'menawarkan kursus percuma dan berbayar.',
       source: (date) => `Sumber: HRD Corp · diakses pada ${date}`,
       accessed: (date) => `diakses pada ${date}`
-    },
-    freeTime: {
-      title: 'Luangkan Masa dengan AI',
-      noEstimate: 'Belum ada anggaran bersumber tentang masa yang dapat dijimatkan untuk peranan ini.',
-      already: 'Sudah mencapai Padanan 80%',
-      changedWeek: (after, before) => `Padanan 80% menjelang Minggu ${after}, sebelum ini Minggu ${before}`,
-      newlyReady: (after) => `Padanan 80% menjelang Minggu ${after} · Sebelum ini di bawah 80%`,
-      withTheseHours: (after) => `Padanan 80% menjelang Minggu ${after} dengan Jam Ini`,
-      withCurrentHours: (before) => `Padanan 80% menjelang Minggu ${before} dengan Jam Semasa`,
-      belowWithin: (weeks) => `Padanan di bawah 80% dalam ${weeks} minggu`,
-      aboutHours: (hours) => `Kira-kira ${hours} jam seminggu`,
-      savedHours: (hours) => `-${hours} jam`,
-      goesFree: 'masa akan diluangkan dengan AI untuk tugas seperti ini.',
-      apply: (hours) => `Gunakan ${hours} jam seminggu untuk Pelan Saya`,
-      source: 'Sumber: Anthropic Economic Index'
     },
     path: {
       title: 'Sumbangan Laluan Ini',
@@ -1114,8 +1094,9 @@ export const roadmapText = defineText(
       levels: { basic: 'Asas', working: 'Kompeten', advanced: 'Lanjutan' },
       aboutLevel: (_level, skill, levelName) => `Anggaran Tahap ${levelName} · ${skill}`,
       estimated: 'Anggaran',
-      useResource: 'Gunakan sumber yang dipautkan untuk berlatih kemahiran ini.',
       searchResource: (title) => `Carian: ${title}`,
+      foldStep: (skill) => `Sembunyikan butiran ${skill}`,
+      openStep: (skill) => `Tunjukkan butiran ${skill}`,
       partialDescription: (description, allocated, hours, week) =>
         `${description} ${allocated} daripada ${hours} jam anggaran yang pertama. Sambung selepas Minggu ${week}.`,
       fullTarget: (gain) => `Sasaran selepas langkah penuh: ${gain}`
@@ -1291,24 +1272,28 @@ export const roadmapText = defineText(
       planControls: '计划设置',
       hoursPerWeek: '每周学习时数',
       planStartDate: '计划开始日期',
-      impactArea: '影响领域',
       highlightStepsBySdg: '按 SDG 突出显示步骤',
       filterStepsByImpact: '按 SDG 影响领域筛选步骤',
       showAll: '显示全部',
       stepDetails: '步骤详情',
       stepDetailsAria: '路线图说明',
+      islandSummary: (hours, date, future) => `每周 ${hours} 小时 · ${date} 起 · ${future}`,
+      change: '更改',
+      done: '完成',
+      yourPlan: '你的计划',
       continue: '继续：'
     },
     qualification:
       '下面的步骤会帮助你培养该职位所需的技能，让你判断这类工作是否适合自己。若要从事这份工作，你仍需要上方提到的资格和录取许可。',
     stepDetails: {
       paceSet: '已为你设定学习进度。',
+      lessImportantTitle: '本计划中较不重要的技能',
+      lessImportantHint: '下降的技能排在计划最后，所以在这里少花些时间。',
       seeMaths: '查看计算方式',
       noLearningSteps: '此快照无需学习步骤。',
       afterWeek: (week) => `第 ${week} 周之后`,
       remaining: (hours, weeks) =>
-        `此阶段之后还剩约 ${hours} 小时的学习内容。按目前的时数，完整路径约需 ${weeks} 周。达到 80% 匹配度不代表已满足所有技能目标。`,
-      noLessImportant: '此计划没有标记为较不重要的技能。'
+        `此阶段之后还剩约 ${hours} 小时的学习内容。按目前的时数，完整路径约需 ${weeks} 周。达到 80% 匹配度不代表已满足所有技能目标。`
     },
     funding: {
       title: '雇主可以资助这项培训吗？',
@@ -1318,21 +1303,6 @@ export const roadmapText = defineText(
       freePremium: '提供免费和付费课程。',
       source: (date) => `来源：HRD Corp · 查阅日期 ${date}`,
       accessed: (date) => `查阅日期 ${date}`
-    },
-    freeTime: {
-      title: '用 AI 腾出时间',
-      noEstimate: '目前没有这份工作可节省时数的来源估算。',
-      already: '已达到至少 80% 匹配度',
-      changedWeek: (after, before) => `第 ${after} 周达到 80% 匹配度，原为第 ${before} 周`,
-      newlyReady: (after) => `第 ${after} 周达到 80% 匹配度 · 原本未达 80%`,
-      withTheseHours: (after) => `按这些时数，第 ${after} 周达到 80% 匹配度`,
-      withCurrentHours: (before) => `按目前时数，第 ${before} 周达到 80% 匹配度`,
-      belowWithin: (weeks) => `${weeks} 周内匹配度未达 80%`,
-      aboutHours: (hours) => `每周约 ${hours} 小时`,
-      savedHours: (hours) => `-${hours} 小时`,
-      goesFree: '使用 AI 处理这类任务后可腾出时间。',
-      apply: (hours) => `每周将 ${hours} 小时用于我的计划`,
-      source: '来源：Anthropic Economic Index'
     },
     path: {
       title: '这条路径的贡献',
@@ -1390,8 +1360,9 @@ export const roadmapText = defineText(
       levels: { basic: '基础', working: '熟练', advanced: '高级' },
       aboutLevel: (_level, skill, levelName) => `目标水平 ${levelName} · ${skill}`,
       estimated: '估算',
-      useResource: '使用链接中的资源练习这项技能。',
       searchResource: (title) => `搜索：${title}`,
+      foldStep: (skill) => `隐藏「${skill}」的详情`,
+      openStep: (skill) => `显示「${skill}」的详情`,
       partialDescription: (description, allocated, hours, week) =>
         `${description} 先完成估算 ${hours} 小时中的 ${allocated} 小时。第 ${week} 周后继续。`,
       fullTarget: (gain) => `完成整个步骤后的目标：${gain}`

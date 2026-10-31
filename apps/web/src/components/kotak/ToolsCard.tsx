@@ -1,6 +1,7 @@
 import type { BundleRole } from '@kotak/shared'
 import { useState } from 'react'
 import { Citation } from '../ui/Citation'
+import { Disclosure } from '../ui/Disclosure'
 import { roadmapText } from '../../i18n/messages/roadmap'
 import { useText } from '../../i18n/text'
 
@@ -13,28 +14,36 @@ const FOLDED = 12
 export function ToolsCard({
   role,
   sourceNumber,
-  heading
+  heading,
+  embedded = false,
+  folded = false
 }: {
   role: Pick<BundleRole, 'onet_code' | 'title' | 'tools'>
   sourceNumber: number
   heading?: string
+  /** Inside another card or fold: no card of its own, and a smaller heading. */
+  embedded?: boolean
+  /** A closed fold of its own, titled with the heading and the count. */
+  folded?: boolean
 }) {
   const t = useText(roadmapText)
   const [open, setOpen] = useState(false)
   if (!role.tools.length) return null
   const titleId = `tools-${role.onet_code}`
+  const title = heading ?? t.tools.employersName
   const inDemand = role.tools.some((tool) => tool.in_demand)
   const shown = open ? role.tools : role.tools.slice(0, FOLDED)
-  return (
-    <section aria-labelledby={titleId} className="surface-card space-y-3 p-4">
-      <header className="flex items-start justify-between gap-3">
-        <h2 id={titleId} className="text-title-s text-text-primary">
-          {heading ?? t.tools.employersName}
-        </h2>
-        <Citation n={sourceNumber} />
-      </header>
+
+  const body = (
+    <>
       <p className="text-body-s text-text-muted">
         {inDemand ? t.tools.inDemand(role.title) : t.tools.oftenNamed(role.title)} {t.tools.usAndMalaysia}
+        {folded && (
+          <>
+            {' '}
+            <Citation n={sourceNumber} />
+          </>
+        )}
       </p>
       <ul className="flex flex-wrap gap-2" aria-label={t.tools.listLabel(role.title)}>
         {shown.map((tool) => (
@@ -56,6 +65,26 @@ export function ToolsCard({
           {open ? t.tools.showFewer : t.tools.showAll(role.tools.length)}
         </button>
       )}
+    </>
+  )
+
+  if (folded) {
+    return (
+      <Disclosure variant="card" title={`${title} (${role.tools.length})`}>
+        <div className="space-y-3">{body}</div>
+      </Disclosure>
+    )
+  }
+
+  return (
+    <section aria-labelledby={titleId} className={embedded ? 'space-y-3' : 'surface-card space-y-3 p-4'}>
+      <header className="flex items-start justify-between gap-3">
+        <h2 id={titleId} className={embedded ? 'text-label-m text-text-primary' : 'text-title-s text-text-primary'}>
+          {title}
+        </h2>
+        <Citation n={sourceNumber} />
+      </header>
+      {body}
     </section>
   )
 }

@@ -1,5 +1,4 @@
 import { Briefcase, CircleCheck, Target, TriangleAlert } from 'lucide-react'
-import { useState } from 'react'
 import { Link } from '../../app/router'
 import { routes } from '../../app/routes'
 import type { Swot, SwotItem } from '../../demo/types'
@@ -15,20 +14,16 @@ export interface SkillsSwotProps {
   radarLink?: boolean
 }
 
-// Each quadrant shows this many items first, so one long list does not stretch its row.
-const QUADRANT_PREVIEW = 4
-
 export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: SkillsSwotProps) {
   const phone = size === 'phone'
   const t = useText(radarText)
-  const [expanded, setExpanded] = useState<string[]>([])
   const quadrants: Array<{
     key: string
     title: string
     hint: string
     items: SwotItem[]
     icon: typeof CircleCheck
-    className: string
+    swatch: string
     focus?: boolean
   }> = [
     {
@@ -37,7 +32,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
       hint: t.strengths.hint,
       items: swot.strengths,
       icon: CircleCheck,
-      className: 'on-accent on-you-fill border-[1.5px] border-text-primary bg-radar-you-fill'
+      swatch: 'bg-radar-you-fill'
     },
     {
       key: 'weaknesses',
@@ -45,7 +40,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
       hint: t.weaknesses.hint,
       items: swot.weaknesses,
       icon: Target,
-      className: 'border-[1.5px] border-text-primary bg-swot-weak',
+      swatch: 'bg-swot-weak',
       focus: true
     },
     {
@@ -54,7 +49,7 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
       hint: t.opportunities.hint,
       items: swot.opportunities,
       icon: Briefcase,
-      className: 'border-[1.5px] border-text-primary bg-swot-opp'
+      swatch: 'bg-swot-opp'
     },
     {
       key: 'threats',
@@ -62,13 +57,13 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
       hint: t.threats.hint,
       items: swot.threats,
       icon: TriangleAlert,
-      className: 'border-[1.5px] border-text-primary bg-swot-threat'
+      swatch: 'bg-swot-threat'
     }
   ]
 
   return (
     <section
-      className={cn('surface-card @container space-y-4', phone ? 'p-3' : 'p-3 lg:p-5')}
+      className={cn('surface-card @container space-y-3', phone ? 'p-3' : 'p-3 lg:p-5')}
       aria-labelledby="skills-swot-title"
     >
       <header className="flex items-start justify-between gap-3">
@@ -88,65 +83,49 @@ export function SkillsSwot({ swot, size = 'desktop', radarLink = false }: Skills
         ) : null}
       </header>
 
-      {/* Columns follow the card's own width: one on phones, 2x2 in a half column, one row of four at full width. */}
-      <div className="grid grid-cols-1 gap-3 @md:grid-cols-2 @3xl:grid-cols-4">
-        {quadrants.map(({ key, title, hint, items, icon: Icon, className, focus }) => {
-          const open = expanded.includes(key)
-          const shown = open ? items : items.slice(0, QUADRANT_PREVIEW)
-          const hiddenCount = items.length - shown.length
-          return (
-            <section
-              key={key}
-              aria-label={title}
-              className={cn(
-                'flex h-full min-w-0 flex-col rounded-md p-3',
-                phone ? 'gap-2' : 'gap-2 lg:gap-2.5 lg:p-4',
-                className
-              )}
-            >
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <Icon className="h-[18px] w-[18px] shrink-0 stroke-current" aria-hidden="true" />
-                <h3 className={cn('text-text-primary', phone ? 'text-label-m' : 'text-label-m lg:text-label-l')}>
+      {/* Four ruled rows: an empty quadrant takes one line instead of a tinted box, and the tints stay as swatches, so
+          the colours still match the quadrant map. */}
+      <ul className="divide-y divide-border-subtle border-y border-border-subtle">
+        {quadrants.map(({ key, title, hint, items, icon: Icon, swatch, focus }) => (
+          <li
+            key={key}
+            aria-label={title}
+            className="grid gap-x-5 gap-y-2 py-3 @2xl:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]"
+          >
+            <div className="flex min-w-0 items-start gap-3">
+              <span
+                aria-hidden="true"
+                className={cn('mt-0.5 h-10 w-3 shrink-0 rounded-sm border border-text-primary', swatch)}
+              />
+              <div className="min-w-0 space-y-0.5">
+                <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-label-m text-text-primary">
+                  <Icon className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
                   {title}
+                  {focus && items.length > 0 && (
+                    <span className="rounded-full border border-text-primary px-2 py-0.5 text-label-s font-semibold text-text-primary">
+                      {t.focusHere}
+                    </span>
+                  )}
                 </h3>
-                {focus && items.length > 0 && (
-                  <span className="rounded-full border border-text-primary px-2 py-0.5 text-label-s font-semibold text-text-primary">
-                    {t.focusHere}
-                  </span>
-                )}
+                <p className="text-body-s text-text-muted">{hint}</p>
               </div>
-              <p className="text-body-s text-text-muted">{hint}</p>
-              {shown.length > 0 ? (
-                <ul className={cn('space-y-2.5', phone ? 'mt-0.5' : 'mt-1')}>
-                  {shown.map((item, index) => (
-                    <li key={`${item.label}-${index}`} className="min-w-0 space-y-1">
-                      <p className="break-words text-label-m text-text-primary">{item.label}</p>
-                      <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                        <VerdictChip verdict={item.verdict} size="sm" />
-                        <span className="font-mono text-mono-s text-text-muted">{item.detail}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-body-s text-text-muted">{t.noneInSnapshot}</p>
-              )}
-              {items.length > QUADRANT_PREVIEW && (
-                <button
-                  type="button"
-                  aria-expanded={open}
-                  onClick={() =>
-                    setExpanded((current) => (open ? current.filter((each) => each !== key) : [...current, key]))
-                  }
-                  className="-ml-1 inline-flex min-h-11 items-center self-start px-1 text-label-s font-semibold text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted"
-                >
-                  {open ? t.showLess : t.moreItems(hiddenCount)}
-                </button>
-              )}
-            </section>
-          )
-        })}
-      </div>
+            </div>
+            {items.length > 0 ? (
+              <ul className="grid content-center gap-x-6 gap-y-2 @3xl:grid-cols-2">
+                {items.map((item, index) => (
+                  <li key={`${item.label}-${index}`} className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="break-words text-label-m text-text-primary">{item.label}</span>
+                    <VerdictChip verdict={item.verdict} size="sm" />
+                    <span className="font-mono text-mono-s text-text-muted">{item.detail}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="self-center text-body-s text-text-muted">{t.noneInSnapshot}</p>
+            )}
+          </li>
+        ))}
+      </ul>
 
       <p className="font-mono text-mono-s text-text-muted">{t.swotFootnote}</p>
     </section>

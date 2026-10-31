@@ -59,7 +59,7 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
         when: `${t.stepCard.estimated} · ${t.stepCard.weekSpan(startWeek, endWeek)} · ${formatDateRange(startDate, endDate)}${conditional ? ` · ${common.verdicts[conditional]}` : ''}`,
         skill: corner?.name ?? item.corner_id,
         title: corner?.statements?.[item.statement] ?? '',
-        description: resource ? t.stepCard.useResource : '',
+        description: '',
         gain: t.stepCard.aboutLevel(item.to_level, corner?.name ?? item.corner_id, t.stepCard.levels[item.statement]),
         hoursPerWeek: weeklyHours,
         resource: resource

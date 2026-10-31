@@ -10,7 +10,7 @@ import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { GapCard } from '../components/kotak/GapCard'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { JobMarketCard } from '../components/kotak/JobMarketCard'
-import { ExplanationSourceProvider } from '../components/kotak/Reasoning'
+import { ExplanationSourceProvider, ReasoningFooter } from '../components/kotak/Reasoning'
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
@@ -21,15 +21,16 @@ import { Button } from '../components/ui/Button'
 import { Stepper } from '../components/ui/Stepper'
 import { Tooltip } from '../components/ui/Tooltip'
 import { routeLinkClassName } from '../components/ui/TextLink'
-import { dateLocale } from '../i18n/locale'
+import { changesText } from '../i18n/messages/changes'
 import { radarText } from '../i18n/messages/radar'
 import { useText } from '../i18n/text'
 import { isEstimatedLevel, toCorners, toRoles, neededByLabel, sourceRefs } from '../engine/viewModel'
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
-import { assessedRoleCode, computeCheckup, type Checkup } from '../engine/checkup'
+import { assessedRoleCode, computeCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
 import { useCheckupBundle } from '../engine/bundle'
 import { fetchExplanations } from '../engine/api'
+import { radarFutureDiff } from '../engine/futureDiff'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { hasAnswers, useGuestSession } from '../session/store'
 import { useScenario } from '../session/scenario'
@@ -44,43 +45,30 @@ function gapFor(corner: Corner, scenario: Scenario) {
   return needed - corner.you
 }
 
-function snapshotMonth(snapshotId: string) {
-  const [year, month] = snapshotId.split('-').map(Number)
-  const date = new Date(Date.UTC(year, month - 1, 1))
-  return date.toLocaleDateString(dateLocale(), { month: 'long', year: 'numeric', timeZone: 'UTC' })
-}
-
-function latestSourceVintageDate(checkup: Checkup): string | null {
-  const dates = checkup.corners
-    .flatMap((corner) => corner.verdict.sources)
-    .map((source) => source.vintage_date)
-    .filter(Boolean)
-  if (dates.length === 0) return null
-  return [...dates].sort().reverse()[0]
-}
-
 export function RadarView() {
   const session = useGuestSession()
   const t = useText(radarText)
+  const futures = useText(changesText).receipts
   const bundle = useCheckupBundle(session)
   const [scenario, setScenario] = useScenario()
   const roleData = bundle.status === 'ready' ? bundle.data : null
   const [today] = useState(() => new Date().toISOString().slice(0, 10))
-  const checkup = useMemo(
-    () =>
-      roleData
-        ? computeCheckup({
-            role: roleData.role,
-            related: roleData.related,
-            answers: session.answers,
-            snapshotId: '2026-05',
-            scenario,
-            weeklyHours: session.custom_weekly_hours,
-            startDate: today
-          })
-        : null,
-    [roleData, session.answers, session.custom_weekly_hours, scenario, today]
-  )
+  const checkups = useMemo(() => {
+    if (!roleData) return null
+    // Both futures, so the switch can say what flipping changes; the page shows the chosen one.
+    const run = (future: Scenario) =>
+      computeCheckup({
+        role: roleData.role,
+        related: roleData.related,
+        answers: session.answers,
+        snapshotId: '2026-05',
+        scenario: future,
+        weeklyHours: session.custom_weekly_hours,
+        startDate: today
+      })
+    return { slow: run('slow'), fast: run('fast') }
+  }, [roleData, session.answers, session.custom_weekly_hours, today])
+  const checkup = checkups ? checkups[scenario] : null
   // Explanations come from the AI route (#43). Until it exists, ?ai=off shows the paused state for demos.
   const [explanationsPaused, setExplanationsPaused] = useState(
     () => new URLSearchParams(window.location.search).get('ai') === 'off'
@@ -191,8 +179,24 @@ export function RadarView() {
   const roles = toRoles(checkup, [role, ...related], session.role_code, { bundle: bundle.data, session })
   const swot = deriveSwot(corners, roles, scenario)
   const neededLabel = neededByLabel(checkup)
-  const activeMonth = snapshotMonth(checkup.snapshotId)
-  const latestVintage = latestSourceVintageDate(checkup)
+  // What the other AI future moves here: needed levels only, since verdicts stay the same in both.
+  // The radar draws needed levels in half steps, so a small target move can leave the chart as it is while the fit
+  // still moves; the receipt then names the fit.
+  const futureDiff = radarFutureDiff(corners)
+  const fitIn = (future: Scenario) =>
+    Math.round(
+      checkups?.[future].roles.find((candidate) => candidate.onet_code === role.onet_code)?.fit.score ?? Number.NaN
+    )
+  const [slowFit, fastFit] = [fitIn('slow'), fitIn('fast')]
+  const futureReceipt =
+    futureDiff.moved > 0
+      ? {
+          slow: futures.radarPreview(futureDiff.moved, futureDiff.total),
+          fast: futures.radarDone(futureDiff.moved, futureDiff.total)
+        }
+      : Number.isFinite(slowFit) && Number.isFinite(fastFit) && slowFit !== fastFit
+        ? { slow: futures.radarFitPreview(slowFit, fastFit), fast: futures.radarFitDone(slowFit, fastFit) }
+        : { slow: futures.radarSame, fast: futures.radarSame }
 
   const biggestRisingGap = corners
     .filter((corner) => corner.verdict === 'rising' && gapFor(corner, scenario) > 0)
@@ -262,23 +266,23 @@ export function RadarView() {
 
     return (
       <ExplanationSourceProvider key={corner.id} source={explanationSource}>
-        <div className="surface-card space-y-3 p-4 [&>article]:rounded-none [&>article]:border-0 [&>article]:bg-transparent [&>article]:p-0">
-          <GapCard
-            corner={corner}
-            sources={cornerSources}
-            scenario={scenario}
-            neededLabel={neededLabel}
-            paused={explanationsPaused}
-          />
-          {targets.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-label-s text-text-muted">{t.closingSupports}</span>
-              {targets.map((target) => (
-                <SdgTargetChip key={target} target={target} />
-              ))}
-            </div>
-          )}
-        </div>
+        <GapCard
+          corner={corner}
+          sources={cornerSources}
+          scenario={scenario}
+          neededLabel={neededLabel}
+          paused={explanationsPaused}
+          aside={
+            targets.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-label-s text-text-muted">{t.closingSupports}</span>
+                {targets.map((target) => (
+                  <SdgTargetChip key={target} target={target} />
+                ))}
+              </div>
+            )
+          }
+        />
       </ExplanationSourceProvider>
     )
   }
@@ -290,6 +294,7 @@ export function RadarView() {
         <CatDialogue pose="worried" speech={t.aiResting} />
 
         {pausedGapCorners.map(renderGapCard)}
+        {pausedGapCorners.length > 0 && <ReasoningFooter sources={[]} paused />}
 
         <div className="surface-glass sticky bottom-(--ask-kopi-clearance) z-10 grid grid-cols-1 gap-3 rounded-md p-3 sm:grid-cols-2 lg:static lg:border-0 lg:bg-bg-default lg:p-0 lg:backdrop-blur-none">
           <Button variant="secondary" size="lg" fullWidth onClick={retryExplanations}>
@@ -337,13 +342,19 @@ export function RadarView() {
           </div>
         )}
         <p className="text-body-s text-text-muted">{t.radarIntro}</p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-          <ScenarioControl scenario={scenario} onChange={setScenario} />
+      </header>
+
+      <ScenarioControl
+        scenario={scenario}
+        onChange={setScenario}
+        receipt={futureReceipt}
+        anchors={role.signals[checkup.snapshotId]?.anchors}
+        trailing={
           <Link to={spacePath()} className={routeLinkClassName}>
             {t.seeFutureInSpace}
           </Link>
-        </div>
-      </header>
+        }
+      />
 
       <AccessNotice
         access={access}
@@ -358,17 +369,17 @@ export function RadarView() {
         }
       />
 
-      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 lg:gap-6">
-        <section className="space-y-4" aria-label={t.futureSkillsRadar}>
+      {/* An equal pair: the map's table starts folded, so no hole opens under the radar. The snapshot month sits in
+          the top bar's data chip. */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+        <section
+          className="flex items-center justify-center lg:rounded-md lg:border lg:border-border-subtle lg:bg-bg-default lg:p-4"
+          aria-label={t.futureSkillsRadar}
+        >
           <FutureSkillsRadar corners={corners} scenario={scenario} size="lg" neededLabel={neededLabel} />
-          <Banner
-            type="info"
-            title={t.dataAsOf(activeMonth)}
-            body={latestVintage ? t.latestVintageDate(latestVintage) : undefined}
-          />
         </section>
 
-        <QuadrantMap points={quadrantPoints} />
+        <QuadrantMap points={quadrantPoints} className="h-full" />
       </div>
 
       <div className="space-y-4">
@@ -385,18 +396,26 @@ export function RadarView() {
           </header>
 
           {weaknessCorners.map(renderGapCard)}
+          {weaknessCorners.length > 0 && (
+            <ReasoningFooter
+              sources={weaknessCorners.map((corner) => explanationByCorner.get(corner.id)?.source ?? 'template')}
+            />
+          )}
         </section>
 
-        {jobMarket && jobMarketSource && (
+        {/* The O*NET tools sit in the job ads' breakdown, so the page lists tools once. */}
+        {jobMarket && jobMarketSource ? (
           <JobMarketCard
             market={jobMarket}
             roleTitle={role.title}
             sourceNumber={jobMarketSource.n}
             level={jobMarketLevelForYears(yearsOfWork(session.profile))}
-          />
+          >
+            {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} embedded />}
+          </JobMarketCard>
+        ) : (
+          toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} folded />
         )}
-
-        {toolsSource && <ToolsCard role={role} sourceNumber={toolsSource.n} />}
 
         <SourceList sources={sources} label={t.allSources} />
 

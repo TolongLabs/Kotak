@@ -9,17 +9,21 @@ export interface ChoiceCardProps extends Omit<ComponentPropsWithoutRef<'label'>,
   onSelect?: (value: string) => void
   name: string
   value: string
+  /** In a wide @container (several narrow columns), icon and radio share a row and the words take the full width. */
+  stacked?: boolean
 }
 
 export const ChoiceCard = forwardRef<HTMLLabelElement, ChoiceCardProps>(function ChoiceCard(
-  { title, description, icon: Icon, selected, onSelect, name, value, className, ...props },
+  { title, description, icon: Icon, selected, onSelect, name, value, stacked = false, className, ...props },
   ref
 ) {
   return (
     <label
       ref={ref}
       className={cn(
-        'has-[:focus-visible]:outline-focus-ring flex cursor-pointer items-start gap-3 rounded-md p-4 text-text-primary transition-colors duration-150 ease-out has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
+        'has-[:focus-visible]:outline-focus-ring flex cursor-pointer items-start rounded-md p-4 text-text-primary transition-colors duration-150 ease-out has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
+        'gap-3',
+        stacked && '@2xl:flex-wrap @2xl:content-start @2xl:gap-y-2',
         selected
           ? 'on-accent border-[1.5px] border-text-primary bg-accent-box'
           : 'border border-border-subtle bg-bg-default hover:border-border-control',
@@ -35,8 +39,8 @@ export const ChoiceCard = forwardRef<HTMLLabelElement, ChoiceCardProps>(function
         onChange={() => onSelect?.(value)}
         className="peer sr-only"
       />
-      <Icon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-      <span className="flex min-w-0 flex-1 flex-col gap-1">
+      <Icon className={cn('mt-0.5 h-5 w-5 shrink-0', stacked && '@2xl:order-1 @2xl:mr-auto')} aria-hidden="true" />
+      <span className={cn('flex min-w-0 flex-1 flex-col gap-1', stacked && '@2xl:order-3 @2xl:basis-full')}>
         <span className="text-label-l">{title}</span>
         <span className="text-body-s text-text-muted">{description}</span>
       </span>
@@ -44,6 +48,7 @@ export const ChoiceCard = forwardRef<HTMLLabelElement, ChoiceCardProps>(function
         aria-hidden="true"
         className={cn(
           'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px]',
+          stacked && '@2xl:order-2',
           selected ? 'border-text-primary' : 'border-border-control'
         )}
       >

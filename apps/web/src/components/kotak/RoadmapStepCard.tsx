@@ -1,5 +1,5 @@
 import { REFRESHER_ID } from '@kotak/shared'
-import { BookOpen, Check, Clock3, ExternalLink, Lock, RefreshCw, Sparkles } from 'lucide-react'
+import { BookOpen, Check, ChevronDown, Clock3, ExternalLink, Lock, RefreshCw, Sparkles } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { RoadmapStep } from '../../demo/types'
 import { fmt } from '../../views/roadmap/planSupport'
@@ -23,6 +23,9 @@ export interface RoadmapStepCardProps {
   onToggle?: (checked: boolean) => void
   /** A clipped step cannot be ticked. */
   toggleDisabled?: boolean
+  /** Folded, the card keeps its header strip and one line of its statement; printing shows every card in full. */
+  open?: boolean
+  onToggleOpen?: () => void
 }
 
 // On phones the Done tick drops below the Next card's yellow strip, so it takes the theme's ink back; on the strip
@@ -40,7 +43,9 @@ export function RoadmapStepCard({
   onSelect,
   stepRef,
   onToggle,
-  toggleDisabled = false
+  toggleDisabled = false,
+  open = true,
+  onToggleOpen
 }: RoadmapStepCardProps) {
   const t = useText(roadmapText)
   const common = useText(commonText)
@@ -57,6 +62,9 @@ export function RoadmapStepCard({
   const level = step.gain.endsWith(skillSuffix) ? step.gain.slice(0, -skillSuffix.length) : step.gain
   const statement = step.title || step.skill
   const detailId = `roadmap-step-${step.id}-detail`
+  const bodyId = `roadmap-step-${step.id}-body`
+  const hoursLabel =
+    totalHours !== undefined ? t.stepCard.aboutTotal(fmt(totalHours)) : t.stepCard.perWeek(fmt(step.hoursPerWeek))
 
   // Long statements fold to a few lines behind Show More; measured while folded, so the toggle stays once opened.
   const statementRef = useRef<HTMLHeadingElement>(null)
@@ -117,7 +125,7 @@ export function RoadmapStepCard({
         aria-labelledby={`roadmap-step-${step.id}`}
         aria-current={selected ? 'true' : undefined}
         onClick={onSelect}
-        className={`relative min-w-0 flex-1 cursor-pointer overflow-hidden rounded-md ${cardBorder} ${onToggle ? 'max-[479px]:pb-11' : ''} ${
+        className={`relative min-w-0 flex-1 scroll-mt-56 cursor-pointer overflow-hidden rounded-md ${cardBorder} ${onToggle ? 'max-[479px]:pb-11' : ''} ${
           highlighted ? 'ring-2 ring-offset-2 ring-offset-bg-default ring-text-primary' : ''
         } ${selected ? 'outline outline-2 outline-offset-2 outline-text-primary' : ''}`}
       >
@@ -174,22 +182,51 @@ export function RoadmapStepCard({
               {toggleDisabled && <Lock className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />}
             </label>
           )}
+          {onToggleOpen && (
+            <button
+              type="button"
+              aria-expanded={open}
+              aria-controls={bodyId}
+              aria-label={open ? t.stepCard.foldStep(step.skill) : t.stepCard.openStep(step.skill)}
+              onClick={(event) => {
+                event.stopPropagation()
+                onToggleOpen()
+              }}
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-sm text-text-primary hover:bg-bg-panel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${next ? NEXT_DONE_COLOURS : ''}`}
+            >
+              <ChevronDown
+                className={`h-4 w-4 stroke-current transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+          )}
         </div>
 
-        <div className="space-y-3 px-4 pb-4 pt-3.5 max-[479px]:px-3.5">
+        {!open && (
+          <p className="flex items-center justify-between gap-3 px-4 py-2.5 text-body-s text-text-muted max-[479px]:px-3.5 print:hidden">
+            <span className="line-clamp-1 min-w-0">{statement}</span>
+            <span className="shrink-0 font-mono text-mono-s">{hoursLabel}</span>
+          </p>
+        )}
+
+        {/* Folded bodies stay in the page, so Export as PDF prints every step in full. */}
+        <div
+          id={bodyId}
+          className={`space-y-3 px-4 pb-4 pt-3.5 max-[479px]:px-3.5 print:block ${open ? '' : 'hidden'}`}
+        >
           <div className="space-y-1">
             <div id={detailId} className="space-y-1">
               <h3
                 ref={statementRef}
                 id={`roadmap-step-${step.id}`}
-                className={`text-title-s text-text-primary [overflow-wrap:anywhere] ${expanded ? '' : 'line-clamp-4'}`}
+                className={`text-title-s text-text-primary [overflow-wrap:anywhere] print:line-clamp-none ${expanded ? '' : 'line-clamp-4'}`}
               >
                 {statement}
               </h3>
               {step.description && (
                 <p
                   ref={descriptionRef}
-                  className={`text-body-s text-text-muted [overflow-wrap:anywhere] ${expanded ? '' : 'line-clamp-3'}`}
+                  className={`text-body-s text-text-muted [overflow-wrap:anywhere] print:line-clamp-none ${expanded ? '' : 'line-clamp-3'}`}
                 >
                   {step.description}
                 </p>
@@ -204,7 +241,7 @@ export function RoadmapStepCard({
                   event.stopPropagation()
                   setExpanded(!expanded)
                 }}
-                className="inline-flex min-h-6 items-center rounded-sm text-label-s text-text-primary underline underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                className="inline-flex min-h-6 items-center rounded-sm text-label-s text-text-primary underline underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring print:hidden"
               >
                 {expanded ? t.stepCard.showLess : t.stepCard.showMore}
               </button>
@@ -216,9 +253,7 @@ export function RoadmapStepCard({
               <dt className="sr-only">{t.stepCard.time}</dt>
               <dd className="inline-flex items-center gap-1.5 text-label-s text-text-primary">
                 <Clock3 className="h-4 w-4 shrink-0 stroke-current" aria-hidden="true" />
-                {totalHours !== undefined
-                  ? t.stepCard.aboutTotal(fmt(totalHours))
-                  : t.stepCard.perWeek(fmt(step.hoursPerWeek))}
+                {hoursLabel}
               </dd>
             </div>
             {!refresher && level && (

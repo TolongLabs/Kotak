@@ -1,3 +1,4 @@
+import { Info } from 'lucide-react'
 import { useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { jobMarketLevelForYears, yearsOfWork } from '@kotak/shared'
@@ -10,16 +11,17 @@ import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { ScenarioMathsNote } from '../components/kotak/ScenarioMathsNote'
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SourceList } from '../components/kotak/SourceList'
-import { Accordion } from '../components/ui/Accordion'
 import { Banner } from '../components/ui/Banner'
 import { Button } from '../components/ui/Button'
 import { Citation } from '../components/ui/Citation'
+import { Disclosure } from '../components/ui/Disclosure'
 import { Stepper } from '../components/ui/Stepper'
 import { routeLinkClassName } from '../components/ui/TextLink'
 import { Link, navigate } from '../app/router'
 import { routes, spacePath } from '../app/routes'
 import { assessedRoleCode, useCheckup } from '../engine/checkup'
 import { occupationSdgs } from '../engine/occupationSdg'
+import { biggestFitMove } from '../engine/futureDiff'
 import { useJobMarkets } from '../engine/useJobMarkets'
 import { toRoles } from '../engine/viewModel'
 import { useScenario } from '../session/scenario'
@@ -36,6 +38,7 @@ import {
 import { estimatedCorners, formatFitPercent, formatLevel } from './roles/fit'
 import type { SourceRef } from '../demo/types'
 import { startAgain } from './checkup/startAgain'
+import { changesText } from '../i18n/messages/changes'
 import { rolesText } from '../i18n/messages/roles'
 import { useText } from '../i18n/text'
 
@@ -121,7 +124,11 @@ export function RolesView() {
   const session = useGuestSession()
   const [scenario, setScenario] = useScenario()
   const loaded = useCheckup({ scenario })
+  // The other AI future, so the switch can say which fit it moves.
+  const other = useCheckup({ scenario: scenario === 'slow' ? 'fast' : 'slow' })
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [aboutOpen, setAboutOpen] = useState(false)
+  const futures = useText(changesText).receipts
   const checkup = loaded.status === 'ready' ? loaded.data.checkup : null
   const aiOff = new URLSearchParams(window.location.search).get('ai') === 'off'
   // Active ads, estimated JobStreet ads and median pay per ranked role (#272), from JobStreet ads Kotak's admins
@@ -202,6 +209,22 @@ export function RolesView() {
   )
   const heading = sessionHeading(session.goal)
 
+  const otherRanked =
+    other.status === 'ready'
+      ? toRoles(other.data.checkup, bundleRoles, session.role_code, { bundle: pool, session })
+      : []
+  const fitMap = (roles: typeof ranked) => new Map(roles.map((candidate) => [candidate.id, candidate.fit]))
+  const [slowFits, fastFits] =
+    scenario === 'slow' ? [fitMap(ranked), fitMap(otherRanked)] : [fitMap(otherRanked), fitMap(ranked)]
+  const fitMove = biggestFitMove(displayRoles, slowFits, fastFits)
+  const futureReceipt = fitMove
+    ? {
+        slow: futures.rolesPreview(fitMove.title, fitMove.from, fitMove.to),
+        fast: futures.rolesDone(fitMove.title, fitMove.from, fitMove.to)
+      }
+    : { slow: futures.rolesSame, fast: futures.rolesSame }
+
+  const selectedSdgs = selected ? occupationSdgs(selected.id) : null
   const roleEvidence = selected ? deriveRoleEvidence(detailCheckupRole, detailBundleRole, checkup.snapshotId) : null
   // Only the sources the visible rows cite; the first two when no row cites one.
   const citedNumbers = new Set(roleEvidence?.rows.map((row) => row.citation).filter((n) => n !== null))
@@ -318,8 +341,22 @@ export function RolesView() {
 
       <header className="flex flex-col gap-1.5">
         <h1 className="text-title-m font-bold text-text-primary lg:text-title-l">{heading}</h1>
-        <p className="text-body-s text-text-muted">
-          {t.rolesView.intro.fitAndOutlook}
+        {/* One sentence up front; where the outlook and ad figures come from is one tap away. */}
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body-s text-text-muted">
+          {t.rolesView.intro.fit}
+          <button
+            type="button"
+            aria-expanded={aboutOpen}
+            aria-controls="roles-about"
+            onClick={() => setAboutOpen((value) => !value)}
+            className="inline-flex min-h-6 items-center gap-1 rounded-sm text-label-s text-text-primary underline underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          >
+            <Info className="h-3.5 w-3.5 shrink-0 stroke-current" aria-hidden="true" />
+            {t.rolesView.intro.about}
+          </button>
+        </p>
+        <p id="roles-about" hidden={!aboutOpen} className="max-w-[65ch] text-body-s text-text-muted">
+          {t.rolesView.intro.outlook}
           {widened && t.rolesView.intro.widened} {t.rolesView.intro.cardSelection}
           {marketSource && (
             <>
@@ -328,19 +365,23 @@ export function RolesView() {
             </>
           )}
         </p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-          <ScenarioControl scenario={scenario} onChange={setScenario} />
-          {/* The highlighted card's role opens pinned; the other cards' roles are the space's related tufts. */}
+      </header>
+
+      <ScenarioControl
+        scenario={scenario}
+        onChange={setScenario}
+        receipt={futureReceipt}
+        anchors={scenarioAnchors}
+        trailing={
+          // The highlighted card's role opens pinned; the other cards' roles are the space's related tufts.
           <Link to={spacePath(selected?.id)} className={routeLinkClassName}>
             {t.rolesView.seeInSpace}
           </Link>
-        </div>
-      </header>
+        }
+      />
 
       <section role="radiogroup" aria-label={heading} className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         {displayRoles.map((displayRole) => {
-          const occupation = occupationSdgs(displayRole.id)
-          const targets = occupation?.targets.slice(0, 3) ?? []
           const market = markets.get(displayRole.id)
           return (
             <RoleCard
@@ -349,9 +390,10 @@ export function RolesView() {
               name="role"
               selected={displayRole.id === selected?.id}
               note={displayRole.id === selected?.id && selectionReason ? selectionNote(selectionReason) : undefined}
+              tag={displayRole.isCurrentJob ? t.card.yourJob : undefined}
               onSelect={() => setSelectedId(displayRole.id)}
               footer={
-                (market || targets.length > 0 || displayRole.access || displayRole.reasons?.length) && (
+                (market || displayRole.access || displayRole.reasons?.length) && (
                   <span className="flex flex-col gap-2">
                     {displayRole.access && displayRole.access.status !== 'open' && (
                       <AccessChip access={displayRole.access} className="self-start" />
@@ -366,14 +408,6 @@ export function RolesView() {
                         {t.market.activeAdsCount(market.ads.active)}
                         {popularityLabel(market) && ` · ${popularityLabel(market)}`}
                         {payLabel(market, level) && ` · ${payLabel(market, level)}`}
-                      </span>
-                    )}
-                    {targets.length > 0 && (
-                      <span className="flex flex-wrap items-center gap-1.5">
-                        <span className="font-mono text-mono-s text-text-muted">{t.rolesView.linkedSdgTargets}</span>
-                        {targets.map((target) => (
-                          <SdgTargetChip key={target} target={target} workReason={occupation?.reason} />
-                        ))}
                       </span>
                     )}
                   </span>
@@ -393,36 +427,54 @@ export function RolesView() {
       )}
 
       {selected && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* How Fit Is Worked Out */}
-          <section aria-labelledby="fit-maths-title" className="surface-card flex flex-col gap-3 p-5">
-            <h2 id="fit-maths-title" className="text-title-s text-text-primary">
-              {t.rolesView.fitMaths}
+        <section aria-labelledby="role-detail-title" className="surface-card space-y-4 p-4 lg:p-5">
+          <header className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="role-detail-title" className="text-title-s text-text-primary">
+              {selected.title}
             </h2>
-            <p className="text-body-s text-text-primary">
-              {detailCheckupRole
-                ? t.rolesView.fitDetail(
-                    formatLevel(detailCheckupRole.fit.numerator),
-                    formatLevel(detailCheckupRole.fit.denominator),
-                    selected.title,
-                    formatFitPercent(detailCheckupRole.fit.score)
-                  )
-                : t.rolesView.fitNotReady(selected.title)}
-            </p>
-            {fitRows.length > 0 && <FitChart rows={fitRows} allEstimated={allEstimated} title={selected.title} />}
-            {allEstimated && <p className="text-body-s text-text-muted">{t.rolesView.estimatedFrom(role.title)}</p>}
-            {detailCheckupRole && mathsFormula && (
-              <Accordion items={[{ id: 'fit-maths', question: t.rolesView.seeMaths, answer: mathsAnswer }]} />
+            {selectedSdgs && selectedSdgs.targets.length > 0 && (
+              <span className="flex flex-wrap items-center gap-1.5">
+                <span className="font-mono text-mono-s text-text-muted">{t.rolesView.linkedSdgTargets}</span>
+                {selectedSdgs.targets.slice(0, 3).map((target) => (
+                  <SdgTargetChip key={target} target={target} workReason={selectedSdgs.reason} />
+                ))}
+              </span>
             )}
-          </section>
+          </header>
 
-          {/* Why This Role */}
-          {/* Stretches with the fit card, so both boxes in the row end on one line. */}
-          <section aria-label={t.rolesView.whyRole} className="flex flex-col justify-between gap-3">
-            <Reasoning text={reasoningText} source="template" paused={aiOff} rows={roleEvidence?.rows ?? []} />
-            <SourceList sources={displaySources} />
-          </section>
-        </div>
+          {/* Why first, beside How Fit Is Worked Out, both one height. */}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 [&>*]:min-w-0">
+            <div className="flex flex-col [&>section]:h-full" aria-label={t.rolesView.whyRole}>
+              <Reasoning text={reasoningText} source="template" paused={aiOff} rows={roleEvidence?.rows ?? []} />
+            </div>
+            <section aria-labelledby="fit-maths-title" className="flex flex-col gap-3">
+              <h3 id="fit-maths-title" className="text-label-l text-text-primary">
+                {t.rolesView.fitMaths}
+              </h3>
+              <p className="text-body-s text-text-primary">
+                {detailCheckupRole
+                  ? t.rolesView.fitDetail(
+                      formatLevel(detailCheckupRole.fit.numerator),
+                      formatLevel(detailCheckupRole.fit.denominator),
+                      selected.title,
+                      formatFitPercent(detailCheckupRole.fit.score)
+                    )
+                  : t.rolesView.fitNotReady(selected.title)}
+              </p>
+              {fitRows.length > 0 && <FitChart rows={fitRows} allEstimated={allEstimated} title={selected.title} />}
+              {allEstimated && <p className="text-body-s text-text-muted">{t.rolesView.estimatedFrom(role.title)}</p>}
+            </section>
+          </div>
+
+          <div className="border-b border-border-subtle">
+            {detailCheckupRole && mathsFormula && (
+              <Disclosure title={t.rolesView.seeMaths}>
+                <div className="text-body-m text-text-muted">{mathsAnswer}</div>
+              </Disclosure>
+            )}
+            <SourceList sources={displaySources} variant="rule" />
+          </div>
+        </section>
       )}
 
       {/* Action CTA */}

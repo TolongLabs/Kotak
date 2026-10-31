@@ -511,7 +511,7 @@ export function QuadrantMap({ points, focusId, title, description, bare = false,
         </div>
       </div>
 
-      <details open className="border-t border-border-subtle pt-3">
+      <details className="border-t border-border-subtle pt-3">
         <summary className="min-h-11 cursor-pointer text-label-m text-text-primary">{t.quadrant.textVersion}</summary>
         <p className="py-2 text-body-s text-text-muted">
           {t.quadrant.textDescription(
