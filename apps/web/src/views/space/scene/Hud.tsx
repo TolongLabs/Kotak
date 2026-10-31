@@ -1,17 +1,32 @@
 import type { Scenario, SnapshotId } from '@kotak/shared'
 import { ArrowLeft, ArrowRight, ExternalLink, X } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  type CSSProperties,
+  type ReactNode,
+  type Ref,
+  type RefObject
+} from 'react'
 import type { SourceRef } from '../../../demo/types'
 import { Link } from '../../../app/router'
 import { jobPath, routes } from '../../../app/routes'
+import { ASK_KOPI_PANEL_ID } from '../../../app/shell/AskKopi'
 import { ButtonLink } from '../../../components/ui/Button'
 import { citationClassName } from '../../../components/ui/Citation'
 import { cn } from '../../../components/ui/cn'
 import { IconButton } from '../../../components/ui/IconButton'
 import { Kbd, KbdGroup } from '../../../components/ui/Kbd'
+import { LanguageToggle } from '../../../components/ui/LanguageToggle'
 import { Modal } from '../../../components/ui/Modal'
+import { commonText } from '../../../i18n/common'
+import { spaceText } from '../../../i18n/messages/space'
+import { uiText } from '../../../i18n/messages/ui'
+import { textNow, useText } from '../../../i18n/text'
 import { formatFitPercent } from '../../roles/fit'
-import { formatChange, hasNoEstimate, NO_ESTIMATE, snapshotSources, VERDICT_MARKS, ZONE_LABEL } from '../format'
+import { formatChange, groupName, hasNoEstimate, monthLabel, snapshotSources, VERDICT_MARKS, zoneWord } from '../format'
 import type { CheckUpLink, SpaceJob, SpaceModel } from '../model'
 import { ringLabels } from './layout'
 import { Ruler } from './Ruler'
@@ -25,18 +40,11 @@ import type { HudBoxes } from './World'
 // the scene, the ruler lying flat at the foot. All of it is type and lines straight on the render, with nothing behind
 // it: the scene keeps its bright parts away from where the HUD sits. Numbers swap at once on a switch; only shapes move.
 
-export const WORLD_NAME: Record<Scenario, string> = { slow: 'Slow AI Uptake', fast: 'Fast AI Uptake' }
-const WORLD_LINE: Record<Scenario, string> = {
-  slow: 'Malaysia keeps today’s AI pace.',
-  fast: 'Malaysia’s AI usage index moves halfway to Singapore’s.'
-}
-
-/** What a snapshot can say about AI use: one dated point per skill (no trend) or two. */
+/** What a snapshot can say about AI use: one dated point per skill (no trend) or two. Call it while rendering. */
 export function monthNote(model: SpaceModel, snapshotId: SnapshotId): string {
+  const t = textNow(spaceText)
   const known = model.medianGrowth[snapshotId].slow !== null || model.medianGrowth[snapshotId].fast !== null
-  return known
-    ? 'Two dated points: a trend for every skill.'
-    : 'Unknown: one dated point per skill, so Kotak won’t guess.'
+  return known ? t.hud.monthKnown : t.hud.monthUnknown
 }
 
 /** A numbered citation that opens the Sources popover; a button, since it opens a panel here rather than a page. */
@@ -45,7 +53,7 @@ function cite(n: number, onCite: (n: number) => void) {
     <button
       key={n}
       type="button"
-      aria-label={`Source ${n}`}
+      aria-label={textNow(uiText).sourceNumber(n)}
       aria-haspopup="dialog"
       onClick={() => onCite(n)}
       className={cn(citationClassName(true), 'pointer-events-auto touch-manipulation')}
@@ -55,12 +63,12 @@ function cite(n: number, onCite: (n: number) => void) {
   )
 }
 
-/** Kotak's name kept whole by page translators. */
+/** Kotak's and Kopi's names kept whole by page translators. */
 function brand(text: string): ReactNode {
-  return text.split(/(Kotak)/).map((part, i) =>
-    part === 'Kotak' ? (
+  return text.split(/(Kotak|Kopi)/).map((part, i) =>
+    part === 'Kotak' || part === 'Kopi' ? (
       <span key={i} translate="no">
-        Kotak
+        {part}
       </span>
     ) : (
       part
@@ -68,20 +76,57 @@ function brand(text: string): ReactNode {
   )
 }
 
-/** A plain text action with its key beside it, for the top right. */
-function HudLink({ keys, onClick, children }: { keys: string; onClick: () => void; children: ReactNode }) {
+/** The top right's plain text actions: underlined type, nothing behind it. */
+const HUD_LINK =
+  'inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-sm text-label-m text-text-primary underline decoration-border-control underline-offset-4 transition-colors duration-150 ease-out hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring'
+
+/** A plain text action with its key beside it, for the top right; a phone's row has no room for the key. */
+function HudLink({
+  keys,
+  onClick,
+  showKey = true,
+  children
+}: {
+  keys: string
+  onClick: () => void
+  showKey?: boolean
+  children: ReactNode
+}) {
+  return (
+    <button type="button" aria-keyshortcuts={keys} onClick={onClick} className={HUD_LINK}>
+      {children}
+      {showKey && (
+        <Kbd bare className="not-any-pointer-fine:hidden">
+          {keys}
+        </Kbd>
+      )}
+    </button>
+  )
+}
+
+/** Opens and closes the app's Ask Kopi chat window, as its floating button does elsewhere; the window keeps its own
+ * panel, so nothing of the HUD sits behind type. */
+function AskKopiLink({ open, onClick, ref }: { open: boolean; onClick: () => void; ref: Ref<HTMLButtonElement> }) {
+  const c = useText(commonText)
   return (
     <button
+      ref={ref}
       type="button"
-      aria-keyshortcuts={keys}
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-controls={ASK_KOPI_PANEL_ID}
       onClick={onClick}
-      className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-sm text-label-m text-text-primary underline decoration-border-control underline-offset-4 transition-colors duration-150 ease-out hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+      className={HUD_LINK}
     >
-      {children}
-      <Kbd bare className="not-any-pointer-fine:hidden">
-        {keys}
-      </Kbd>
+      <span>{brand(c.askKopi)}</span>
     </button>
+  )
+}
+
+/** The app's language toggle as HUD type, without its fill, underlined like the links beside it. */
+function HudLanguage() {
+  return (
+    <LanguageToggle className="!rounded-sm !bg-transparent underline decoration-border-control underline-offset-4 hover:!bg-transparent hover:decoration-current" />
   )
 }
 
@@ -117,8 +162,12 @@ export function JobCard({
   className,
   style
 }: CardProps) {
+  const t = useText(spaceText)
+  const c = useText(commonText)
   const compact = form === 'compact'
+  const group = groupName(t, job)
   const snapshot = model.snapshots.find((s) => s.id === snapshotId)!
+  const month = monthLabel(snapshot)
   const { anchorN, zoneN } = snapshotSources(model, snapshot)
   const anchors = model.anchors[snapshot.id]
   const noEstimate = hasNoEstimate(job)
@@ -147,13 +196,11 @@ export function JobCard({
   // Fit (or, in the short form, the Job Zone) and the AI-use change, in both futures, the one on show in ink.
   const numbers = (
     <table className={cn('w-full', !compact && 'border-t border-border-subtle')}>
-      <caption className="sr-only">
-        {job.fit === null ? 'AI-use change in both AI futures' : 'Fit and AI-use change in both AI futures'}
-      </caption>
+      <caption className="sr-only">{job.fit === null ? t.card.captionChange : t.card.captionFit}</caption>
       <thead>
         <tr className="text-label-s text-text-muted">
           <th scope="col" className={cn('text-left font-medium', headCell)}>
-            <span className="sr-only">Measure</span>
+            <span className="sr-only">{t.card.measure}</span>
             {/* The short form names the group here, the full one under its title. */}
             {compact && (
               <span aria-hidden="true" className="inline-flex items-center gap-1.5">
@@ -161,8 +208,9 @@ export function JobCard({
                   <span className="size-2.5 rounded-full border border-text-primary bg-accent-box" />
                 )}
                 {job.kind === 'related' && <span className="size-2.5 rounded-full bg-map-suggested" />}
-                {job.kind === 'yours' && <span className="text-text-primary">Your Job ·</span>}
-                {job.kind === 'related' && 'Related ·'} {job.groupName}
+                {job.kind === 'yours' && <span className="text-text-primary">{`${t.yourJob} · `}</span>}
+                {job.kind === 'related' && `${t.related} · `}
+                {group}
               </span>
             )}
           </th>
@@ -172,7 +220,7 @@ export function JobCard({
               scope="col"
               className={cn('pl-4 text-right font-medium', headCell, s === scenario && 'text-text-primary')}
             >
-              {s === 'slow' ? 'Slow' : 'Fast'}
+              {t.futureShort[s]}
             </th>
           ))}
         </tr>
@@ -182,21 +230,21 @@ export function JobCard({
           compact && (
             <tr>
               <th scope="row" className={rowHead}>
-                Job Zone
+                {t.table.jobZone}
               </th>
               <td colSpan={2} className="whitespace-nowrap text-right font-sans text-label-m text-text-primary">
-                {job.zone}: {ZONE_LABEL[job.zone].toLowerCase()} {zoneN !== null && cite(zoneN, onCite)}
+                {t.card.zoneValue(job.zone, zoneWord(t, job.zone))} {zoneN !== null && cite(zoneN, onCite)}
               </td>
             </tr>
           )
         ) : (
           <tr>
             <th scope="row" className={rowHead}>
-              {job.kind === 'yours' || noEstimate ? 'Fit' : 'Fit (est.)'}
+              {job.kind === 'yours' || noEstimate ? t.fit : t.fitEst}
             </th>
             {noEstimate ? (
               <td colSpan={2} className={cn('text-right font-sans text-label-m text-text-muted', pad)}>
-                {NO_ESTIMATE}
+                {t.noEstimate}
               </td>
             ) : (
               futures.map((s) => (
@@ -208,17 +256,21 @@ export function JobCard({
           </tr>
         )}
         <tr>
+          {/* The measure runs on into "median skill", which wraps whole, so a longer language takes no extra line. */}
           <th scope="row" className={rowHead}>
-            AI use, 12-month change (est.){compact && ' '}
-            <span className={cn('text-label-s font-medium text-text-muted', !compact && 'block')}>
-              {compact ? 'median skill' : 'Median skill'}
-            </span>
+            {t.card.change}{' '}
+            <span className="whitespace-nowrap text-label-s font-medium text-text-muted">{t.card.medianSkill}</span>
           </th>
           {futures.map((s) => {
             const change = job.growth[snapshotId][s]
             return (
               <td key={s} className={cell(s)}>
-                {change === null ? 'Unknown' : formatChange(change)}
+                {/* A longer language's word for it may wrap, rather than push the card wider. */}
+                {change === null ? (
+                  <span className="whitespace-normal">{c.verdicts.Unknown}</span>
+                ) : (
+                  formatChange(change)
+                )}
               </td>
             )
           })}
@@ -236,16 +288,18 @@ export function JobCard({
           </span>
         ))}
       </span>
-      <span className="sr-only">{shown.map(({ verdict }) => `${counts[verdict]} ${verdict}`).join(', ')}</span>
+      <span className="sr-only">
+        {shown.map(({ verdict }) => `${counts[verdict]} ${c.verdicts[verdict]}`).join(', ')}
+      </span>
     </>
   )
-  const verdictsLabel = `Skill verdicts, ${scenario === 'slow' ? 'Slow' : 'Fast'}:`
-  const borrowedText = borrowed > 0 && `AI-use data borrowed for ${borrowed} of ${job.skills.length} skills`
+  const verdictsLabel = t.card.verdicts(t.futureShort[scenario])
+  const borrowedText = borrowed > 0 && t.card.borrowed(borrowed, job.skills.length)
   // The data's month and its source's full name, wrapping; its last word keeps the citation on its line.
   const words = anchors?.source.split(' ') ?? []
   const sourceText = anchors && anchorN !== null && (
     <span className="font-mono text-mono-s">
-      {snapshot.label} data · {words.slice(0, -1).join(' ')}{' '}
+      {t.dataOf(month)} · {words.slice(0, -1).join(' ')}{' '}
       <span className="whitespace-nowrap">
         {words.at(-1)} {cite(anchorN, onCite)}
       </span>
@@ -261,7 +315,7 @@ export function JobCard({
         <Fragment key={s}>
           {i > 0 && '/'}
           <span className={s === scenario ? 'text-text-primary' : undefined}>
-            {values[i] === null ? 'Unknown' : format(values[i]!)}
+            {values[i] === null ? c.verdicts.Unknown : format(values[i]!)}
           </span>
         </Fragment>
       ))
@@ -269,7 +323,7 @@ export function JobCard({
     const changes = futures.map((s) => job.growth[snapshotId][s])
     return (
       <section
-        aria-label={`${job.title}, job card`}
+        aria-label={t.card.label(job.title)}
         className={cn('flex w-[min(18rem,34vw)] flex-col gap-0.5 text-text-primary', className)}
         style={style}
       >
@@ -277,38 +331,36 @@ export function JobCard({
           <h2 className="min-w-0 text-label-l text-text-primary">
             <Link
               to={jobPath(job.code)}
+              lang="en"
               title={job.title}
               className="block truncate rounded-sm underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
             >
               {job.title}
-              <span className="sr-only">: Open the Job Page</span>
+              <span className="sr-only">{t.card.openJobPageSr}</span>
             </Link>
-            <span className="sr-only">
-              , {job.kind === 'yours' ? 'your job, ' : job.kind === 'related' ? 'related, ' : ''}
-              {job.groupName}
-            </span>
+            <span className="sr-only">{t.card.kindSr(job.kind, group)}</span>
           </h2>
           {close}
         </div>
         <p aria-hidden="true" className="truncate text-label-s text-text-muted [@media(max-height:410px)]:hidden">
-          {job.kind === 'yours' && 'Your Job · '}
-          {job.kind === 'related' && 'Related · '}
-          {job.groupName}
+          {job.kind !== 'other' && `${job.kind === 'yours' ? t.yourJob : t.related} · `}
+          {group}
         </p>
         <p className="flex flex-wrap items-center gap-x-1.5 text-label-s text-text-muted">
           <span aria-hidden="true" className="contents">
             {fitValues ? (
               <>
-                Fit, Slow/Fast
+                {t.card.fitPair}
                 <span className="font-mono text-mono-s">
-                  {noEstimate ? NO_ESTIMATE : pair(fitValues, formatFitPercent)}
+                  {noEstimate ? t.noEstimate : pair(fitValues, formatFitPercent)}
                 </span>
-                · AI use
+                {t.card.aiUse}
               </>
             ) : (
               <>
-                Job Zone {job.zone}
-                {zoneN !== null && cite(zoneN, onCite)}· AI use, Slow/Fast
+                {t.jobZone(job.zone)}
+                {zoneN !== null && cite(zoneN, onCite)}
+                {t.card.aiUsePair}
               </>
             )}
             <span className="font-mono text-mono-s">{pair(changes, formatChange)}</span>
@@ -316,17 +368,16 @@ export function JobCard({
           <span className="sr-only">
             {fitValues &&
               (noEstimate
-                ? `Fit: ${NO_ESTIMATE}. `
-                : `Fit${job.kind === 'yours' ? '' : ' (est.)'}: ${formatFitPercent(fitValues[0]!)} in Slow AI Uptake, ${formatFitPercent(fitValues[1]!)} in Fast. `)}
-            {!fitValues && `Job Zone ${job.zone}: ${ZONE_LABEL[job.zone].toLowerCase()}. `}
-            AI use, 12-month change (est.), median skill:{' '}
-            {changes
-              .map(
-                (c, i) =>
-                  `${c === null ? 'Unknown' : formatChange(c)} in ${futures[i] === 'slow' ? 'Slow AI Uptake' : 'Fast'}`
-              )
-              .join(', ')}
-            .{borrowedText && ` ${borrowedText}.`}
+                ? t.card.noEstimateSr(t.noEstimate)
+                : t.card.fitSr(formatFitPercent(fitValues[0]!), formatFitPercent(fitValues[1]!), job.kind !== 'yours'))}
+            {!fitValues && t.card.zoneSr(job.zone, zoneWord(t, job.zone))}
+            {t.card.changeSr(
+              ...(changes.map((change) => (change === null ? c.verdicts.Unknown : formatChange(change))) as [
+                string,
+                string
+              ])
+            )}
+            {borrowedText && ` ${borrowedText}.`}
           </span>
         </p>
         <p className="text-label-s text-text-muted">
@@ -343,7 +394,7 @@ export function JobCard({
   if (compact)
     return (
       <section
-        aria-label={`${job.title}, job card`}
+        aria-label={t.card.label(job.title)}
         className={cn(
           'flex max-h-full w-[26rem] max-w-[calc(100vw-1.5rem)] flex-col gap-0.5 overflow-y-auto overscroll-contain text-text-primary',
           className
@@ -354,32 +405,38 @@ export function JobCard({
           <h2 className="text-balance text-label-l text-text-primary">
             <Link
               to={jobPath(job.code)}
+              lang="en"
               className="rounded-sm underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
             >
               {job.title}
-              <span className="sr-only">: Open the Job Page</span>
+              <span className="sr-only">{t.card.openJobPageSr}</span>
               <ArrowRight className="ml-1 inline size-4 stroke-current align-[-2px]" aria-hidden="true" />
             </Link>
-            <span className="sr-only">
-              , {job.kind === 'yours' ? 'your job, ' : job.kind === 'related' ? 'related, ' : ''}
-              {job.groupName}
-            </span>
+            <span className="sr-only">{t.card.kindSr(job.kind, group)}</span>
           </h2>
           {close}
         </div>
         {numbers}
-        {/* The rest runs on as one paragraph, so the short form stays in the dark sky above the horizon. */}
+        {/* The rest runs on as one paragraph, so the short form stays in the dark sky above the horizon: the data's month
+            and its citation, whose popover names the source. */}
         <p className="w-fit text-label-s text-text-muted">
           {verdictsLabel} {marks}
           {borrowedText && ` · ${borrowedText}`}
-          {sourceText && <> · {sourceText}</>}
+          {anchors && anchorN !== null && (
+            <>
+              {' · '}
+              <span className="whitespace-nowrap font-mono text-mono-s">
+                {t.dataOf(month)} {cite(anchorN, onCite)}
+              </span>
+            </>
+          )}
         </p>
       </section>
     )
 
   return (
     <section
-      aria-label={`${job.title}, job card`}
+      aria-label={t.card.label(job.title)}
       className={cn(
         'flex max-h-full w-[22rem] max-w-[calc(100vw-1.5rem)] flex-col gap-3 overflow-y-auto overscroll-contain text-text-primary',
         className
@@ -391,20 +448,22 @@ export function JobCard({
           {job.kind === 'yours' && (
             <span className="inline-flex items-center gap-1.5 text-label-s text-text-primary">
               <span aria-hidden="true" className="size-2.5 rounded-full border border-text-primary bg-accent-box" />
-              Your Job
+              {t.yourJob}
             </span>
           )}
           {job.kind === 'related' && (
             <span className="inline-flex items-center gap-1.5 text-label-s text-text-muted">
               <span aria-hidden="true" className="size-2.5 rounded-full bg-map-suggested" />
-              Related
+              {t.related}
             </span>
           )}
-          <h2 className="text-balance text-title-s text-text-primary">{job.title}</h2>
-          <p className="text-body-s text-text-muted">{job.groupName}</p>
+          <h2 lang="en" className="text-balance text-title-s text-text-primary">
+            {job.title}
+          </h2>
+          <p className="text-body-s text-text-muted">{group}</p>
           {job.fit === null && (
             <p className="flex flex-wrap items-center gap-1.5 text-body-s text-text-primary">
-              Job Zone {job.zone}: {ZONE_LABEL[job.zone].toLowerCase()}
+              {t.card.zoneLine(job.zone, zoneWord(t, job.zone))}
               {zoneN !== null && cite(zoneN, onCite)}
             </p>
           )}
@@ -424,7 +483,7 @@ export function JobCard({
         to={jobPath(job.code)}
         className="-mb-2 inline-flex min-h-11 items-center gap-1.5 self-start rounded-sm text-label-m text-text-primary underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
       >
-        Open the Job Page
+        {t.card.openJobPage}
         <ArrowRight className="size-4 stroke-current" aria-hidden="true" />
       </Link>
     </section>
@@ -432,13 +491,15 @@ export function JobCard({
 }
 
 export function HowToRead({ open, onClose, model }: { open: boolean; onClose: () => void; model: SpaceModel }) {
-  const rings = ringLabels(model)
+  const t = useText(spaceText)
+  const h = t.howTo
+  const rings = t.list(ringLabels(model, t))
   const strong = 'font-semibold'
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title="How to Read the Space"
+      title={h.title}
       closeTooltip={false}
       closeVariant="bare"
       backdrop="none"
@@ -448,68 +509,46 @@ export function HowToRead({ open, onClose, model }: { open: boolean; onClose: ()
       <div className="flex flex-col gap-5 text-body-s">
         <ul className="flex list-none flex-col gap-3">
           <li>
-            <strong className={strong}>Each tuft is one job</strong>, {model.jobs.length} in all, and each blade is one
-            of its skills.
-          </li>
-          {model.answers ? (
-            <li>
-              <strong className={strong}>Distance from the box</strong> is 100 minus your fit: the nearer a job, the
-              more of its needed levels your answers already meet. The rings mark {rings.join(', ')}. Hollow tufts at
-              the far edge are jobs no answer reaches, so they have no estimate yet.
-            </li>
-          ) : (
-            <li>
-              <strong className={strong}>Distance from the box</strong> is the job’s O*NET Job Zone, 1 to 5: how much
-              preparation it needs, from Job Zone 1 ({ZONE_LABEL[1].toLowerCase()}), nearest, to Job Zone 5 (
-              {ZONE_LABEL[5].toLowerCase()}), farthest. Each zone is a band with a ring at its inner edge. There are no
-              answers yet; take the check-up and distance becomes your fit instead.
-            </li>
-          )}
-          <li>
-            <strong className={strong}>The angle</strong> is the job’s SOC major group.{' '}
-            {model.answers
-              ? 'Within a group, jobs sit in alphabetical order.'
-              : 'Within a group and a zone, jobs sit in alphabetical order in columns, from left to right, each column running from the box outward.'}{' '}
-            It means only the group.
+            <strong className={strong}>{h.tuft.lead}</strong>
+            {h.tuft.rest(model.jobs.length)}
           </li>
           <li>
-            <strong className={strong}>A blade’s height</strong> is that skill’s AI use, 12-month change (est.). The
-            base height is no change. Rising AI use climbs on a log scale: each doubling adds the same height. Falling
-            use shrinks in a straight line, from the base height at 0% to a short stub at −100%.
+            <strong className={strong}>{h.distance}</strong>
+            {model.answers ? h.distanceFit(rings) : h.distanceZone(zoneWord(t, 1), zoneWord(t, 5))}
           </li>
           <li>
-            <strong className={strong}>Colour:</strong>{' '}
-            {model.answers ? (
-              <>
-                yellow is your job, blue the related roles <span translate="no">Kotak</span> ranks against it, warm
-                light every other job.
-              </>
-            ) : (
-              'every job is warm light, since there is no job of yours yet.'
-            )}{' '}
-            Grey blades are Unknown: one dated point, so <span translate="no">Kotak</span> won’t guess.
+            <strong className={strong}>{h.angle}</strong>
+            {h.angleRest(model.answers)}
           </li>
           <li>
-            <strong className={strong}>The ring</strong> stands at Malaysia’s AI usage index. In Fast AI Uptake it rises
-            halfway to Singapore’s. The ruler reads the same index in numbers, Singapore’s too.
+            <strong className={strong}>{h.blade}</strong>
+            {h.bladeRest}
           </li>
           <li>
-            <strong className={strong}>Atmosphere:</strong> the sky, haze, glow, dust and the ground’s shimmer are not
-            data.
+            <strong className={strong}>{h.colour}</strong>
+            {brand(h.colourRest(model.answers))}
+          </li>
+          <li>
+            <strong className={strong}>{h.ring}</strong>
+            {h.ringRest}
+          </li>
+          <li>
+            <strong className={strong}>{h.atmosphere}</strong>
+            {h.atmosphereRest}
           </li>
         </ul>
         <section aria-labelledby="space-camera" className="flex flex-col gap-2 border-t border-border-subtle pt-4">
           <h3 id="space-camera" className="text-label-m text-text-primary">
-            Moving Around
+            {h.moving}
           </h3>
           <ul className="flex list-none flex-col gap-1.5">
-            <li>Drag (one finger on touch) to look around the field; the horizon stays ahead.</li>
-            <li>Scroll or pinch to zoom.</li>
-            <li>Right-drag, Shift-drag or a two-finger drag pans along the ground.</li>
-            <li>Double-click or double-tap a tuft to fly to it and pin its card.</li>
+            <li>{h.drag}</li>
+            <li>{h.zoom}</li>
+            <li>{h.pan}</li>
+            <li>{h.doubleClick}</li>
             <li>
-              <Kbd aria-hidden={false}>R</Kbd> flies back to the opening view and lets the camera drift again; any other
-              key below holds it still.
+              <Kbd aria-hidden={false}>R</Kbd>
+              {h.reset}
             </li>
           </ul>
         </section>
@@ -518,7 +557,7 @@ export function HowToRead({ open, onClose, model }: { open: boolean; onClose: ()
           className="flex flex-col gap-2 border-t border-border-subtle pt-4 not-any-pointer-fine:hidden"
         >
           <h3 id="space-keys" className="text-label-m text-text-primary">
-            Keys
+            {h.keys}
           </h3>
           <dl className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5 text-text-muted">
             <dt>
@@ -528,30 +567,30 @@ export function HowToRead({ open, onClose, model }: { open: boolean; onClose: ()
                 <Kbd aria-hidden={false}>2</Kbd>
               </KbdGroup>
             </dt>
-            <dd>The AI future: flip, Slow, Fast</dd>
+            <dd>{h.keyFuture}</dd>
             <dt>
               <Kbd aria-hidden={false}>M</Kbd>
             </dt>
-            <dd>The data month</dd>
+            <dd>{h.keyMonth}</dd>
             <dt>
               <KbdGroup>
                 <Kbd aria-hidden={false}>←</Kbd>
                 <Kbd aria-hidden={false}>→</Kbd>
               </KbdGroup>
             </dt>
-            <dd>Step through the jobs across the fan</dd>
+            <dd>{h.keyArrows}</dd>
             <dt>
               <Kbd aria-hidden={false}>D</Kbd>
             </dt>
-            <dd>The table, with the same numbers</dd>
+            <dd>{h.keyTable}</dd>
             <dt>
               <Kbd aria-hidden={false}>H</Kbd>
             </dt>
-            <dd>This guide</dd>
+            <dd>{h.keyGuide}</dd>
             <dt>
               <Kbd aria-hidden={false}>Esc</Kbd>
             </dt>
-            <dd>Close a card or the sources</dd>
+            <dd>{h.keyEscape}</dd>
           </dl>
         </section>
       </div>
@@ -597,6 +636,10 @@ interface HudProps {
   children?: ReactNode
   /** A card in its line form, which takes the title block's place on a short screen while it is open. */
   headerCard?: ReactNode
+  /** Whether the Ask Kopi chat window is open; the HUD's Ask Kopi link toggles it and takes focus back on close. */
+  kopiOpen: boolean
+  onKopi: () => void
+  kopiLink: Ref<HTMLButtonElement>
 }
 
 /**
@@ -617,6 +660,8 @@ function SourcesPopover({
   onClose: () => void
   className: string
 }) {
+  const t = useText(spaceText)
+  const ui = useText(uiText)
   const close = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -638,7 +683,7 @@ function SourcesPopover({
         <h2 className="text-label-l text-text-primary">{title}</h2>
         <IconButton
           ref={close}
-          label="Close Sources"
+          label={t.hud.closeSources}
           icon={X}
           variant="bare"
           tooltip={false}
@@ -665,7 +710,7 @@ function SourcesPopover({
               href={source.href}
               target="_blank"
               rel="noreferrer"
-              aria-label={`Open ${source.name}`}
+              aria-label={ui.openSource(source.name)}
               className="-my-3 inline-flex size-11 shrink-0 items-center justify-center rounded-sm text-text-primary transition-colors duration-150 ease-out hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
             >
               <ExternalLink className="size-5 stroke-current" aria-hidden="true" />
@@ -710,12 +755,14 @@ function LookAroundNote({
   actionOnly?: boolean
   className?: string
 }) {
+  const [before, after] = useText(spaceText).hud.lookAroundNote
   return (
     <div className={cn('pointer-events-auto flex flex-col gap-3', className)}>
       {!actionOnly && (
         <p className="text-body-s text-text-primary">
-          Distance shows the preparation each job needs, its O*NET Job Zone
-          {zoneN !== null && <> {cite(zoneN, onCite)}</>}. Take the check-up to place every job by your fit.
+          {before}
+          {zoneN !== null && <> {cite(zoneN, onCite)}</>}
+          {after}
         </p>
       )}
       <ButtonLink to={checkUp.route} variant="outline-accent" className="touch-manipulation">
@@ -728,9 +775,12 @@ function LookAroundNote({
 export function Hud(props: HudProps) {
   const { model, scenario, snapshotId, onScenario, onSnapshot, show2D, announcement, hint, hud } = props
   const { sourcesOpen, setSourcesOpen, onHelp, pinned, onPin, checkUp, focusTitle, sheet, bottomSheets, docked } = props
-  const { short, title, children, headerCard } = props
+  const { short, title, children, headerCard, kopiOpen, onKopi, kopiLink } = props
+  const t = useText(spaceText)
+  const c = useText(commonText)
   const phone = usePhoneLayout()
   const snapshot = model.snapshots.find((s) => s.id === snapshotId)!
+  const month = monthLabel(snapshot)
   const { sources, anchorN, zoneN } = snapshotSources(model, snapshot)
   const anchors = model.anchors[snapshot.id]
   // One scale for every month, so a month switch moves the marks, not the scale.
@@ -825,7 +875,7 @@ export function Hud(props: HudProps) {
       anchors={anchors}
       max={rulerMax}
       scenario={scenario}
-      month={snapshot.label}
+      month={month}
       cite={anchorN !== null && cite(anchorN, onCite)}
       className={
         phone
@@ -869,8 +919,8 @@ export function Hud(props: HudProps) {
           hint && !announcement ? 'opacity-100' : 'opacity-0'
         )}
       >
-        <span className="not-any-pointer-fine:hidden">Drag to look around · R resets</span>
-        <span className="any-pointer-fine:hidden">Drag to look around · double-tap a job</span>
+        <span className="not-any-pointer-fine:hidden">{t.hud.hintPointer}</span>
+        <span className="any-pointer-fine:hidden">{t.hud.hintTouch}</span>
       </p>
     </div>
   )
@@ -881,12 +931,19 @@ export function Hud(props: HudProps) {
         ref={header}
         className={cn(
           'relative flex items-start justify-between px-5 sm:px-8 lg:px-10',
-          short ? 'gap-4 pt-4' : 'gap-6 pt-5 sm:pt-7 lg:pt-9'
+          short ? 'gap-4 pt-4' : phone ? 'flex-wrap gap-x-6 gap-y-1.5 pt-5' : 'gap-6 pt-5 sm:pt-7 lg:pt-9'
         )}
       >
         {/* On a short screen an open card takes the title block's place, as the sky there is the only dark part of the
-            frame that holds it; the title stays for screen readers, and comes back when the card closes. */}
-        <div className="flex min-w-0 max-w-[30rem] flex-col gap-1.5">
+            frame that holds it; the title stays for screen readers, and comes back when the card closes. The card keeps
+            its width, and the links beside it wrap onto a second row instead, right-aligned, where the frame is narrow. */}
+        <div
+          className={cn(
+            'flex min-w-0 max-w-[30rem] flex-col gap-1.5',
+            phone && 'flex-1 basis-0',
+            headerCard ? 'shrink-0' : undefined
+          )}
+        >
           {headerCard}
           <h1
             ref={title}
@@ -897,53 +954,70 @@ export function Hud(props: HudProps) {
               headerCard ? 'sr-only' : undefined
             )}
           >
-            <span className="sr-only">The 3D Space: </span>
-            {WORLD_NAME[scenario]}
+            <span className="sr-only">{t.hud.titlePrefix}</span>
+            {c.scenarios[scenario]}
           </h1>
           {/* A short screen's switch announces the line. */}
-          {!short && <p className="text-body-m text-text-primary max-sm:text-body-s">{WORLD_LINE[scenario]}</p>}
-          {phone && (
-            <nav aria-label="Space" className="pointer-events-auto -mb-2 flex items-center gap-5">
-              <HudLink keys="H" onClick={onHelp}>
-                How to Read
-              </HudLink>
-              <HudLink keys="D" onClick={show2D}>
-                Show the Table
-              </HudLink>
-            </nav>
+          {!short && (
+            <p className="text-balance text-body-m text-text-primary max-sm:text-body-s">{t.hud.worldLine[scenario]}</p>
           )}
           {!phone && !docked && !headerCard && note}
           {short && line}
         </div>
         <nav
-          aria-label="Space"
-          className={cn('pointer-events-auto flex shrink-0 items-center', short ? 'gap-4' : 'gap-6', phone && 'hidden')}
+          aria-label={c.nav.space}
+          className={cn(
+            'pointer-events-auto flex items-center',
+            short ? 'min-w-0 flex-wrap justify-end gap-x-4' : 'ml-auto shrink-0 gap-4 2xl:gap-6',
+            phone && 'hidden'
+          )}
         >
           <HudLink keys="H" onClick={onHelp}>
-            How to Read
+            {t.hud.howToRead}
           </HudLink>
           <HudLink keys="D" onClick={show2D}>
-            Show the Table
+            {t.hud.showTable}
           </HudLink>
+          {!phone && <AskKopiLink ref={kopiLink} open={kopiOpen} onClick={onKopi} />}
+          {!phone && <HudLanguage />}
           {!short && (
             <ButtonLink
               to={routes.home}
               variant="outline"
               iconStart={<ArrowLeft className="size-5 stroke-current" aria-hidden="true" />}
-              className="touch-manipulation max-sm:hidden"
+              className="touch-manipulation max-2xl:hidden"
             >
-              Back to Dashboard
+              {t.backToDashboard}
             </ButtonLink>
           )}
         </nav>
-        {/* Its arrow alone on a phone, and on a short screen, where the title row has room for little else. */}
-        <ButtonLink
-          to={routes.home}
-          variant="outline"
-          aria-label="Back to Dashboard"
-          iconStart={<ArrowLeft className="size-5 stroke-current" aria-hidden="true" />}
-          className={cn('pointer-events-auto -mr-2 w-11 touch-manipulation !px-0', !short && 'sm:hidden')}
-        />
+        {/* Its arrow alone on a phone, on a short screen, where the title row has room for little else, and under 2xl, so
+            the links keep clear of the ring as it rises in the fast future; a phone keeps the language beside it. */}
+        <div className={cn('pointer-events-auto -mr-2 flex shrink-0 items-center gap-2', !short && '2xl:hidden')}>
+          {phone && <HudLanguage />}
+          <ButtonLink
+            to={routes.home}
+            variant="outline"
+            aria-label={t.backToDashboard}
+            iconStart={<ArrowLeft className="size-5 stroke-current" aria-hidden="true" />}
+            className="w-11 touch-manipulation !px-0"
+          />
+        </div>
+        {/* A phone's links take a row of their own under the title, the width of the screen. */}
+        {phone && (
+          <nav
+            aria-label={c.nav.space}
+            className="pointer-events-auto -mb-2 flex basis-full flex-wrap items-center gap-x-5"
+          >
+            <HudLink keys="H" onClick={onHelp} showKey={false}>
+              {t.hud.howToRead}
+            </HudLink>
+            <HudLink keys="D" onClick={show2D} showKey={false}>
+              {t.hud.showTable}
+            </HudLink>
+            <AskKopiLink ref={kopiLink} open={kopiOpen} onClick={onKopi} />
+          </nav>
+        )}
       </header>
 
       {!flat && ruler}
@@ -980,13 +1054,13 @@ export function Hud(props: HudProps) {
               short && 'hidden'
             )}
           >
-            <Metric label="Jobs">{model.jobs.length}</Metric>
+            <Metric label={t.hud.jobs}>{model.jobs.length}</Metric>
             {yours?.fit && (
-              <Metric label={`Fit, ${yours.title}`}>
+              <Metric label={t.hud.fitFor(yours.title)}>
                 <button
                   type="button"
                   aria-pressed={pinned}
-                  aria-label={`${formatFitPercent(yours.fit[snapshot.id][scenario])} fit, ${yours.title}: Pin Your Card`}
+                  aria-label={t.hud.pinYours(formatFitPercent(yours.fit[snapshot.id][scenario]), yours.title)}
                   onClick={onPin}
                   className="-my-3 inline-flex min-h-11 items-center rounded-sm underline decoration-current underline-offset-2 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                 >
@@ -995,19 +1069,24 @@ export function Hud(props: HudProps) {
               </Metric>
             )}
             {moved && (
-              <Metric label="Fit Changed, Slow to Fast">
-                {moved.count} {moved.count === 1 ? 'job' : 'jobs'}
-                <span className="text-text-muted">· at most {moved.max}&nbsp;pts</span>
+              <Metric label={t.hud.fitChanged}>
+                {t.jobs(moved.count)}
+                <span className="text-text-muted">{t.hud.atMost(moved.max)}</span>
               </Metric>
             )}
-            {!model.answers && <Metric label="Distance">Job Zone 1 to 5{zoneN !== null && cite(zoneN, onCite)}</Metric>}
+            {!model.answers && (
+              <Metric label={t.hud.distance}>
+                {t.hud.zoneRange}
+                {zoneN !== null && cite(zoneN, onCite)}
+              </Metric>
+            )}
           </div>
         </div>
 
         <div className={cn('relative flex max-w-[38%] flex-col items-end gap-0.5 text-right max-sm:portrait:contents')}>
           {sourcesOpen !== null && (
             <SourcesPopover
-              title={`Sources, ${snapshot.label}`}
+              title={`${c.sources} · ${month}`}
               sources={sources}
               open={sourcesOpen}
               onClose={() => setSourcesOpen(null)}
@@ -1025,14 +1104,14 @@ export function Hud(props: HudProps) {
             {phone && line}
             <div className="pointer-events-auto flex items-center gap-3">
               <Switcher
-                label="AI Uptake Scenario"
+                label={t.hud.scenario}
                 keyshortcuts="F 1 2"
                 size="lg"
                 value={scenario}
                 onChange={onScenario}
                 options={[
-                  { value: 'slow', label: 'Slow', name: WORLD_NAME.slow },
-                  { value: 'fast', label: 'Fast', name: WORLD_NAME.fast }
+                  { value: 'slow', label: t.futureShort.slow, name: c.scenarios.slow },
+                  { value: 'fast', label: t.futureShort.fast, name: c.scenarios.fast }
                 ]}
               />
               <Kbd bare className="not-any-pointer-fine:hidden">
@@ -1042,15 +1121,15 @@ export function Hud(props: HudProps) {
           </div>
           <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-1 max-sm:portrait:order-2 max-sm:portrait:justify-center">
             <span className="flex items-center gap-1.5 text-label-s text-text-muted">
-              Data
+              {t.hud.data}
               {sources.filter((s) => s.n !== anchorN && s.n !== zoneN).map((s) => cite(s.n, onCite))}
             </span>
             <Switcher
-              label="Data Month"
+              label={t.hud.dataMonth}
               keyshortcuts="M"
               value={snapshot.id}
               onChange={onSnapshot}
-              options={model.snapshots.map((s) => ({ value: s.id, label: s.label }))}
+              options={model.snapshots.map((s) => ({ value: s.id, label: monthLabel(s) }))}
             />
             <Kbd bare className="not-any-pointer-fine:hidden">
               M

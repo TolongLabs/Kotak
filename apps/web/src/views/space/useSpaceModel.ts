@@ -23,7 +23,11 @@ export function useSpaceModel({ lookAround }: { lookAround: boolean }): Loaded<S
   // or the snapshot doesn't recompute it.
   const answersKey = session.answers.join()
 
-  const roles = bundle.status === 'ready' ? bundle.data : null
+  // The bundle comes overlaid in the language on show, but a switch changes no number, so the model keys on the roles'
+  // codes rather than the bundle's identity: a language switch doesn't recompute it or rebuild the scene.
+  const loadedRoles = bundle.status === 'ready' ? bundle.data : null
+  const rolesKey = loadedRoles && [loadedRoles.role.onet_code, ...loadedRoles.related.map((r) => r.onet_code)].join()
+  const roles = useMemo(() => loadedRoles, [rolesKey])
   const file = space.status === 'ready' ? space.data : null
   const snapshots = manifest.status === 'ready' ? manifest.data.snapshots : null
   const pathwaysFile = pathways.status === 'ready' ? pathways.data : null

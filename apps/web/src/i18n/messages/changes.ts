@@ -1,3 +1,4 @@
+import type { VerdictRow } from '@kotak/shared'
 import { defineText } from '../text'
 
 const COUNT_EN: Record<number, string> = {
@@ -36,6 +37,7 @@ export const changesText = defineText(
     bannerTitle: 'Kopi Could Not Open This Job',
     bannerBody: 'Reload the page, or choose your job again.',
     comparing: 'Comparing the dated job data…',
+    thenCompare: ', then I can compare its snapshots.',
     viewingApril: 'You are viewing April data. Select After (May) to apply the newer snapshot across Kotak.',
     liveDemo: 'Live Demo',
     activeMay: (label: string) => `New data landed: ${label} is active across Kotak.`,
@@ -44,6 +46,7 @@ export const changesText = defineText(
     beforeApril: 'Before (April)',
     afterMay: 'After (May)',
     aprilToMay: 'April to May Changes',
+    seeChangeInSpace: 'See This Change in the Space',
     noChanges: 'No skill changes were found between April and May.',
     dashedLine: 'The Dashed Line Moved',
     neededNowMay: 'Needed Now (May)',
@@ -95,6 +98,14 @@ export const changesText = defineText(
     estimatedTarget: (target: string) => `Estimated target: about ${target}.`,
     roadmapPosition: (rank: string) => `Roadmap position: ${rank}.`,
     kopiLabels: (label: string) => `Kopi now labels this skill ${label}.`,
+    /** The engine's verdict rows (packages/shared VerdictRow), which travel inside verdictChange and kopiLabels; Steady
+     * reads as the common verdict. */
+    verdictRows: {
+      'Rising: AI helps it scale': 'Rising: AI helps it scale',
+      'Declining because of AI': 'Declining because of AI',
+      "Rising: AI can't do it yet": "Rising: AI can't do it yet",
+      'Declining for other reasons': 'Declining for other reasons'
+    } satisfies Record<Exclude<VerdictRow, 'Steady'>, string>,
     kopiSignal: 'Kopi uses the changed AI-use signal.',
     movedTargetNone: 'No estimated skill targets changed between snapshots.',
     movedTargets: (n: number, names: string) => `${n} estimated skill target${n === 1 ? '' : 's'} changed: ${names}.`,
@@ -184,6 +195,7 @@ export const changesText = defineText(
     bannerTitle: 'Kopi Tidak Dapat Membuka Pekerjaan Ini',
     bannerBody: 'Muat semula halaman, atau pilih pekerjaan anda semula.',
     comparing: 'Membandingkan data pekerjaan bertarikh…',
+    thenCompare: ', kemudian saya boleh membandingkan snapshotnya.',
     viewingApril: 'Anda melihat data April. Pilih Selepas (Mei) untuk menggunakan snapshot terkini di seluruh Kotak.',
     liveDemo: 'Demo Langsung',
     activeMay: (label) => `Data baharu diterima: ${label} aktif di seluruh Kotak.`,
@@ -192,6 +204,7 @@ export const changesText = defineText(
     beforeApril: 'Sebelum (April)',
     afterMay: 'Selepas (Mei)',
     aprilToMay: 'Perubahan April hingga Mei',
+    seeChangeInSpace: 'Lihat Perubahan Ini dalam Ruang',
     noChanges: 'Tiada perubahan kemahiran antara April dan Mei.',
     dashedLine: 'Garis Putus-Putus Beralih',
     neededNowMay: 'Diperlukan Kini (Mei)',
@@ -241,6 +254,12 @@ export const changesText = defineText(
     estimatedTarget: (target) => `Anggaran sasaran: sekitar ${target}.`,
     roadmapPosition: (rank) => `Kedudukan peta jalan: ${rank}.`,
     kopiLabels: (label) => `Kopi kini melabelkan kemahiran ini ${label}.`,
+    verdictRows: {
+      'Rising: AI helps it scale': 'Meningkat: AI membantunya berkembang',
+      'Declining because of AI': 'Menurun kerana AI',
+      "Rising: AI can't do it yet": 'Meningkat: AI belum mampu melakukannya',
+      'Declining for other reasons': 'Menurun kerana sebab lain'
+    },
     kopiSignal: 'Kopi menggunakan isyarat penggunaan AI yang berubah.',
     movedTargetNone: 'Tiada anggaran sasaran kemahiran berubah antara snapshot.',
     movedTargets: (n, names) => `${n} anggaran sasaran kemahiran berubah: ${names}.`,
@@ -333,6 +352,7 @@ export const changesText = defineText(
     bannerTitle: 'Kopi 无法打开这份工作',
     bannerBody: '请重新加载页面，或重新选择你的工作。',
     comparing: '正在比较带日期的工作数据…',
+    thenCompare: '，然后我就可以比较它的快照。',
     viewingApril: '你正在查看 4 月数据。请选择“之后（5 月）”，将新的快照应用到 Kotak 全站。',
     liveDemo: '实时演示',
     activeMay: (label) => `有新数据：${label}已在 Kotak 全站生效。`,
@@ -341,6 +361,7 @@ export const changesText = defineText(
     beforeApril: '之前（4 月）',
     afterMay: '之后（5 月）',
     aprilToMay: '4 月到 5 月的变化',
+    seeChangeInSpace: '在空间中查看这次变化',
     noChanges: '4 月到 5 月之间没有发现技能变化。',
     dashedLine: '虚线移动了',
     neededNowMay: '当前所需（5 月）',
@@ -387,6 +408,12 @@ export const changesText = defineText(
     estimatedTarget: (target) => `估算目标：约 ${target}。`,
     roadmapPosition: (rank) => `路线图位置：${rank}。`,
     kopiLabels: (label) => `Kopi 现在将这项技能标为${label}。`,
+    verdictRows: {
+      'Rising: AI helps it scale': '上升：AI 助其扩展',
+      'Declining because of AI': '因 AI 而下降',
+      "Rising: AI can't do it yet": '上升：AI 尚无法胜任',
+      'Declining for other reasons': '因其他原因下降'
+    },
     kopiSignal: 'Kopi 采用了变化后的 AI 使用信号。',
     movedTargetNone: '两个快照之间，估算的技能目标没有变化。',
     movedTargets: (n, names) => `${n} 项估算技能目标发生了变化：${names}。`,

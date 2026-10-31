@@ -8,16 +8,21 @@ import { Citation } from '../../components/ui/Citation'
 import { cn } from '../../components/ui/cn'
 import { Link } from '../../app/router'
 import { jobPath } from '../../app/routes'
+import { commonText } from '../../i18n/common'
+import { spaceText } from '../../i18n/messages/space'
+import { textNow, useText } from '../../i18n/text'
 import { formatFitPercent } from '../roles/fit'
 import {
   Est,
   formatChange,
   formatIndex,
+  groupName,
   hasNoEstimate,
-  NO_ESTIMATE,
+  monthLabel,
   snapshotSources,
+  useSpaceText,
   VERDICT_MARKS,
-  ZONE_LABEL
+  zoneWord
 } from './format'
 import type { SpaceJob, SpaceModel } from './model'
 
@@ -27,8 +32,6 @@ import type { SpaceJob, SpaceModel } from './model'
 // Around, with no answers, it has no fit: each job shows its O*NET Job Zone, sorted by zone, then title. Every number
 // the 3D view shows is here too: both futures' index above the rows, and each job's both futures in its expansion.
 
-const SCENARIO_WORD: Record<Scenario, string> = { slow: 'Slow', fast: 'Fast' }
-
 /** Rows on one page of the table. */
 const PAGE_SIZE = 20
 
@@ -36,7 +39,8 @@ const markOf = new Map(VERDICT_MARKS.map((mark) => [mark.verdict, mark]))
 
 // As the Roles cards mark fit: answered on your job, estimated where answers carry over, none where no answer reaches.
 function Fit({ job, value }: { job: SpaceJob; value: number }) {
-  if (hasNoEstimate(job)) return <span className="font-sans text-body-s text-text-muted">{NO_ESTIMATE}</span>
+  const t = useText(spaceText)
+  if (hasNoEstimate(job)) return <span className="font-sans text-body-s text-text-muted">{t.noEstimate}</span>
   return (
     <>
       {formatFitPercent(value)}
@@ -46,7 +50,8 @@ function Fit({ job, value }: { job: SpaceJob; value: number }) {
 }
 
 function Change({ value }: { value: number | null }) {
-  if (value === null) return <span className="text-text-muted">Unknown</span>
+  const c = useText(commonText)
+  if (value === null) return <span className="text-text-muted">{c.verdicts.Unknown}</span>
   return (
     <>
       {formatChange(value)}
@@ -57,10 +62,11 @@ function Change({ value }: { value: number | null }) {
 
 function VerdictMark({ verdict }: { verdict: Verdict }) {
   const { icon: Icon, tone } = markOf.get(verdict)!
+  const c = useText(commonText)
   return (
     <span className={cn('inline-flex items-center gap-1 font-sans text-label-s', tone)}>
       <Icon className="size-3.5 shrink-0 stroke-current" aria-hidden="true" />
-      {verdict}
+      {c.verdicts[verdict]}
     </span>
   )
 }
@@ -73,23 +79,24 @@ interface StateProps {
 // Each skill of one job, as the 3D view draws its blades: the AI-use change and verdict in the future shown, and
 // whether its AI-use data is borrowed from a broader Malaysian row.
 function Skills({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
+  const { t, skillName } = useSpaceText()
   const cell = 'whitespace-nowrap px-3 py-1.5'
   return (
     <table className="w-full text-left">
-      <caption className="sr-only">Skills of {job.title}</caption>
+      <caption className="sr-only">{t.table.skillsCaption(job.title)}</caption>
       <thead>
         <tr className="font-mono text-mono-s text-text-muted">
           <th scope="col" className="px-3 py-1.5 font-normal">
-            Skill
+            {t.table.skill}
           </th>
           <th scope="col" className={cn(cell, 'text-right font-normal')}>
-            AI Use, 12-Month Change
+            {t.table.skillChange}
           </th>
           <th scope="col" className={cn(cell, 'text-right font-normal')}>
-            Verdict
+            {t.table.verdict}
           </th>
           <th scope="col" className={cn(cell, 'text-right font-normal')}>
-            AI-Use Data
+            {t.table.aiUseData}
           </th>
         </tr>
       </thead>
@@ -97,7 +104,7 @@ function Skills({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
         {job.skills.map((skill) => (
           <tr key={skill.corner_id} className="border-t border-border-subtle">
             <th scope="row" className="px-3 py-1.5 text-body-s font-normal text-text-primary">
-              {skill.name}
+              {skillName(job, skill)}
             </th>
             <td className={cn(cell, 'text-right font-mono text-mono-s')}>
               <Change value={skill.growth[snapshotId][scenario]} />
@@ -106,7 +113,7 @@ function Skills({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
               <VerdictMark verdict={skill.status[snapshotId][scenario]} />
             </td>
             <td className={cn(cell, 'text-right text-body-s text-text-muted')}>
-              {skill.borrowed[snapshotId] ? 'Borrowed from a broader row' : 'Not borrowed'}
+              {skill.borrowed[snapshotId] ? t.table.borrowed : t.table.notBorrowed}
             </td>
           </tr>
         ))}
@@ -118,6 +125,8 @@ function Skills({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
 // One job in both AI futures, as its card in the space shows it: fit (with answers) and the median AI-use change, the
 // future shown in ink. It reads as one block with the skills under it: the same cells, header and rules.
 function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) {
+  const t = useText(spaceText)
+  const c = useText(commonText)
   const futures: Scenario[] = ['slow', 'fast']
   const value = (s: Scenario) =>
     cn(
@@ -127,11 +136,11 @@ function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) 
   const head = 'px-3 py-1.5 text-body-s font-normal text-text-primary'
   return (
     <table className="w-full text-left">
-      <caption className="sr-only">{job.title} in both AI futures</caption>
+      <caption className="sr-only">{t.table.futuresCaption(job.title)}</caption>
       <thead>
         <tr className="font-mono text-mono-s text-text-muted">
           <th scope="col" className="px-3 py-1.5 font-normal">
-            Both Futures
+            {t.table.bothFutures}
           </th>
           {futures.map((s) => (
             <th
@@ -142,7 +151,7 @@ function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) 
                 s === scenario && 'text-text-primary'
               )}
             >
-              {SCENARIO_WORD[s]} AI Uptake
+              {c.scenarios[s]}
             </th>
           ))}
         </tr>
@@ -151,7 +160,7 @@ function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) 
         {job.fit && (
           <tr className="border-t border-border-subtle">
             <th scope="row" className={head}>
-              Fit
+              {t.fit}
             </th>
             {futures.map((s) => (
               <td key={s} className={value(s)}>
@@ -162,7 +171,7 @@ function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) 
         )}
         <tr className="border-t border-border-subtle">
           <th scope="row" className={head}>
-            AI use, 12-month change, median skill
+            {t.table.medianChange}
           </th>
           {futures.map((s) => (
             <td key={s} className={value(s)}>
@@ -176,6 +185,7 @@ function Futures({ job, snapshotId, scenario }: { job: SpaceJob } & StateProps) 
 }
 
 function Verdicts({ counts }: { counts: Record<Verdict, number> }) {
+  const c = useText(commonText)
   const shown = VERDICT_MARKS.filter(({ verdict }) => counts[verdict] > 0)
   return (
     <>
@@ -187,7 +197,9 @@ function Verdicts({ counts }: { counts: Record<Verdict, number> }) {
           </span>
         ))}
       </span>
-      <span className="sr-only">{shown.map(({ verdict }) => `${counts[verdict]} ${verdict}`).join(', ')}</span>
+      <span className="sr-only">
+        {shown.map(({ verdict }) => `${counts[verdict]} ${c.verdicts[verdict]}`).join(', ')}
+      </span>
     </>
   )
 }
@@ -218,6 +230,7 @@ const JobRow = memo(function JobRow({
   pinned,
   rowRef
 }: JobRowProps) {
+  const t = useText(spaceText)
   const yours = job.kind === 'yours'
   const detailsId = `space-details-${job.code}`
   return (
@@ -243,11 +256,12 @@ const JobRow = memo(function JobRow({
                 className={cn('size-4 stroke-current transition-transform duration-150', open && 'rotate-90')}
                 aria-hidden="true"
               />
-              <span className="sr-only">Both futures and skills of {job.title}</span>
+              <span className="sr-only">{t.table.detailsOf(job.title)}</span>
             </button>
             <span className="pt-2.5">
               <Link
                 to={jobPath(job.code)}
+                lang="en"
                 className={cn(
                   'scroll-mt-20 text-label-m text-text-primary underline decoration-current underline-offset-2 transition-colors duration-150 ease-out hover:text-text-muted',
                   yours && 'font-bold'
@@ -255,18 +269,18 @@ const JobRow = memo(function JobRow({
               >
                 {job.title}
               </Link>
-              {yours && <span className="ml-2 text-label-s font-bold text-text-primary">Your Job</span>}
-              {pinned && !yours && <span className="ml-2 text-label-s font-bold text-text-primary">Pinned</span>}
+              {yours && <span className="ml-2 text-label-s font-bold text-text-primary">{t.yourJob}</span>}
+              {pinned && !yours && <span className="ml-2 text-label-s font-bold text-text-primary">{t.pinned}</span>}
               {job.kind === 'related' && (
                 <span className="ml-2 inline-flex items-center gap-1 text-label-s text-text-muted">
                   <span aria-hidden="true" className="size-2 rounded-full bg-map-suggested" />
-                  Related
+                  {t.related}
                 </span>
               )}
             </span>
           </span>
         </th>
-        <td className="min-w-40 px-3 py-2 text-body-s text-text-muted">{job.groupName}</td>
+        <td className="min-w-40 px-3 py-2 text-body-s text-text-muted">{groupName(t, job)}</td>
         {job.fit ? (
           <td className="whitespace-nowrap px-3 py-2 text-right font-mono text-mono-m">
             <Fit job={job} value={job.fit[snapshotId][scenario]} />
@@ -274,7 +288,7 @@ const JobRow = memo(function JobRow({
         ) : (
           <td className="min-w-48 px-3 py-2">
             <span className="font-mono text-mono-m text-text-primary">{job.zone}</span>
-            <span className="ml-2 text-body-s text-text-muted">{ZONE_LABEL[job.zone]}</span>
+            <span className="ml-2 text-body-s text-text-muted">{t.zones[job.zone]}</span>
           </td>
         )}
         <td className="whitespace-nowrap px-3 py-2 text-right font-mono text-mono-m">
@@ -301,21 +315,30 @@ const JobRow = memo(function JobRow({
 })
 
 /** The table dialog's title, naming the month and the AI future it shows, such as "All 923 Jobs · May 2026 · Slow AI
- * Uptake". */
+ * Uptake". Call it while rendering, so a language switch reaches it. */
 export const spaceTableTitle = (model: SpaceModel, snapshotId: SnapshotId, scenario: Scenario) =>
-  `All ${model.jobs.length} Jobs · ${model.snapshots.find((s) => s.id === snapshotId)!.label} · ${SCENARIO_WORD[scenario]} AI Uptake`
+  textNow(spaceText).table.title(
+    model.jobs.length,
+    monthLabel(model.snapshots.find((s) => s.id === snapshotId)!),
+    textNow(commonText).scenarios[scenario]
+  )
 
 export interface SpaceTableProps extends StateProps {
   model: SpaceModel
-  /** The job in focus in the space (its pinned card), whose page the table opens on; null opens on your job's page. */
-  focusCode: string | null
+  /** The job the table opens on, whose page it shows and whose row it marks: the space's job in focus, or a deep link's
+   * job; null opens on your job's page. */
+  targetCode: string | null
+  /** The job whose card is pinned in the space, labelled Pinned; null without the 3D view. */
+  pinnedCode: string | null
   /** Why the table shows instead of the 3D view, when it is the fallback. */
   note?: string
   /** Actions beside the explanation, such as showing the 3D view. */
   actions?: ReactNode
 }
 
-export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actions }: SpaceTableProps) {
+export function SpaceTable({ model, scenario, snapshotId, targetCode, pinnedCode, note, actions }: SpaceTableProps) {
+  const t = useText(spaceText)
+  const c = useText(commonText)
   const regionRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLTableElement>(null)
   const targetRef = useRef<HTMLTableRowElement>(null)
@@ -332,8 +355,10 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
         : [...model.jobs].sort((a, b) => a.zone - b.zone || a.title.localeCompare(b.title)),
     [model, snapshotId, scenario]
   )
-  const word = SCENARIO_WORD[scenario]
-  const target = focusCode ?? model.assessedCode
+  const future = c.scenarios[scenario]
+  const month = monthLabel(snapshot)
+  const zoneScale = t.table.zoneScale(zoneWord(t, 1), zoneWord(t, 5))
+  const target = targetCode ?? model.assessedCode
   const pages = Math.ceil(rows.length / PAGE_SIZE)
   // The table mounts each time its dialog opens, so it opens on the target's page, or the first.
   const [page, setPage] = useState(() =>
@@ -356,7 +381,7 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
       const at = row.getBoundingClientRect()
       region.scrollTop += at.top - box.top - (box.height - at.height) / 2
       const job = rows.find((j) => j.code === target)
-      if (job) setOpened(`Page ${page + 1} of ${pages}, showing ${job.title}`)
+      if (job) setOpened(textNow(spaceText).table.opened(page + 1, pages, job.title))
     })
     return () => cancelAnimationFrame(frame)
     // Once, on opening: the dialog remounts the table each time it opens.
@@ -404,7 +429,7 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
     <div className="flex min-h-0 flex-col gap-3">
       {(note || actions) && (
         <div className="flex flex-col gap-3">
-          {note && <Banner type="info" title="Table View" body={note} />}
+          {note && <Banner type="info" title={t.table.viewTitle} body={note} />}
           {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
         </div>
       )}
@@ -416,25 +441,23 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
       <div
         ref={regionRef}
         role="region"
-        aria-label="Jobs Table"
+        aria-label={t.table.region}
         tabIndex={0}
         className="relative h-[min(36rem,60dvh)] min-h-0 overflow-auto overscroll-contain rounded-md border border-border-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
       >
         <div className="sticky left-0 flex flex-col gap-4 p-4">
           <p className="max-w-[720px] text-body-s text-text-muted">
-            {model.answers
-              ? 'Fit is the share of each job’s needed levels your answers already meet; for every other job it is estimated from your answers. AI use, 12-month change, is the median of a job’s skills’ projected change in AI use: an AI-usage signal, not job demand. Both are estimates, for the month and AI future the title names, as the space shows them. Open a job to see both futures and each skill.'
-              : 'With no answers yet, there is no fit, so each job shows its O*NET Job Zone: how much preparation it needs. AI use, 12-month change, is the median of a job’s skills’ projected change in AI use: an AI-usage signal, not job demand. It is an estimate, for the month and AI future the title names, as the space shows them. Open a job to see both futures and each skill.'}
+            {model.answers ? t.table.introAnswers : t.table.introLookAround}
           </p>
 
           <dl className="grid gap-3 sm:grid-cols-2">
             {anchors && (
               <div className="flex flex-col gap-1 rounded-md border border-border-subtle bg-bg-panel p-4">
-                <dt className="text-label-m text-text-primary">Malaysia’s AI Usage Index</dt>
+                <dt className="text-label-m text-text-primary">{t.mysIndex}</dt>
                 <dd className="flex flex-wrap items-center gap-x-4 gap-y-1 text-label-m">
                   {(['slow', 'fast'] as const).map((s) => (
                     <span key={s} className={s === scenario ? 'text-text-primary' : 'text-text-muted'}>
-                      {SCENARIO_WORD[s]} AI Uptake{' '}
+                      {c.scenarios[s]}{' '}
                       <span className="font-mono text-mono-m">
                         {formatIndex(s === 'fast' ? anchors.fastMys : anchors.mys)}
                         {s === 'fast' && <Est />}
@@ -442,61 +465,55 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
                     </span>
                   ))}
                   <span className="text-text-muted">
-                    Singapore <span className="font-mono text-mono-m">{formatIndex(anchors.sgp)}</span>
+                    {t.singapore} <span className="font-mono text-mono-m">{formatIndex(anchors.sgp)}</span>
                   </span>
                   {anchorN !== null && <Citation n={anchorN} />}
                 </dd>
-                <dd className="text-body-s text-text-muted">
-                  Fast AI Uptake moves Malaysia halfway to Singapore, from the same release, so it is an estimate.
-                </dd>
+                <dd className="text-body-s text-text-muted">{t.table.fastNote}</dd>
               </div>
             )}
             {moved ? (
               <div className="flex flex-col gap-1 rounded-md border border-border-subtle bg-bg-panel p-4">
-                <dt className="text-label-m text-text-primary">Fit Between the Two Futures</dt>
+                <dt className="text-label-m text-text-primary">{t.table.fitBetween}</dt>
                 <dd className="text-body-m text-text-primary">
-                  {moved.count === 0
-                    ? 'Fit is the same in both futures for every job.'
-                    : `Fit changed for ${moved.count} ${moved.count === 1 ? 'job' : 'jobs'}, by at most ${moved.max} ${
-                        moved.max === 1 ? 'point' : 'points'
-                      }.`}
+                  {moved.count === 0 ? t.table.fitSame : t.table.fitChanged(moved.count, moved.max)}
                 </dd>
-                <dd className="text-body-s text-text-muted">Whole percents, as the table shows them.</dd>
+                <dd className="text-body-s text-text-muted">{t.table.wholePercents}</dd>
               </div>
             ) : (
               <div className="flex flex-col gap-1 rounded-md border border-border-subtle bg-bg-panel p-4">
-                <dt className="text-label-m text-text-primary">O*NET Job Zone</dt>
+                <dt className="text-label-m text-text-primary">{t.table.onetJobZone}</dt>
                 <dd className="flex flex-wrap items-center gap-1.5 text-body-m text-text-primary">
                   <span>
-                    From <span className="font-mono text-mono-m">1</span>, {ZONE_LABEL[1].toLowerCase()}, to{' '}
-                    <span className="font-mono text-mono-m">5</span>, {ZONE_LABEL[5].toLowerCase()}.
+                    {zoneScale[0]}
+                    <span className="font-mono text-mono-m">1</span>
+                    {zoneScale[1]}
+                    <span className="font-mono text-mono-m">5</span>
+                    {zoneScale[2]}
                   </span>
                   {zoneN !== null && <Citation n={zoneN} />}
                 </dd>
-                <dd className="text-body-s text-text-muted">
-                  The education, training and experience a job needs, as O*NET rates it for US workers. It is the same
-                  in both futures and both months.
-                </dd>
+                <dd className="text-body-s text-text-muted">{t.table.zoneMeaning}</dd>
               </div>
             )}
           </dl>
 
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
             <p className="flex flex-wrap items-center gap-1.5 font-mono text-mono-s text-text-muted">
-              {model.jobs.length} jobs · {snapshot.label} data
+              {t.jobs(model.jobs.length)} · {t.dataOf(month)}
               {sources.map((source) => (
                 <Citation key={source.n} n={source.n} />
               ))}
-              {model.answers ? `· best fit first, ${word} AI Uptake` : '· by Job Zone, then title'}
+              {model.answers ? t.table.byFit(future) : t.table.byZone}
             </p>
             <ul
               className="flex flex-wrap items-center gap-3 font-mono text-mono-s text-text-muted"
-              aria-label="Verdicts"
+              aria-label={t.table.verdicts}
             >
               {VERDICT_MARKS.map(({ verdict, icon: Icon, tone }) => (
                 <li key={verdict} className="inline-flex items-center gap-1">
                   <Icon className={cn('size-3.5 shrink-0 stroke-current', tone)} aria-hidden="true" />
-                  {verdict}
+                  {c.verdicts[verdict]}
                 </li>
               ))}
             </ul>
@@ -505,20 +522,24 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
 
         <table ref={tableRef} className="w-full border-t border-border-subtle text-left">
           <caption className="sr-only">
-            {model.answers
-              ? `Jobs ${first + 1} to ${first + shown.length} of ${rows.length}: each job’s fit, AI use, 12-month change, and skill verdicts in ${word} AI Uptake, for ${snapshot.label} data, best fit first.`
-              : `Jobs ${first + 1} to ${first + shown.length} of ${rows.length}: each job’s O*NET Job Zone, AI use, 12-month change, and skill verdicts in ${word} AI Uptake, for ${snapshot.label} data, by Job Zone, then title.`}
+            {(model.answers ? t.table.captionFit : t.table.captionZone)(
+              first + 1,
+              first + shown.length,
+              rows.length,
+              future,
+              month
+            )}
           </caption>
           <thead className="sticky top-0 z-10 bg-bg-default shadow-[0_1px_0_var(--color-border-subtle)]">
             <tr className="font-mono text-mono-s text-text-muted">
               <th scope="col" className="px-3 py-2 font-normal">
-                Job
+                {t.table.job}
               </th>
               <th scope="col" className="px-3 py-2 font-normal">
-                Group
+                {t.table.group}
               </th>
               {model.answers ? (
-                header(['Fit'], { sorted: true })
+                header([t.fit], { sorted: true })
               ) : (
                 <th
                   scope="col"
@@ -526,13 +547,13 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
                   className="whitespace-nowrap px-3 py-2 font-normal text-text-primary"
                 >
                   <span className="flex items-center gap-1.5">
-                    Job Zone
+                    {t.table.jobZone}
                     {zoneN !== null && <Citation n={zoneN} />}
                   </span>
                 </th>
               )}
-              {header(['AI Use,', '12-Month Change'])}
-              {header(['Skill Verdicts'], { right: false })}
+              {header(t.table.change)}
+              {header([t.table.skillVerdicts], { right: false })}
             </tr>
           </thead>
           <tbody>
@@ -545,7 +566,7 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
                 open={open.has(job.code)}
                 onToggle={toggle}
                 highlight={job.code === target}
-                pinned={job.code === focusCode}
+                pinned={job.code === pinnedCode}
                 rowRef={job.code === target ? targetRef : undefined}
               />
             ))}
@@ -553,7 +574,7 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
         </table>
       </div>
 
-      <nav aria-label="Jobs Table Pages" className="flex shrink-0 items-center justify-between gap-3">
+      <nav aria-label={t.table.pages} className="flex shrink-0 items-center justify-between gap-3">
         <Button
           variant="secondary"
           aria-disabled={page === 0 || undefined}
@@ -561,11 +582,13 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
           iconStart={<ChevronLeft className="size-5 stroke-current" aria-hidden="true" />}
           className={cn(pagerButton, 'max-sm:w-11 max-sm:!px-0')}
         >
-          <span className="max-sm:sr-only">Previous</span>
-          <span className="sr-only"> Page</span>
+          <span aria-hidden="true" className="max-sm:hidden">
+            {t.table.previous}
+          </span>
+          <span className="sr-only">{t.table.previousPage}</span>
         </Button>
         <p aria-live="polite" aria-atomic="true" className="text-center font-mono text-mono-s text-text-muted">
-          Page {page + 1} of {pages} · rows {first + 1}–{first + shown.length} of {rows.length}
+          {t.table.pageStatus(page + 1, pages, first + 1, first + shown.length, rows.length)}
         </p>
         <Button
           variant="secondary"
@@ -574,8 +597,10 @@ export function SpaceTable({ model, scenario, snapshotId, focusCode, note, actio
           iconEnd={<ChevronRight className="size-5 stroke-current" aria-hidden="true" />}
           className={cn(pagerButton, 'max-sm:w-11 max-sm:!px-0')}
         >
-          <span className="max-sm:sr-only">Next</span>
-          <span className="sr-only"> Page</span>
+          <span aria-hidden="true" className="max-sm:hidden">
+            {t.table.next}
+          </span>
+          <span className="sr-only">{t.table.nextPage}</span>
         </Button>
       </nav>
       <p className="sr-only" aria-live="polite">

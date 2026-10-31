@@ -3,18 +3,19 @@ import { addMonths, HORIZON_MONTHS, roleVerdicts, type BundleRole, type Scenario
 import { ArrowUpRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, navigate } from '../app/router'
-import { jobPath, routes } from '../app/routes'
+import { jobPath, routes, spacePath } from '../app/routes'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { Button } from '../components/ui/Button'
+import { routeLinkClassName } from '../components/ui/TextLink'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
 import type { Corner } from '../demo/types'
 import { loadRoleBundle, useRoleBundle } from '../engine/bundle'
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { verdictId } from '../engine/viewModel'
-import { useGuestSession } from '../session/store'
+import { hasAnswers, useGuestSession } from '../session/store'
 import { useScenario } from '../session/scenario'
 import { NotFoundView } from './NotFoundView'
 import { dateLocale } from '../i18n/locale'
@@ -255,6 +256,13 @@ export function JobView({ code }: { code: string }) {
             <span className="font-mono text-mono-s text-text-muted">O*NET {role.onet_code}</span>
             <VerdictChip verdict={outlook} size="sm" />
             <span className="text-body-s text-text-muted">{neededBy}</span>
+            {/* Without a check-up the space has no fit to place jobs by, so it opens in Look Around. */}
+            <Link
+              to={spacePath(role.onet_code, !(assessedRoleCode(session) && hasAnswers(session)))}
+              className={routeLinkClassName}
+            >
+              {t.jobView.findInSpace}
+            </Link>
           </p>
         </div>
         <Button

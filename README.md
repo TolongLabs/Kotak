@@ -215,6 +215,10 @@ A check-up for a web developer with a computer science degree who wants to see w
 
     <img src="/docs/readme/steps/5-roadmap.png" alt="Roadmap" width="100%">
 
+6.  **See every job in the space.** At `/app/space`, all 923 jobs stand as tufts of grass around Kopi's box, one blade per skill: the nearer a tuft, the better your fit, and the taller a blade, the faster that skill's AI use is rising (est.). Switch the AI future or the data month and every tuft moves at once; the same numbers sit in a table one key away. Home, Radar, Roles, What Changed and each job page link in, and `/app/space?job=<O*NET code>` opens on one job with its card pinned.
+
+    <img src="/docs/readme/steps/6-space.png" alt="Space" width="100%">
+
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
 ### Features
@@ -223,6 +227,7 @@ A check-up for a web developer with a computer science degree who wants to see w
 - **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights, refreshed weekly. A Before/After switch shows what changed when May's data arrived.
 - **Future-role matching** — up to 6 roles from the user's targets, areas, field of study and O\*NET's related list, each with a fit score, the maths behind it, the named gaps and why it's there.
 - **Malaysian job ads** — for each role, the JobStreet ads Kotak's admins reviewed: active ads, an estimate of its JobStreet ads and how it ranks by them, advertised pay in ringgit, where the jobs are, the benefits employers name, and the tools, languages and AI skills they ask for. Shown beside the verdicts, which it never sets.
+- **3D space** — all 923 jobs at `/app/space`, placed by the user's fit and drawn with each skill's AI use, 12-month change (est.), in both AI futures and both data months, with every number in a table one key away. `/app/space?job=<O*NET code>` opens it on one job, and Look Around shows it before the check-up, placed by O\*NET Job Zone.
 - **Reskilling pathway** — an interactive roadmap with ordered steps, hours, one free resource per step and a finish date that moves with the user's weekly hours.
 - **SDG mapping** — every skill carries SDG targets, every job shows the goals its work serves, and the roadmap highlights steps by goal.
 - **Handling uncertainty** — every target is labelled an estimate, Split shows slow and fast AI-uptake futures, and Unknown marks thin data.
@@ -281,7 +286,7 @@ Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`
 
 ### Tech Stack
 
-- **Frontend:** TypeScript, [React](https://react.dev/) 19, [Vite](https://vite.dev/), [Tailwind CSS](https://tailwindcss.com/), [Recharts](https://recharts.org/) and [Live2D](https://www.live2d.com/) for Kopi.
+- **Frontend:** TypeScript, [React](https://react.dev/) 19, [Vite](https://vite.dev/), [Tailwind CSS](https://tailwindcss.com/), [Recharts](https://recharts.org/), [three.js](https://threejs.org/) for the 3D space and [Live2D](https://www.live2d.com/) for Kopi.
 - **Backend:** [Bun](https://bun.sh/), [Hono](https://hono.dev/) and [Zod](https://zod.dev/). The rule engine runs in the browser through `@kotak/sdk`.
 - **Database:** [Neon](https://neon.com/) Postgres 18.
 - **AI / Compute:** [RunPod](https://www.runpod.io/) serverless GPU (Qwen3.8-27B on vLLM), [Claude](https://www.anthropic.com/claude) Haiku 5.5 and [ElevenLabs](https://elevenlabs.io/).

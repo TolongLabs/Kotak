@@ -13,11 +13,15 @@ import {
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { spaceText } from '../../../i18n/messages/space'
+import { useText } from '../../../i18n/text'
 import type { SpaceModel } from '../model'
 import { CameraRig } from './camera'
 import {
   BLADE_H0,
   FAN_EDGE,
+  LINE_END,
+  focusShot,
   FUTURE_SECONDS,
   MONTH_SECONDS,
   monthIds,
@@ -28,6 +32,7 @@ import {
   ringLabels,
   tuftPosition,
   type FieldLayout,
+  type FocusView,
   type Shot
 } from './layout'
 import {
@@ -93,6 +98,8 @@ interface WorldProps {
   hud: RefObject<HudBoxes>
   /** Increments to fly back to the opening shot and resume the drift. */
   resetView: number
+  /** A deep link's job (?job=): the camera flies from the opening shot to its tuft once, at once under reduced motion. */
+  flyTo?: number | null
   /** Holds the opening shot still (no drift, no parallax) without locking the controls; R's reset clears it in SpaceScene. */
   still?: boolean
   onPick: (pick: Pick | null, how: 'hover' | 'tap') => void
@@ -148,6 +155,32 @@ const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 
 function tweenAt(tween: Tween, now: number, ease: (t: number) => number) {
   const t = tween.seconds > 0 ? Math.min(1, Math.max(0, (now - tween.start) / tween.seconds)) : 1
   return tween.from + (tween.to - tween.from) * ease(t)
+}
+
+/**
+ * The camera's lens and the HUD's text as it lays out now, in CSS pixels from the canvas's corner, for a fly-to's
+ * landing to keep clear (layout.ts, focusShot); text faded out, such as the hint, keeps its place too, as it can fade
+ * back. Read once per flight, not per frame.
+ */
+function focusView(camera: THREE.PerspectiveCamera, canvas: HTMLCanvasElement): FocusView {
+  const frame = canvas.getBoundingClientRect()
+  const text: FocusView['text'] = []
+  for (const el of (canvas.closest('main') ?? document.body).querySelectorAll('*')) {
+    const words = [...el.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+    if (!words || el.closest('dialog')) continue
+    const r = el.getBoundingClientRect()
+    if (r.width < 2 || r.height < 2) continue
+    // checkVisibility came late to some browsers (Safari 17.4); the style says as much where it is missing.
+    const shown = el.checkVisibility?.({ visibilityProperty: true }) ?? getComputedStyle(el).visibility === 'visible'
+    if (!shown) continue
+    text.push({
+      left: r.left - frame.left,
+      top: r.top - frame.top,
+      right: r.right - frame.left,
+      bottom: r.bottom - frame.top
+    })
+  }
+  return { fov: camera.fov, width: frame.width, height: frame.height, text }
 }
 
 /** Frees a loaded model's geometries, materials and any textures its materials hold. */
@@ -377,9 +410,12 @@ function Effects({ reduced }: { reduced: boolean }) {
   return null
 }
 
-/** The ground labels' type, Atkinson Hyperlegible Next Bold in outline, drawn this many pixels tall into each texture. */
+/**
+ * The ground labels' type, Atkinson Hyperlegible Next Bold in outline, drawn this many pixels tall into each texture.
+ * Atkinson has no Chinese glyphs, so the stack falls back to a Simplified Chinese face for them.
+ */
 const LABEL_PX = 96
-const LABEL_FONT = `700 ${LABEL_PX}px "Atkinson Hyperlegible Next"`
+const LABEL_FONT = `700 ${LABEL_PX}px "Atkinson Hyperlegible Next", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif`
 /** The outline's width in the texture's pixels: on the nearest label, about a ring line's width on screen (1.2 px). */
 const LABEL_STROKE = 5
 /** A label texture's height, its baseline's depth and the font's cap height, in em. */
@@ -396,12 +432,16 @@ const LABEL_DEPTH = 0.103
 const LABEL_STRETCH = 2.5
 /** The space between a label's last letter and its line's end, in em, with the texture's own pad: about a letter. */
 const LABEL_GAP_EM = 0.5
-/** Where the ground shader's ring lines have faded out past the fan's edge, in radians (shaders.ts, groundFragment). */
-const LINE_END = FAN_EDGE + 0.02
 /** A label's brightness over the ring lines' own colour: a touch brighter, as its strokes are as thin as a line. */
 const LABEL_GAIN = 1.4
 
-/** One label's texture: the text's outline in white on clear, its height LABEL_PX * LABEL_EM and its width the text's. */
+/** Chinese characters are too dense to read in outline at the ground's low angle, so a label with them is filled, a
+ * little dimmer, so it weighs about as much as an outlined one. */
+const HAN = /\p{Script=Han}/u
+const LABEL_FILL = 'rgba(255, 255, 255, 0.7)'
+
+/** One label's texture: the text's outline (or fill, HAN) in white on clear, its height LABEL_PX * LABEL_EM and its
+ * width the text's. */
 function labelTexture(text: string, anisotropy: number) {
   const context = document.createElement('canvas').getContext('2d')!
   context.font = LABEL_FONT
@@ -413,7 +453,10 @@ function labelTexture(text: string, anisotropy: number) {
   context.strokeStyle = '#fff'
   context.lineWidth = LABEL_STROKE
   context.lineJoin = 'round'
-  context.strokeText(text, pad, LABEL_PX * LABEL_BASELINE)
+  if (HAN.test(text)) {
+    context.fillStyle = LABEL_FILL
+    context.fillText(text, pad, LABEL_PX * LABEL_BASELINE)
+  } else context.strokeText(text, pad, LABEL_PX * LABEL_BASELINE)
   const texture = new THREE.CanvasTexture(context.canvas)
   texture.anisotropy = anisotropy
   return texture
@@ -454,12 +497,13 @@ function labelStrip(radius: number, aspect: number, depth: number) {
 
 /**
  * The ground rings' names (ringLabels: Job Zone 1 to 5 in Look Around, the fit rings with answers), painted flat on the
- * ground past each ring line's left end, like a road marking, in outline in the lines' colour. They are drawn once the
- * font has loaded, and freed, textures too, on unmount or when the names change.
+ * ground past each ring line's left end, like a road marking, in outline in the lines' colour, in the language on show.
+ * They are drawn once their fonts have loaded, and freed, textures too, on unmount or when the names change, as a
+ * language switch changes them.
  */
 function GroundLabels({ model, layout, uniforms }: { model: SpaceModel; layout: FieldLayout; uniforms: Uniforms }) {
   const gl = useThree((s) => s.gl)
-  const names = ringLabels(model).join('\n')
+  const names = ringLabels(model, useText(spaceText)).join('\n')
   const [group, setGroup] = useState<THREE.Group | null>(null)
   useEffect(() => {
     const built = new THREE.Group()
@@ -489,8 +533,8 @@ function GroundLabels({ model, layout, uniforms }: { model: SpaceModel; layout: 
       })
       setGroup(built)
     }
-    // A canvas draws with whatever font has loaded, so the labels wait for theirs.
-    document.fonts.load(LABEL_FONT).then(draw, draw)
+    // A canvas draws with whatever font has loaded, so the labels wait for the faces their text needs.
+    document.fonts.load(LABEL_FONT, names).then(draw, draw)
     return () => {
       alive = false
       for (const child of built.children) {
@@ -565,7 +609,9 @@ function buildMeshes(uniforms: Uniforms, layout: FieldLayout) {
 
   // The dust hangs low over the field, below every opening shot's eye (the phone's is the lowest, at 1.08 m), so it
   // stays under the horizon, and from 4 m past the box, so it stays above the foot: it never drifts under the HUD's
-  // text in the sky or across the foot.
+  // text in the sky or across the foot. Seen from inside the field, as after a fly-to, it fades out from 7.5 m to 5 m
+  // in front of the eye (shaders.ts, dustVertex), over the ground the foot covers; the opening shots stand about 7 m or
+  // more from it.
   const DUST = 420
   const dustPositions = new Float32Array(DUST * 3)
   const seeds = new Float32Array(DUST)
@@ -597,7 +643,7 @@ function buildMeshes(uniforms: Uniforms, layout: FieldLayout) {
 
 export function World(props: WorldProps) {
   const { model, layout, future, month, reduced, shot, drift, paused, highlight, yours, hud, resetView } = props
-  const { still } = props
+  const { still, flyTo = null } = props
   const { onPick, onSteer, onFocusJob, onLost } = props
   const gl = useThree((s) => s.gl)
   const scene = useThree((s) => s.scene)
@@ -659,6 +705,18 @@ export function World(props: WorldProps) {
     return () => built.dispose()
   }, [camera, gl])
   const resetSeen = useRef(resetView)
+  const flown = useRef(false)
+  // A deep link's landing measures the HUD's text, so it waits for the fonts that set its size.
+  const fontsReady = useRef(false)
+  useEffect(() => {
+    let alive = true
+    document.fonts.ready.then(() => {
+      if (alive) fontsReady.current = true
+    })
+    return () => {
+      alive = false
+    }
+  }, [])
 
   // Shaders compile before the first switch, once the box has its materials too.
   const [boxReady, setBoxReady] = useState(false)
@@ -749,6 +807,12 @@ export function World(props: WorldProps) {
       if (resetSeen.current !== resetView) rig.reset(reduced)
       resetSeen.current = resetView
       rig.update(t, delta, shot, { locked: !drift, still, reduced })
+      // After the opening shot's first frames, so the flight starts from it, once the fonts have loaded; the card is
+      // pinned already (SpaceScene). The user didn't steer this flight.
+      if (flyTo !== null && !flown.current && fontsReady.current) {
+        flown.current = true
+        rig.focus(focusShot(layout, flyTo, f, m, focusView(camera, gl.domElement)), reduced, () => {}, false)
+      }
     }
 
     // The HUD's text boxes, for the sky's stars: from CSS pixels down from the top to the frame's pixels up from the
@@ -801,9 +865,10 @@ export function World(props: WorldProps) {
     const focus = (event: MouseEvent) => {
       const hit = pick(event)
       if (!rig || !hit) return
-      const [x, z] = tuftPosition(layout, hit.index, now.current.future, now.current.month)
       const code = model.jobs[hit.index]!.code
-      rig.focus(x, z, latest.current.reduced, () => latest.current.onFocusJob(code))
+      const view = focusView(camera, canvas)
+      const landing = focusShot(layout, hit.index, now.current.future, now.current.month, view)
+      rig.focus(landing, latest.current.reduced, () => latest.current.onFocusJob(code))
     }
     let lastTap: { time: number; x: number; y: number } | null = null
     const tap = (event: PointerEvent) => {

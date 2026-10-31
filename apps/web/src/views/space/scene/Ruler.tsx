@@ -2,6 +2,9 @@ import type { Scenario } from '@kotak/shared'
 import { useEffect, useRef, type ReactNode, type Ref } from 'react'
 import { useReducedMotion } from '../../../components/kopi/motion'
 import { cn } from '../../../components/ui/cn'
+import { commonText } from '../../../i18n/common'
+import { spaceText } from '../../../i18n/messages/space'
+import { useText } from '../../../i18n/text'
 import { formatIndex } from '../format'
 import { FUTURE_SECONDS, MONTH_SECONDS, REDUCED_SECONDS } from './layout'
 
@@ -16,7 +19,7 @@ interface RulerProps {
   /** The scale's top, the same in every month, so a month switch moves the marks and not the scale. */
   max: number
   scenario: Scenario
-  /** The snapshot's label, such as "May 2026", for screen readers. */
+  /** The snapshot's month, such as "May 2026", for screen readers. */
   month: string
   cite: ReactNode
   /** Vertical down the right edge (the caller positions it, absolute), or flat across the foot of a phone's HUD. */
@@ -29,6 +32,8 @@ interface RulerProps {
 const TICK = { vertical: ['h-px w-2.5', 'h-px w-1.5'], horizontal: ['h-2.5 w-px', 'h-1.5 w-px'] }
 
 export function Ruler({ anchors, max, scenario, month, cite, orientation, className, ref }: RulerProps) {
+  const t = useText(spaceText)
+  const c = useText(commonText)
   const { reduced } = useReducedMotion()
   const flip = reduced ? REDUCED_SECONDS : FUTURE_SECONDS
   const monthSwitch = reduced ? REDUCED_SECONDS : MONTH_SECONDS
@@ -41,9 +46,9 @@ export function Ruler({ anchors, max, scenario, month, cite, orientation, classN
   const ticks = Array.from({ length: max * 2 + 1 }, (_, i) => i / 2)
   // The caption names Malaysia once, so its two marks say only the future; the caption's hidden text says it all.
   const marks = [
-    { key: 'sgp', label: 'Singapore', value: anchors.sgp, live: false },
-    { key: 'fast', label: 'Fast', value: anchors.fastMys, live: scenario === 'fast' },
-    { key: 'slow', label: 'Slow', value: anchors.mys, live: scenario === 'slow' }
+    { key: 'sgp', label: t.singapore, value: anchors.sgp, live: false },
+    { key: 'fast', label: t.futureShort.fast, value: anchors.fastMys, live: scenario === 'fast' },
+    { key: 'slow', label: t.futureShort.slow, value: anchors.mys, live: scenario === 'slow' }
   ]
   const live = scenario === 'fast' ? anchors.fastMys : anchors.mys
 
@@ -62,12 +67,16 @@ export function Ruler({ anchors, max, scenario, month, cite, orientation, classN
   return (
     <figure ref={ref} className={cn('flex flex-col', flat ? 'items-center gap-1.5' : 'items-end gap-4', className)}>
       <figcaption className="pointer-events-auto flex items-center gap-1.5 text-label-s text-text-primary">
-        Malaysia’s AI Usage Index
+        {t.mysIndex}
         {cite}
         <span className="sr-only">
-          , {month}: Malaysia {formatIndex(anchors.mys)} in Slow AI Uptake and {formatIndex(anchors.fastMys)} in Fast AI
-          Uptake, halfway to Singapore’s {formatIndex(anchors.sgp)}.{' '}
-          {scenario === 'fast' ? 'Fast AI Uptake' : 'Slow AI Uptake'} is on show.
+          {t.hud.rulerSr(
+            month,
+            formatIndex(anchors.mys),
+            formatIndex(anchors.fastMys),
+            formatIndex(anchors.sgp),
+            c.scenarios[scenario]
+          )}
         </span>
       </figcaption>
       {/* Vertical, a spine 24 px in from the right edge, the tick numbers right of it and the marks left of it. Flat, a

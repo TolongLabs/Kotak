@@ -1,10 +1,15 @@
 import { Canvas } from '@react-three/fiber'
 import type { Scenario } from '@kotak/shared'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { AskKopiPanel } from '../../../app/shell/AskKopi'
 import { useReducedMotion } from '../../../components/kopi/motion'
 import { cn } from '../../../components/ui/cn'
+import { commonText } from '../../../i18n/common'
+import { spaceText } from '../../../i18n/messages/space'
+import { textNow, useText } from '../../../i18n/text'
+import { groupName, monthLabel } from '../format'
 import type { SpaceSceneProps } from '../model'
-import { HowToRead, Hud, JobCard, monthNote, WORLD_NAME } from './Hud'
+import { HowToRead, Hud, JobCard, monthNote } from './Hud'
 import { fieldLayout, monthIds, phoneShot, ringLabels, shortShot, shots, tuftPosition, type ShotName } from './layout'
 import { usePhoneLayout } from './usePhoneLayout'
 import { World, type HudBoxes, type Pick } from './World'
@@ -69,7 +74,8 @@ function firstVisit() {
 export default function SpaceScene(props: SpaceSceneProps) {
   const { model, scenario, snapshotId, onScenario, onSnapshot, show2D, onContextLost, checkUp, paused, focusTitle } =
     props
-  const { onFocusChange } = props
+  const { onFocusChange, initialJob } = props
+  const t = useText(spaceText)
   const { reduced } = useReducedMotion()
   const visible = useTabVisible()
   const viewport = useViewport()
@@ -89,6 +95,8 @@ export default function SpaceScene(props: SpaceSceneProps) {
   const future = scenario === 'fast' ? 1 : 0
   // -1 in Look Around, which has no job of yours.
   const yours = model.jobs.findIndex((job) => job.kind === 'yours')
+  // A deep link's job (?job=), read once: -1 for none or an unknown code, which is ignored.
+  const [linked] = useState(() => (initialJob === null ? -1 : model.jobs.findIndex((job) => job.code === initialJob)))
 
   const [shotName] = useState<ShotName | null>(() => {
     const name = new URLSearchParams(window.location.search).get('shot') as ShotName | null
@@ -113,9 +121,16 @@ export default function SpaceScene(props: SpaceSceneProps) {
   /** What had focus when the card opened, for focus to return to when it is closed. */
   const opener = useRef<HTMLElement | null>(null)
   const [hover, setHover] = useState<Pick | null>(null)
-  const [selected, setSelected] = useState<Pick | null>(null)
+  // A deep link opens on its job's card, as if picked by key, so it is announced; yours opens pinned instead.
+  const [selected, setSelected] = useState<Pick | null>(() =>
+    linked >= 0 && linked !== yours ? { index: linked, x: Number.NaN, y: Number.NaN } : null
+  )
   // Your card opens pinned in the dock; on a phone or a short screen it waits for a tap, so the field shows first.
-  const [pinned, setPinned] = useState(() => yours >= 0 && !phone && window.innerHeight >= SHORT)
+  const [pinned, setPinned] = useState(
+    () => (linked >= 0 && linked === yours) || (yours >= 0 && !phone && window.innerHeight >= SHORT)
+  )
+  const [kopiOpen, setKopiOpen] = useState(false)
+  const kopiLink = useRef<HTMLButtonElement>(null)
   const [help, setHelp] = useState(false)
   const [sourcesOpen, setSourcesOpen] = useState<number | null>(null)
   const [announcement, setAnnouncement] = useState<string | null>(null)
@@ -175,14 +190,13 @@ export default function SpaceScene(props: SpaceSceneProps) {
     const before = previous.current
     previous.current = { scenario, snapshotId }
     const snapshot = model.snapshots.find((s) => s.id === snapshotId)
+    const text = textNow(spaceText)
+    const name = textNow(commonText).scenarios[scenario]
     let line: string | null = null
     if (before.scenario !== scenario) {
-      line =
-        scenario === 'fast'
-          ? `${WORLD_NAME.fast} · Malaysia halfway to Singapore’s AI usage index`
-          : `${WORLD_NAME.slow} · Malaysia keeps today’s AI pace`
+      line = scenario === 'fast' ? text.hud.announceFast(name) : text.hud.announceSlow(name)
     } else if (before.snapshotId !== snapshotId && snapshot) {
-      line = `${snapshot.label} · ${monthNote(model, snapshotId)}`
+      line = text.hud.announceMonth(monthLabel(snapshot), monthNote(model, snapshotId))
     }
     if (!line) return
     setAnnouncement(line)
@@ -253,10 +267,9 @@ export default function SpaceScene(props: SpaceSceneProps) {
   ])
 
   // The canvas is one picture to a screen reader, named by what it draws; How to Read says the rest.
-  const rings = ringLabels(model)
   const picture = model.answers
-    ? `The 3D space: ${model.jobs.length} jobs as tufts of grass around your box, one blade per skill, each blade as tall as its skill’s AI use, 12-month change (est.); rings on the ground, labelled ${rings.join(', ')}, mark each job’s fit; the ring in the sky stands at Malaysia’s AI usage index.`
-    : `The 3D space: ${model.jobs.length} jobs as tufts of grass around the box, one blade per skill, each blade as tall as its skill’s AI use, 12-month change (est.); rings on the ground, labelled Job Zone 1 to 5, mark the preparation each job needs; the ring in the sky stands at Malaysia’s AI usage index.`
+    ? t.hud.pictureAnswers(model.jobs.length, t.list(ringLabels(model, t)))
+    : t.hud.pictureLookAround(model.jobs.length)
   useEffect(() => {
     canvas.current?.setAttribute('role', 'img')
     canvas.current?.setAttribute('aria-label', picture)
@@ -307,7 +320,7 @@ export default function SpaceScene(props: SpaceSceneProps) {
         } else setPinned(false)
         returnFocus()
       }}
-      closeLabel={shownJob === floatingJob ? 'Close Card' : 'Unpin Your Card'}
+      closeLabel={shownJob === floatingJob ? t.card.close : t.card.unpin}
       form={short ? 'line' : compactCards ? 'compact' : 'full'}
       // A hovered card lets the pointer through; a tapped one takes it.
       className={
@@ -322,7 +335,8 @@ export default function SpaceScene(props: SpaceSceneProps) {
   )
 
   return (
-    <div className="absolute inset-0 bg-bg-default">
+    // The chat window opens from the HUD's Ask Kopi link, with no floating button to clear at the foot.
+    <div className="absolute inset-0 bg-bg-default" style={{ '--ask-kopi-clearance': '1rem' } as CSSProperties}>
       {/* No frames while the tab is hidden. While the page's table covers the scene, only a resize draws one, with
           World's clock held, so the scene stays visible behind it and resumes where it stopped. */}
       <Canvas
@@ -347,6 +361,7 @@ export default function SpaceScene(props: SpaceSceneProps) {
           yours={yours}
           hud={hud}
           resetView={resetView}
+          flyTo={linked >= 0 ? linked : null}
           still={still}
           onPick={onPick}
           onSteer={onSteer}
@@ -355,11 +370,11 @@ export default function SpaceScene(props: SpaceSceneProps) {
         />
       </Canvas>
       <p className="sr-only" aria-live="polite">
-        {byKey && floating ? `${model.jobs[floating.index]!.title}, ${model.jobs[floating.index]!.groupName}` : ''}
+        {byKey && floating
+          ? t.hud.jobInHand(model.jobs[floating.index]!.title, groupName(t, model.jobs[floating.index]!))
+          : ''}
       </p>
-      <p className="sr-only">
-        The same numbers are in the table: press D. How to Read, H, explains every mark in the space.
-      </p>
+      <p className="sr-only">{t.hud.sameNumbers}</p>
       <Hud
         model={model}
         scenario={scenario}
@@ -383,11 +398,20 @@ export default function SpaceScene(props: SpaceSceneProps) {
         docked={!sheetCards && shownJob !== undefined}
         short={short}
         headerCard={short && shownCard}
+        kopiOpen={kopiOpen}
+        onKopi={() => setKopiOpen((open) => !open)}
+        kopiLink={kopiLink}
       >
         {!sheetCards && shownCard}
       </Hud>
       {phone && shownCard}
       <HowToRead open={help} onClose={() => setHelp(false)} model={model} />
+      <AskKopiPanel
+        open={kopiOpen}
+        onClose={() => setKopiOpen(false)}
+        dataLabel={monthLabel(model.snapshots.find((s) => s.id === snapshotId)!)}
+        returnFocusRef={kopiLink}
+      />
     </div>
   )
 }

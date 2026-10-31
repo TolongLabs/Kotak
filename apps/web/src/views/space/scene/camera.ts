@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import type { Shot } from './layout'
+import type { FocusShot, Shot } from './layout'
 
 // The camera: a slow drift around the opening shot until the user steers, then three's OrbitControls, held to limits
 // that keep the view reading (the horizon ahead, never under the field), until R flies it back and the drift resumes.
@@ -13,11 +13,12 @@ const DRAG_PX = 5
 const MIN_DISTANCE = 2
 const MAX_DISTANCE = 36
 /**
- * From 50 degrees above the orbit's target down to 4 degrees, and up to 45 degrees either side of the line from the box
- * to the horizon, so the ring stays at least partly in a wide frame.
+ * From 50 degrees above the orbit's target down to 2.5 degrees, and up to 45 degrees either side of the line from the box
+ * to the horizon, so the ring stays at least partly in a wide frame. A fly-to lands near the lowest (layout.ts,
+ * focusShot).
  */
 const MIN_POLAR = deg(40)
-const MAX_POLAR = deg(86)
+const MAX_POLAR = deg(87.5)
 const MAX_AZIMUTH = deg(45)
 /**
  * The orbit's target stays over the field: within FIELD_RADIUS metres of the box and at most BEHIND metres behind, which
@@ -27,10 +28,8 @@ const FIELD_RADIUS = 20.5
 const BEHIND = 3.2
 /** When the user takes over, the orbit's target is where the view's centre meets this height above the ground. */
 const TARGET_Y = 1
-/** A tuft in focus: seen from this far toward the box and this high above its centre, in metres. */
-const FOCUS_BACK = 3.6
-const FOCUS_UP = 1.5
-const FOCUS_Y = 0.25
+/** A landing keeps this far inside the orbit's limits, in radians, so the orbit takes over without a nudge. */
+const LIMIT_MARGIN = 0.001
 /** The idle parallax: the camera slides this far with the pointer, in metres sideways and up. */
 const PARALLAX: [number, number] = [0.05, 0.025]
 /** A key that holds the shot still eases the drift out over this long, in seconds, and R eases it back in. */
@@ -156,19 +155,21 @@ export class CameraRig {
     this.fly(null, reduced ? 0 : RESET_SECONDS)
   }
 
-  /** Flies to frame a tuft's centre on the ground, from the box's side, then orbits it. */
-  focus(x: number, z: number, reduced: boolean, done: () => void) {
+  /**
+   * Flies to a tuft's landing (layout.ts, focusShot), then orbits its target. The landing is held inside the orbit's
+   * limits, so nothing moves once it is there. A flight the user didn't ask for (a deep link's) doesn't count as their
+   * steering: the first-visit hint stays, and the visit isn't marked steered.
+   */
+  focus(shot: FocusShot, reduced: boolean, done: () => void, byUser = true) {
     if (!this.controls.enabled) return
-    const target = new THREE.Vector3(x, FOCUS_Y, z)
-    // From the box's side of the tuft, turned no further than the orbit's azimuth limit.
-    const azimuth = THREE.MathUtils.clamp(Math.atan2(-x, -z), -MAX_AZIMUTH + 0.02, MAX_AZIMUTH - 0.02)
-    const position = new THREE.Vector3(
-      x + Math.sin(azimuth) * FOCUS_BACK,
-      FOCUS_Y + FOCUS_UP,
-      z + Math.cos(azimuth) * FOCUS_BACK
-    )
+    const target = new THREE.Vector3(...shot.target)
+    const orbit = new THREE.Spherical().setFromVector3(new THREE.Vector3(...shot.position).sub(target))
+    orbit.radius = THREE.MathUtils.clamp(orbit.radius, MIN_DISTANCE, MAX_DISTANCE)
+    orbit.phi = THREE.MathUtils.clamp(orbit.phi, MIN_POLAR + LIMIT_MARGIN, MAX_POLAR - LIMIT_MARGIN)
+    orbit.theta = THREE.MathUtils.clamp(orbit.theta, -MAX_AZIMUTH + LIMIT_MARGIN, MAX_AZIMUTH - LIMIT_MARGIN)
+    const position = new THREE.Vector3().setFromSpherical(orbit).add(target)
     const quaternion = new THREE.Quaternion().setFromRotationMatrix(this.matrix.lookAt(position, target, UP))
-    this.fly({ position, quaternion, target }, reduced ? 0 : FOCUS_SECONDS, done)
+    this.fly({ position, quaternion, target }, reduced ? 0 : FOCUS_SECONDS, done, byUser)
   }
 
   /** One frame. A locked shot holds still and takes no input; `still` holds the opening shot without drift or parallax. */
@@ -293,7 +294,7 @@ export class CameraRig {
     this.steer(true)
   }
 
-  private fly(to: Flight['to'], seconds: number, done?: () => void) {
+  private fly(to: Flight['to'], seconds: number, done?: () => void, byUser = true) {
     const { camera, controls } = this
     // Drop any glide left from the last drag, so it doesn't carry on after landing.
     const target = controls.target.clone()
@@ -309,7 +310,7 @@ export class CameraRig {
     this.flight = { from, start: this.now, seconds, to, done }
     this.mode = 'fly'
     this.stillSince = this.now
-    this.steer(true)
+    if (byUser) this.steer(true)
   }
 
   private steer(steering: boolean) {

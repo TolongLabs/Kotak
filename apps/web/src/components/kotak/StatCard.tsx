@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 export interface StatCardProps {
   label: string
   value: string
-  caption?: string
+  caption?: ReactNode
   // An optional visual between the value and the caption, such as a sparkline or a progress bar.
   children?: ReactNode
 }
