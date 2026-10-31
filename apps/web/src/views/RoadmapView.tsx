@@ -344,6 +344,14 @@ export function RoadmapView() {
       detail: `${toolsSource.geo_or_layer} · ${toolsSource.vintage_date}`,
       href: toolsSource.source_url
     })
+  const sgfSource = bundle.data.pathways.sources.sgf
+  if (Object.keys(role.sgf.corners).length > 0)
+    sources.push({
+      n: sources.length + 1,
+      name: sgfSource.source_name,
+      detail: `${sgfSource.geo_or_layer} · ${sgfSource.vintage_date}`,
+      href: sgfSource.source_url
+    })
   // A regulated role the user isn't qualified for puts the qualification before every skill step (#284).
   const planAccess = accessFor(role.onet_code, session.profile, bundle.data.pathways, session.role_code)
   const qualificationNeeded = needsQualification(planAccess)

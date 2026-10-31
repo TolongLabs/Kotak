@@ -39,7 +39,15 @@ export const commonText = defineText(
     hours: (n: number) => `${n} ${n === 1 ? 'hour' : 'hours'}`,
     weeks: (n: number) => `${n} ${n === 1 ? 'week' : 'weeks'}`,
     languageShort: 'EN',
-    languageLabel: 'Language: English. Change Language'
+    languageLabel: 'Language: English. Change Language',
+    sgf: {
+      name: 'SkillsFuture Singapore',
+      equivalent: 'Singapore Equivalent',
+      more: (n: number) => `+${n} more`,
+      level: (n: number) => `Level ${n} of 6`,
+      emerging: 'Emerging in Singapore',
+      matched: "Matched by AI from Singapore's Skills Framework; not yet checked by a person."
+    }
   },
   {
     verdicts: {
@@ -77,7 +85,15 @@ export const commonText = defineText(
     hours: (n) => `${n} jam`,
     weeks: (n) => `${n} minggu`,
     languageShort: 'BM',
-    languageLabel: 'Bahasa: Bahasa Melayu. Tukar Bahasa'
+    languageLabel: 'Bahasa: Bahasa Melayu. Tukar Bahasa',
+    sgf: {
+      name: 'SkillsFuture Singapura',
+      equivalent: 'Setara di Singapura',
+      more: (n) => `+${n} lagi`,
+      level: (n) => `Tahap ${n} daripada 6`,
+      emerging: 'Baharu Muncul di Singapura',
+      matched: 'Dipadankan oleh AI daripada Rangka Kerja Kemahiran Singapura; belum disemak oleh manusia.'
+    }
   },
   {
     verdicts: {
@@ -115,6 +131,14 @@ export const commonText = defineText(
     hours: (n) => `${n} 小时`,
     weeks: (n) => `${n} 周`,
     languageShort: '中文',
-    languageLabel: '语言：中文。切换语言'
+    languageLabel: '语言：中文。切换语言',
+    sgf: {
+      name: '新加坡 SkillsFuture',
+      equivalent: '新加坡对应职位',
+      more: (n) => `另 ${n} 个`,
+      level: (n) => `第 ${n} 级（共 6 级）`,
+      emerging: '新加坡新兴技能',
+      matched: '由 AI 根据新加坡技能框架匹配，尚未经人工核对。'
+    }
   }
 )

@@ -1,4 +1,4 @@
-import type { CandidateReason, FreeResource, RoleAccess } from '@kotak/shared'
+import type { BundleSgfSkill, CandidateReason, FreeResource, RoleAccess } from '@kotak/shared'
 
 export type VerdictId = 'rising' | 'steady' | 'declining' | 'split' | 'unknown'
 
@@ -60,6 +60,8 @@ export type RoadmapStep = {
   sdgs: number[]
   /** The skill's SDG targets, such as `4.4`; each has a reason in /data/sdg-reasons.json (#391). */
   sdgTargets?: string[]
+  /** SkillsFuture Singapore's names for the skill, with levels (#464). */
+  sgfSkills?: BundleSgfSkill[]
   conditional?: string
 }
 

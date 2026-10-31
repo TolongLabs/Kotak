@@ -18,7 +18,7 @@ export const TOOL_CATALOG = {
   find_role: {
     title: 'Find a Role',
     description:
-      "Find the O*NET roles that match a job title, best first. Call it first in a check-up, then confirm the role with the user; never guess an O*NET code. It searches O*NET's English titles and alternate titles, so translate a Malay or local title to English first (for example jurutera perisian to software engineer). A role with questions_ready false can't be checked up yet: say so and offer the next match."
+      "Find the O*NET roles that match a job title, best first. Call it first in a check-up, then confirm the role with the user; never guess an O*NET code. It searches O*NET's English titles and alternate titles, so translate a Malay or local title to English first (for example jurutera perisian to software engineer). A role with questions_ready false can't be checked up yet: say so and offer the next match. singapore_equivalents lists the SkillsFuture Singapore roles an AI matched to the role, not checked by a person: name them as the regional equivalent, never as Malaysian data."
   },
   get_checkup_questions: {
     title: 'Get the Check-Up Questions',

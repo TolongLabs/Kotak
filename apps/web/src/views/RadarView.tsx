@@ -14,6 +14,7 @@ import { ExplanationSourceProvider, ReasoningFooter } from '../components/kotak/
 import { SdgTargetChip } from '../components/kotak/SdgReasonChip'
 import { SkillsSwot } from '../components/kotak/SkillsSwot'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
+import { SgfSkillList } from '../components/kotak/SgfSkills'
 import { SourceList } from '../components/kotak/SourceList'
 import { ToolsCard } from '../components/kotak/ToolsCard'
 import { Banner } from '../components/ui/Banner'
@@ -164,10 +165,21 @@ export function RadarView() {
         href: pathways.sources.onet_tools.source_url
       }
     : null
+  // SkillsFuture Singapore (#464) comes after the tools, on roles with a linked corner.
+  const sgfSource: SourceRef | null =
+    Object.keys(role.sgf.corners).length > 0
+      ? {
+          n: verdictSources.length + (jobMarketSource ? 1 : 0) + (toolsSource ? 1 : 0) + 1,
+          name: pathways.sources.sgf.source_name,
+          detail: `${pathways.sources.sgf.geo_or_layer} · ${pathways.sources.sgf.vintage_date}`,
+          href: pathways.sources.sgf.source_url
+        }
+      : null
   const sources = [
     ...verdictSources,
     ...(jobMarketSource ? [jobMarketSource] : []),
-    ...(toolsSource ? [toolsSource] : [])
+    ...(toolsSource ? [toolsSource] : []),
+    ...(sgfSource ? [sgfSource] : [])
   ]
   const access = accessFor(role.onet_code, session.profile, pathways, session.role_code)
   const explanationByCorner = new Map(
@@ -260,10 +272,14 @@ export function RadarView() {
   )
 
   const renderGapCard = (corner: Corner) => {
-    const cornerSources: SourceRef[] = (corner.sources ?? []).flatMap((number) => {
-      const source = sourceByNumber.get(number)
-      return source ? [source] : []
-    })
+    const sgfSkills = role.sgf.corners[corner.id] ?? []
+    const cornerSources: SourceRef[] = [
+      ...(corner.sources ?? []).flatMap((number) => {
+        const source = sourceByNumber.get(number)
+        return source ? [source] : []
+      }),
+      ...(sgfSource && sgfSkills.length > 0 ? [sgfSource] : [])
+    ]
     const explanationSource = explanationByCorner.get(corner.id)?.source ?? 'template'
     const targets = sdgByCorner.get(corner.id) ?? []
 
@@ -276,12 +292,17 @@ export function RadarView() {
           neededLabel={neededLabel}
           paused={explanationsPaused}
           aside={
-            targets.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-label-s text-text-muted">{t.closingSupports}</span>
-                {targets.map((target) => (
-                  <SdgTargetChip key={target} target={target} />
-                ))}
+            (targets.length > 0 || sgfSkills.length > 0) && (
+              <div className="space-y-2">
+                {targets.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-label-s text-text-muted">{t.closingSupports}</span>
+                    {targets.map((target) => (
+                      <SdgTargetChip key={target} target={target} />
+                    ))}
+                  </div>
+                )}
+                <SgfSkillList skills={sgfSkills} />
               </div>
             )
           }

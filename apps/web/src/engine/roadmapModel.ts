@@ -84,6 +84,7 @@ export function toRoadmapSteps(checkup: Checkup, role: BundleRole, ticked: strin
           )
         ],
         sdgTargets: corner?.sdg_targets ?? [],
+        sgfSkills: role.sgf.corners[item.corner_id] ?? [],
         ...(conditional ? { conditional } : {})
       }
     }

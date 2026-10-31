@@ -15,6 +15,7 @@ import {
   type BundlePathways,
   type BundleRole
 } from '../../packages/shared/src/index'
+import { loadSgfInputs, sgfSource } from './sgf'
 
 /** At most this many tools per role: above the longest In Demand list (35), so none is cut for its name. */
 const MAX_TOOLS = 40
@@ -31,7 +32,7 @@ async function load<T>(root: string, path: string, schema: { safeParse: (value: 
 }
 
 export async function loadPathwaysInputs(root: string) {
-  const [areas, fields, cipSoc, regulated, preparation, tools] = await Promise.all([
+  const [areas, fields, cipSoc, regulated, preparation, tools, sgf] = await Promise.all([
     load<ReturnType<typeof CareerAreasFileSchema.parse>>(
       root,
       'data/pathways/career-areas.json',
@@ -57,9 +58,10 @@ export async function loadPathwaysInputs(root: string) {
       root,
       'data/onet/hot-technologies.json',
       OnetHotTechnologiesFileSchema
-    )
+    ),
+    loadSgfInputs(root)
   ])
-  return { areas, fields, cipSoc, regulated, preparation, tools }
+  return { areas, fields, cipSoc, regulated, preparation, tools, sgf }
 }
 
 type Inputs = Awaited<ReturnType<typeof loadPathwaysInputs>>
@@ -197,6 +199,7 @@ export function buildPathways(
         vintage_date: cipSoc.meta.vintage_date,
         geo_or_layer: 'US CIP 2020 and SOC 2018'
       },
+      sgf: sgfSource(inputs.sgf),
       regulated: {
         source_name: 'Malaysian regulators and Acts, checked by Kotak',
         source_url: 'https://lom.agc.gov.my/',

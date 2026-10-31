@@ -130,7 +130,9 @@ const registry = {
               onet_code: OnetSocCodeSchema,
               title: z.string(),
               description: z.string().optional(), // left out when the role has no bundle file
-              questions_ready: z.boolean() // false: no can-do questions yet, so no check-up
+              questions_ready: z.boolean(), // false: no can-do questions yet, so no check-up
+              // SkillsFuture Singapore roles matched by AI (#464), best first; left out when there are none
+              singapore_equivalents: z.array(z.object({ title: z.string(), sector: z.string() }).strict()).optional()
             })
             .strict()
         )
@@ -141,7 +143,14 @@ const registry = {
       const roles = await Promise.all(
         hits.map(async ({ onet_code, title }) => {
           const role = await kotak.role(onet_code).catch(() => null)
-          return { onet_code, title, description: role?.description, questions_ready: !!role?.questions_ready }
+          const equivalents = (role?.sgf_roles ?? []).slice(0, 3).map((r) => ({ title: r.title, sector: r.sector }))
+          return {
+            onet_code,
+            title,
+            description: role?.description,
+            questions_ready: !!role?.questions_ready,
+            ...(equivalents.length > 0 ? { singapore_equivalents: equivalents } : {})
+          }
         })
       )
       return { job_title, match, roles }

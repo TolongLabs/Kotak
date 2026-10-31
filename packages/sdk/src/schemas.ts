@@ -2,6 +2,7 @@ import {
   BundleCornerSchema,
   BundleCreditSchema,
   BundleRelatedRoleSchema,
+  BundleSgfRoleSchema,
   BundleSnapshotSchema,
   DEFAULT_SCENARIO,
   DEFAULT_SNAPSHOT,
@@ -84,7 +85,9 @@ export const RoleSummarySchema = z
     description: z.string().min(1),
     questions_ready: z.boolean(), // false: no can-do statements yet, so no check-up
     corners: z.array(BundleCornerSchema.pick({ corner_id: true, name: true, statements: true })),
-    related: z.array(BundleRelatedRoleSchema)
+    related: z.array(BundleRelatedRoleSchema),
+    /** SkillsFuture Singapore roles matched by AI (#464), best first. */
+    sgf_roles: z.array(BundleSgfRoleSchema)
   })
   .strict()
 
