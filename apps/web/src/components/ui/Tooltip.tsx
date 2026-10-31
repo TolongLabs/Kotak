@@ -15,20 +15,25 @@ import { cn } from './cn'
 export interface TooltipProps {
   content: string
   placement?: 'top' | 'bottom' | 'right'
+  /** A sentence rather than a label: it wraps at about 16rem. */
+  multiline?: boolean
   children: ReactNode
   className?: string
 }
 
 // The space between the trigger and the tooltip, in px.
 const GAP = 8
+// The least space between the tooltip and the edge of the screen, in px.
+const EDGE = 8
 
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(
-  { content, placement = 'top', children, className },
+  { content, placement = 'top', multiline = false, children, className },
   ref
 ) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<{ left: number; top: number } | null>(null)
   const anchorRef = useRef<HTMLSpanElement | null>(null)
+  const tipRef = useRef<HTMLSpanElement | null>(null)
   const id = useId()
 
   // The tooltip sits in the browser's top layer as a manual popover, placed from its trigger, so a modal dialog, a
@@ -41,12 +46,16 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
     const place = () => {
       const rect = anchorRef.current?.getBoundingClientRect()
       if (!rect) return
+      // Centred over the trigger, but kept on screen: a chip by the right edge shifts its tooltip left.
+      const half = (tipRef.current?.offsetWidth ?? 0) / 2
+      const viewport = document.documentElement.clientWidth
+      const centre = Math.min(Math.max(rect.left + rect.width / 2, half + EDGE), viewport - half - EDGE)
       setPosition(
         placement === 'right'
           ? { left: rect.right + GAP, top: rect.top + rect.height / 2 }
           : placement === 'bottom'
-            ? { left: rect.left + rect.width / 2, top: rect.bottom + GAP }
-            : { left: rect.left + rect.width / 2, top: rect.top - GAP }
+            ? { left: centre, top: rect.bottom + GAP }
+            : { left: centre, top: rect.top - GAP }
       )
     }
     place()
@@ -72,6 +81,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
 
   // A browser without the popover API keeps it in place, still fixed to the screen.
   const showInTopLayer = (element: HTMLSpanElement | null) => {
+    tipRef.current = element
     if (element && typeof element.showPopover === 'function' && !element.matches(':popover-open')) {
       element.showPopover()
     }
@@ -110,7 +120,8 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
           id={id}
           style={position ?? { visibility: 'hidden' }}
           className={cn(
-            'pointer-events-none fixed inset-auto m-0 overflow-visible whitespace-nowrap rounded-sm border-0 bg-text-primary px-2.5 py-1 text-label-s text-bg-default shadow-[var(--shadow-popover)]',
+            'pointer-events-none fixed inset-auto m-0 overflow-visible rounded-sm border-0 bg-text-primary px-2.5 py-1 text-label-s text-bg-default shadow-[var(--shadow-popover)]',
+            multiline ? 'w-max max-w-64 whitespace-normal py-1.5 font-normal' : 'whitespace-nowrap',
             placement === 'right'
               ? '-translate-y-1/2'
               : placement === 'bottom'

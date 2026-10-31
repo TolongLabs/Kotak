@@ -1,7 +1,7 @@
 import { accessFor } from '@kotak/sdk'
 import { addDays, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS, needsQualification, REFRESHER_ID } from '@kotak/shared'
 import { Gauge } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { AccessNotice } from '../components/kotak/AccessNotice'
@@ -49,6 +49,9 @@ import { changesText } from '../i18n/messages/changes'
 import { evidenceText } from '../i18n/messages/evidence'
 import { roadmapText } from '../i18n/messages/roadmap'
 import { useText } from '../i18n/text'
+
+/** The plan island fades out over this much scroll before Step Details reaches it. */
+const ISLAND_FADE_PX = 96
 
 function fromIsoDate(value: string) {
   const [year, month, day] = value.split('-').map(Number)
@@ -156,14 +159,6 @@ export function RoadmapView() {
   // Read out on the live region below, so a screen reader hears the verdict.
   const [announcement, setAnnouncement] = useState('')
   const [paceOpen, setPaceOpen] = useState(false)
-  // The plan island's height, so the step column below it sticks with a gap under it at every width.
-  const [islandHeight, setIslandHeight] = useState(0)
-  const measureIsland = useCallback((island: HTMLElement | null) => {
-    if (!island) return
-    const observer = new ResizeObserver(() => setIslandHeight(island.offsetHeight))
-    observer.observe(island)
-    return () => observer.disconnect()
-  }, [])
   // The plan island's controls on phones and narrow desktops, where it folds to one line.
   const [controlsOpen, setControlsOpen] = useState(false)
   const futuresText = useText(changesText)
@@ -196,6 +191,37 @@ export function RoadmapView() {
     startDate,
     scenario
   ])
+
+  // The plan island sticks only over the plan it reshapes (the impact card, chart and timeline), then fades out over
+  // its last ISLAND_FADE_PX before Step Details reaches it, so it never covers the steps.
+  const planZoneRef = useRef<HTMLDivElement>(null)
+  const islandRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const zone = planZoneRef.current
+    const island = islandRef.current
+    if (!zone || !island) return
+    let frame = 0
+    const update = () => {
+      frame = 0
+      // A sticky box stops with its margin inside its container, so the room left ends at the island's margin.
+      const margin = parseFloat(getComputedStyle(island).marginBottom) || 0
+      const room = zone.getBoundingClientRect().bottom - island.getBoundingClientRect().bottom - margin
+      const opacity = Math.min(1, Math.max(0, room / ISLAND_FADE_PX))
+      island.style.opacity = String(opacity)
+      island.style.visibility = opacity === 0 ? 'hidden' : ''
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+    }
+  }, [checkup])
 
   // Clicking a step bar or a readiness point scrolls its Step Details card into view.
   useEffect(() => {
@@ -619,90 +645,92 @@ export function RoadmapView() {
           </div>
         )}
 
-        {/* The plan island: the three controls that reshape the plan stay in view with their result, so dragging the
+        <div ref={planZoneRef} className="space-y-5 lg:space-y-6">
+          {/* The plan island: the three controls that reshape the plan stay in view with their result, so dragging the
             hours moves the chart and timeline under it. Phones and narrow desktops fold it to one line. */}
-        <section
-          ref={measureIsland}
-          aria-label={t.controls.planControls}
-          className="roadmap-print-actions surface-glass sticky top-20 z-20 rounded-md p-3 lg:top-24 xl:p-4"
-        >
-          <div className="flex items-center justify-between gap-3 xl:hidden">
-            <div className="min-w-0">
-              <p className="truncate font-mono text-mono-s text-text-muted">
-                {t.controls.islandSummary(
-                  formatEstimate(weeklyHours),
-                  formatDayMonth(checkup.roadmap.start_date),
-                  futuresText.scenarioShort[scenario]
-                )}
-              </p>
-              <p className="text-label-l text-text-primary">{readyCopy}</p>
-            </div>
-            <button
-              type="button"
-              aria-expanded={controlsOpen}
-              aria-controls="plan-controls"
-              onClick={() => setControlsOpen((value) => !value)}
-              className="inline-flex min-h-11 shrink-0 items-center rounded-sm px-2 text-label-m text-text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-            >
-              {controlsOpen ? t.controls.done : t.controls.change}
-            </button>
-          </div>
-          <div
-            id="plan-controls"
-            className={cn(
-              'gap-4 xl:grid xl:grid-cols-[auto_minmax(0,1fr)_minmax(0,12rem)_minmax(0,14rem)] xl:items-center xl:gap-5',
-              controlsOpen ? 'mt-3 grid xl:mt-0' : 'hidden'
-            )}
+          <section
+            ref={islandRef}
+            aria-label={t.controls.planControls}
+            className="roadmap-print-actions surface-glass sticky top-20 z-20 rounded-md p-3 lg:top-24 xl:p-4"
           >
-            <ScenarioControl compact scenario={scenario} onChange={setScenario} />
-            <Slider
-              label={t.controls.hoursPerWeek}
-              min={MIN_WEEKLY_HOURS}
-              max={MAX_WEEKLY_HOURS}
-              step={1}
-              value={weeklyHours}
-              onChange={(value) => updateGuestSession({ custom_weekly_hours: value })}
-              unit="h"
-              formatValue={formatEstimate}
-            />
-            <DatePicker
-              label={t.controls.planStartDate}
-              value={fromIsoDate(checkup.roadmap.start_date)}
-              onChange={(date) => setSelectedStartDate(toIsoDate(date))}
-              className="w-full"
-            />
-            <div role="status" className="space-y-0.5 xl:border-l xl:border-border-subtle xl:pl-4">
-              <p className="hidden font-mono text-mono-s text-text-muted xl:block">{t.controls.yourPlan}</p>
-              <p className="hidden text-title-s text-text-primary xl:block">{readyCopy}</p>
-              {futureReceipt && <p className="text-label-s text-text-muted">{futureReceipt[scenario]}</p>}
+            <div className="flex items-center justify-between gap-3 xl:hidden">
+              <div className="min-w-0">
+                <p className="truncate font-mono text-mono-s text-text-muted">
+                  {t.controls.islandSummary(
+                    formatEstimate(weeklyHours),
+                    formatDayMonth(checkup.roadmap.start_date),
+                    futuresText.scenarioShort[scenario]
+                  )}
+                </p>
+                <p className="text-label-l text-text-primary">{readyCopy}</p>
+              </div>
+              <button
+                type="button"
+                aria-expanded={controlsOpen}
+                aria-controls="plan-controls"
+                onClick={() => setControlsOpen((value) => !value)}
+                className="inline-flex min-h-11 shrink-0 items-center rounded-sm px-2 text-label-m text-text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+              >
+                {controlsOpen ? t.controls.done : t.controls.change}
+              </button>
             </div>
-          </div>
-        </section>
+            <div
+              id="plan-controls"
+              className={cn(
+                'gap-4 xl:grid xl:grid-cols-[auto_minmax(0,1fr)_minmax(0,12rem)_minmax(0,14rem)] xl:items-center xl:gap-5',
+                controlsOpen ? 'mt-3 grid xl:mt-0' : 'hidden'
+              )}
+            >
+              <ScenarioControl compact scenario={scenario} onChange={setScenario} />
+              <Slider
+                label={t.controls.hoursPerWeek}
+                min={MIN_WEEKLY_HOURS}
+                max={MAX_WEEKLY_HOURS}
+                step={1}
+                value={weeklyHours}
+                onChange={(value) => updateGuestSession({ custom_weekly_hours: value })}
+                unit="h"
+                formatValue={formatEstimate}
+              />
+              <DatePicker
+                label={t.controls.planStartDate}
+                value={fromIsoDate(checkup.roadmap.start_date)}
+                onChange={(date) => setSelectedStartDate(toIsoDate(date))}
+                className="w-full"
+              />
+              <div role="status" className="space-y-0.5 xl:border-l xl:border-border-subtle xl:pl-4">
+                <p className="hidden font-mono text-mono-s text-text-muted xl:block">{t.controls.yourPlan}</p>
+                <p className="hidden text-title-s text-text-primary xl:block">{readyCopy}</p>
+                {futureReceipt && <p className="text-label-s text-text-muted">{futureReceipt[scenario]}</p>}
+              </div>
+            </div>
+          </section>
 
-        <PathContributionCard
-          steps={timelineSteps}
-          impactArea={selectedImpactArea}
-          goals={impactAreaGoals}
-          onSelectGoal={selectImpactArea}
-        />
+          <PathContributionCard
+            steps={timelineSteps}
+            impactArea={selectedImpactArea}
+            goals={impactAreaGoals}
+            onSelectGoal={selectImpactArea}
+          />
 
-        <ReadinessChart
-          points={readinessPoints}
-          roleTitle={role.title}
-          startIso={checkup.roadmap.start_date}
-          todayIso={today}
-          steps={timelineSteps}
-          onSelectStep={selectStep}
-        />
+          <ReadinessChart
+            points={readinessPoints}
+            roleTitle={role.title}
+            startIso={checkup.roadmap.start_date}
+            todayIso={today}
+            steps={timelineSteps}
+            onSelectStep={selectStep}
+          />
 
-        <RoadmapTimeline
-          steps={timelineSteps}
-          startDate={fromIsoDate(checkup.roadmap.start_date)}
-          today={fromIsoDate(today)}
-          impactArea={selectedImpactArea}
-          selectedStepId={selectedStepId}
-          onSelectStep={selectStep}
-        />
+          <RoadmapTimeline
+            steps={timelineSteps}
+            startDate={fromIsoDate(checkup.roadmap.start_date)}
+            today={fromIsoDate(today)}
+            impactArea={selectedImpactArea}
+            selectedStepId={selectedStepId}
+            onSelectStep={selectStep}
+          />
+        </div>
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-6">
           <section
@@ -782,11 +810,8 @@ export function RoadmapView() {
             )}
           </section>
 
-          {/* It sticks 1rem under the plan island (lg:top-24 plus its height), never against it. */}
-          <div
-            className="roadmap-sticky-column space-y-4 lg:sticky lg:top-(--below-plan-island) lg:self-start"
-            style={{ '--below-plan-island': `calc(6rem + ${islandHeight}px + 1rem)` } as CSSProperties}
-          >
+          {/* The plan island has gone by the time this column sticks, so it sits just under the top bar. */}
+          <div className="roadmap-sticky-column space-y-4 lg:sticky lg:top-24 lg:self-start">
             {reasonText && (
               <section aria-label={t.controls.stepDetailsAria} className="[&>section>p:first-of-type]:text-body-s">
                 <Reasoning text={reasonText} />

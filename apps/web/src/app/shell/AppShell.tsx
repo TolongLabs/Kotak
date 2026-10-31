@@ -1,8 +1,8 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { readGuestSession, startGuestSession } from '../../session/store'
 import { shellText } from '../../i18n/messages/shell'
 import { useText } from '../../i18n/text'
-import { AskKopiButton, AskKopiPanel } from './AskKopi'
+import { AskKopiButton, AskKopiPanel, onAskKopiRequest, type AskKopiRequest } from './AskKopi'
 import { NavDrawer } from './NavDrawer'
 import { Sidebar } from './Sidebar'
 import { PhoneTopBar, Topbar } from './Topbar'
@@ -32,6 +32,16 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [kopiOpen, setKopiOpen] = useState(false)
+  // A question a page sent with askKopiAbout opens the window and asks it.
+  const [kopiRequest, setKopiRequest] = useState<AskKopiRequest | null>(null)
+  useEffect(
+    () =>
+      onAskKopiRequest((request) => {
+        setKopiRequest(request)
+        setKopiOpen(true)
+      }),
+    []
+  )
   const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const kopiButtonRef = useRef<HTMLButtonElement>(null)
@@ -82,6 +92,7 @@ export function AppShell({ path, dataLabel, collapsed = false, children }: AppSh
         onClose={() => setKopiOpen(false)}
         dataLabel={dataLabel}
         returnFocusRef={kopiButtonRef}
+        request={kopiRequest}
       />
       <AskKopiButton ref={kopiButtonRef} open={kopiOpen} onClick={() => setKopiOpen((current) => !current)} />
     </div>

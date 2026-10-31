@@ -132,7 +132,7 @@ _[The driver switches windows to the browser. The presenter faces the judges.]_
 
 **Presenter**, 2:11 to 7:11. The driver runs Aina's check-up on the live site, `kotak.tp073654.workers.dev`, and says nothing. The presenter names each stage aloud as it appears ("Stage 3 of 6: matching"), so the judges can tick all six. Each beat gives the page, the driver's clicks in order, then the presenter's lines. The beats add up to 4:45; the other 15 seconds cover page loads.
 
-Every label below was read off `main` at 5c0aba2 (#452) on 31 October 2026, the build `kotak.tp073654.workers.dev` serves. The demo runs there, not on Replit: only Workers has Kopi's pre-made audio. The Replit mirror serves the same build for the QR codes on slides 5 and 10. If a label on stage differs, the driver follows the screen and the presenter keeps talking.
+Every label below was read off `main` at 5c0aba2 (#452) on 31 October 2026; the Sources (7), Interpret, chip tooltip and plan bar beats were read off the UI refinements PR on 1 November. Redeploy `kotak.tp073654.workers.dev` after it merges. The demo runs there, not on Replit: only Workers has Kopi's pre-made audio. The Replit mirror serves the same build for the QR codes on slides 5 and 10. If a label on stage differs, the driver follows the screen and the presenter keeps talking.
 
 ### Before the slot
 
@@ -193,9 +193,11 @@ A wrong click is easy to undo: click **Previous Question** and pick again.
 **Driver:**
 
 1.  Point the mouse at the dashed line on the radar.
-1.  Scroll down to **Your Gaps**. On the first card, **Technical documentation**, click **Sources (7)**: the sources start folded, and SkillsFuture Singapore is the seventh. Point at "Anthropic Economic Index" and its line "MYS/iwa · 2026-05-01".
+1.  Scroll down to **Your Gaps**. On the first card, **Technical documentation**, rest the mouse on the **Rising** chip while the presenter says "Every skill gets a verdict": a dark tooltip says what Rising means. Then click **Sources (7)**: the sources start folded, and SkillsFuture Singapore is the seventh. Point at "Anthropic Economic Index" and its line "MYS/iwa · 2026-05-01".
 1.  Scroll down to **Job Ads in Malaysia**. Point at the **Median Advertised Pay** tile, RM 6,800 a month.
 1.  Scroll to the bottom and click **See Roles That Fit**.
+
+Under **Sources (7)** sits an **Interpret** row. Don't click it in the main run: Kopi's answer takes about 9 seconds and its window covers the page. If a judge asks what a gap means for Aina, click **Interpret** on that card. Kopi's window opens in the middle of the screen over a blurred page and answers what the skill is, why the gap matters with its dated sources, and how to start this week. Close it with the X or Esc.
 
 > Stage 2 of 6: the trend signal. Here's her radar. The yellow shape is Aina today. The dashed line is what her job needs by May 2027. Every skill gets a verdict, with a source and date. This one's from the Anthropic Economic Index, May 2026. Here are 218 real Malaysian job ads for her role. Median pay: RM 6,800 a month.
 
@@ -220,7 +222,7 @@ A wrong click is easy to undo: click **Previous Question** and pick again.
 
 1.  **Hours Per Week** sits in the plan bar under the page heading. On a screen under 1280 px wide the bar is one line: click **Change** first. Click the slider's round knob, not the bar (a click on the bar jumps to that value), then press the Right arrow key until the number beside Hours Per Week reads **10 h**: six presses from 4 h. The heading changes to **Your 34-Week Roadmap**. Set the hours before clicking any step: on a narrow screen, a step click folds the bar again.
 1.  Point at **80% Fit by Week 34** in the plan bar, under "Your Plan".
-1.  Scroll to **Step Details**. The first step is "I can write detailed test plans and procedures independently."
+1.  Scroll to **Step Details**. The plan bar fades away just before Step Details reaches it, so it never covers the steps. The first step is "I can write detailed test plans and procedures independently."
 1.  Click **Google: Technical Writing courses**. It opens in a new tab: hold it for 3 seconds, then close the tab (Ctrl+W).
 1.  Scroll to **Can Your Employer Fund This?** and point at **HRD Corp Claimable Courses**.
 
