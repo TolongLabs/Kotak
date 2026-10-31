@@ -19,7 +19,7 @@
     <br />
     <a href="https://kotak-alaskxntxna.replit.app"><strong>Live Demo &rarr;</strong></a>
     &middot;
-    <a href="https://youtu.be/HQgdbantbN0">Demo Video</a>
+    <a href="https://youtu.be/HQgdbantbN0">Preliminary Demo Video</a>
     &middot;
     <a href="/docs/demo/final/kotak-pitch-deck.pptx">Slide Deck</a>
     &middot;
@@ -59,6 +59,7 @@
         <li><a href="#screenshots">Screenshots</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
         <li><a href="#features">Features</a></li>
+        <li><a href="#finalist-demo-and-evidence">Finalist Demo and Evidence</a></li>
         <li><a href="#architecture">Architecture</a></li>
         <li><a href="#project-structure">Project Structure</a></li>
         <li><a href="#tech-stack">Tech Stack</a></li>
@@ -90,7 +91,7 @@
 
 AI is changing Malaysian jobs faster than training can keep up: 56% of Malaysian professionals use AI tools at work, but only 26% have had formal training (Hays Asia Salary Guide 2025). Workers who wonder what AI means for their job get static skills lists with no dates, no scores and no plan. Without dated evidence, they cannot tell which skills to learn first, and may spend scarce hours on tasks AI is taking over.
 
-Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks where the user is now, what they studied and what they want. Someone with no job yet, or no role in mind, gets roles to check first, from their study and what they enjoy. Kopi then asks 12 can-do questions about their job or the role they want, each rated from 1 (Not yet) to 4 (Yes, on my own). Kotak then draws a Future Skills Radar of the job's 6 core skills, ranks matched roles and builds a dated roadmap, in about 3 minutes. Fixed rules over dated public data set every verdict, score and step, so every number cites its source. AI does the language work around those rules: a RunPod GPU batch built each job's skills and questions from its own O\*NET tasks, Claude explains verdicts and matches Malay job titles, and ElevenLabs gives Kopi a voice.
+Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks where the user is now, what they studied and what they want. Someone with no job yet, or no role in mind, gets roles to check first, from their study and what they enjoy. Kopi then asks 12 what-would-you-do questions about their job or the role they want; jobs without a complete scenario set keep can-do self-ratings. Kotak draws a Future Skills Radar of the job's core skills, ranks matched roles and builds a dated roadmap. Fixed rules over dated public data set every verdict, score and step, with sources shown beside the results. Users can switch between slow and fast AI uptake to compare estimated skill targets, fit and learning plans. AI works around those rules: a RunPod GPU batch drafted each job's skills and statements from its own O\*NET tasks, Claude explains verdicts and matches job titles, and ElevenLabs gives Kopi a voice.
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students from APU, the University of Reading and the University of Sheffield, led by Hee Zi Jie.
 
@@ -109,14 +110,16 @@ Submission documents: the [final report](/submission/SDC2026_T010NG_Final.pdf), 
 
 ### Links
 
-| Resource          | Link                                                                                                                       |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| GitHub Repository | <https://github.com/TolongLabs/Kotak>                                                                                      |
-| Live Demo         | <https://kotak-alaskxntxna.replit.app>, published on Replit; mirror at <https://kotak.tp073654.workers.dev>                |
-| Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started) |
-| RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                           |
-| Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/final/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/final/kotak-pitch-deck.pdf)  |
-| Demo Video        | <https://youtu.be/HQgdbantbN0>, public on YouTube (5:34)                                                                   |
+| Resource          | Link                                                                                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GitHub Repository | <https://github.com/TolongLabs/Kotak>                                                                                                                              |
+| Live Demo         | <https://kotak-alaskxntxna.replit.app>, published on Replit; mirror at <https://kotak.tp073654.workers.dev>                                                        |
+| Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started)                                         |
+| RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                                                                   |
+| Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/final/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/final/kotak-pitch-deck.pdf)                                          |
+| Demo Video        | [Preliminary pitching video](https://youtu.be/HQgdbantbN0) (5:34); the final is demonstrated live using the [final pitch script](/docs/demo/final/pitch-script.md) |
+| Final Report      | [Phase 2 report](/submission/SDC2026_T010NG_Final.pdf), with impact measurements and verification commands                                                         |
+| Final Pitch       | [Deck PDF](/submission/SDC2026_T010NG_PitchDeck.pdf), [pitch script](/docs/demo/final/pitch-script.md) and [Q&A sheet](/docs/demo/final/qa-cheat-sheet.md)         |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -156,7 +159,7 @@ Submission documents: the [final report](/submission/SDC2026_T010NG_Final.pdf), 
     <td width="50%" valign="top" align="left">
       <img src="/docs/readme/screenshots/tools.png" alt="Tools Employers Name" width="100%">
       <br />
-      <strong>Tools Employers Name</strong> · The software in demand in job postings for the role, from O*NET, beside the radar and again on the roadmap.
+      <strong>Tools Employers Name</strong> · The software named in O*NET's US job-posting data for the role, beside the radar and again on the roadmap.
     </td>
   </tr>
   <tr>
@@ -195,15 +198,15 @@ A check-up for a web developer with a computer science degree who wants to see w
 
     <img src="/docs/readme/steps/1-start.png" alt="Start: your situation, study and experience" width="100%">
 
-    Then type your job title in any language, and Kopi matches it to one of 900 O\*NET job profiles. Pick a goal: stay strong in your job, move to up to 3 roles you have in mind, see where you could go in up to 3 areas, or say you're not sure. With no job or no role in mind, Kopi suggests roles to check first, and the questions test the one you pick.
+    Then type your job title in any language, and Kopi matches it to one of 923 O\*NET job profiles. Pick a goal: stay strong in your job, move to up to 3 roles you have in mind, see where you could go in up to 3 areas, or say you're not sure. With no job or no role in mind, Kopi suggests roles to check first, and the questions test the one you pick.
 
     <img src="/docs/readme/steps/1-goal.png" alt="Start: your work, your goal and the areas to explore" width="100%">
 
-2.  **Answer 12 can-do questions.** Rate each from 1 (Not yet) to 4 (Yes, on my own), with a click or the number keys. Each question tests one of the job's 6 core skills, drafted from the job's own O\*NET tasks.
+2.  **Answer 12 job questions.** Choose how you would handle each situation, with a click or the number keys. Jobs without a complete scenario set use can-do statements rated from 1 (Not yet) to 4 (Yes, on my own). The questions assess the job's core skills, drafted from its own O\*NET tasks.
 
     <img src="/docs/readme/steps/2-questions.png" alt="Questions" width="100%">
 
-3.  **Read your Future Skills Radar.** Each skill shows your level against the level needed by May 2027, its verdict and its dated sources. The SWOT sorts the skills into strengths, weaknesses, roles within reach and tasks AI can draft. A role Malaysian law restricts, such as law or medicine, also shows the qualification it needs and the route in, beside your fit.
+3.  **Read your Future Skills Radar.** Each skill shows your level against the estimated level needed by May 2027, its verdict and its dated sources. Switch between slow and fast AI uptake to compare targets. The SWOT sorts the skills into strengths, weaknesses, roles within reach and tasks AI can draft. Where available, SkillsFuture Singapore adds regional skill names and expected levels, labelled auto-generated. A role Malaysian law restricts, such as law or medicine, also shows the qualification it needs and the route in, beside your fit.
 
     <img src="/docs/readme/steps/3-radar.png" alt="Radar" width="100%">
 
@@ -211,7 +214,7 @@ A check-up for a web developer with a computer science degree who wants to see w
 
     <img src="/docs/readme/steps/4-roles.png" alt="Roles" width="100%">
 
-5.  **Follow your roadmap.** Ordered steps for the role you picked, running at least 12 weeks and on to the week you reach 80% fit, here Data Scientists, each with its hours, one free resource and its SDG targets, plus the software employers name for the role. That week moves with your weekly hours (1 to 20), and the plan exports as a PDF.
+5.  **Follow your roadmap.** Ordered steps for the role you picked, here Data Scientists, with estimated hours, learning links and SDG targets, plus the software employers name for the role. The view spans at least 12 weeks and extends to the estimated 80% fit milestone when the plan reaches it; otherwise it shows the available plan and says the threshold is unmet. Dates move with your weekly hours (1 to 20), and the plan exports as a PDF. A resource labelled Search is a way to find learning material, not a checked course. Upload completion evidence for a step and Kopi returns pass, fail or unclear; only a pass marks it done.
 
     <img src="/docs/readme/steps/5-roadmap.png" alt="Roadmap" width="100%">
 
@@ -224,15 +227,33 @@ A check-up for a web developer with a computer science degree who wants to see w
 ### Features
 
 - **Skills profile intake** — where you are now, your study and experience, a job title in any language, a goal (stay strong, move to up to 3 roles, explore by area, or not sure) and 12 what-would-you-do questions, worded for the user's years of work where a job keeps can-do statements. Without a job or a role in mind, Kotak suggests roles first, and a profession Malaysian law restricts, such as law or medicine, shows the qualification it needs beside the user's fit, to help them decide whether to pursue it.
-- **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights, refreshed weekly. A Before/After switch shows what changed when May's data arrived.
+- **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights. A Before/After switch shows what changed when May's data arrived. A weekly refresh workflow checks for new releases; it can also be run locally.
 - **Future-role matching** — up to 6 roles from the user's targets, areas, field of study and O\*NET's related list, each with a fit score, the maths behind it, the named gaps and why it's there.
 - **Malaysian job ads** — for each role, the JobStreet ads Kotak's admins reviewed: active ads, an estimate of its JobStreet ads and how it ranks by them, advertised pay in ringgit, where the jobs are, the benefits employers name, and the tools, languages and AI skills they ask for. Shown beside the verdicts, which it never sets.
 - **3D space** — all 923 jobs at `/app/space`, placed by the user's fit and drawn with each skill's AI use, 12-month change (est.), in both AI futures and both data months, with every number in a table one key away. `/app/space?job=<O*NET code>` opens it on one job, and Look Around shows it before the check-up, placed by O\*NET Job Zone.
-- **Reskilling pathway** — an interactive roadmap with ordered steps, hours, one free resource per step and a finish date that moves with the user's weekly hours.
+- **Reskilling pathway** — an interactive roadmap with ordered steps, estimated hours, learning resources or labelled searches, and dates that move with the user's weekly hours, situation, experience and qualification. Completion evidence is checked by Claude; the upload is not stored by Kotak.
+- **SkillsFuture Singapore context** — regional skill names and proficiency levels beside the radar and roadmap where links are available. These AI-generated links have not been individually reviewed, and never set verdicts or fit scores. Provenance and limits are in the [data card](/docs/data-card.md).
 - **SDG mapping** — every skill carries SDG targets, every job shows the goals its work serves, and the roadmap highlights steps by goal.
-- **Handling uncertainty** — every target is labelled an estimate, Split shows slow and fast AI-uptake futures, and Unknown marks thin data.
+- **Handling uncertainty** — a shared slow/fast AI-uptake control on Radar, Roles, Roadmap and job pages recalculates estimated targets, fit and plans. The 3D space compares the same futures. Split marks disagreeing outcomes, and Unknown marks thin data.
 - **Ask Kopi and MCP** — a chat agent answers through 8 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
 - **Three languages** — English, Bahasa Malaysia and Chinese behind one switch in the top bar, with Kopi answering in the language you pick. Every job title is translated, and so are the skills and questions of 18 jobs, the demo roles among them; a job still partly in English says so. Kopi's voice speaks English only.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Finalist Demo and Evidence
+
+The [Domain 1 finalist guide](/docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md) asks for six must-haves in one live journey. Start a synthetic profile in the [live demo](https://kotak-alaskxntxna.replit.app), complete the questions, then open Radar, Roles and Roadmap: the profile drives the results, each verdict names its source and date, fit scores show their maths, and SDG targets explain the link to the chosen path. Open a learning link and check whether it is a resource or a labelled search. Switch slow/fast AI uptake to compare the estimates, then use What Changed to compare April and May 2026. The [final pitch script](/docs/demo/final/pitch-script.md) and [Q&A sheet](/docs/demo/final/qa-cheat-sheet.md) guide the live presentation; the linked video records the preliminary version.
+
+To reproduce the change test and fairness evidence after installation:
+
+```bash
+bun run build:data
+bun scripts/sdk-checkup.ts
+bun scripts/scan-verdict-flips.ts
+bun test packages/sdk/src/fairness.test.ts
+```
+
+The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, measurements and limits: the April-to-May swap changes at least one verdict for all 923 jobs, and 30 paired profiles produce identical verdicts and fit when situation, qualification or experience changes. These are checks of the prototype, not measured employment or learning outcomes. The [data card](/docs/data-card.md) explains borrowed signals and unreviewed mappings; the [cost card](/docs/cost-card.md) gives measured API costs and scale assumptions. The guest session is saved in browser storage; AI features send the inputs needed for their replies to the API. Certificate checks send the uploaded file to Claude for that request without storing it in Kotak. The [technical design](/docs/TRD.md) documents data handling and deployment limits.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -244,7 +265,7 @@ A check-up for a web developer with a computer science degree who wants to see w
   <img src="/docs/readme/architecture-light.svg" alt="Kotak architecture">
 </picture>
 
-The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API does the language work: Claude matches titles and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources, ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
+The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
 
 Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json).
 
@@ -255,7 +276,7 @@ Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`
 ```text
 .
 ├── apps/
-│   ├── api/            # Hono API: title match, explanations, voice, Ask Kopi and MCP
+│   ├── api/            # Hono API: AI, completion evidence, voice, Ask Kopi and MCP
 │   └── web/            # React app, served with the static data bundle
 ├── packages/
 │   ├── shared/         # Rules, verdicts, roadmap and Zod schemas
@@ -273,7 +294,7 @@ Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`
 │   └── generated/      # Each job's AI-drafted skills and questions
 ├── runpod/             # RunPod endpoint settings and example requests
 ├── docs/               # PRD, technical design, declaration, research and README images
-├── submission/         # Submission template and the Replit and RunPod proofs of use
+├── submission/         # Final report, pitch deck, PRD, declaration and proofs of use
 ├── .env.example        # Environment variables
 ├── .replit             # Replit run configuration
 ├── wrangler.jsonc      # Cloudflare Workers configuration
@@ -306,11 +327,11 @@ No setup is needed to try Kotak: open the [live demo](https://kotak-alaskxntxna.
 
 - [Bun](https://bun.sh) 1.3 or later, for a local run.
 - Optional keys, listed in [`.env.example`](/.env.example):
-  - `ANTHROPIC_API_KEY` for job-title matching, explanations and Ask Kopi
+  - `ANTHROPIC_API_KEY` for job-title matching, explanations, Ask Kopi and completion evidence checks
   - `ELEVENLABS_API_KEY` for Kopi's voice
   - `DATABASE_URL`, a Neon Postgres URL, for the job-ad cards, the admin page and the national view's database
 
-The app runs without keys too: exact job titles still match, explanations fall back to fixed templates, Ask Kopi says it can't chat, Kopi's lines show as text, the job-ad cards stay hidden and the national view serves its built-in sample rows. The RunPod, Cloudflare and scraper settings in `.env.example` are only for the corner batch, the deploy and the JobStreet scraper.
+The app runs without keys too: exact job titles still match, explanations fall back to fixed templates, Ask Kopi says it can't chat, Kopi's lines show as text, completion evidence cannot be verified, the job-ad cards stay hidden and the national view serves its built-in sample rows. The RunPod, Cloudflare and scraper settings in `.env.example` are only for the corner batch, the deploy and the JobStreet scraper.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -362,14 +383,14 @@ bun test
 
 ### Run CI Locally
 
-TolongLabs' free GitHub Actions minutes are used up, so pull requests get no checks and a merge to `main` doesn't deploy. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
+GitHub Actions checks pull requests and deploys merges to `main`. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
 
 ```bash
 echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' >> ~/.actrc
 ```
 
 ```bash
-bun run ci:local       # the pull request check: typecheck, build and a Worker dry run
+bun run ci:local       # the pull request check: typecheck, build, fairness and a Worker dry run
 bun run deploy:local   # the production deploy, as a push to main would run it
 bun run refresh:local  # the weekly data refresh; add --input dry_run=true to only check
 ```
@@ -422,9 +443,9 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 ## Challenges and Learnings
 
-- **Thin data.** With only April's AI-use data, every skill read Unknown. Kotak shows Unknown rather than guess, and May's data then flipped six verdicts. Honest uncertainty proved more useful than a confident guess.
+- **Thin data.** With only April's AI-use data, every skill read Unknown. Kotak shows Unknown rather than guess, and May's data then changed all six verdicts on each of the three demo roles. Honest uncertainty proved more useful than a confident guess.
 - **Keeping AI out of the verdicts.** An explanation from a language model can drift from the rule it explains. A check now rejects any explanation that changes a verdict, and a template answers when Claude cannot.
-- **A plan that reaches its goal.** An early roadmap finished each skill to Advanced before starting the next, so a test user's 12-week plan stopped at 47% fit. Steps now go in order of fit gained per hour, and the plan runs until 80% fit; every simulated plan reaches it.
+- **A plan with a visible goal.** An early roadmap finished each skill to Advanced before starting the next, so a test user's 12-week plan stopped at 47% fit. Steps now go in order of fit gained per hour, and the view extends to the estimated 80% fit milestone when reachable. The estimate describes progress within Kotak's model.
 - **Real hiring data.** Job ads change daily and pages fail. The collector runs from a queue that resumes after a crash, in an isolated runner with a restricted database role, and a person checks the ads Claude sorts.
 - **923 jobs at once.** One RunPod batch drafted every job's skills and questions in 13 minutes with none failed, because a JSON schema shaped each answer and a validator rejected any task from another job.
 
@@ -436,7 +457,7 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 - [ ] Kotak Team: a skill-gap view for an employer's whole team, and who to train first
 - [ ] Bahasa Malaysia and Chinese skills and questions for every job, beyond the 18 translated so far (#449)
-- [ ] Slow and fast AI-uptake scenarios side by side on the radar (the engine already holds both)
+- [ ] A side-by-side radar comparison of slow and fast AI uptake, beyond today's shared scenario switch
 - [ ] Checked free and HRD Corp-claimable courses for each step, beyond today's search suggestions
 - [ ] A notice when new monthly data moves a user's plan
 - [ ] A pilot with HR teams at levy-paying employers, measuring steps done and fit gained
@@ -472,7 +493,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 - [x] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod used, with proof of use in `submission/`
-- [x] Submission template completed in `submission/`
+- [x] Phase 1 proposal completed in `submission/`
 - [x] Phase 2 final report completed in `submission/`
 - [x] Pitch deck in `submission/`, as `.pptx` and PDF
 - [x] Technical and tools declaration completed in `submission/`
