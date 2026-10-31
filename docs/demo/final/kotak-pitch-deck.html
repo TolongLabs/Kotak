@@ -1472,6 +1472,7 @@
             <g class="stamp"><rect x="814" y="596" width="116" height="32" rx="8" /><text x="872" y="617" text-anchor="middle">O*NET 30.1</text></g>
             <g class="stamp"><rect x="940" y="596" width="66" height="32" rx="8" /><text x="973" y="617" text-anchor="middle">DOSM</text></g>
             <g class="stamp"><rect x="1016" y="596" width="140" height="32" rx="8" /><text x="1086" y="617" text-anchor="middle">JobStreet Ads</text></g>
+            <g class="stamp"><rect x="1166" y="596" width="132" height="32" rx="8" /><text x="1232" y="617" text-anchor="middle">SkillsFuture</text></g>
 
             <use class="u" href="#i-arrow" x="1337" y="312" width="36" height="36" />
 
@@ -1578,6 +1579,7 @@
               <rect class="box " x="22" y="56" width="250" height="100" rx="12" />
               <image href="assets/icons/anthropic.svg" x="38" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
               <text class="t1" x="38" y="124">Public Data</text>
+              <text class="t2" x="76" y="89">+ SkillsFuture SG</text>
               <text class="t2" x="38" y="144">Econ. Index · O*NET · DOSM</text>
               <rect class="box " x="300" y="56" width="250" height="100" rx="12" />
               <image href="assets/icons/bun.svg" x="316" y="70" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
@@ -1796,7 +1798,7 @@
   "Here's how Kotak works, in three steps. One: Aina answers twelve questions about what she'd do at work. Two: Kotak checks her answers against dated public data on AI use and jobs in Malaysia. Fixed rules decide every result. AI only explains it. Three: she gets her plan. The skill to learn first, the hours, and who pays. Data decides. AI explains. Let's run Aina's check-up, live. [Advance to slide 5.]",
   "Now, without further ado, let's see how things work in action. [The driver switches windows to the browser.] Live demo, five minutes: follow D1 to D8 in the pitch script, and name each stage aloud as it appears. Stage 1 of 6, intake. 2, the trend signal. 3, matching. 4, her pathway. 5, the SDGs. 6, uncertainty, in the 3D space. Then the change test: say when. [The driver switches back to the deck, on slide 6.]",
   "Now, why Kotak? We compared it with MyMahir, LinkedIn, e-LATiH and a general chatbot. Kotak is the only one we found with all five you just saw: a dated AI trend for each skill, the maths shown, a timed plan, a funding route, and even a MCP server your AI can call.",
-  "Under the hood: two halves, one rulebook. First, the engine, at build time. Bun pipelines turn the Economic Index, ONET and DOSM into dated monthly snapshots. Each skill's AI trend resolves Malaysia-first, down six ONET levels, before any global figure. Then followed by RunPod GPU batch, Qwen on vLLM, drafted skills for all 923 jobs in 13 minutes, and validators reject any task that isn't the job's own. Finally the product. One TypeScript rulebook runs in your browser and on our edge API, so every result is reproducible. Our AI layer - Claude Haiku, only explains: a verifier keeps its text only if it names the exact verdict, cites each source by date, and adds no number of its own.",
+  "Under the hood: two halves, one rulebook. First, the engine, at build time. Bun pipelines turn the Economic Index, ONET and DOSM into dated monthly snapshots. Each skill's AI trend resolves Malaysia-first, down six ONET levels, before any global figure. SkillsFuture Singapore adds skill names, never verdicts. Then a RunPod GPU batch, Qwen on vLLM, drafted skills for all 923 jobs in 13 minutes, and validators reject any task that isn't the job's own. Finally the product. One TypeScript rulebook runs in your browser and on our edge API, so every result is reproducible. Claude Haiku only explains: a verifier keeps its text only if it names the exact verdict, cites each source by date, and adds no number.",
   "Here's what Aina gets. Her check-up took about three minutes. Her plan reaches 80% fit by week 34 at ten hours a week. Every step has a free course. For her, it costs nothing. [Only once #378 has run:] Across 20 test profiles, all 20 reached a plan in under three minutes, with every step cited. Is it fair? We tested 30 pairs of profiles differing only in situation, years or qualification. Verdicts and fit matched in all 30. Kotak never asks for name, gender, race, religion or age. Aina's answers stay on her device.",
   "Now, who pays? Never the worker. Employers in HRD Corp's mandatory sectors already pay a training levy of 1% of wages. Kotak shows which skills to fund. Next, we're building a team view for HR, and we'll pilot it first with one HR team and their staff. Agencies get anonymous totals, only for groups of ten or more. It's cheap to run: about 7 US cents a check-up.",
   "Kotak means box, and we built it to open the box on your job. Thank you. [Hold 3 seconds on the QR codes.]"

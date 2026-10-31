@@ -33,6 +33,7 @@
     "ingest:aei": "bun scripts/ingest/aei.ts",
     "ingest:dosm-jmi": "bun scripts/ingest/dosm-jmi.ts",
     "ingest:pathways": "bun scripts/ingest/pathways.ts",
+    "ingest:sgf": "bun scripts/ingest/sgf.ts",
     "build:corner-groups": "bun scripts/corners/build-groups.ts",
     "batch:corners": "bun scripts/corners/run-batch.ts",
     "translate": "bun scripts/i18n/translate-roles.ts",

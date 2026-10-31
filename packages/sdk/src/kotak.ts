@@ -82,7 +82,8 @@ export function createKotak({ source }: { source: BundleSource }): Kotak {
         description: role.description,
         questions_ready: role.questions_ready,
         corners: role.corners.map(({ corner_id, name, statements }) => ({ corner_id, name, statements })),
-        related: role.related
+        related: role.related,
+        sgf_roles: role.sgf.roles
       }
     },
 

@@ -7,13 +7,14 @@ import { jobPath, routes, spacePath } from '../app/routes'
 import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
+import { SgfEquivalent, SgfSkillList } from '../components/kotak/SgfSkills'
 import { UntranslatedNote } from '../components/kotak/UntranslatedNote'
 import { Button } from '../components/ui/Button'
 import { routeLinkClassName } from '../components/ui/TextLink'
 import { VerdictChip } from '../components/ui/VerdictChip'
 import { cn } from '../components/ui/cn'
 import type { Corner } from '../demo/types'
-import { loadRoleBundle, useRoleBundle, useRoleIndex } from '../engine/bundle'
+import { loadRoleBundle, usePathways, useRoleBundle, useRoleIndex } from '../engine/bundle'
 import { topGapLabel, trendOf, type QuadrantPoint } from '../engine/quadrant'
 import { verdictId } from '../engine/viewModel'
 import { hasAnswers, useGuestSession } from '../session/store'
@@ -108,6 +109,8 @@ const cardClass = 'surface-card min-w-0 space-y-4 p-4 sm:p-6'
 
 function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotId: SnapshotId; scenario: Scenario }) {
   const t = useText(rolesText)
+  const pathways = usePathways()
+  const sgfSource = pathways.status === 'ready' ? pathways.data.sources.sgf : null
   const names = new Map(role.corners.map((corner) => [corner.corner_id, corner.name]))
   const rows = roleVerdicts(role.signals[snapshotId]).corners.map((corner) => ({
     id: corner.corner_id,
@@ -145,6 +148,7 @@ function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotI
                 <tr key={row.id} className="border-t border-border-subtle">
                   <th scope="row" className="py-3 pr-3 text-label-m text-text-primary">
                     {row.name}
+                    <SgfSkillList skills={role.sgf.corners[row.id] ?? []} compact className="mt-1 font-normal" />
                   </th>
                   <td className="py-3 pr-3">
                     <VerdictChip verdict={row.verdict} size="sm" />
@@ -162,7 +166,7 @@ function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotI
                           />
                         ))}
                       </span>
-                      <span className="font-mono text-mono-s text-text-primary">
+                      <span className="whitespace-nowrap font-mono text-mono-s text-text-primary">
                         {t.jobView.ofThree(formatNeeded(row.needed))}
                       </span>
                     </span>
@@ -173,6 +177,14 @@ function NeedsCard({ role, snapshotId, scenario }: { role: BundleRole; snapshotI
           </tbody>
         </table>
       </div>
+      {sgfSource && Object.keys(role.sgf.corners).length > 0 && (
+        <p className="text-body-s text-text-muted">
+          <a href={sgfSource.source_url} target="_blank" rel="noreferrer" className={routeLinkClassName}>
+            {sgfSource.source_name}
+          </a>{' '}
+          · {sgfSource.geo_or_layer} · {sgfSource.vintage_date}
+        </p>
+      )}
     </section>
   )
 }
@@ -260,6 +272,7 @@ export function JobView({ code }: { code: string }) {
           <UntranslatedNote onetCode={role.onet_code} />
           <p className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-mono-s text-text-muted">O*NET {role.onet_code}</span>
+            <SgfEquivalent roles={role.sgf.roles} />
             <VerdictChip verdict={outlook} size="sm" />
             <span className="text-body-s text-text-muted">{neededBy}</span>
             {/* Without a check-up the space has no fit to place jobs by, so it opens in Look Around. */}

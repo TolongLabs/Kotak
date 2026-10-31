@@ -53,7 +53,7 @@ Contents:
 - **Singapore's Skills Framework** ([Skills Frameworks page][skillsfuture], [terms of use][swda-terms], [FAQ][swda-faq])
   - Offers: three XLSX downloads, "Updated quarterly": the Skills Framework dataset (Q3 2026, with 2,031 job roles and "job roles, key tasks, and skills across 38 sectors"), the Unique Skills List (September 2026) and the TSC-to-Unique-Skills mapping (June 2026). The portal is now run by SWDA, the Skills & Workforce Development Agency.
   - Licence: not open data. The terms say "You shall not reproduce, republish … or otherwise display or distribute in any way the Contents without the prior written permission of SWDA" and forbid scraping the site; the files aren't on data.gov.sg. The FAQ allows downloading "specific datasets for offline analysis".
-  - Fit: a reference for internal analysis only; shipping it in a public repo or app needs SWDA's written permission.
+  - Fit: a reference for internal analysis only; shipping it in a public repo or app needs SWDA's written permission. On 31 October 2026 a SkillsFuture ambassador gave the team verbal approval, and Kotak loads it as context (#464).
 
 [esco-api]: https://esco.ec.europa.eu/en/use-esco/use-esco-services-api
 [esco-web-service]: https://esco.ec.europa.eu/en/use-esco/use-esco-services-api/esco-web-service-api

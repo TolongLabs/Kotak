@@ -38,6 +38,7 @@ import {
 import { cornerLinkErrors, loadCorners } from './build-data/corners'
 import { i18nFiles, I18N_LANGUAGES } from './build-data/i18n'
 import { buildPathways, loadPathwaysInputs, roleTools } from './build-data/pathways'
+import { roleSgf } from './build-data/sgf'
 
 const started = performance.now()
 const ROOT = `${import.meta.dir}/..`
@@ -143,6 +144,11 @@ for (const occupation of occupations.occupations) {
       titles.has(r.onet_code) ? [{ ...r, title: titles.get(r.onet_code)! }] : []
     ),
     tools: roleTools(pathwaysInputs, occupation.onet_code),
+    sgf: roleSgf(
+      pathwaysInputs.sgf,
+      occupation.onet_code,
+      found.corners.map((c) => c.corner_id)
+    ),
     signals: Object.fromEntries(
       months.map((m, i) => [m.snapshot_id, resolveRoleSignals({ ...input, aei: snapshotMonths(i) })])
     )

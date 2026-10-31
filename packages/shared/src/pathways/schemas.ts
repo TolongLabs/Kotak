@@ -165,7 +165,14 @@ export const OnetPreparationFileSchema = z
 export const BundlePathwaysSchema = z
   .object({
     sources: z
-      .object({ onet: SourceSchema, onet_tools: SourceSchema, cip_soc: SourceSchema, regulated: SourceSchema })
+      .object({
+        onet: SourceSchema,
+        onet_tools: SourceSchema,
+        /** SkillsFuture Singapore (#464): the equivalents and corner skills on each role. */
+        sgf: SourceSchema,
+        cip_soc: SourceSchema,
+        regulated: SourceSchema
+      })
       .strict(),
     fields: z.array(
       z

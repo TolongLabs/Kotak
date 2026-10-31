@@ -50,6 +50,8 @@ On 31 October the technical architecture came back at full length, as in the pre
 
 Also on 31 October, Why Kotak moved ahead of the architecture. Straight after the demo, its five columns sum up what the judges just saw, and its last line, "Kotak is the tool a chatbot calls", leads into the MCP clients on the architecture slide. Slide 5 is a cue the room sees for a few seconds while the driver switches windows.
 
+Later on 31 October, slide 7 named a fourth dataset, SkillsFuture Singapore, as context beside the verdicts. Its 7 words were cut from the same slide, so the timing holds.
+
 ## Slide 1, who we are
 
 **Presenter**, 0:00 to 0:19
@@ -191,7 +193,7 @@ A wrong click is easy to undo: click **Previous Question** and pick again.
 **Driver:**
 
 1.  Point the mouse at the dashed line on the radar.
-1.  Scroll down to **Your Gaps**. On the first card, **Technical documentation**, click **Sources (6)**: the sources start folded. Point at "Anthropic Economic Index" and its line "MYS/iwa · 2026-05-01".
+1.  Scroll down to **Your Gaps**. On the first card, **Technical documentation**, click **Sources (7)**: the sources start folded, and SkillsFuture Singapore is the seventh. Point at "Anthropic Economic Index" and its line "MYS/iwa · 2026-05-01".
 1.  Scroll down to **Job Ads in Malaysia**. Point at the **Median Advertised Pay** tile, RM 6,800 a month.
 1.  Scroll to the bottom and click **See Roles That Fit**.
 
@@ -311,15 +313,15 @@ On screen: the comparison grid, six tools against the five things, with Kotak's 
 
 > Under the hood: two halves, one rulebook.
 >
-> First, the engine, at build time. Bun pipelines turn the Economic Index, O*NET and DOSM into dated monthly snapshots. Each skill's AI trend resolves Malaysia-first, down six O*NET levels, before any global figure.
+> First, the engine, at build time. Bun pipelines turn the Economic Index, O*NET and DOSM into dated monthly snapshots. Each skill's AI trend resolves Malaysia-first, down six O*NET levels, before any global figure. SkillsFuture Singapore adds skill names, never verdicts.
 >
-> Then followed by RunPod GPU batch, Qwen on vLLM, drafted skills for all 923 jobs in 13 minutes, and validators reject any task that isn't the job's own.
+> Then a RunPod GPU batch, Qwen on vLLM, drafted skills for all 923 jobs in 13 minutes, and validators reject any task that isn't the job's own.
 >
-> Finally the product. One TypeScript rulebook runs in your browser and on our edge API, so every result is reproducible. Our AI layer - Claude Haiku, only explains: a verifier keeps its text only if it names the exact verdict, cites each source by date, and adds no number of its own.
+> Finally the product. One TypeScript rulebook runs in your browser and on our edge API, so every result is reproducible. Claude Haiku only explains: a verifier keeps its text only if it names the exact verdict, cites each source by date, and adds no number.
 
-On screen: the architecture slide, "Two Halves, One Rulebook, No Guessing." Point to the engine half (left) on "First, the engine", to GPU Batch and Validators on "A RunPod GPU batch", then to the product half (right) on "Then the product". Every name said aloud is on the slide; Kopi's voice and avatar (Haiku 5.5, ElevenLabs, Live2D) and the job-ad pipeline are on the slide only.
+On screen: the architecture slide, "Two Halves, One Rulebook, No Guessing." Point to the engine half (left) on "First, the engine", to "+ SkillsFuture SG" in the Public Data box on "SkillsFuture Singapore", to GPU Batch and Validators on "A RunPod GPU batch", then to the product half (right) on "Then the product". Every name said aloud is on the slide; Kopi's voice and avatar (Haiku 5.5, ElevenLabs, Live2D) and the job-ad pipeline are on the slide only.
 
-Each technical line has its source in the code: the Malaysia-first lookup in `packages/shared/src/rules/resolve.ts`, the task validator in `packages/shared/src/corners/validate.ts`, the Durable Object in `apps/api/src/worker.ts`, and the explanation verifier in `apps/api/src/ai/verifier.ts`. If a judge asks who wrote the what-would-you-do questions: Claude Sonnet and GPT, as coding agents in the team's own sessions at build time, not inside the product. A script checked every question (four answers scored 1 to 4 exactly once, no giveaway words, task IDs from the job), and Claude Sonnet, GPT and Gemini reviewed the demo jobs and a sample of the rest ([technology declaration](/docs/tech-declaration.md)).
+Each technical line has its source in the code: the Malaysia-first lookup in `packages/shared/src/rules/resolve.ts`, the task validator in `packages/shared/src/corners/validate.ts`, the SkillsFuture match and its validator in `scripts/sgf/link.ts`, the Durable Object in `apps/api/src/worker.ts`, and the explanation verifier in `apps/api/src/ai/verifier.ts`. If a judge asks who wrote the what-would-you-do questions: Claude Sonnet and GPT, as coding agents in the team's own sessions at build time, not inside the product. A script checked every question (four answers scored 1 to 4 exactly once, no giveaway words, task IDs from the job), and Claude Sonnet, GPT and Gemini reviewed the demo jobs and a sample of the rest ([technology declaration](/docs/tech-declaration.md)).
 
 ## Slide 8, what a worker gets
 
