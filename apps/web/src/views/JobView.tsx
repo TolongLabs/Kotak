@@ -8,6 +8,7 @@ import { FutureSkillsRadar } from '../components/kotak/FutureSkillsRadar'
 import { QuadrantMap } from '../components/kotak/QuadrantMap'
 import { ScenarioControl } from '../components/kotak/ScenarioControl'
 import { SgfEquivalent, SgfSkillList } from '../components/kotak/SgfSkills'
+import { SpaceLink } from '../components/kotak/SpaceLink'
 import { UntranslatedNote } from '../components/kotak/UntranslatedNote'
 import { Button } from '../components/ui/Button'
 import { routeLinkClassName } from '../components/ui/TextLink'
@@ -276,12 +277,9 @@ export function JobView({ code }: { code: string }) {
             <VerdictChip verdict={outlook} size="sm" />
             <span className="text-body-s text-text-muted">{neededBy}</span>
             {/* Without a check-up the space has no fit to place jobs by, so it opens in Look Around. */}
-            <Link
-              to={spacePath(role.onet_code, !(assessedRoleCode(session) && hasAnswers(session)))}
-              className={routeLinkClassName}
-            >
+            <SpaceLink to={spacePath(role.onet_code, !(assessedRoleCode(session) && hasAnswers(session)))}>
               {t.jobView.findInSpace}
-            </Link>
+            </SpaceLink>
           </p>
         </div>
         <Button

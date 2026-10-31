@@ -22,7 +22,7 @@ const readDate = (iso: string) =>
   )
 
 /** Below the chip, or above it when only that fits; when neither does, as close as fits on screen. */
-function place(button: HTMLElement, panel: HTMLElement) {
+export function place(button: HTMLElement, panel: HTMLElement) {
   const rect = button.getBoundingClientRect()
   const viewportWidth = document.documentElement.clientWidth
   const width = Math.min(WIDTH, viewportWidth - 2 * EDGE)

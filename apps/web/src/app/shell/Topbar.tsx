@@ -1,11 +1,10 @@
-import { CalendarDays, Menu, UserRound } from 'lucide-react'
+import { CalendarDays, Menu } from 'lucide-react'
 import { useEffect, useId, useRef, useState, type RefObject } from 'react'
 import { LanguageToggle } from '../../components/ui/LanguageToggle'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { cn } from '../../components/ui/cn'
 import { useRoleIndex } from '../../engine/bundle'
 import { assessedRoleCode, planRoleCodeOf } from '../../engine/checkup'
-import { commonText } from '../../i18n/common'
 import { shellText } from '../../i18n/messages/shell'
 import { useLocale } from '../../i18n/locale'
 import { useText } from '../../i18n/text'
@@ -154,7 +153,6 @@ function isTyping(target: EventTarget | null) {
 
 export function Topbar({ dataLabel, className }: { dataLabel: string; className?: string }) {
   const searchRef = useRef<HTMLInputElement>(null)
-  const c = useText(commonText)
 
   useEffect(() => {
     function focusSearch(event: KeyboardEvent) {
@@ -171,13 +169,8 @@ export function Topbar({ dataLabel, className }: { dataLabel: string; className?
     <header className={cn('surface-glass h-16 items-center gap-4 rounded-md px-4', className)}>
       <TopbarSearch ref={searchRef} />
       <div className="ml-auto flex items-center gap-3">
+        {/* The guest card lives in the sidebar, so the top bar doesn't repeat it. */}
         <DataChip snapshot={dataLabel} />
-        <div className="inline-flex shrink-0 items-center gap-2 text-label-m text-text-primary">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[1.5px] border-text-primary bg-accent-box text-accent-on-box">
-            <UserRound className="h-5 w-5 stroke-current" aria-hidden="true" />
-          </span>
-          {c.guest}
-        </div>
         <LanguageToggle />
         <ThemeToggle />
       </div>

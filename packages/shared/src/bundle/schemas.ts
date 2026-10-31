@@ -104,7 +104,9 @@ export const BundleSgfSkillSchema = z
     type: SgfSkillTypeSchema,
     proficiency_level: SgfProficiencySchema,
     emerging: z.boolean(),
-    role_id: z.string().min(1)
+    role_id: z.string().min(1),
+    /** The framework's own one-line description of the skill, shown when its chip opens; null when it has none. */
+    description: z.string().min(1).nullable()
   })
   .strict()
 
