@@ -125,6 +125,8 @@ Submission documents: the [final report](/submission/SDC2026_T010NG_Final.pdf), 
 
 ### Screenshots
 
+Screenshots and walkthrough captures use a 1920×1080 (16:9) viewport.
+
 <table>
   <tr>
     <td width="50%" valign="top" align="left">
@@ -267,7 +269,7 @@ The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, m
 
 The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
 
-Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json).
+Drawn with the [Kotak design system](/docs/DESIGN.md) from [`architecture.json`](/docs/readme/architecture.json). Regenerate both themes with `bun scripts/readme-architecture.ts`.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -383,14 +385,14 @@ bun test
 
 ### Run CI Locally
 
-GitHub Actions checks pull requests and deploys merges to `main`. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
+GitHub Actions runs verification and deploys updates to `main`. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
 
 ```bash
 echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' >> ~/.actrc
 ```
 
 ```bash
-bun run ci:local       # the pull request check: typecheck, build, fairness and a Worker dry run
+bun run ci:local       # verification: typecheck, build, fairness and a Worker dry run
 bun run deploy:local   # the production deploy, as a push to main would run it
 bun run refresh:local  # the weekly data refresh; add --input dry_run=true to only check
 ```
@@ -456,7 +458,7 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 ## Future Improvements
 
 - [ ] Kotak Team: a skill-gap view for an employer's whole team, and who to train first
-- [ ] Bahasa Malaysia and Chinese skills and questions for every job, beyond the 18 translated so far (#449)
+- [ ] Bahasa Malaysia and Chinese skills and questions for every job, beyond the 18 translated so far
 - [ ] A side-by-side radar comparison of slow and fast AI uptake, beyond today's shared scenario switch
 - [ ] Checked free and HRD Corp-claimable courses for each step, beyond today's search suggestions
 - [ ] A notice when new monthly data moves a user's plan
