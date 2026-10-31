@@ -1,7 +1,7 @@
 import { accessFor } from '@kotak/sdk'
 import { addDays, MAX_WEEKLY_HOURS, MIN_WEEKLY_HOURS, needsQualification, REFRESHER_ID } from '@kotak/shared'
 import { Gauge } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { navigate } from '../app/router'
 import { routes } from '../app/routes'
 import { AccessNotice } from '../components/kotak/AccessNotice'
@@ -156,6 +156,14 @@ export function RoadmapView() {
   // Read out on the live region below, so a screen reader hears the verdict.
   const [announcement, setAnnouncement] = useState('')
   const [paceOpen, setPaceOpen] = useState(false)
+  // The plan island's height, so the step column below it sticks with a gap under it at every width.
+  const [islandHeight, setIslandHeight] = useState(0)
+  const measureIsland = useCallback((island: HTMLElement | null) => {
+    if (!island) return
+    const observer = new ResizeObserver(() => setIslandHeight(island.offsetHeight))
+    observer.observe(island)
+    return () => observer.disconnect()
+  }, [])
   // The plan island's controls on phones and narrow desktops, where it folds to one line.
   const [controlsOpen, setControlsOpen] = useState(false)
   const futuresText = useText(changesText)
@@ -606,6 +614,7 @@ export function RoadmapView() {
         {/* The plan island: the three controls that reshape the plan stay in view with their result, so dragging the
             hours moves the chart and timeline under it. Phones and narrow desktops fold it to one line. */}
         <section
+          ref={measureIsland}
           aria-label={t.controls.planControls}
           className="roadmap-print-actions surface-glass sticky top-20 z-20 rounded-md p-3 lg:top-24 xl:p-4"
         >
@@ -765,7 +774,11 @@ export function RoadmapView() {
             )}
           </section>
 
-          <div className="roadmap-sticky-column space-y-4 lg:sticky lg:top-52 lg:self-start">
+          {/* It sticks 1rem under the plan island (lg:top-24 plus its height), never against it. */}
+          <div
+            className="roadmap-sticky-column space-y-4 lg:sticky lg:top-(--below-plan-island) lg:self-start"
+            style={{ '--below-plan-island': `calc(6rem + ${islandHeight}px + 1rem)` } as CSSProperties}
+          >
             {reasonText && (
               <section aria-label={t.controls.stepDetailsAria} className="[&>section>p:first-of-type]:text-body-s">
                 <Reasoning text={reasonText} />
