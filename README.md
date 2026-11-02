@@ -93,9 +93,9 @@ AI is changing Malaysian jobs faster than training can keep up: 56% of Malaysian
 
 Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks where the user is now, what they studied and what they want. Someone with no job yet, or no role in mind, gets roles to check first, from their study and what they enjoy. Kopi then asks 12 what-would-you-do questions about their job or the role they want; jobs without a complete scenario set keep can-do self-ratings. Kotak draws a Future Skills Radar of the job's core skills, ranks matched roles and builds a dated roadmap. Fixed rules over dated public data set every verdict, score and step, with sources shown beside the results. Users can switch between slow and fast AI uptake to compare estimated skill targets, fit and learning plans. AI works around those rules: a RunPod GPU batch drafted each job's skills and statements from its own O\*NET tasks, Claude explains verdicts and matches job titles, and ElevenLabs gives Kopi a voice.
 
-Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students led by AlaskanTuna.
+Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students led by [@AlaskanTuna](https://github.com/AlaskanTuna).
 
-Submission documents: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
+Submission documents, as public copies with contact details and the signature withheld: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
 
 ### Team Information
 
@@ -104,7 +104,7 @@ Submission documents: the [final report](/submission/SDC2026_T010NG_Final.pdf), 
 | **Team Name**         | T010NG                                                                             |
 | **Team Domain**       | Domain 1: Aiversecity Future-Ready Workforce                                       |
 | **SDG Track (1–17)**  | SDG 4: Quality Education (target 4.4), with SDG 8: Decent Work and Economic Growth |
-| **Team Leader**       | AlaskanTuna                                                                         |
+| **Team Leader**       | @AlaskanTuna                                                                       |
 | **Number of Members** | 5                                                                                  |
 
 ### Links
@@ -469,13 +469,13 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 
 ## Team
 
-| Name           | Role        | GitHub                                         |
-| -------------- | ----------- | ---------------------------------------------- |
-| AlaskanTuna     | Team leader | [@AlaskanTuna](https://github.com/AlaskanTuna) |
-| chaosiris     | Member      | [@chaosiris](https://github.com/chaosiris)     |
-| kymil4   | Member      | [@kymil4](https://github.com/kymil4)           |
-| DrxgClanPC | Member      | [@DrxgClanPC](https://github.com/DrxgClanPC)   |
-| Doraemon-00       | Member      | [@Doraemon-00](https://github.com/Doraemon-00) |
+| GitHub                                         | Role        |
+| ---------------------------------------------- | ----------- |
+| [@AlaskanTuna](https://github.com/AlaskanTuna) | Team leader |
+| [@chaosiris](https://github.com/chaosiris)     | Member      |
+| [@kymil4](https://github.com/kymil4)           | Member      |
+| [@DrxgClanPC](https://github.com/DrxgClanPC)   | Member      |
+| [@Doraemon-00](https://github.com/Doraemon-00) | Member      |
 
 <a href="https://github.com/TolongLabs/Kotak/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=TolongLabs/Kotak" alt="Kotak team" />

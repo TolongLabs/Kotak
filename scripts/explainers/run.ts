@@ -3,9 +3,9 @@
 // Checkpoints are append-only JSONL files, so a rerun only does the items still missing. Workers only return text.
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
-const RUN = '/home/user/projects/sdc-hack/.agent-team/build/2026-10-23-checkup-batch2'
+const RUN = '.agent-team/build/2026-10-23-checkup-batch2'
 const SESSION = '2e30d6e3-8b93-4d2c-b064-eb1330589e1f'
-const GATE_RUN = '/home/user/projects/sdc-hack/.agent-team/build/2026-10-23-explainers-flash' // Flash-only gated run; outputs stay under RUN
+const GATE_RUN = '.agent-team/build/2026-10-23-explainers-flash' // Flash-only gated run; outputs stay under RUN
 const ROOT = new URL('../..', import.meta.url).pathname.replace(/\/$/, '')
 const W = `${RUN}/research/explainers`
 const TRIAGE = `${W}/triage-results.jsonl`

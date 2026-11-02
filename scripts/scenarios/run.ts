@@ -5,7 +5,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import { ScenariosFileSchema } from '../../packages/shared/src/data/scenarios'
 import { validateJob, type CornerIn, type Slot } from './validate'
 
-const RUN = process.env.SCENARIO_RUN_DIR ?? '/home/user/projects/sdc-hack/.agent-team/build/2026-10-29-final-upgrades' // team run dir: briefs, raw output, checkpoints
+const RUN = process.env.SCENARIO_RUN_DIR ?? '.agent-team/build/2026-10-29-final-upgrades' // team run dir: briefs, raw output, checkpoints
 const SESSION = process.env.SCENARIO_SESSION_ID ?? 'c9da7c6a-035d-41d6-8598-abcecc23ede7'
 const ROOT = new URL('../..', import.meta.url).pathname.replace(/\/$/, '')
 const W = `${RUN}/research/scenarios`
