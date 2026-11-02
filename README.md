@@ -27,6 +27,8 @@
     <br />
   </p>
 
+[![SDC Hackathon 2026: 2nd Runner-Up][sdchackathon-badge]][sdchackathon-url]
+
 [![TypeScript][typescript-badge]][typescript-url]
 [![Bun][bun-badge]][bun-url]
 [![React][react-badge]][react-url]
@@ -531,6 +533,8 @@ Third-party data, models, assets and libraries keep their own licences, listed i
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
+[sdchackathon-badge]: https://img.shields.io/badge/SDC%20Hackathon%202026-%F0%9F%A5%89%202nd%20Runner--Up-CD7F32?style=for-the-badge
+[sdchackathon-url]: https://sdchack.my/
 [typescript-badge]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
 [typescript-url]: https://www.typescriptlang.org/
 [bun-badge]: https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white
