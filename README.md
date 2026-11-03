@@ -93,7 +93,7 @@ Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students led by [@AlaskanTuna](https://github.com/AlaskanTuna).
 
-Submission documents, as public copies with contact details and the signature withheld: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf).
+Submission documents, as public copies with contact details and the signature withheld: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal (updated PRD)](/submission/SDC2026_T010NG_Preliminary.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -226,7 +226,7 @@ The Domain 1 finalist guide asks for six must-haves in one live journey. Start a
   <img src="/docs/readme/architecture-light.svg" alt="Kotak architecture">
 </picture>
 
-The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/apps/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad cards. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [final report](/submission/SDC2026_T010NG_Final.pdf) explains each part, and the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) sets out the conceptual tech stack and a system block diagram. The diagram is generated from [`architecture.json`](/docs/readme/architecture.json). The SVGs use transparent canvases and the Kotak design system.
+The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/apps/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad cards. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [final report](/submission/SDC2026_T010NG_Final.pdf) explains each part, and the [updated PRD](/submission/SDC2026_T010NG_Preliminary.pdf) and the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) each set out the tech stack with a system block diagram. The diagram is generated from [`architecture.json`](/docs/readme/architecture.json). The SVGs use transparent canvases and the Kotak design system.
 
 Made with [Archify](https://github.com/tt-a1i/archify).
 
@@ -328,7 +328,7 @@ bun apps/scripts/scan-verdict-flips.ts
 bun test apps/sdk/src/fairness.test.ts
 ```
 
-The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, measurements and limits: the April-to-May swap changes at least one verdict for all 923 jobs, and 30 paired profiles produce identical verdicts and fit when situation, qualification or experience changes. These are checks of the prototype, not measured employment or learning outcomes. The report also explains where Kotak borrows AI-use figures from outside Malaysia, which mappings are AI-generated, the measured API costs and the scale assumptions. The guest session is saved in browser storage, and AI features send the API the inputs their replies need. Certificate checks send the uploaded file to Claude for that request without storing it in Kotak. The final report sets out this data handling against Malaysia's Personal Data Protection Act 2010.
+The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, measurements and limits: the April-to-May swap changes at least one verdict for all 923 jobs, and 30 paired profiles produce identical verdicts and fit when situation, qualification or experience changes. These are checks of the prototype, not measured employment or learning outcomes. The [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) explains the bias in borrowed data, such as O\*NET describing US jobs, and the unreviewed AI-drafted skills and translations; the report adds where Kotak borrows AI-use figures from outside Malaysia, which mappings are AI-generated, the measured API costs and the scale assumptions. The guest session is saved in browser storage, and AI features send the API the inputs their replies need. Certificate checks send the uploaded file to Claude for that request without storing it in Kotak. The technical declaration documents this data handling, the rate limits and the single-provider risks, and the final report sets the data handling against Malaysia's Personal Data Protection Act 2010.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -387,7 +387,7 @@ The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, m
 │   │   └── generated/      # Each job's AI-drafted skills and questions
 │   └── video/              # Remotion source of the demo video
 ├── docs/readme/            # README images and the architecture diagram
-├── submission/             # Final report, proposal, technical declaration, pitch deck and proofs of use
+├── submission/             # Final report, updated PRD, technical declaration, pitch deck and proofs of use
 ├── .env.example            # Environment variables
 ├── .replit                 # Replit run configuration
 ├── LICENSE                 # Apache License 2.0
@@ -472,10 +472,10 @@ curl https://api.runpod.ai/v2/$RUNPOD_ENDPOINT_ID/openai/v1/chat/completions \
 - [x] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod used, with proof of use in `submission/`
-- [x] Phase 1 proposal completed in `submission/`
+- [x] Phase 1 proposal completed in `submission/`, as the updated PRD
 - [x] Phase 2 final report completed in `submission/`
 - [x] Pitch deck in `submission/`, as `.pptx` and PDF
-- [x] Technical declaration completed in `submission/`
+- [x] Technical and tools declaration completed in `submission/`
 - [x] "How to Run" steps verified
 - [x] No API keys or secrets committed to the repository
 
@@ -493,12 +493,6 @@ See [open issues](https://github.com/TolongLabs/Kotak/issues) for a full list of
 
 ## Team
 
-- [@AlaskanTuna](https://github.com/AlaskanTuna) (team leader)
-- [@chaosiris](https://github.com/chaosiris)
-- [@kymil4](https://github.com/kymil4)
-- [@DrxgClanPC](https://github.com/DrxgClanPC)
-- [@Doraemon-00](https://github.com/Doraemon-00)
-
 <a href="https://github.com/TolongLabs/Kotak/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=TolongLabs/Kotak" alt="Kotak team" />
 </a>
@@ -513,7 +507,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 This project is licensed under the [Apache License 2.0](/LICENSE). Kotak, copyright 2026 TolongLabs. See [LICENSE](/LICENSE) for more information.
 
-Kotak uses the third-party data, models, assets and code below, each under its own licence. The [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) lists the datasets, models and code declared in the preliminary round, and the [final report](/submission/SDC2026_T010NG_Final.pdf) adds those new since.
+Kotak uses the third-party data, models, assets and code below, each under its own licence. The [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) lists every tool and service in full.
 
 **Data**
 
