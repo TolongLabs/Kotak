@@ -8,8 +8,7 @@
 __MACOSX/
 .AppleDouble
 .LSOverride
-Icon[
-]
+Icon[]
 
 # Resource forks
 ._*
@@ -30,8 +29,7 @@ Icon[
 .file
 .disk_label*
 lost+found
-.HFS+ Private Directory Data[
-]
+.HFS+ Private Directory Data[]
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -86,33 +84,36 @@ node_modules/
 .env*
 !.env.example
 
-# Local agent tooling, never committed
+# Graphify
+graphify-out/*
+!graphify-out/graph.json
+
+# Impeccable
+.agents/skills/impeccable/scripts/bin
+.claude/skills/impeccable/scripts/bin
+
+# Agents
 .agents/
 .claude/
 .codex/
 .superpowers/
 graphify-out/
 
-# Secrets and local env files (never commit)
-.env
-.env.*
-!.env.example
-.dev.vars
-.dev.vars.*
-
-# Build outputs
+# Build
 dist/
-# The static client bundle, written by bun run build:data
 apps/web/public/data/
-# The published skill and /llms.txt, written by bun run build:skill
 apps/web/public/kotak-checkup.zip
 apps/web/public/skills/
 apps/web/public/llms.txt
+
+# Wrangler
+.dev.vars
+.dev.vars.*
 .wrangler/
 
-# Local caches: downloaded source data and the Bun server's Claude responses
+# Cache
 .cache/
 
-# Local scraper runs and browser tooling
+# Local
 .local/
 apps/data/jobstreet/

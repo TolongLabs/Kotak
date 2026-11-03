@@ -1,12 +1,15 @@
 .agents/
 .claude/
-# Generated O*NET data, one record per line
+
+# Data
 apps/data/onet/
 apps/data/pathways/onet-preparation.json
 apps/data/pathways/cip-soc.json
 apps/data/generated/
-# The demo video's hand-set graphics pack, kept as exported; day-card.ts edits overlays.html by exact text
+
+# Video
 apps/video/graphics/
 apps/video/assets/
-# Local knowledge graph
+
+# Graphify
 graphify-out/

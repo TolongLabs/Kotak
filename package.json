@@ -1,15 +1,9 @@
 {
-  "name": "kotak",
-  "private": true,
-  "workspaces": [
-    "apps/api",
-    "apps/web",
-    "apps/agent",
-    "apps/browser",
-    "apps/sdk",
-    "apps/shared"
-  ],
   "scripts": {
+    "graph": "graphify update .",
+    "lint": "prettier --check .",
+    "lint:fix": "prettier --write .",
+    "prepare": "husky",
     "dev": "bun run build:data && bun run build:skill && bun run --parallel --filter @kotak/api --filter @kotak/web dev",
     "build": "bun run build:data && bun run build:skill && bun run --filter @kotak/web build",
     "build:data": "bun apps/scripts/build-data.ts",
@@ -28,8 +22,6 @@
     "ingest:onet": "bun apps/scripts/ingest/onet.ts",
     "scrape:jobstreet": "bun apps/api/src/scrapers/jobstreet/cli.ts",
     "jobs:prepare": "bun apps/api/src/scrapers/jobstreet/prepare-cli.ts",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
     "ingest:aei": "bun apps/scripts/ingest/aei.ts",
     "ingest:dosm-jmi": "bun apps/scripts/ingest/dosm-jmi.ts",
     "ingest:pathways": "bun apps/scripts/ingest/pathways.ts",
@@ -39,27 +31,34 @@
     "translate": "bun apps/scripts/i18n/translate-roles.ts",
     "translate:roles": "bun apps/scripts/i18n/translate-roles.ts 15-1252.00 15-2051.00 13-2011.00 13-1111.00 13-1071.00 11-2021.00 11-1021.00 11-1011.00 29-1141.00 25-2031.00",
     "refresh:check": "bun apps/scripts/refresh/check.ts",
-    "refresh:validate": "bun apps/scripts/refresh/validate.ts",
-    "lint": "prettier --check .",
-    "lint:fix": "prettier --write .",
-    "prepare": "husky"
+    "refresh:validate": "bun apps/scripts/refresh/validate.ts"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown"
   },
-  "overrides": {
-    "gh-pages": "^6.3.0"
-  },
   "devDependencies": {
-    "@anthropic-ai/sdk": "^1.1.0",
-    "@commitlint/cli": "^21.2.3",
-    "@commitlint/config-conventional": "^21.2.3",
-    "@types/bun": "^1.4.3",
-    "fflate": "^0.8.3",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
+    "@anthropic-ai/sdk": "^1.1.0",
+    "@types/bun": "^1.4.3",
+    "fflate": "^0.8.3",
     "typescript": "^7.0.2",
     "wrangler": "^4.151.3"
+  },
+  "name": "kotak",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "apps/agent",
+    "apps/browser",
+    "apps/sdk",
+    "apps/shared"
+  ],
+  "overrides": {
+    "gh-pages": "^6.3.0"
   }
 }
