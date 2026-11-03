@@ -2,7 +2,7 @@ import type { CheckupBundle, RoleBundle } from '@kotak/sdk'
 import type { BundleCorner, BundleRole, SdgReasonsFile } from '@kotak/shared'
 
 // The translated data overlays (#449): Malay and Chinese copies of the jobs' titles, corner texts, questions,
-// explainers, resource titles and the SDG reasons. The build splits `data/generated/i18n/<lang>.json` into a small
+// explainers, resource titles and the SDG reasons. The build splits `apps/data/generated/i18n/<lang>.json` into a small
 // index every page may read and one file per job, read only when that job is on screen (engine/bundle.ts). Every field
 // is optional; anything without an entry keeps its English.
 interface CornerOverlay {

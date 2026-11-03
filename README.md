@@ -21,7 +21,7 @@
     &middot;
     <a href="https://youtu.be/HQgdbantbN0">Preliminary Demo Video</a>
     &middot;
-    <a href="/docs/demo/final/kotak-pitch-deck.pptx">Slide Deck</a>
+    <a href="/submission/SDC2026_T010NG_PitchDeck.pptx">Slide Deck</a>
     &middot;
     <a href="https://github.com/TolongLabs/Kotak/issues/new?labels=bug">Report a Bug</a>
     <br />
@@ -73,7 +73,7 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
         <li><a href="#run-tests">Run Tests</a></li>
-        <li><a href="#run-ci-locally">Run CI Locally</a></li>
+        <li><a href="#deploy-to-cloudflare-workers">Deploy to Cloudflare Workers</a></li>
       </ul>
     </li>
     <li><a href="#how-we-use-replit">How We Use Replit</a></li>
@@ -97,7 +97,7 @@ Kotak, Malay for box, opens the box on a job. Kopi, a cat counsellor, first asks
 
 Built for [SDC Hackathon 2026](https://sdchack.my/), Domain 1: Aiversecity Future-Ready Workforce, on SDG 4 (target 4.4), by team T010NG: five students led by [@AlaskanTuna](https://github.com/AlaskanTuna).
 
-Submission documents, as public copies with contact details and the signature withheld: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf). The [technical requirements](/docs/TRD.md), the [data card](/docs/data-card.md), the [algorithm card](/docs/algorithm-card.md) and the [decision log](/docs/decision-log.md) explain how it works, and the [cost card](/docs/cost-card.md) what it costs to run.
+Submission documents, as public copies with contact details and the signature withheld: the [final report](/submission/SDC2026_T010NG_Final.pdf), the [proposal](/submission/SDC2026_T010NG_Preliminary.pdf), the [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf), the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) and the [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf).
 
 ### Team Information
 
@@ -111,16 +111,15 @@ Submission documents, as public copies with contact details and the signature wi
 
 ### Links
 
-| Resource          | Link                                                                                                                                                               |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GitHub Repository | <https://github.com/TolongLabs/Kotak>                                                                                                                              |
-| Live Demo         | <https://kotak-alaskxntxna.replit.app>, published on Replit                                                        |
-| Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started)                                         |
-| RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                                                                   |
-| Slide Deck        | [`kotak-pitch-deck.pptx`](/docs/demo/final/kotak-pitch-deck.pptx), also as a [PDF](/docs/demo/final/kotak-pitch-deck.pdf)                                          |
-| Demo Video        | [Preliminary pitching video](https://youtu.be/HQgdbantbN0) (5:34); the final is demonstrated live using the [final pitch script](/docs/demo/final/pitch-script.md) |
-| Final Report      | [Phase 2 report](/submission/SDC2026_T010NG_Final.pdf), with impact measurements and verification commands                                                         |
-| Final Pitch       | [Deck PDF](/submission/SDC2026_T010NG_PitchDeck.pdf), [pitch script](/docs/demo/final/pitch-script.md) and [Q&A sheet](/docs/demo/final/qa-cheat-sheet.md)         |
+| Resource          | Link                                                                                                                                    |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub Repository | <https://github.com/TolongLabs/Kotak>                                                                                                   |
+| Live Demo         | <https://kotak-alaskxntxna.replit.app>, published on Replit                                                                             |
+| Replit Project    | The project is private to the team's account; import this repository into Replit as in [Getting Started](#getting-started)              |
+| RunPod Endpoint   | `https://api.runpod.ai/v2/5yjk19uqmrpbp7`, idle at 0 workers since the batch run                                                        |
+| Slide Deck        | [`SDC2026_T010NG_PitchDeck.pptx`](/submission/SDC2026_T010NG_PitchDeck.pptx), also as a [PDF](/submission/SDC2026_T010NG_PitchDeck.pdf) |
+| Demo Video        | [Preliminary pitching video](https://youtu.be/HQgdbantbN0) (5:34); the final is demonstrated live                                       |
+| Final Report      | [Phase 2 report](/submission/SDC2026_T010NG_Final.pdf), with impact measurements and verification commands                              |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -230,12 +229,12 @@ A check-up for a web developer with a computer science degree who wants to see w
 ### Features
 
 - **Skills profile intake** — where you are now, your study and experience, a job title in any language, a goal (stay strong, move to up to 3 roles, explore by area, or not sure) and 12 what-would-you-do questions, worded for the user's years of work where a job keeps can-do statements. Without a job or a role in mind, Kotak suggests roles first, and a profession Malaysian law restricts, such as law or medicine, shows the qualification it needs beside the user's fit, to help them decide whether to pursue it.
-- **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights. A Before/After switch shows what changed when May's data arrived. A weekly refresh workflow checks for new releases; it can also be run locally.
+- **AI-trend signal layer** — dated Anthropic Economic Index snapshots for Malaysia (April and May 2026) and DOSM Job Market Insights. A Before/After switch shows what changed when May's data arrived. `bun run refresh:check` checks for new releases, and `bun run refresh:validate` checks the data files against their schemas.
 - **Future-role matching** — up to 6 roles from the user's targets, areas, field of study and O\*NET's related list, each with a fit score, the maths behind it, the named gaps and why it's there.
 - **Malaysian job ads** — for each role, the JobStreet ads Kotak's admins reviewed: active ads, an estimate of its JobStreet ads and how it ranks by them, advertised pay in ringgit, where the jobs are, the benefits employers name, and the tools, languages and AI skills they ask for. Shown beside the verdicts, which it never sets.
 - **3D space** — all 923 jobs at `/app/space`, placed by the user's fit and drawn with each skill's AI use, 12-month change (est.), in both AI futures and both data months, with every number in a table one key away. `/app/space?job=<O*NET code>` opens it on one job, and Look Around shows it before the check-up, placed by O\*NET Job Zone.
 - **Reskilling pathway** — an interactive roadmap with ordered steps, estimated hours, learning resources or labelled searches, and dates that move with the user's weekly hours, situation, experience and qualification. Completion evidence is checked by Claude; the upload is not stored by Kotak.
-- **SkillsFuture Singapore context** — regional skill names and proficiency levels beside the radar and roadmap where links are available. These AI-generated links have not been individually reviewed, and never set verdicts or fit scores. Provenance and limits are in the [data card](/docs/data-card.md).
+- **SkillsFuture Singapore context** — regional skill names and proficiency levels beside the radar and roadmap where links are available. These AI-generated links have not been individually reviewed, and never set verdicts or fit scores. Provenance and limits are in the [final report](/submission/SDC2026_T010NG_Final.pdf).
 - **SDG mapping** — every skill carries SDG targets, every job shows the goals its work serves, and the roadmap highlights steps by goal.
 - **Handling uncertainty** — a shared slow/fast AI-uptake control on Radar, Roles, Roadmap and job pages recalculates estimated targets, fit and plans. The 3D space compares the same futures. Split marks disagreeing outcomes, and Unknown marks thin data.
 - **Ask Kopi and MCP** — a chat agent answers through 8 read-only tools over the same rules, and other assistants can use the same tools at `/api/mcp`.
@@ -245,18 +244,18 @@ A check-up for a web developer with a computer science degree who wants to see w
 
 ### Finalist Demo and Evidence
 
-The [Domain 1 finalist guide](/docs/sources/drive.google.com/domain-1-aiversecity-finalist-guide.md) asks for six must-haves in one live journey. Start a synthetic profile in the [live demo](https://kotak-alaskxntxna.replit.app), complete the questions, then open Radar, Roles and Roadmap: the profile drives the results, each verdict names its source and date, fit scores show their maths, and SDG targets explain the link to the chosen path. Open a learning link and check whether it is a resource or a labelled search. Switch slow/fast AI uptake to compare the estimates, then use What Changed to compare April and May 2026. The [final pitch script](/docs/demo/final/pitch-script.md) and [Q&A sheet](/docs/demo/final/qa-cheat-sheet.md) guide the live presentation; the linked video records the preliminary version.
+The Domain 1 finalist guide asks for six must-haves in one live journey. Start a synthetic profile in the [live demo](https://kotak-alaskxntxna.replit.app), complete the questions, then open Radar, Roles and Roadmap: the profile drives the results, each verdict names its source and date, fit scores show their maths, and SDG targets explain the link to the chosen path. Open a learning link and check whether it is a resource or a labelled search. Switch slow/fast AI uptake to compare the estimates, then use What Changed to compare April and May 2026. The [pitch deck](/submission/SDC2026_T010NG_PitchDeck.pdf) guides the live presentation; the linked video records the preliminary version.
 
 To reproduce the change test and fairness evidence after installation:
 
 ```bash
 bun run build:data
-bun scripts/sdk-checkup.ts
-bun scripts/scan-verdict-flips.ts
-bun test packages/sdk/src/fairness.test.ts
+bun apps/scripts/sdk-checkup.ts
+bun apps/scripts/scan-verdict-flips.ts
+bun test apps/sdk/src/fairness.test.ts
 ```
 
-The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, measurements and limits: the April-to-May swap changes at least one verdict for all 923 jobs, and 30 paired profiles produce identical verdicts and fit when situation, qualification or experience changes. These are checks of the prototype, not measured employment or learning outcomes. The [data card](/docs/data-card.md) explains borrowed signals and unreviewed mappings; the [cost card](/docs/cost-card.md) gives measured API costs and scale assumptions. The guest session is saved in browser storage; AI features send the inputs needed for their replies to the API. Certificate checks send the uploaded file to Claude for that request without storing it in Kotak. The [technical design](/docs/TRD.md) documents data handling and deployment limits.
+The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, measurements and limits: the April-to-May swap changes at least one verdict for all 923 jobs, and 30 paired profiles produce identical verdicts and fit when situation, qualification or experience changes. These are checks of the prototype, not measured employment or learning outcomes. The [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) explains borrowed signals and unreviewed mappings; the final report gives measured API costs and scale assumptions. The guest session is saved in browser storage; AI features send the inputs needed for their replies to the API. Certificate checks send the uploaded file to Claude for that request without storing it in Kotak. The technical declaration documents data handling and deployment limits.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -268,9 +267,9 @@ The [final report](/submission/SDC2026_T010NG_Final.pdf) records the baseline, m
   <img src="/docs/readme/architecture-light.svg" alt="Kotak architecture">
 </picture>
 
-The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/packages/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [PRD](/docs/PRD.md) and the [technical design](/docs/TRD.md) explain each part.
+The rules run in the browser. `@kotak/sdk` computes every verdict, score and roadmap step with the [rules](/apps/shared/src/rules/) over a static bundle of dated snapshots, so a check-up needs no server. The Hono API handles AI features: Claude matches titles, checks completion evidence and writes explanations, which a [verifier](/apps/api/src/ai/verifier.ts) checks against the rules' verdict and sources. ElevenLabs speaks Kopi's lines, and Neon Postgres holds the national view, the JobStreet scraper's runs and the reviewed job ads behind the job-ad market. MCP clients reach the same tools at `/api/mcp`. Before deploy, Bun scripts build the bundle from public data, and a RunPod GPU batch drafted each job's skills once. The [updated PRD](/submission/SDC2026_T010NG_UpdatedPRD.pdf) and the [technical declaration](/submission/SDC2026_T010NG_TechDeclaration.pdf) explain each part.
 
-Generated with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json). The README SVGs use transparent canvases and the [Kotak design system](/docs/DESIGN.md); the submission SVG uses the SDC templates' Montserrat typography and colours. Regenerate all three with `bun scripts/readme-architecture.ts`; install the Archify skill or set `ARCHIFY_BIN` to its CLI path. The standalone HTML and validation receipts are saved under `../.orchestration/`.
+Generated with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json). The SVGs use transparent canvases and the Kotak design system.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -279,30 +278,29 @@ Generated with [Archify](https://github.com/tt-a1i/archify) from [`architecture.
 ```text
 .
 ├── apps/
-│   ├── api/            # Hono API: AI, completion evidence, voice, Ask Kopi and MCP
-│   └── web/            # React app, served with the static data bundle
-├── packages/
-│   ├── shared/         # Rules, verdicts, roadmap and Zod schemas
-│   ├── sdk/            # Check-up engine shared by the app and the MCP tools
-│   ├── agent/          # Ask Kopi's tools and the MCP server
-│   └── browser/        # Browser for the JobStreet research scraper
-├── plugins/kotak/      # Claude Code plugin with the check-up skill
-├── scripts/
-│   ├── ingest/         # O*NET, Economic Index and DOSM ingestion
-│   ├── corners/        # RunPod batch that drafts each job's skills and questions
-│   └── refresh/        # Weekly check for new data snapshots
-├── data/
-│   ├── onet/           # O*NET 30.1 occupations, tasks and work activities
-│   ├── snapshots/      # Dated Economic Index and DOSM snapshots
-│   └── generated/      # Each job's AI-drafted skills and questions
-├── runpod/             # RunPod endpoint settings and example requests
-├── docs/               # PRD, technical design, declaration, research and README images
-├── submission/         # Final report, pitch deck, PRD, declaration and proofs of use
-├── .env.example        # Environment variables
-├── .replit             # Replit run configuration
-├── wrangler.jsonc      # Cloudflare Workers configuration
-├── LICENSE             # Apache License 2.0
-├── NOTICE.md           # Third-party credits
+│   ├── api/                # Hono API: AI, completion evidence, voice, Ask Kopi and MCP
+│   │   └── wrangler.jsonc  # Cloudflare Workers configuration
+│   ├── web/                # React app, served with the static data bundle
+│   ├── shared/             # Rules, verdicts, roadmap and Zod schemas
+│   ├── sdk/                # Check-up engine shared by the app and the MCP tools
+│   ├── agent/              # Ask Kopi's tools and the MCP server
+│   ├── browser/            # Browser for the JobStreet research scraper
+│   ├── plugin/             # Claude Code plugin with the check-up skill
+│   ├── scripts/
+│   │   ├── ingest/         # O*NET, Economic Index and DOSM ingestion
+│   │   ├── corners/        # RunPod batch that drafts each job's skills and questions
+│   │   └── refresh/        # Check for new data snapshots
+│   ├── data/
+│   │   ├── onet/           # O*NET 30.1 occupations, tasks and work activities
+│   │   ├── snapshots/      # Dated Economic Index and DOSM snapshots
+│   │   └── generated/      # Each job's AI-drafted skills and questions
+│   └── video/              # Remotion source of the demo video
+├── docs/readme/            # README images and the architecture diagram
+├── submission/             # Final report, pitch deck, PRD, declaration and proofs of use
+├── .env.example            # Environment variables
+├── .replit                 # Replit run configuration
+├── LICENSE                 # Apache License 2.0
+├── NOTICE.md               # Third-party credits
 └── README.md
 ```
 
@@ -314,7 +312,7 @@ Generated with [Archify](https://github.com/tt-a1i/archify) from [`architecture.
 - **Backend:** [Bun](https://bun.sh/), [Hono](https://hono.dev/) and [Zod](https://zod.dev/). The rule engine runs in the browser through `@kotak/sdk`.
 - **Database:** [Neon](https://neon.com/) Postgres 18.
 - **AI / Compute:** [RunPod](https://www.runpod.io/) serverless GPU (Qwen3.8-27B on vLLM), [Claude](https://www.anthropic.com/claude) Haiku 5.5 and [ElevenLabs](https://elevenlabs.io/).
-- **Hosting / Dev:** [Replit](https://replit.com/), [Cloudflare Workers](https://workers.cloudflare.com/) and GitHub Actions.
+- **Hosting / Dev:** [Replit](https://replit.com/) and [Cloudflare Workers](https://workers.cloudflare.com/).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -382,23 +380,18 @@ bun run typecheck
 bun test
 ```
 
-`bun test` skips the 26 browser integration tests of the JobStreet scraper unless `BROWSER_INTEGRATION=1` is set, because they launch its Chromium build ([scraper guide](/apps/api/src/scrapers/jobstreet/README.md#verification)). It also skips the intake pathway tests until `bun run build` has written the data bundle.
+`bun test` skips the 26 browser integration tests of the JobStreet scraper unless `BROWSER_INTEGRATION=1` is set, because they launch its Chromium build. It also skips the intake pathway tests until `bun run build` has written the data bundle.
 
-### Run CI Locally
+### Deploy to Cloudflare Workers
 
-GitHub Actions runs verification and deploys updates to `main`. [act](https://github.com/nektos/act) runs the same workflows in Docker on your machine ([usage guide](https://nektosact.com/usage/index.html)). Install it from its [releases](https://github.com/nektos/act/releases/latest), then map the runner to the medium image once, in `~/.actrc`:
-
-```bash
-echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' >> ~/.actrc
-```
+Replit publishes the live demo, and the same build also runs on Cloudflare Workers. With `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` exported, build and deploy from the repository root:
 
 ```bash
-bun run ci:local       # verification: typecheck, build, fairness and a Worker dry run
-bun run deploy:local   # the production deploy, as a push to main would run it
-bun run refresh:local  # the weekly data refresh; add --input dry_run=true to only check
+bun run build
+bunx wrangler deploy --config apps/api/wrangler.jsonc
 ```
 
-The deploy and the refresh read their secrets from `.secrets`, which git ignores: copy [.secrets.example](/.secrets.example) and fill in the repository's Actions secrets. act removes its containers when a run ends, but keeps the runner image for the next run; `docker image rm catthehacker/ubuntu:act-latest` frees that space.
+The Worker reads its keys from Cloudflare secrets: add each with `bunx wrangler secret put ANTHROPIC_API_KEY --config apps/api/wrangler.jsonc`, and the same for `ELEVENLABS_API_KEY` and `DATABASE_URL`. For `wrangler dev`, Wrangler reads them from `apps/api/.dev.vars`, which git ignores.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -417,8 +410,8 @@ The deploy and the refresh read their secrets from `.secrets`, which git ignores
 ## How We Use RunPod
 
 - **Workload:** a RunPod serverless GPU ran `Qwen/Qwen3.8-27B-FP8` on vLLM once, before the demo, to group each O\*NET job's own tasks into 6 skills and draft 18 can-do statements for each of 923 jobs. A JSON schema constrains every answer, and a validator rejects any task from another job.
-- **Setup:** the stock RunPod vLLM worker, `runpod/worker-v1-vllm:v2.28.0`, on one H100 80 GB GPU, as endpoint `5yjk19uqmrpbp7`, now idle at 0 workers. [`runpod/README.md`](/runpod/README.md) has the endpoint settings.
-- **Integration:** [`scripts/corners/run-batch.ts`](/scripts/corners/run-batch.ts) sends the requests with `RUNPOD_API_KEY` and `RUNPOD_ENDPOINT_ID`, and writes the results into the data snapshots that the app ships. The full run took 783 seconds and cost about US$1.25.
+- **Setup:** the stock RunPod vLLM worker, `runpod/worker-v1-vllm:v2.28.0`, on one H100 80 GB GPU, as endpoint `5yjk19uqmrpbp7`, now idle at 0 workers.
+- **Integration:** [`apps/scripts/corners/run-batch.ts`](/apps/scripts/corners/run-batch.ts) sends the requests with `RUNPOD_API_KEY` and `RUNPOD_ENDPOINT_ID`, and writes the results into the data snapshots that the app ships. The full run took 783 seconds and cost about US$1.25.
 
 Example request:
 

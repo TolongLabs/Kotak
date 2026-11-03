@@ -104,7 +104,7 @@ export function ScenarioControl({
   )
 }
 
-/** Both futures are estimates, so the switch always says so where it stands (DESIGN.md content rules). */
+/** Both futures are estimates, so the switch always says so where it stands. */
 function EstimateTag() {
   const t = useText(changesText)
   return (

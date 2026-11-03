@@ -1,10 +1,10 @@
 // Labelled sample rows for the national view (is_sample = true). The seed script inserts them, and the
 // summary route serves the same rows when the database is unset or unreachable.
-import demoRoles from '../../../data/demo-roles.json'
+import demoRoles from '../../data/demo-roles.json'
 
-// The live-demo roles in data/demo-roles.json (#88), so the national view shows the same jobs as the demo, and
-// the lowest O*NET code in every other occupation group, so each group has labelled rows (TRD: "at least 10 per
-// occupation group", #147). Each role's levels follow its corner count. `bun run build:data` checks the groups and
+// The live-demo roles in apps/data/demo-roles.json (#88), so the national view shows the same jobs as the demo, and
+// the lowest O*NET code in every other occupation group, so each group has labelled rows (at least 10 per
+// occupation group, #147). Each role's levels follow its corner count. `bun run build:data` checks the groups and
 // counts against the bundle.
 export const DEMO_ROLE_CODES = demoRoles.roles.map((role) => role.onet_code)
 const GROUP_ROLES: Record<string, number> = {

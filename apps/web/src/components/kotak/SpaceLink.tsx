@@ -2,7 +2,7 @@ import { ArrowUpRight, Orbit } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from '../../app/router'
 
-// The way into the 3D space from a control strip (DESIGN.md "Components"): a compact ink pill, never an underlined link.
+// The way into the 3D space from a control strip: a compact ink pill, never an underlined link.
 export function SpaceLink({ to, children }: { to: string; children: ReactNode }) {
   return (
     <Link

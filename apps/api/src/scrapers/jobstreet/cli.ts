@@ -41,7 +41,7 @@ try {
   --retries N      Transient navigation retries (0–3, default 2)
   --verification-timeout-ms N  Wait for verification (0–600000, default 120000); complete any check manually in the browser window
   --sort MODE      Breadth view: newest, title, company, location, job-id, scraped-at
-  --output PATH    New directory (default data/jobstreet/[depth/]<timestamp>-<suffix>)
+  --output PATH    New directory (default apps/data/jobstreet/[depth/]<timestamp>-<suffix>)
   BROWSER_PROFILE_ID reuses a saved local browser profile; otherwise a temporary profile is created`)
   } else {
     // Stable relative to the repo, even when invoked from apps/api.
@@ -59,7 +59,7 @@ try {
         values.output ||
         resolve(
           root,
-          'data/jobstreet',
+          'apps/data/jobstreet',
           mode === 'depth' ? 'depth' : '',
           `${new Date().toISOString().replace(/[:.]/g, '-')}-${crypto.randomUUID().slice(0, 8)}`
         ),

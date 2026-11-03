@@ -4,7 +4,7 @@ import { commonText } from '../common'
 import { getLocale } from '../locale'
 import { defineText, textNow } from '../text'
 
-// The SDK words each verdict's reason in English for the app and the agents alike (packages/sdk/src/view.ts). The app
+// The SDK words each verdict's reason in English for the app and the agents alike (apps/sdk/src/view.ts). The app
 // rebuilds it in Malay and Chinese from the same verdict fields; in English it returns the SDK's own sentence.
 const reasonText = defineText(
   {

@@ -1,3 +1,0 @@
-[test]
-# Other finalist teams' repositories carry their own tests
-pathIgnorePatterns = ["docs/sources/finalists/**"]

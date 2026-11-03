@@ -1,14 +1,12 @@
 .agents/
 .claude/
-# Hand-set slide decks, exported to PDF and PPTX as they are
-docs/demo/final/*.html
-docs/demo/prelim/*.html
 # Generated O*NET data, one record per line
-data/onet/
-data/pathways/onet-preparation.json
-data/pathways/cip-soc.json
-data/generated/
-# Other finalist teams' repositories, kept byte-for-byte as cloned
-docs/sources/finalists/*/
-# Generated knowledge graph, rewritten by graphify update
+apps/data/onet/
+apps/data/pathways/onet-preparation.json
+apps/data/pathways/cip-soc.json
+apps/data/generated/
+# The demo video's hand-set graphics pack, kept as exported; day-card.ts edits overlays.html by exact text
+apps/video/graphics/
+apps/video/assets/
+# Local knowledge graph
 graphify-out/

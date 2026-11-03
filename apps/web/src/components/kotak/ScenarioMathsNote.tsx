@@ -6,7 +6,7 @@ import { useText } from '../../i18n/text'
 /**
  * The fast future's one rule in plain words (#389), quoted in See the Maths on the Roles and Roadmap screens. The
  * multiplier and both anchors come from the data, never typed in by hand: `fastGrowthMultiplier` in
- * `packages/shared/src/rules/verdicts.ts` moves Malaysia's usage index halfway to Singapore's (FAST_CONVERGENCE = 0.5).
+ * `apps/shared/src/rules/verdicts.ts` moves Malaysia's usage index halfway to Singapore's (FAST_CONVERGENCE = 0.5).
  */
 export function ScenarioMathsNote({ anchors }: { anchors: UsageAnchors }) {
   const t = useText(changesText)

@@ -75,7 +75,7 @@ if (excess.length)
     `The runner database role has more access than it needs: ${excess.map((row) => printable(row.problem)).join('; ')}`
   )
 
-const root = fileURLToPath(new URL('../../../../../data/jobstreet/production', import.meta.url))
+const root = fileURLToPath(new URL('../../../../data/jobstreet/production', import.meta.url))
 const delayMs = Number(Bun.env.JOBSTREET_DELAY_MS ?? 30_000)
 const delayJitterMs = Number(Bun.env.JOBSTREET_DELAY_JITTER_MS ?? 30_000)
 // Search pages per breadth run, newest ads first. A lower cap scrapes a sample of a broad search's newest ads, and

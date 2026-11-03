@@ -126,7 +126,7 @@ function canReuse(detail: JobDetailObservation | undefined, time: number, hours:
 
 async function previousLocalDepthFiles(): Promise<string[]> {
   const root = fileURLToPath(new URL('../../../../../', import.meta.url))
-  const directory = resolve(root, 'data/jobstreet/depth')
+  const directory = resolve(root, 'apps/data/jobstreet/depth')
   const folders = await readdir(directory, { withFileTypes: true }).catch((error: NodeJS.ErrnoException) => {
     if (error.code === 'ENOENT') return []
     throw error

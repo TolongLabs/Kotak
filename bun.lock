@@ -17,6 +17,16 @@
         "wrangler": "^4.151.3",
       },
     },
+    "apps/agent": {
+      "name": "@kotak/agent",
+      "dependencies": {
+        "@anthropic-ai/sdk": "^1.1.0",
+        "@kotak/sdk": "workspace:*",
+        "@kotak/shared": "workspace:*",
+        "@modelcontextprotocol/server": "^2.3.1",
+        "zod": "^4.6.7",
+      },
+    },
     "apps/api": {
       "name": "@kotak/api",
       "dependencies": {
@@ -32,6 +42,32 @@
       },
       "devDependencies": {
         "@electric-sql/pglite": "^0.5.11",
+        "@types/bun": "^1.4.3",
+      },
+    },
+    "apps/browser": {
+      "name": "@kotak/browser",
+      "dependencies": {
+        "clearcote": "~0.60.0",
+        "playwright-core": "^1.64.1",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.4.3",
+      },
+    },
+    "apps/sdk": {
+      "name": "@kotak/sdk",
+      "dependencies": {
+        "@kotak/shared": "workspace:*",
+        "zod": "^4.6.7",
+      },
+    },
+    "apps/shared": {
+      "name": "@kotak/shared",
+      "dependencies": {
+        "zod": "^4.6.7",
+      },
+      "devDependencies": {
         "@types/bun": "^1.4.3",
       },
     },
@@ -59,42 +95,6 @@
         "@vitejs/plugin-react": "^6.1.2",
         "tailwindcss": "^4.3.3",
         "vite": "^8.3.5",
-      },
-    },
-    "packages/agent": {
-      "name": "@kotak/agent",
-      "dependencies": {
-        "@anthropic-ai/sdk": "^1.1.0",
-        "@kotak/sdk": "workspace:*",
-        "@kotak/shared": "workspace:*",
-        "@modelcontextprotocol/server": "^2.3.1",
-        "zod": "^4.6.7",
-      },
-    },
-    "packages/browser": {
-      "name": "@kotak/browser",
-      "dependencies": {
-        "clearcote": "~0.60.0",
-        "playwright-core": "^1.64.1",
-      },
-      "devDependencies": {
-        "@types/bun": "^1.4.3",
-      },
-    },
-    "packages/sdk": {
-      "name": "@kotak/sdk",
-      "dependencies": {
-        "@kotak/shared": "workspace:*",
-        "zod": "^4.6.7",
-      },
-    },
-    "packages/shared": {
-      "name": "@kotak/shared",
-      "dependencies": {
-        "zod": "^4.6.7",
-      },
-      "devDependencies": {
-        "@types/bun": "^1.4.3",
       },
     },
   },
@@ -286,15 +286,15 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.9", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.0.3", "@jridgewell/sourcemap-codec": "^1.4.10" } }, "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ=="],
 
-    "@kotak/agent": ["@kotak/agent@workspace:packages/agent"],
+    "@kotak/agent": ["@kotak/agent@workspace:apps/agent"],
 
     "@kotak/api": ["@kotak/api@workspace:apps/api"],
 
-    "@kotak/browser": ["@kotak/browser@workspace:packages/browser"],
+    "@kotak/browser": ["@kotak/browser@workspace:apps/browser"],
 
-    "@kotak/sdk": ["@kotak/sdk@workspace:packages/sdk"],
+    "@kotak/sdk": ["@kotak/sdk@workspace:apps/sdk"],
 
-    "@kotak/shared": ["@kotak/shared@workspace:packages/shared"],
+    "@kotak/shared": ["@kotak/shared@workspace:apps/shared"],
 
     "@kotak/web": ["@kotak/web@workspace:apps/web"],
 

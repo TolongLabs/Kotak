@@ -28,7 +28,7 @@ function useSkillProvenance() {
   return { roles, failed }
 }
 
-// The data chip opens About This Data: the active snapshot and how each role's skills were made (DESIGN.md "Layout").
+// The data chip opens About This Data: the active snapshot and how each role's skills were made.
 // A dot marks the chip while any of those skills are AI-drafted.
 export function DataChip({
   snapshot,

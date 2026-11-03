@@ -153,7 +153,7 @@
       "size": [180, 64],
       "sources": [
         {
-          "path": "scripts/build-data.ts",
+          "path": "apps/scripts/build-data.ts",
           "line": 297,
           "end_line": 317
         }
@@ -168,12 +168,12 @@
       "size": [180, 72],
       "sources": [
         {
-          "path": "scripts/build-data.ts",
+          "path": "apps/scripts/build-data.ts",
           "line": 61,
           "end_line": 68
         },
         {
-          "path": "scripts/build-data/sgf.ts",
+          "path": "apps/scripts/build-data/sgf.ts",
           "line": 13,
           "end_line": 22
         }
@@ -188,12 +188,12 @@
       "size": [180, 72],
       "sources": [
         {
-          "path": "scripts/build-data.ts",
+          "path": "apps/scripts/build-data.ts",
           "line": 297,
           "end_line": 317
         },
         {
-          "path": "scripts/corners/run-batch.ts",
+          "path": "apps/scripts/corners/run-batch.ts",
           "line": 1,
           "end_line": 11
         }
@@ -208,7 +208,7 @@
       "size": [180, 72],
       "sources": [
         {
-          "path": "scripts/corners/run-batch.ts",
+          "path": "apps/scripts/corners/run-batch.ts",
           "line": 166,
           "end_line": 190
         }

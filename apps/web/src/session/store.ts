@@ -1,7 +1,7 @@
 import { DEFAULT_SCENARIO, GuestSessionSchema, ProfileSchema, type GuestSession, type Rating } from '@kotak/shared'
 import { useSyncExternalStore } from 'react'
 
-// The guest's check-up state, kept in this browser only (TRD.md "Client runtime"). Same key as the #136 stand-in.
+// The guest's check-up state, kept in this browser only. Same key as the #136 stand-in.
 const GUEST_SESSION_KEY = 'kotak:guest-session'
 // The scenario options' shuffle seed (#352), kept apart from the session so the session's schema is unchanged.
 const SCENARIO_SEED_KEY = 'kotak:scenario-seed'

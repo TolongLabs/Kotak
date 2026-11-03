@@ -15,7 +15,7 @@ if (!values['dry-run'] && !databaseUrl) {
   process.exit(1)
 }
 
-const input = resolve(values.input ?? 'data/jobstreet')
+const input = resolve(values.input ?? 'apps/data/jobstreet')
 const runFiles = [...new Bun.Glob('**/run.json').scanSync({ cwd: input, absolute: true })].sort()
 const sql = databaseUrl && !values['dry-run'] ? jobstreetDatabase(databaseUrl) : null
 let imported = 0

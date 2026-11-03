@@ -14,7 +14,7 @@ interface LandingSectionProps {
   children: ReactNode
 }
 
-// Every landing scene fills the viewport and centres its content (DESIGN.md "Layout"); taller content grows the scene
+// Every landing scene fills the viewport and centres its content; taller content grows the scene
 // instead of clipping.
 export function LandingSection({ id, tone, className, children }: LandingSectionProps) {
   return (

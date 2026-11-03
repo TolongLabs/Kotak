@@ -23,7 +23,7 @@ import {
 import { useLocale, type Locale } from '../i18n/locale'
 
 // The static client bundle (#88), read through @kotak/sdk from the page's origin: each file fetched once and checked
-// with its Zod schema (TRD.md "Client runtime"). The React hooks stay here.
+// with its Zod schema. The React hooks stay here.
 
 export { BundleFileError, type CheckupBundle, type RoleBundle } from '@kotak/sdk'
 

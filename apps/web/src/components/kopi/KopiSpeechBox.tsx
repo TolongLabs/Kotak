@@ -22,7 +22,7 @@ export interface KopiSpeechBoxProps {
   className?: string
 }
 
-// Kopi's game-style speech box (DESIGN.md): types the line out, reads it aloud unless muted, and links citations.
+// Kopi's game-style speech box: types the line out, reads it aloud unless muted, and links citations.
 export function KopiSpeechBox({ speech, reserve, className }: KopiSpeechBoxProps) {
   const t = useText(uiText)
   const locale = useLocale()

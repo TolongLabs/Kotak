@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { KopiPose } from './poses'
 
-// Kopi's entrance (DESIGN.md "Motion"), after ascii-magic.com's image-to-ASCII looks: the pose art rebuilt from glyphs
+// Kopi's entrance, after ascii-magic.com's image-to-ASCII looks: the pose art rebuilt from glyphs
 // that rise row by row from the bottom. Each cell scrambles in the text colour, then settles on the glyph for its
 // density in the art's own colour. The settled glyphs stay on screen until the caller hands over to Live2D.
 const RAMP = ' .:-=+*#%@'

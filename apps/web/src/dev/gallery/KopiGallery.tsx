@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button'
 import { corners } from '../../demo/data'
 import { questions } from '../../demo/questions'
 
-// One line per DESIGN.md moment; the explaining line carries citation markers.
+// One line per Kopi moment; the explaining line carries citation markers.
 const poseLines: Record<KopiPose, string> = {
   idle: 'Hi, I’m Kopi. Let’s open the box on your job.',
   asking: questions[0]?.text ?? '',

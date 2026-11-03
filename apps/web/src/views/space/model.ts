@@ -188,7 +188,7 @@ export interface SpaceModelInput {
  */
 export function spaceModel({ space, snapshots, pathways, checkup }: SpaceModelInput): SpaceModel {
   const role = checkup?.role ?? null
-  // A space role carries every field the engine reads for a ranked role (packages/shared/src/bundle/space.ts), so it
+  // A space role carries every field the engine reads for a ranked role (apps/shared/src/bundle/space.ts), so it
   // stands in for a full one; the assessed role is always the full file.
   const roles = space.roles.map((job) =>
     role && job.onet_code === role.onet_code ? role : (job as unknown as BundleRole)

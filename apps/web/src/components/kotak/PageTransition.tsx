@@ -9,7 +9,7 @@ export interface PageTransitionProps {
   load?: () => Promise<unknown>
 }
 
-// The flaps swing open and Kopi's ears rise. Reduced motion skips to the open box and a 200 ms fade (DESIGN.md).
+// The flaps swing open and Kopi's ears rise. Reduced motion skips to the open box and a 200 ms fade.
 function OpeningBox({ open, className }: { open: boolean; className?: string }) {
   const swing = 'transition-transform duration-700 ease-out'
 

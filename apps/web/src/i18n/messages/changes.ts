@@ -98,7 +98,7 @@ export const changesText = defineText(
     estimatedTarget: (target: string) => `Estimated target: about ${target}.`,
     roadmapPosition: (rank: string) => `Roadmap position: ${rank}.`,
     kopiLabels: (label: string) => `Kopi now labels this skill ${label}.`,
-    /** The engine's verdict rows (packages/shared VerdictRow), which travel inside verdictChange and kopiLabels; Steady
+    /** The engine's verdict rows (apps/shared VerdictRow), which travel inside verdictChange and kopiLabels; Steady
      * reads as the common verdict. */
     verdictRows: {
       'Rising: AI helps it scale': 'Rising: AI helps it scale',

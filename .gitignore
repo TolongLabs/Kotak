@@ -86,14 +86,12 @@ node_modules/
 .env*
 !.env.example
 
-# Graphify
-graphify-out/*
-!graphify-out/graph.json
-
-# impeccable engine binaries; the launcher downloads a pinned, verified copy
-.agents/skills/impeccable/scripts/bin/
-.claude/skills/impeccable/scripts/bin/
-docs/meetings/
+# Local agent tooling, never committed
+.agents/
+.claude/
+.codex/
+.superpowers/
+graphify-out/
 
 # Secrets and local env files (never commit)
 .env
@@ -101,9 +99,6 @@ docs/meetings/
 !.env.example
 .dev.vars
 .dev.vars.*
-
-# Local design tooling
-.superpowers/
 
 # Build outputs
 dist/
@@ -120,8 +115,4 @@ apps/web/public/llms.txt
 
 # Local scraper runs and browser tooling
 .local/
-data/jobstreet/
-
-# act, the local GitHub Actions runner (#432)
-.secrets
-.artifacts/
+apps/data/jobstreet/

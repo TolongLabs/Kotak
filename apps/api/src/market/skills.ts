@@ -5,7 +5,7 @@
 // ordinary English. Benefits are matched only in the selling points an employer puts on the ad's card (stats.ts,
 // CARD_HIGHLIGHTS), so "medical" in a hospital's job summary is no medical cover.
 //
-// The tools started from the O*NET Hot Technologies examples (data/onet/hot-technologies.json), renamed the way ads
+// The tools started from the O*NET Hot Technologies examples (apps/data/onet/hot-technologies.json), renamed the way ads
 // write them, and were checked against the 4,318 listings scraped on 22 October 2026: each pattern's matches were
 // read for false hits. The benefits were read the same way against the selling points of the 1,083 of 4,408 cards
 // that had them on 24 October. Bump SKILL_VOCABULARY_VERSION whenever a pattern changes, so every listing is matched

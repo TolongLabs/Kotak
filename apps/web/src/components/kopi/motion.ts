@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 
-// Reduced motion is the system setting or the in-app toggle (TRD.md "Accessibility"). The toggle is a device preference.
+// Reduced motion is the system setting or the in-app toggle. The toggle is a device preference.
 const QUERY = '(prefers-reduced-motion: reduce)'
 const STORAGE_KEY = 'kotak:reduced-motion'
 

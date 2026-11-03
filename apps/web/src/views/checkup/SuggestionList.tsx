@@ -155,7 +155,7 @@ export function SuggestionList({
                 // The scroll margin keeps the highlighted row clear of the floating Ask Kopi button.
                 'flex min-h-11 w-full min-w-0 scroll-mb-(--ask-kopi-clearance) cursor-pointer rounded-sm border-[1.5px] px-3 py-2 text-left text-text-primary transition-colors duration-150 ease-out',
                 inline ? 'items-center justify-between gap-3' : 'flex-col items-start justify-center gap-1',
-                // Yellow on white gets an ink outline (DESIGN.md colour rules), so the highlight doesn't rely on colour alone.
+                // Yellow on white gets an ink outline, so the highlight doesn't rely on colour alone.
                 index === list.active ? 'on-accent border-text-primary bg-accent-box' : 'border-transparent'
               )}
             >

@@ -4,14 +4,14 @@ import { fail } from '../ai/errors'
 import { cacheGet, cachePut, sha256Hex } from '../cache'
 import { getConfig } from '../config'
 
-// TRD.md (#46, #144): fixed lines are pre-generated with eleven_v4, live lines use eleven_v4_turbo over the Text to
+// #46, #144: fixed lines are pre-generated with eleven_v4, live lines use eleven_v4_turbo over the Text to
 // Dialogue WebSocket, and the fallback streams eleven_v4 over HTTP. The cache key names eleven_v4, so a cached line
 // and its pre-generated file share one key whichever model spoke it.
 export const TTS_MODEL_ID = 'eleven_v4'
 export const LIVE_TTS_MODEL_ID = 'eleven_v4_turbo'
 // Kopi's voice: Johari (warm, clear, young Malaysian male). ELEVENLABS_VOICE_ID overrides it.
 export const KOPI_VOICE_ID = 'lvNyQwaZPcGFiNUWWiVa'
-// Pre-generated fixed lines live in the static build at /tts/<key>.mp3 (scripts/tts-pregenerate.ts).
+// Pre-generated fixed lines live in the static build at /tts/<key>.mp3 (apps/scripts/tts-pregenerate.ts).
 export const TTS_STATIC_DIRECTORY = 'tts'
 const OUTPUT_FORMAT = 'mp3_44100_128'
 const UPSTREAM_TIMEOUT_MS = 15_000

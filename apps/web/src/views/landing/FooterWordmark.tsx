@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useReducedMotion } from '../../components/kopi/motion'
 
-// The footer's full-width wordmark (DESIGN.md "Motion"), after mkdir.directory's wordmark footer and footer.design's
+// The footer's full-width wordmark, after mkdir.directory's wordmark footer and footer.design's
 // ASCII footers: "kotak" set in Next ExtraBold, sampled per cell and redrawn from the density ramp the theme wave and
 // Kopi's entrance use. It holds still in the text colour; glyphs under a mouse scramble in the accent and settle back.
 const WORD = 'kotak'

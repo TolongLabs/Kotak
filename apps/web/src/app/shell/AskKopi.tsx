@@ -419,7 +419,7 @@ export function AskKopiPanel({
   )
 }
 
-// Kopi's turn, framed like the speech box (DESIGN.md "Spacing, radius and surfaces").
+// Kopi's turn, framed like the speech box.
 function KopiBubble({ children }: { children: ReactNode }) {
   return (
     <div className="space-y-3 rounded-md border-2 border-text-primary bg-bg-default p-4">

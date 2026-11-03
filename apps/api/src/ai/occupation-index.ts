@@ -1,6 +1,6 @@
 import { lookupTitle, prepareTitleIndex, type Occupation, type OnetTitleIndex } from '@kotak/shared'
 // Bundled into the Worker: it is parsed once at isolate startup, not inside a request's CPU budget.
-import titleIndexJson from '../../../../data/onet/title-index.json'
+import titleIndexJson from '../../../data/onet/title-index.json'
 
 export interface TitleSearch {
   // exact: the whole title is a known O*NET title or alternate title. partial: every word starts a word of the hits.

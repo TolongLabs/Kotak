@@ -14,7 +14,7 @@ const files = {
   icon: { src: appIconUrl, width: 128, height: 128, size: 'h-8 w-8' }
 }
 
-// DESIGN.md: never recolour the cat, so the logo ships as fixed-colour SVG files.
+// Never recolour the cat, so the logo ships as fixed-colour SVG files.
 // On dark surfaces the black cat and ink wordmark disappear, so the lockup and mark swap to
 // the app icon's yellow plate (plus a live wordmark) through the .logo-light / .logo-dark rules.
 export function Logo({ variant = 'lockup', className }: LogoProps) {
